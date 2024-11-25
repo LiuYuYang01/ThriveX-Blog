@@ -4,7 +4,7 @@
     </a>
 </p>
 
-<h1 style="font-size:20px; font-weight:700; align:center">ThriveX</h1>
+<p style="font-size:20px; font-weight:700; align:center">ThriveX</p>
 
 <p align="center" style="margin-bottom:10px">年轻、高颜值、全开源、永不收费的现代化博客管理系统</p>
 

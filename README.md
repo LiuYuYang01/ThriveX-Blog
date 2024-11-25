@@ -4,7 +4,9 @@
     </a>
 </p>
 
-<p align="center" style="margin-bottom:10px"><b>ThriveX</b> 年轻、高颜值、全开源、永不收费的现代化博客管理系统</p>
+<h1 style="font-size:20px; font-weight:700">ThriveX</h1>
+
+<p align="center" style="margin-bottom:10px">年轻、高颜值、全开源、永不收费的现代化博客管理系统</p>
 
 
 # 🎉 ThriveX 现代化博客管理系统

@@ -2,7 +2,7 @@
 
 <p align="center">
     <a href="https://liuyuyang.net" target="_blank">
-        <img width="100" src="https://bu.dusays.com/2024/11/17/6739adf188f64.png" alt="ThriveX logo" style="width:200px" />
+        <img width="100" src="https://bu.dusays.com/2024/11/17/6739adf188f64.png" alt="ThriveX logo" style="width:150px" />
     </a>
 </p>
 

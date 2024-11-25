@@ -1,5 +1,12 @@
 首先我想跟大家说一句话："国内做开源真的不容易，没有任何受益，纯为爱发电。如果大家觉得这个项目还不错，那么非常希望能够占用你 `10` 秒钟的宝贵时间点上一个免费的 `star` 支持一下开源"
 
+<p align="center">
+    <a href="https://liuyuyang.net" target="_blank">
+        <img width="100" src="https://bu.dusays.com/2024/11/17/6739adf188f64.png" alt="ThriveX logo" style="width:200px" />
+    </a>
+</p>
+
+<p align="center"><b>ThriveX</b> 年轻、高颜值、全开源、永不收费的现代化博客管理系统</p>
  
 
 # 🎉 ThriveX 现代化博客管理系统

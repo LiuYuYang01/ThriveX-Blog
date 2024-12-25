@@ -1,26 +1,27 @@
-import Image from 'next/image';
 import avatarBg from '@/assets/image/avatar_bg.jpg';
 import { Social, Theme } from '@/types/app/project';
+import Image from 'next/image';
 
-import CSDN from '@/assets/svg/socializing/CSDN.svg'
-import Douyin from '@/assets/svg/socializing/Douyin.svg'
-import GitHub from '@/assets/svg/socializing/GitHub.svg'
-import Gitee from '@/assets/svg/socializing/Gitee.svg'
-import Juejin from '@/assets/svg/socializing/Juejin.svg'
-import QQ from '@/assets/svg/socializing/QQ.svg'
-import Weixin from '@/assets/svg/socializing/Weixin.svg'
+import CSDN from '@/assets/svg/socializing/CSDN.svg';
+import Douyin from '@/assets/svg/socializing/Douyin.svg';
+import GitHub from '@/assets/svg/socializing/GitHub.svg';
+import Gitee from '@/assets/svg/socializing/Gitee.svg';
+import Juejin from '@/assets/svg/socializing/Juejin.svg';
+import QQ from '@/assets/svg/socializing/QQ.svg';
+import Weixin from '@/assets/svg/socializing/Weixin.svg';
 
+import { getConfigDataAPI } from '@/api/project';
 import { getUserDataAPI } from '@/api/user';
-import { getConfigDataAPI } from '@/api/project'
 
-import './index.scss';
 import { User } from '@/types/app/user';
+import './index.scss';
 
 const Author = async () => {
     const { data: user } = await getUserDataAPI() || { data: {} as User }
     const { data: { social } } = await getConfigDataAPI<Theme>("layout") || { data: {} as Theme }
 
-    const socialList = JSON.parse(social)?.map((item: string) => item)
+    const socialList = JSON.parse(social)?.map((item: string) => JSON.parse(item))
+    
 
     // 图标列表
     const images: { [string: string]: string } = {
@@ -34,6 +35,7 @@ const Author = async () => {
     }
 
     const getIcon = (name: string) => images[name];
+
 
     return (
         <div className='AuthorComponent'>

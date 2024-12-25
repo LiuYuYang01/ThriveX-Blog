@@ -1,6 +1,6 @@
+import Image from 'next/image';
 import avatarBg from '@/assets/image/avatar_bg.jpg';
 import { Social, Theme } from '@/types/app/project';
-import Image from 'next/image';
 
 import CSDN from '@/assets/svg/socializing/CSDN.svg';
 import Douyin from '@/assets/svg/socializing/Douyin.svg';
@@ -10,8 +10,8 @@ import Juejin from '@/assets/svg/socializing/Juejin.svg';
 import QQ from '@/assets/svg/socializing/QQ.svg';
 import Weixin from '@/assets/svg/socializing/Weixin.svg';
 
-import { getConfigDataAPI } from '@/api/project';
 import { getUserDataAPI } from '@/api/user';
+import { getConfigDataAPI } from '@/api/project';
 
 import { User } from '@/types/app/user';
 import './index.scss';

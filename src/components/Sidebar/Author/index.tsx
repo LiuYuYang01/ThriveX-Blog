@@ -1,4 +1,4 @@
-import Image from 'next/image';
+import Image from 'next/image'
 import avatarBg from '@/assets/image/avatar_bg.jpg'
 import { Social, Theme } from '@/types/app/project'
 
@@ -31,7 +31,7 @@ const Author = async () => {
         "Gitee": Gitee,
         "Juejin": Juejin,
         "QQ": QQ,
-        "Weixin": Weixin,
+        "Weixin": Weixin
     }
 
     const getIcon = (name: string) => images[name];

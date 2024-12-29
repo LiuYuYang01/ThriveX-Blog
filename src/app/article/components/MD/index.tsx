@@ -18,7 +18,6 @@ import rehypeCallouts from "rehype-callouts";
 import 'rehype-callouts/theme/obsidian';
 import rehypeRaw from 'rehype-raw';
 
-
 interface Props {
     data: string;
 }

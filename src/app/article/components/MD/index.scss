@@ -19,6 +19,10 @@
             }
         }
 
+        img {
+            border-radius: 10px;
+        }
+
         h1,
         h2,
         h3,
@@ -70,15 +74,26 @@
             @apply my-5 border dark:border-[#4e5969] transition-colors;
         }
 
+        // 引用
+        blockquote {
+            @apply p-3 space-y-2 border-l-[3px] !border-primary !bg-[#ecf7fe] rounded-md text-sm text-black-b;
+
+            p {
+                margin: 0 !important;
+            }
+        }
+
+        // 行内代码
         p code,
-        ul code {
+        ul code,
+        ol code {
             @apply bg-[rgba(13,110,253,0.1)] dark:bg-[#334052] text-[#0d6efd] rounded-md py-1 px-2 text-sm transition-colors;
         }
 
         // 任务列表
         li.task-list-item {
             @apply my-2.5;
-        };
+        }
 
         li:not(.task-list-item) {
             @apply my-2.5 ml-6;
@@ -94,16 +109,16 @@
             counter-reset: counter;
         }
 
-        ol > li:not([id^="user-content-fn-"]) {
+        ol>li:not([id^="user-content-fn-"]) {
 
             &::before {
-                @apply absolute w-4 h-4 mt-1 leading-none left-0 rounded-full text-center text-sm border border-[#11181C]   dark:border-gray-400;
+                @apply absolute w-4 h-4 mt-1 leading-none left-0 rounded-full text-center text-sm border border-[#11181C] dark:border-gray-400;
 
                 counter-increment: counter;
                 content: counter(counter);
             }
 
-            & ol > li::before {
+            & ol>li::before {
                 @apply absolute left-7 border-0 text-base mt-0 leading-normal;
 
                 content: counter(counter) ".";
@@ -117,10 +132,12 @@
 
         // 脚注
         .footnotes {
-            @apply mt-10 before:content-[''] ;
+            @apply mt-10 before:content-[''];
+
             &>h2 {
                 @apply text-yellow-500;
             }
+
             &::before {
                 @apply block w-full h-[1px] bg-gray-300;
             }
@@ -139,7 +156,7 @@
         .callout-content {
             @apply pt-1;
 
-            & > p {
+            &>p {
                 @apply mb-0;
             }
         }

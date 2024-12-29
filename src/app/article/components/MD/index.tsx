@@ -10,7 +10,7 @@ import "./index.scss";
 import "katex/dist/katex.min.css";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
-import remarkFlexibleMarkers from "remark-flexible-markers";
+import { remarkMark } from 'remark-mark-highlight';
 import rehypeHighlight from "rehype-highlight";
 import rehypeKatex from "rehype-katex";
 import rehypeSemanticBlockquotes from "rehype-semantic-blockquotes";
@@ -112,7 +112,7 @@ const ContentMD = ({ data }: Props) => {
                 <div className="content markdown-body">
                     <ReactMarkdown
                         components={renderers}
-                        remarkPlugins={[[remarkGfm, {singleTilde: false}], remarkMath, remarkFlexibleMarkers]}
+                        remarkPlugins={[[remarkGfm, {singleTilde: false}], remarkMath, remarkMark]}
                         rehypePlugins={[rehypeRaw, rehypeHighlight, rehypeKatex, rehypeCallouts, rehypeSemanticBlockquotes]}
                     >
                         {data}

@@ -1,28 +1,30 @@
-import Slide from "@/components/Slide";
-import Typed from "@/components/Typed";
-import Starry from "@/components/Starry"
-import Container from "@/components/Container";
-import ArticleLayout from "@/components/ArticleLayout";
-import Sidebar from "@/components/Sidebar";
+import Slide from '@/components/Slide'
+import Typed from '@/components/Typed'
+import Starry from '@/components/Starry'
+import Container from '@/components/Container'
+import ArticleLayout from '@/components/ArticleLayout'
+import Sidebar from '@/components/Sidebar'
 
 import { getConfigDataAPI } from '@/api/project'
-import { Theme } from "@/types/app/project";
-import Lantern from "@/components/Lantern";
+import { Theme } from '@/types/app/project'
+import Lantern from '@/components/Lantern'
 
 interface Props {
-  searchParams: Promise<{ page: number }>;
-};
+  searchParams: Promise<{ page: number }>
+}
 
 export default async (props: Props) => {
-  const searchParams = await props.searchParams;
-  const page = searchParams.page || 1;
-  const { data } = (await getConfigDataAPI<Theme>("layout")) || { data: {} as Theme }
+  const searchParams = await props.searchParams
+  const page = searchParams.page || 1
+  const { data } = (await getConfigDataAPI<Theme>('layout')) || {
+    data: {} as Theme
+  }
 
   return (
     <>
       {/* <Lantern data={['新', '春', '快', '乐']} /> */}
 
-      <Slide src={data?.swiper_image}>
+      <Slide src={data?.swiper_image} isRipple={false}>
         {/* 星空背景组件 */}
         <Starry />
         {/* 打字机组件 */}
@@ -36,5 +38,5 @@ export default async (props: Props) => {
         <Sidebar />
       </Container>
     </>
-  );
-};
+  )
+}

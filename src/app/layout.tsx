@@ -1,20 +1,21 @@
 import localFont from 'next/font/local'
 
-import HeroUIProvider from "@/components/HeroUIProvider";
-import NProgress from '@/components/NProgress';
+import HeroUIProvider from '@/components/HeroUIProvider'
+import NProgress from '@/components/NProgress'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
-import Tools from '@/components/Tools';
-import Confetti from '@/components/Confetti';
+import Tools from '@/components/Tools'
+import Confetti from '@/components/Confetti'
 import RouteChangeHandler from '@/components/RouteChangeHandler'
+import MusicTools from '@/components/MusicTools'
 
 import { getConfigDataAPI } from '@/api/project'
-import { Web } from '@/types/app/project';
+import { Web } from '@/types/app/project'
 
 // 加载样式文件
-import "@/styles/index.scss";
-import "@/styles/tailwind.scss";
-import BaiduStatis from '@/components/BaiduStatis';
+import '@/styles/index.scss'
+import '@/styles/tailwind.scss'
+import BaiduStatis from '@/components/BaiduStatis'
 
 // 加载本地字体
 const LXGWWenKai = localFont({
@@ -23,13 +24,13 @@ const LXGWWenKai = localFont({
 })
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  const { data } = (await getConfigDataAPI<Web>("web")) || { data: {} as Web };
+  const { data } = (await getConfigDataAPI<Web>('web')) || { data: {} as Web }
 
   // 尊重开源，禁止删除此版权信息！！！
-  console.log("🚀 欢迎使用 ThriveX 现代化博客管理系统")
-  console.log("🎉 开源地址：https://github.com/LiuYuYang01/ThriveX-Blog")
-  console.log("🏕 作者主页：https://liuyuyang.net")
-  console.log("🌟 觉得好用的话记得点个 Star 哦 🙏")
+  console.log('🚀 欢迎使用 ThriveX 现代化博客管理系统')
+  console.log('🎉 开源地址：https://github.com/LiuYuYang01/ThriveX-Blog')
+  console.log('🏕 作者主页：https://liuyuyang.net')
+  console.log('🌟 觉得好用的话记得点个 Star 哦 🙏')
 
   return (
     <html lang="zh-CN" className={LXGWWenKai.className}>
@@ -66,16 +67,16 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 
         {/* 主体内容 */}
         <HeroUIProvider>
-          <div className='min-h-[calc(100vh-300px)]'>
-            {children}
-          </div>
+          <div className="min-h-[calc(100vh-300px)]">{children}</div>
         </HeroUIProvider>
 
         {/* 底部组件 */}
         <Footer />
         {/* 右侧工具栏组件 */}
         <Tools />
+        {/* 左侧音乐组件 */}
+        <MusicTools />
       </body>
     </html>
-  );
+  )
 }

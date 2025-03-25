@@ -28,6 +28,10 @@ yarn-error.log*
 # local env files
 .env*.local
 
+# prettier
+.prettierignore
+.prettierrc.js
+
 # vercel
 .vercel
 

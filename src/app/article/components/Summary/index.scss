@@ -1,0 +1,118 @@
+.post-ai {
+  border-radius: 12px;
+  padding: 12px;
+  border: 1px solid;
+  margin: 8px 0 16px;
+  transition: all 0.3s ease;
+
+  :root & {
+    background: #f1f3f8;
+    border-color: #e3e8f7;
+  }
+
+  .dark & {
+    background: #21232a;
+    border-color: #3d3d3f;
+  }
+}
+
+.ai-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.ai-title-left {
+  display: flex;
+  align-items: center;
+}
+
+.ai-title-text {
+  font-weight: bold;
+}
+
+.ai-tag {
+  padding: 2px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+
+  :root & {
+    background: rgba(42, 148, 225, 0.1);
+    color: #2a94e1;
+  }
+
+  .dark & {
+    background: rgba(42, 148, 225, 0.2);
+    color: #5a9cf8;
+  }
+}
+
+.ai-explanation {
+  line-height: 1.5;
+  position: relative;
+
+  :root & {
+    color: #a1a2b8;
+  }
+
+  .dark & {
+    color: #8a8b9c;
+  }
+}
+
+.cursor {
+  animation: blink 1s step-end infinite;
+
+  :root & {
+    color: #2a94e1;
+  }
+
+  .dark & {
+    color: #5a9cf8;
+  }
+}
+
+.ai-suggestions {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ai-suggestions-item {
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  :root & {
+    background: rgba(42, 148, 225, 0.1);
+    color: #2a94e1;
+  }
+
+  .dark & {
+    background: rgba(42, 148, 225, 0.2);
+    color: #5a9cf8;
+  }
+
+  &:hover {
+    :root & {
+      background: rgba(42, 148, 225, 0.2);
+    }
+
+    .dark & {
+      background: rgba(42, 148, 225, 0.3);
+    }
+  }
+}
+
+@keyframes blink {
+  from,
+  to {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}

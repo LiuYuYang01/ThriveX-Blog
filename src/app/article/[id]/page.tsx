@@ -8,6 +8,7 @@ import Copyright from "../components/Copyright";
 import UpAndDown from "../components/UpAndDown";
 import Comment from "../components/Comment";
 import MD from "../components/MD";
+import Summary from "../components/Summary";
 import Nav from "../components/Nav";
 
 import { IoMdPricetags } from "react-icons/io";
@@ -84,6 +85,7 @@ export default async (props: Props) => {
                     </Slide>
 
                     <div className="w-[90%] xl:w-6/12 mx-auto mt-12 relative">
+                        <Summary content={data?.description || ""} />
                         <MD data={data?.content} />
 
                         <div className="w-full">

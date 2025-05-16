@@ -26,6 +26,7 @@
     "mdast-util-gfm-autolink-literal": "^2.0.0",
     "next": "15.1.7",
     "next-nprogress-bar": "^2.3.13",
+    "next-runtime-env": "^3.3.0",
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "react-github-calendar": "^4.5.5",

@@ -13,6 +13,8 @@ COPY package*.json .
 # 安装依赖
 RUN npm install
 
+RUN npm install --os=linux --libc=musl --cpu=x64 sharp
+
 # 复制所有文件到工作目录
 COPY . .
 

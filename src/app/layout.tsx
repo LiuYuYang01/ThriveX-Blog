@@ -1,4 +1,5 @@
 import localFont from 'next/font/local'
+import { PublicEnvScript } from 'next-runtime-env'
 
 import HeroUIProvider from "@/components/HeroUIProvider";
 import NProgress from '@/components/NProgress';
@@ -50,6 +51,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 
         {/* 百度统计 */}
         <BaiduStatis />
+        <PublicEnvScript />
       </head>
 
       {/* 监听路由变化 */}

@@ -101,7 +101,7 @@ export default ({ list }: { list: Article[] }) => {
                                                     duration: 1,
                                                 },
                                                 opacity: {
-                                                    easings: "ease",
+                                                    ease: "easeInOut",
                                                     duration: 1,
                                                 },
                                             },
@@ -112,11 +112,11 @@ export default ({ list }: { list: Article[] }) => {
                                             height: 0,
                                             transition: {
                                                 height: {
-                                                    easings: "ease",
+                                                    ease: "easeInOut",
                                                     duration: 0.25,
                                                 },
                                                 opacity: {
-                                                    easings: "ease",
+                                                    ease: "easeInOut",
                                                     duration: 0.3,
                                                 },
                                             },

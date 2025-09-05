@@ -31,7 +31,7 @@ export default function MapContainer({ position }: { position: number[] }) {
           map = new AMap.Map('container', {
             viewMode: '3D', // 是否为3D地图模式
             zoom: 7,
-            center: [113.625351, 34.746303], // 初始化地图中心点位置
+            center: position, // 初始化地图中心点位置
           });
 
           new AMap.Marker({

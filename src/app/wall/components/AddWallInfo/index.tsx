@@ -6,8 +6,7 @@ import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { Wall, Cate } from '@/types/app/wall';
 import { addWallDataAPI, getCateListAPI } from '@/api/wall';
 import { Bounce, toast, ToastContainer, ToastOptions } from 'react-toastify';
-import HCaptchaType from '@hcaptcha/react-hcaptcha';
-import HCaptcha from '@/components/HCaptcha';
+import Turnstile, { TurnstileRef } from '@/components/Turnstile';
 import { useConfigStore } from '@/stores';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -27,13 +26,13 @@ export default () => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   // 人机验证相关
-  const captchaRef = useRef<HCaptchaType>(null);
+  const captchaRef = useRef<TurnstileRef>(null);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [captchaError, setCaptchaError] = useState<string>('');
-  
-  // 获取HCaptcha配置
+
+  // 获取Turnstile配置
   const config = useConfigStore();
-  const hasHCaptcha = !!config?.other?.hcaptcha_key;
+  const hasTurnstile = !!config?.other?.turnstile_site_key;
 
   // 获取留言分类列表
   const [cateList, setCateList] = useState<Cate[]>([]);
@@ -66,20 +65,20 @@ export default () => {
     // 清除之前的人机验证错误
     setCaptchaError('');
 
-    // 只有配置了HCaptcha时才需要验证
-    if (hasHCaptcha && !captchaToken) return setCaptchaError('请完成人机验证');
+    // 只有配置了Turnstile时才需要验证
+    if (hasTurnstile && !captchaToken) return setCaptchaError('请完成人机验证');
 
-    const { code, message } = (await addWallDataAPI({ ...data, createTime: Date.now().toString(), h_captcha_response: captchaToken! })) || { code: 0, message: '' };
+    const { code, message } = (await addWallDataAPI({ ...data, createTime: Date.now().toString(), turnstile_token: captchaToken! })) || { code: 0, message: '' };
 
     if (code !== 200) {
-      captchaRef.current?.resetCaptcha();
+      captchaRef.current?.reset();
       return toast.error(message, toastConfig);
     }
 
     // 清除验证相关状态
     setCaptchaError('');
     setCaptchaToken(null);
-    captchaRef.current?.resetCaptcha();
+    captchaRef.current?.reset();
 
     // 提交成功后存储消息
     localStorage.setItem('toastMessage', '🎉 提交成功, 请等待审核!');
@@ -204,9 +203,9 @@ export default () => {
                 />
 
                 {/* 人机验证 */}
-                {hasHCaptcha && (
+                {hasTurnstile && (
                   <div className="flex flex-col">
-                    <HCaptcha ref={captchaRef} setToken={handleCaptchaSuccess} />
+                    <Turnstile ref={captchaRef} setToken={handleCaptchaSuccess} />
                     {captchaError && <span className="text-red-400 text-sm pl-3 mt-1">{captchaError}</span>}
                   </div>
                 )}

@@ -5,9 +5,8 @@ import { useForm } from 'react-hook-form';
 import { addCommentDataAPI } from '@/api/comment';
 import { Bounce, ToastOptions, toast } from 'react-toastify';
 import { Spinner, Popover, PopoverTrigger, PopoverContent } from '@heroui/react';
-import HCaptchaType from '@hcaptcha/react-hcaptcha';
 import List from './components/List';
-import HCaptcha from '@/components/HCaptcha';
+import Turnstile, { TurnstileRef } from '@/components/Turnstile';
 import EmojiBag from '@/components/EmojiBag';
 import { useConfigStore } from '@/stores';
 import 'react-toastify/dist/ReactToastify.css';
@@ -48,13 +47,13 @@ const CommentForm = ({ articleId }: Props) => {
 
   const commentRef = useRef<{ getCommentList: () => void }>(null);
 
-  const captchaRef = useRef<HCaptchaType>(null);
+  const captchaRef = useRef<TurnstileRef>(null);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [captchaError, setCaptchaError] = useState<string>('');
-  
-  // 获取HCaptcha配置
+
+  // 获取Turnstile配置
   const config = useConfigStore();
-  const hasHCaptcha = !!config?.other?.hcaptcha_key;
+  const hasTurnstile = !!config?.other?.turnstile_site_key;
 
   const {
     register,
@@ -76,8 +75,8 @@ const CommentForm = ({ articleId }: Props) => {
     // 清除之前的人机验证错误
     setCaptchaError('');
 
-    // 只有配置了HCaptcha时才需要验证
-    if (hasHCaptcha && !captchaToken) return setCaptchaError('请完成人机验证');
+    // 只有配置了Turnstile时才需要验证
+    if (hasTurnstile && !captchaToken) return setCaptchaError('请完成人机验证');
 
     setLoading(true);
 
@@ -95,11 +94,11 @@ const CommentForm = ({ articleId }: Props) => {
       articleId,
       commentId: commentId === articleId ? 0 : commentId,
       createTime: Date.now().toString(),
-      h_captcha_response: captchaToken,
+      turnstile_token: captchaToken,
     })) || { code: 0, message: '' };
 
     if (code !== 200) {
-      captchaRef.current?.resetCaptcha();
+      captchaRef.current?.reset();
       return toast.error('发布评论失败：' + message, toastConfig);
     }
 
@@ -115,7 +114,7 @@ const CommentForm = ({ articleId }: Props) => {
     // 清除验证相关状态
     setCaptchaError('');
     setCaptchaToken(null);
-    captchaRef.current?.resetCaptcha();
+    captchaRef.current?.reset();
 
     // 提交成功后把评论的数据持久化到本地
     localStorage.setItem('comment_data', JSON.stringify(data));
@@ -216,9 +215,9 @@ const CommentForm = ({ articleId }: Props) => {
             <span className="text-red-400 text-sm pl-3 mt-1">{errors.url?.message}</span>
           </div>
 
-          {hasHCaptcha && (
+          {hasTurnstile && (
             <div className="flex flex-col">
-              <HCaptcha ref={captchaRef} setToken={handleCaptchaSuccess} />
+              <Turnstile ref={captchaRef} setToken={handleCaptchaSuccess} />
               {captchaError && <span className="text-red-400 text-sm pl-3 mt-1">{captchaError}</span>}
             </div>
           )}

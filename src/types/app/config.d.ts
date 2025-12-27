@@ -46,7 +46,7 @@ export interface Theme {
 // 其他配置
 export interface Other {
   baidu_token: string;
-  hcaptcha_key: string;
+  hcaptcha_key?: string; // 已废弃，保留用于向后兼容
   turnstile_site_key: string;
 }
 

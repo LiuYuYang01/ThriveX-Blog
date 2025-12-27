@@ -20,6 +20,7 @@ import '@/styles/tailwind.scss';
 import BaiduStatis from '@/components/BaiduStatis';
 import FloatingBlock from '@/components/FloatingBlock';
 import InjectData from '@/components/InjectData';
+import TurnstileProtection from '@/components/TurnstileProtection';
 
 // 加载本地字体
 const LXGWWenKai = localFont({
@@ -107,6 +108,12 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
             <link rel="apple-touch-icon" href={data.favicon} />
           </>
         )}
+
+        {/* Cloudflare Turnstile 资源提示 */}
+        <link rel="preconnect" href="https://challenges.cloudflare.com" />
+        {/* Cloudflare Turnstile 脚本 */}
+        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer />
+        
         {/* 百度统计 */}
         <BaiduStatis />
       </head>
@@ -137,6 +144,8 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 
         {/* 悬浮块 */}
         <FloatingBlock />
+        {/* Turnstile 页面保护 */}
+        <TurnstileProtection />
       </body>
     </html>
   );

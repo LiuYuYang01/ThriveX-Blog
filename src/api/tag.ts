@@ -1,4 +1,4 @@
-import Request from '@/utils/request'
+import { Request } from '@/utils'
 import { Tag } from '@/types/app/tag'
 import { Article } from '@/types/app/article';
 

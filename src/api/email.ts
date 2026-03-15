@@ -1,4 +1,4 @@
-import Request from '@/utils/request';
+import { Request } from '@/utils';
 import { CommentEmail } from '@/types/app/email';
 
 // 发送评论邮件

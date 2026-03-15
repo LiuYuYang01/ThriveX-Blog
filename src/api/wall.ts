@@ -1,4 +1,4 @@
-import Request from '@/utils/request';
+import { Request } from '@/utils';
 import { Wall, Cate } from '@/types/app/wall';
 
 // 新增留言

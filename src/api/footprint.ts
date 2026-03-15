@@ -1,4 +1,4 @@
-import Request from '@/utils/request'
+import { Request } from '@/utils'
 import { Footprint } from '@/types/app/footprint'
 
 // 获取足迹

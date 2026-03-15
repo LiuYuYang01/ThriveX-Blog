@@ -1,4 +1,4 @@
-import Request from '@/utils/request';
+import { Request } from '@/utils';
 import { Web, WebType } from '@/types/app/web';
 
 // 获取网站类型列表

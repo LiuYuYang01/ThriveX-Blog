@@ -1,4 +1,4 @@
-import Request from '@/utils/request'
+import { Request } from '@/utils'
 import { Record } from '@/types/app/record'
 
 // 新增说说

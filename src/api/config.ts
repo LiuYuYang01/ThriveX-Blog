@@ -1,4 +1,4 @@
-import Request from '@/utils/request';
+import { Request } from '@/utils';
 import { Config } from '@/types/app/config';
 
 // 获取网站配置

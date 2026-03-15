@@ -1,5 +1,5 @@
 import { User } from '@/types/app/user'
-import Request from '@/utils/request'
+import { Request } from '@/utils'
 
 // 获取作者信息
 export const getAuthorDataAPI = async () => {

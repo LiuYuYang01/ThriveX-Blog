@@ -1,4 +1,4 @@
-import Request from '@/utils/request';
+import { Request } from '@/utils';
 import { Comment } from '@/types/app/comment';
 
 // 新增评论

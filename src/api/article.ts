@@ -1,4 +1,4 @@
-import Request from '@/utils/request';
+import { Request } from '@/utils';
 import { Article } from '@/types/app/article';
 
 // 获取指定文章数据
@@ -13,8 +13,9 @@ export const getArticleListAPI = async () => {
 
 // 分页获取文章数据
 export const getArticlePagingAPI = async (data: { page: number, size: number, key?: string }) => {
-    // 搜索暂时，晚点修复，先上线
-    return await Request<Paginate<Article[]>>('GET', `/article?page=${data.page}&size=${data.size}`);
+    return await Request<Paginate<Article[]>>('GET', `/article`, {
+        params: { page: data.page, size: data.size, key: data.key }
+    });
 }
 
 // 获取随机文章列表

@@ -1,4 +1,4 @@
-import Request from '@/utils/request'
+import { Request } from '@/utils'
 import { Swiper } from '@/types/app/swiper'
 
 // 获取轮播图

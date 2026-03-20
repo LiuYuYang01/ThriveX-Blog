@@ -12,7 +12,7 @@ const RandomArticle = async () => {
   const theme = themeResponse?.data?.value as Theme;
   const { data: article } = await getArticleListAPI();
   const ids = theme.reco_article.map((item) => Number(item)) ?? [];
-  const list = article?.filter((item: Article) => ids.includes(item.id as number)) ?? [];
+  const list = article?.result.filter((item: Article) => ids.includes(item.id as number)) ?? [];
 
   return (
     <div className="hotArticleComponent">

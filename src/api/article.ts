@@ -8,7 +8,7 @@ export const getArticleDataAPI = async (id: number, password?: string) => {
 
 // 获取文章列表
 export const getArticleListAPI = async () => {
-    return await Request<Article[]>('GET', `/article?page=1&size=9999999999`,);
+    return await Request<Paginate<Article[]>>('GET', `/article`,);
 }
 
 // 分页获取文章数据

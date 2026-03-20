@@ -35,8 +35,8 @@ export default async () => {
       <div className="w-[92%] max-w-6xl mx-auto -mt-8 sm:-mt-12 relative z-10 mb-16">
         <div className="rounded-2xl shadow-xl overflow-hidden bg-white dark:bg-black-b/95 backdrop-blur-sm border border-slate-200/80 dark:border-slate-700/50">
           <div className="p-6 sm:p-10 lg:p-12 space-y-12">
-            <Statis aTotal={data?.length} />
-            <Archiving list={data} />
+            <Statis aTotal={data?.total ?? 0} />
+            <Archiving list={data?.result ?? []} />
           </div>
         </div>
       </div>

@@ -29,10 +29,11 @@ export default ({ aTotal }: Props) => {
   const [commentList, setCommentList] = useState<Comment[]>([]);
   const [linkList, setLinkList] = useState<Web[]>([]);
 
+  // 优化：移除这三个获取列表接口，使用一个接口来获取相关数据
   const getData = async () => {
     await Promise.all([getCateListAPI(), getCommentListAPI(), getWebListAPI()]).then(([cateList, commentList, linkList]) => {
       setCateList(cateList?.data.result ?? []);
-      setCommentList(commentList?.data ?? []);
+      setCommentList(commentList?.data.result ?? []);
       setLinkList(linkList?.data ?? []);
     });
   };

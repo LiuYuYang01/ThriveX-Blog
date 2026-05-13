@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { getCommentPagingAPI } from '@/api/comment';
+import { getCommentListAPI } from '@/api/comment';
 import NewCommentSvg from '@/assets/svg/other/comments.svg';
 import RandomAvatar from '@/components/RandomAvatar';
 import { Comment } from '@/types/app/comment';
@@ -13,13 +13,13 @@ import { RiTimeLine } from 'react-icons/ri';
 const NewComments = () => {
   const [list, setList] = useState<Comment[]>([]);
 
-  const getCommentPaging = async () => {
-    const { data } = await getCommentPagingAPI();
+  const getCommentList = async () => {
+    const { data } = await getCommentListAPI();
     setList(data?.result ?? []);
   };
 
   useEffect(() => {
-    getCommentPaging();
+    getCommentList();
   }, []);
 
   return (

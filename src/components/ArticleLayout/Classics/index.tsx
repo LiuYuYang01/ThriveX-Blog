@@ -32,7 +32,7 @@ const Classics = async ({ data }: ClassicsProps) => {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-2">
       {data?.result?.map((item, index) => (
         <div key={item.id} className="relative overflow-hidden flex h-[190px] md:h-60 lg:h-52 xl:h-60 bg-black-b tw_container">
           {index % 2 === 0 && (

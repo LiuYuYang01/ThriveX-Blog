@@ -26,7 +26,7 @@ export default () => {
   const fetchRecordList = useCallback(async (page: number, append: boolean = false) => {
     setLoading(true);
     try {
-      const { data: recordData } = await getRecordPagingAPI({ pagination: { page, size: 8 } });
+      const { data: recordData } = await getRecordPagingAPI({ page, size: 8 });
 
       if (recordData?.result && recordData?.result?.length > 0) {
         if (append) {

@@ -9,7 +9,7 @@ export default () => {
   const [list, setList] = useState<Tag[]>([]);
   const getTagData = async () => {
     const { data } = await getTagListAPI();
-    setList(data);
+    setList(data?.result ?? []);
   };
 
   useEffect(() => {

@@ -20,10 +20,10 @@ export default function Dynamic({ className = '' }: { className?: string }) {
 
   const getRecordList = async () => {
     try {
-      const { data } = await getRecordPagingAPI({ pagination: { page: 1, size: 8 } });
+      const { data } = await getRecordPagingAPI({ page: 1, size: 8 });
       setList(data?.result ?? []);
     } catch (error) {
-      console.error('Failed to fetch records:', error);
+      console.error('获取说说失败：', error);
     } finally {
       setIsLoading(false);
     }

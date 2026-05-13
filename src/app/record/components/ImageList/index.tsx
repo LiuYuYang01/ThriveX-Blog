@@ -8,7 +8,7 @@ interface Props {
 }
 
 const imgClass = 'object-cover w-full h-full min-w-full min-h-full transition-transform duration-500 group-hover/img:scale-110';
-const boxClass = 'group/img relative overflow-hidden rounded-2xl bg-slate-100 dark:bg-slate-800 cursor-pointer border border-slate-100 dark:border-slate-700 flex items-center justify-center';
+const boxClass = 'group/img relative overflow-hidden rounded-2xl cursor-pointer flex items-center justify-center';
 
 export default ({ list }: Props) => {
   if (!list?.length) return null;

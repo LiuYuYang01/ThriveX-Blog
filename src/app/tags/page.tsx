@@ -1,4 +1,4 @@
-import { getTagListWithArticleCountAPI } from '@/api/tag';
+import { getTagListAPI } from '@/api/tag';
 import { Metadata } from 'next';
 import TagsPageClient from './components/TagsPageClient';
 
@@ -8,6 +8,6 @@ export const metadata: Metadata = {
 };
 
 export default async () => {
-  const { data } = await getTagListWithArticleCountAPI();
-  return <TagsPageClient tags={data ?? []} />;
+  const { data } = await getTagListAPI();
+  return <TagsPageClient tags={data?.result ?? []} />;
 };

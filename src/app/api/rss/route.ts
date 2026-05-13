@@ -13,7 +13,7 @@ export async function GET() {
   const web = webResponse?.data?.value as Web;
   const { data: user } = await getAuthorDataAPI();
   const { data: article } = await getArticlePagingAPI({ page: 1, size: 8 });
-  const { data: record } = await getRecordPagingAPI({ pagination: { page: 1, size: 8 } });
+  const { data: record } = await getRecordPagingAPI({ page: 1, size: 8 });
 
   const articleList = article?.result ?? [];
   const recordList = record?.result ?? [];
@@ -51,12 +51,12 @@ export async function GET() {
       content: item?.content,
       author: user?.name
         ? [
-            {
-              name: user.name,
-              email: user.email,
-              link: web?.url,
-            },
-          ]
+          {
+            name: user.name,
+            email: user.email,
+            link: web?.url,
+          },
+        ]
         : [],
       copyright: 'ThriveX 现代化博客管理系统',
       date: new Date(+item?.createTime),

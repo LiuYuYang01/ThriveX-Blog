@@ -5,4 +5,4 @@ import { Swiper } from '@/types/app/swiper'
 export const getSwiperDataAPI = (id?: number) => Request<Swiper>('GET', `/swiper/${id}`)
 
 // 获取轮播图数据列表
-export const getSwiperListAPI = () => Request<Swiper[]>('POST', `/swiper/list`)
+export const getSwiperListAPI = () => Request<Paginate<Swiper[]>>('GET', `/swiper`)

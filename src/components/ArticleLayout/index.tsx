@@ -26,7 +26,7 @@ export default async ({ page }: { page: number }) => {
 
   return (
     <div className={`w-full md:w-[90%] ${sidebar?.length ? 'lg:w-[68%] xl:w-[73%]' : 'w-full'} mx-auto transition-width`}>
-      {!!swiper?.length && <Swiper data={swiper} />}
+      {!!swiper.result?.length && <Swiper data={swiper.result} />}
       <Dynamic className="my-2" />
 
       {theme.is_article_layout === 'classics' && <Classics data={data} />}

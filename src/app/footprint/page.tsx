@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Modal, ModalContent, ModalHeader, ModalBody, useDisclosure } from '@heroui/react';
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure } from '@heroui/react';
 import { getFootprintListAPI } from '@/api/footprint';
 import { Footprint } from '@/types/app/footprint';
 import { PhotoProvider, PhotoView } from 'react-photo-view';
@@ -9,7 +9,6 @@ import 'react-photo-view/dist/react-photo-view.css';
 import dayjs from 'dayjs';
 import Masonry from 'react-masonry-css';
 import { getGaodeMapConfigDataAPI } from '@/api/config';
-import './page.scss';
 
 const breakpointColumnsObj = {
   default: 4,
@@ -22,12 +21,13 @@ export default function MapContainer() {
   const [isDismissable, setIsDismissable] = useState(true);
   const [list, setList] = useState<Footprint[]>([]);
   const [data, setData] = useState<Footprint>({} as Footprint);
+  const [mapLoadError, setMapLoadError] = useState<string | null>(null);
   let map: any = null;
   let infoWindow: any = null;
 
   const getFootprintList = async () => {
     const { data } = await getFootprintListAPI();
-    setList(data);
+    setList(data.result);
   };
 
   useEffect(() => {
@@ -39,8 +39,20 @@ export default function MapContainer() {
 
     // 确保代码仅在客户端执行
     import('@amap/amap-jsapi-loader').then(async (AMapLoader) => {
-      const { data } = await getGaodeMapConfigDataAPI();
-      const { key_code, security_code } = data as { key_code: string; security_code: string };
+      setMapLoadError(null);
+
+      let key_code: string;
+      let security_code: string;
+      try {
+        const { data: cfg } = await getGaodeMapConfigDataAPI();
+        ({ key_code, security_code } = cfg as { key_code: string; security_code: string });
+      } catch (e) {
+        console.error('加载地图配置失败：', e);
+        setMapLoadError(
+          '无法获取地图配置。请稍后刷新页面重试；若持续失败，请联系站长检查后台高德 Key 与安全密钥是否已正确填写。',
+        );
+        return;
+      }
 
       (window as any)._AMapSecurityConfig = {
         securityJsCode: security_code,
@@ -171,7 +183,10 @@ export default function MapContainer() {
           });
         })
         .catch((e) => {
-          console.log('加载地图失败：', e);
+          console.error('加载地图失败：', e);
+          setMapLoadError(
+            '地图脚本加载失败，可能是高德密钥配置有误，请联系站长在后台核对。',
+          );
         });
 
       return () => {
@@ -185,7 +200,47 @@ export default function MapContainer() {
     <>
       <title>⛳️ 那年走过的路</title>
       <meta name="description" content="⛳️ 那年走过的路" />
-      <div id="container"></div>
+      <div className="relative m-0 h-screen w-full p-0">
+        <div id="container" className="m-0 h-full w-full p-0" />
+      </div>
+
+      <Modal
+        isOpen={!!mapLoadError}
+        placement="center"
+        backdrop="blur"
+        scrollBehavior="inside"
+        onOpenChange={(open) => {
+          if (!open) setMapLoadError(null);
+        }}
+        classNames={{
+          backdrop: 'bg-slate-900/40 backdrop-blur-sm',
+          base: 'border border-primary/25 shadow-[0_10px_40px_1px_rgb(83,157,253,.12)] dark:border-primary/35',
+          header: 'border-b border-primary/15 flex-col gap-1 text-primary dark:border-white/10',
+          body: 'py-5',
+          footer: 'border-t border-primary/10 dark:border-white/10',
+        }}
+      >
+        <ModalContent className="bg-white dark:bg-black-b">
+          {() => (
+            <>
+              <ModalHeader className="text-lg font-semibold text-slate-800 dark:text-slate-100">提示</ModalHeader>
+              <ModalBody>
+                <p className="text-left text-sm leading-relaxed text-slate-600 dark:text-slate-300" role="alert">
+                  {mapLoadError}
+                </p>
+              </ModalBody>
+              <ModalFooter className="gap-2">
+                <Button variant="light" className="text-slate-600 dark:text-slate-400" onPress={() => setMapLoadError(null)}>
+                  关闭
+                </Button>
+                <Button color="primary" className="font-medium shadow-[0_2px_12px_rgba(83,157,253,0.35)]" onPress={() => window.location.reload()}>
+                  刷新
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
 
       <Modal
         size="4xl"

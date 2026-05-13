@@ -8,7 +8,7 @@ export const getWebTypeListAPI = async () => {
 
 // 获取网站列表
 export const getWebListAPI = async () => {
-    return await Request<Web[]>('POST', `/link/list`, undefined, false);
+    return await Request<Paginate<Web[]>>('GET', `/link`);
 }
 
 // 新增网站

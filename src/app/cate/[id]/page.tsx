@@ -13,10 +13,10 @@ export default async (props: Props) => {
   const searchParams = await props.searchParams;
   const params = await props.params;
   const id = params.id;
-  const page = searchParams.page ?? 1;
+  const page = +(searchParams.page ?? 1);
   const name = searchParams.name;
 
-  const { data } = await getCateArticleListAPI(id, page);
+  const { data } = await getCateArticleListAPI(id, { page, size: 8 });
 
   return (
     <>
@@ -39,7 +39,7 @@ export default async (props: Props) => {
         <div className="md:w-full lg:w-[900px] lg:mx-auto px-4 lg:p-0 my-5">
           <Classics data={data} />
 
-          {data?.total && <Pagination total={data?.pages} page={page} path={`?name=${name}`} className="flex justify-center mt-5" />}
+          {data?.total > 0 && <Pagination total={data?.pages} page={page} path={`?name=${name}`} className="flex justify-center mt-5" />}
         </div>
       </div>
     </>

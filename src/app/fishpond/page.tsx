@@ -34,7 +34,7 @@ export default function FishpondPage() {
       const response = await getRssListAPI();
 
       if (response?.data) {
-        setRssData(response.data);
+        setRssData(response.data.result);
       }
     } catch (error) {
       console.error('获取RSS数据失败:', error);

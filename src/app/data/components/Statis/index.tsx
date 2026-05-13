@@ -34,7 +34,7 @@ export default ({ aTotal }: Props) => {
     await Promise.all([getCateListAPI(), getCommentListAPI(), getWebListAPI()]).then(([cateList, commentList, linkList]) => {
       setCateList(cateList?.data.result ?? []);
       setCommentList(commentList?.data.result ?? []);
-      setLinkList(linkList?.data ?? []);
+      setLinkList(linkList?.data.result ?? []);
     });
   };
 

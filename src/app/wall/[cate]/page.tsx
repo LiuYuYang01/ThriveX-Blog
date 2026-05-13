@@ -32,14 +32,14 @@ export default () => {
   }, []);
 
   // 获取留言列表
-  const fetchWallList = useCallback(
-    async (page: number, append: boolean = false) => {
+  const getWallList = useCallback(
+    async (params: Page, append: boolean = false) => {
       const id = cateList.find((item) => item.mark === cate)?.id ?? 0;
       if (!id) return;
 
       setLoading(true);
       try {
-        const { data: tallList } = await getCateWallListAPI(id, page, 8);
+        const { data: tallList } = await getCateWallListAPI(id, params);
 
         if (tallList?.result && tallList?.result?.length > 0) {
           if (append) {
@@ -48,8 +48,8 @@ export default () => {
             setWalls(tallList?.result);
           }
           setTotalPages(tallList.pages || 1);
-          setHasMore(page < (tallList.pages || 1));
-          currentPageRef.current = page;
+          setHasMore((params.page ?? 1) < (tallList.pages ?? 1));
+          currentPageRef.current = params.page ?? 1;
         } else {
           setHasMore(false);
         }
@@ -71,9 +71,9 @@ export default () => {
       setHasMore(true);
       setInitialLoading(true);
       currentPageRef.current = 1;
-      fetchWallList(1, false);
+      getWallList({ page: 1, size: 8 }, false);
     }
-  }, [cate, cateList, fetchWallList]);
+  }, [cate, cateList, getWallList]);
 
   // 滚动监听
   useEffect(() => {
@@ -89,7 +89,7 @@ export default () => {
       if (scrollTop + windowHeight >= documentHeight - 100) {
         const nextPage = currentPageRef.current + 1;
         if (nextPage <= totalPages) {
-          fetchWallList(nextPage, true);
+          getWallList({ page: nextPage, size: 8 }, true);
         }
       }
     };
@@ -106,7 +106,7 @@ export default () => {
       window.removeEventListener('scroll', debouncedHandleScroll);
       clearTimeout(timeoutId);
     };
-  }, [hasMore, loading, totalPages, fetchWallList]);
+  }, [hasMore, loading, totalPages, getWallList]);
 
   return (
     <>

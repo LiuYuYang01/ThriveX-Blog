@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { getTagListAPI } from '@/api/tag';
 import { Tag } from '@/types/app/tag';
 import { getRandom } from '@/utils';
+import { Tooltip } from '@heroui/react';
 import tag from './svg/tag.svg';
 
 export default () => {
@@ -38,12 +39,13 @@ export default () => {
       </div>
       <div className="overflow-auto max-h-[280px] pr-2 grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 gap-2 hide_sliding">
         {list.map((item, index) => (
-          <span
-            key={index}
-            className={`inline-flex justify-center items-center px-3 py-2 text-sm font-medium rounded-xl whitespace-nowrap transition-[transform,box-shadow] hover:scale-105 hover:shadow-md ${tagStyles[getRandom(0, tagStyles.length - 1)]}`}
-          >
-            {item.name}
-          </span>
+          <Tooltip key={index} content={item.name} showArrow={true}>
+            <span
+              className={`flex justify-center items-center min-w-0 px-3 py-2 text-sm font-medium rounded-xl transition-[transform,box-shadow] hover:scale-105 hover:shadow-md ${tagStyles[getRandom(0, tagStyles.length - 1)]} overflow-hidden text-ellipsis whitespace-nowrap`}
+            >
+              {item.name}
+            </span>
+          </Tooltip>
         ))}
       </div>
     </div>

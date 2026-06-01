@@ -27,8 +27,8 @@ export default ({ disclosure }: Props) => {
 
     const { data } = await getArticlePagingAPI({
       key,
-      page: 1,
-      size: 10,
+      pageNum: 1,
+      pageSize: 10,
     })
 
     setData(data);

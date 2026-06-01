@@ -6,15 +6,10 @@ export const getArticleDataAPI = async (id: number, password?: string) => {
     return await Request<Article>('GET', `/article${!password ? `/${id}` : `/${id}?password=${password}`}`);
 }
 
-// 获取文章列表
-export const getArticleListAPI = async () => {
-    return await Request<Paginate<Article[]>>('GET', `/article`,);
-}
-
-// 分页获取文章数据
-export const getArticlePagingAPI = async (data: Page & { key?: string }) => {
+//  获取文章列表
+export const getArticlePagingAPI = async (params?: Page & { key?: string }) => {
     return await Request<Paginate<Article[]>>('GET', `/article`, {
-        params: { pageNum: data.pageNum, pageSize: data.pageSize, key: data.key }
+        params: params ?? {}
     });
 }
 

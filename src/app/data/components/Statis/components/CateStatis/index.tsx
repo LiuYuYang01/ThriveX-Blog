@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
-import { getCateArticleCountAPI } from '@/api/cate';
+import { getCateListAPI } from '@/api/cate';
 import cate from './svg/cate.svg';
 
 import * as echarts from 'echarts/core';
@@ -16,8 +16,8 @@ export default () => {
   const [list, setList] = useState<{ value: number; name: string }[]>([]);
 
   const getCateArticleCount = async () => {
-    const { data } = await getCateArticleCountAPI();
-    setList(data?.map(({ count, name }) => ({ value: count, name })) ?? []);
+    const { data } = await getCateListAPI();
+    setList(data?.result?.map(({ count, name }) => ({ value: count, name })) ?? []);
   };
 
   useEffect(() => {

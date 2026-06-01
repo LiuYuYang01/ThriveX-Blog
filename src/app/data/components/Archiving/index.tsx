@@ -144,7 +144,7 @@ export default ({ list }: { list: Article[] }) => {
                 {Object.keys(item.month).map((month, monthIdx) => (
                   <div key={monthIdx} className="relative pl-6">
                     <div className="absolute left-0 top-1.5 w-px h-[calc(100%-0.5rem)] bg-gradient-to-b from-primary/60 to-slate-200 dark:to-slate-600" />
-                    <div className="absolute left-0 top-1.5 w-2.5 h-2.5 rounded-full bg-primary shadow-sm ring-2 ring-white dark:ring-black-b" />
+                    <div className="absolute -left-1 top-1.5 w-2.5 h-2.5 rounded-full bg-primary shadow-sm ring-2 ring-white dark:ring-black-b" />
                     <div className="rounded-xl bg-slate-50/80 dark:bg-slate-800/30 p-4 border border-slate-100 dark:border-slate-700/50">
                       <div className="flex flex-wrap items-center gap-2 mb-3">
                         <span className="text-lg font-semibold text-slate-700 dark:text-slate-200">

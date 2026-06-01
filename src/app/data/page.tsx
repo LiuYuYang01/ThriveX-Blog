@@ -2,10 +2,10 @@ import Slide from '@/components/Slide';
 import Starry from '@/components/Starry';
 import Statis from './components/Statis';
 import Archiving from './components/Archiving';
-import { getArticleListAPI } from '@/api/article';
+import { getArticlePagingAPI } from '@/api/article';
 
 export default async () => {
-  const { data } = await getArticleListAPI();
+  const { data } = await getArticlePagingAPI();
 
   return (
     <>

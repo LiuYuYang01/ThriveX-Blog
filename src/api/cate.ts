@@ -11,8 +11,3 @@ export const getCateListAPI = async () => {
 export const getCateArticleListAPI = async (id: number, params: Page) => {
     return await Request<Paginate<Article[]>>('GET', `/article/cate/${id}`, { params })
 }
-
-// 获取每个分类的文章数量
-export const getCateArticleCountAPI = async () => {
-    return await Request<CateArticleCount[]>('GET', '/cate/article/count')
-}

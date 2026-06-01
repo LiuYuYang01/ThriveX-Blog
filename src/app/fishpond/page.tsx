@@ -75,11 +75,11 @@ export default function FishpondPage() {
       <title>🐟 鱼塘 | Rss Feed</title>
       <meta name="description" content="汇聚好友与订阅的动态鱼塘" />
 
-      <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10 bg-slate-50/50 dark:bg-[#0a0a0a]">
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute inset-0 bg-[linear-gradient(rgba(148,163,184,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,0.06)_1px,transparent_1px)] bg-[size:64px_64px]" />
-        <div className="absolute top-[-10%] left-[-10%] w-[40vw] h-[40vw] rounded-full bg-blue-400/10 dark:bg-blue-600/10 blur-[100px] mix-blend-multiply dark:mix-blend-screen" />
-        <div className="absolute top-[20%] right-[-10%] w-[30vw] h-[30vw] rounded-full bg-violet-400/10 dark:bg-violet-600/10 blur-[120px] mix-blend-multiply dark:mix-blend-screen" />
-        <div className="absolute bottom-[-10%] left-[20%] w-[35vw] h-[35vw] rounded-full bg-cyan-400/10 dark:bg-cyan-600/10 blur-[100px] mix-blend-multiply dark:mix-blend-screen" />
+        <div className="absolute -top-1/2 left-1/2 -translate-x-1/2 w-[800px] h-[800px] rounded-full bg-primary/6 blur-[120px]" />
+        <div className="absolute top-1/4 right-0 w-96 h-96 rounded-full bg-violet-400/8 blur-[80px]" />
+        <div className="absolute bottom-1/4 left-0 w-80 h-80 rounded-full bg-cyan-400/8 blur-[80px]" />
       </div>
 
       <div className="w-full min-h-screen pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-[1920px] mx-auto">

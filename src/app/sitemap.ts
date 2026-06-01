@@ -1,5 +1,5 @@
 import { MetadataRoute } from 'next';
-import { getArticleListAPI } from '@/api/article';
+import { getArticlePagingAPI } from '@/api/article';
 import { getWebConfigDataAPI } from '@/api/config';
 import { Web } from '@/types/app/config';
 
@@ -11,7 +11,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = webConfig?.url ?? 'https://liuyuyang.net';
 
   // 获取所有文章
-  const res = await getArticleListAPI();
+  const res = await getArticlePagingAPI();
   const articles = res?.data.result ?? [];
 
   // 静态页面

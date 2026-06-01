@@ -18,10 +18,10 @@ export const getCommentListAPI = async (paginate?: Page) => {
 
 // 获取当前文章中所有评论
 export const getArticleCommentListAPI = async (articleId: number, paginate?: Page) => {
-    return await Request<Paginate<Comment[]>>('POST', `/comment/article/${articleId}`, {
+    return await Request<Paginate<Comment[]>>('GET', `/comment/article/${articleId}`, {
         params: paginate ? {
-            pageNum: paginate.pageNum ?? 1,
-            pageSize: paginate.pageSize ?? 5,
+            pageNum: paginate.pageNum,
+            pageSize: paginate.pageSize,
         } : {}
     });
 }

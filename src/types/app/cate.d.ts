@@ -7,6 +7,7 @@ export interface Cate {
     level: number,
     type: 'cate' | 'nav',
     count: number,
+    is_hide: boolean,
     order: number,
     children: Cate[]
 }

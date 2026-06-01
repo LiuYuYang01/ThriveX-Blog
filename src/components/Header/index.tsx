@@ -31,7 +31,14 @@ export default () => {
   const [cateList, setCateList] = useState<Cate[]>([]);
   const getCateList = async () => {
     const { data } = await getCateListAPI();
-    setCateList(data?.result ?? []);
+    const result = data?.result ?? [];
+    const filteredList = result
+      .filter((item) => !item.is_hide)
+      .map((item) => ({
+        ...item,
+        children: item.children?.filter((child) => !child.is_hide) ?? [],
+      }));
+    setCateList(filteredList);
   };
 
   useEffect(() => {

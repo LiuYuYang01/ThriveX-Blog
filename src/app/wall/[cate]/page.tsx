@@ -48,8 +48,8 @@ export default () => {
             setWalls(tallList?.result);
           }
           setTotalPages(tallList.pages || 1);
-          setHasMore((params.page ?? 1) < (tallList.pages ?? 1));
-          currentPageRef.current = params.page ?? 1;
+          setHasMore((params.pageNum ?? 1) < (tallList.pages ?? 1));
+          currentPageRef.current = params.pageSize ?? 1;
         } else {
           setHasMore(false);
         }
@@ -71,7 +71,7 @@ export default () => {
       setHasMore(true);
       setInitialLoading(true);
       currentPageRef.current = 1;
-      getWallList({ page: 1, size: 8 }, false);
+      getWallList({ pageNum: 1, pageSize: 8 }, false);
     }
   }, [cate, cateList, getWallList]);
 
@@ -89,7 +89,7 @@ export default () => {
       if (scrollTop + windowHeight >= documentHeight - 100) {
         const nextPage = currentPageRef.current + 1;
         if (nextPage <= totalPages) {
-          getWallList({ page: nextPage, size: 8 }, true);
+          getWallList({ pageNum: nextPage, pageSize: 8 }, true);
         }
       }
     };

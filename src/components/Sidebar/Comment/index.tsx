@@ -14,7 +14,7 @@ const NewComments = () => {
   const [list, setList] = useState<Comment[]>([]);
 
   const getCommentList = async () => {
-    const { data } = await getCommentListAPI();
+    const { data } = await getCommentListAPI({ pageNum: 1, pageSize: 5 });
     setList(data?.result ?? []);
   };
 

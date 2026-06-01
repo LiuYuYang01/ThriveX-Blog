@@ -12,9 +12,9 @@ export const getArticleListAPI = async () => {
 }
 
 // 分页获取文章数据
-export const getArticlePagingAPI = async (data: { page: number, size: number, key?: string }) => {
+export const getArticlePagingAPI = async (data: Page & { key?: string }) => {
     return await Request<Paginate<Article[]>>('GET', `/article`, {
-        params: { page: data.page, size: data.size, key: data.key }
+        params: { pageNum: data.pageNum, pageSize: data.pageSize, key: data.key }
     });
 }
 

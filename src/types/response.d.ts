@@ -15,8 +15,8 @@ interface Paginate<T> {
 }
 
 interface Page {
-    page?: number,
-    size?: number,
+    pageNum?: number,
+    pageSize?: number,
 }
 
 interface FilterData {

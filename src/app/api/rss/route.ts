@@ -6,14 +6,14 @@ import { Web } from '@/types/app/config';
 import { getArticlePagingAPI } from '@/api/article';
 import { getWebConfigDataAPI } from '@/api/config';
 import { getAuthorDataAPI } from '@/api/user';
-import { getRecordPagingAPI } from '@/api/record';
+import { getRecordListAPI } from '@/api/record';
 
 export async function GET() {
   const webResponse = await getWebConfigDataAPI<{ value: Web }>('web');
   const web = webResponse?.data?.value as Web;
   const { data: user } = await getAuthorDataAPI();
-  const { data: article } = await getArticlePagingAPI({ page: 1, size: 8 });
-  const { data: record } = await getRecordPagingAPI({ page: 1, size: 8 });
+  const { data: article } = await getArticlePagingAPI({ pageNum: 1, pageSize: 8 });
+  const { data: record } = await getRecordListAPI({ pageNum: 1, pageSize: 8 });
 
   const articleList = article?.result ?? [];
   const recordList = record?.result ?? [];

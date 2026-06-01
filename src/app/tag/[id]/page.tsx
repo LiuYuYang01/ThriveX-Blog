@@ -16,7 +16,7 @@ export default async (props: Props) => {
   const page = searchParams.page ?? 1;
   const name = searchParams.name;
 
-  const { data } = await getTagArticleListAPI(id, { page, size: 8 });
+  const { data } = await getTagArticleListAPI(id, { pageNum: page, pageSize: 8 });
 
   return (
     <>

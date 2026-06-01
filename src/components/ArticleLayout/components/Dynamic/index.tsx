@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { HiOutlineSpeakerphone } from 'react-icons/hi';
 import { FiChevronRight } from 'react-icons/fi';
-import { getRecordPagingAPI } from '@/api/record';
+import { getRecordListAPI } from '@/api/record';
 import { Record } from '@/types/app/record';
 import { extractText } from '@/utils';
 
@@ -20,7 +20,7 @@ export default function Dynamic({ className = '' }: { className?: string }) {
 
   const getRecordList = async () => {
     try {
-      const { data } = await getRecordPagingAPI({ page: 1, size: 8 });
+      const { data } = await getRecordListAPI({ pageNum: 1, pageSize: 8 });
       setList(data?.result ?? []);
     } catch (error) {
       console.error('获取说说失败：', error);

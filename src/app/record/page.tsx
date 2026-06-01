@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import RecordCard from './components/RecordCard';
-import { getRecordPagingAPI } from '@/api/record';
+import { getRecordListAPI } from '@/api/record';
 import { getAuthorDataAPI } from '@/api/user';
 import { Record } from '@/types/app/record';
 import { User } from '@/types/app/user';
@@ -26,7 +26,7 @@ export default () => {
   const fetchRecordList = useCallback(async (page: number, append: boolean = false) => {
     setLoading(true);
     try {
-      const { data: recordData } = await getRecordPagingAPI({ page, size: 8 });
+      const { data: recordData } = await getRecordListAPI({ pageNum: page, pageSize: 8 });
 
       if (recordData?.result && recordData?.result?.length > 0) {
         if (append) {

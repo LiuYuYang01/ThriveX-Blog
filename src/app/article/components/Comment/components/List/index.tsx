@@ -20,7 +20,7 @@ interface Props {
 const CommentList = forwardRef(({ id, reply }: Props, ref) => {
   const [data, setData] = useState<Paginate<Comment[]>>({} as Paginate<Comment[]>);
   const getCommentList = async (page: number = 1) => {
-    const { data } = await getArticleCommentListAPI(+id!, { page, size: 8 });
+    const { data } = await getArticleCommentListAPI(+id!, { pageNum: page, pageSize: 8 });
     setData(data);
   };
 

@@ -36,8 +36,9 @@ export default () => {
       .filter((item) => !item.is_hide)
       .map((item) => ({
         ...item,
-        children: item.children?.filter((child) => !child.is_hide) ?? [],
-      }));
+        children: item.children?.filter((child) => !child.is_hide).sort((a, b) => a.order - b.order) ?? [],
+      }))
+      .sort((a, b) => a.order - b.order);
     setCateList(filteredList);
   };
 

@@ -15,6 +15,9 @@ export default async ({ page }: { page: number }) => {
   const themeResponse = await getWebConfigDataAPI<{ value: Theme }>('theme');
   const theme = themeResponse?.data?.value as Theme;
   const sidebar = theme?.right_sidebar ?? [];
+
+  // 按order排序轮播图（顺序越小越靠前）
+  swiper.result = swiper.result?.sort((a, b) => (a.order || 0) - (b.order || 0)) ?? [];
   
   // 如果是瀑布流布局就显示28条数据，否则显示8条
   const { data } = await getArticlePagingAPI({

@@ -4,5 +4,6 @@ export interface Swiper {
     description: string,
     url: string,
     image: string,
+    order?: number,
     createtime?: string
 }

@@ -8,6 +8,6 @@ export const getTagListAPI = async () => {
 }
 
 // 获取指定标签中的所有文章
-export const getTagArticleListAPI = async (id: number, params: Page) => {
-    return await Request<Paginate<Article[]>>('GET', `/tag/${id}/articles`, { params })
+export const getTagArticleListAPI = async (id: number, params?: Page) => {
+    return await Request<Paginate<Article[]>>('GET', `/tag/${id}/articles`, { params: params ?? {} })
 }

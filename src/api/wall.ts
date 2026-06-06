@@ -12,6 +12,6 @@ export const getCateListAPI = async () => {
 }
 
 // 获取当前分类中所有留言
-export const getCateWallListAPI = async (cateId: number, params: Page) => {
-    return await Request<Paginate<Wall[]>>('GET', `/wall/cate/${cateId}`, { params });
+export const getCateWallListAPI = async (cateId: number, params?: Page) => {
+    return await Request<Paginate<Wall[]>>('GET', `/wall/cate/${cateId}`, { params: params ?? {} });
 }

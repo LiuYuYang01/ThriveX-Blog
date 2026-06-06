@@ -7,21 +7,15 @@ export const addCommentDataAPI = async (data: Comment) => {
 }
 
 // 获取评论列表
-export const getCommentListAPI = async (paginate?: Page) => {
+export const getCommentListAPI = async (params?: Page) => {
     return await Request<Paginate<Comment[]>>('GET', `/comment`, {
-        params: paginate ? {
-            pageNum: paginate.pageNum ?? 1,
-            pageSize: paginate.pageSize ?? 5,
-        } : {}
+        params: params ?? {}
     });
 }
 
 // 获取当前文章中所有评论
-export const getArticleCommentListAPI = async (articleId: number, paginate?: Page) => {
+export const getArticleCommentListAPI = async (articleId: number, params?: Page) => {
     return await Request<Paginate<Comment[]>>('GET', `/comment/article/${articleId}`, {
-        params: paginate ? {
-            pageNum: paginate.pageNum,
-            pageSize: paginate.pageSize,
-        } : {}
+        params: params ?? {}
     });
 }

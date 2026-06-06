@@ -8,6 +8,6 @@ export const getCateListAPI = async () => {
 }
 
 // 获取指定分类中的所有文章
-export const getCateArticleListAPI = async (id: number, params: Page) => {
-    return await Request<Paginate<Article[]>>('GET', `/article/cate/${id}`, { params })
+export const getCateArticleListAPI = async (id: number, params?: Page) => {
+    return await Request<Paginate<Article[]>>('GET', `/article/cate/${id}`, { params: params ?? {} })
 }

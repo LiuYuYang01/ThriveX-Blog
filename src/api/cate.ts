@@ -1,5 +1,5 @@
 import { Article } from '@/types/app/article'
-import { Cate, CateArticleCount } from '@/types/app/cate'
+import { Cate } from '@/types/app/cate'
 import { Request } from '@/utils';
 
 // 获取分类列表

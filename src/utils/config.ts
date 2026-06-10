@@ -11,5 +11,7 @@ export const loadRuntimeConfig = async (): Promise<void> => {
   try {
     const res = await fetch('/config.json', { cache: 'no-store' });
     if (res.ok) configCache = await res.json();
-  } catch { }
+  } catch {
+    // 忽略 config.json 加载失败，回退到环境变量
+  }
 };

@@ -4,3 +4,4 @@ export * from './htmlParser';
 export * from './common';
 export * from './url';
 export * from './request';
+export * from './cateNav';

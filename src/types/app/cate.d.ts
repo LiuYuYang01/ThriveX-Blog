@@ -5,7 +5,7 @@ export interface Cate {
     url: string,
     icon: string,
     level: number,
-    type: 'cate' | 'nav',
+    type: 'cate' | 'page' | 'nav',
     count: number,
     is_hide: boolean,
     order: number,

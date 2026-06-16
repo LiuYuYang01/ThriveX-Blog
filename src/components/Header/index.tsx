@@ -14,6 +14,7 @@ import { BsFillMoonStarsFill, BsTextIndentLeft } from 'react-icons/bs';
 
 import { Cate } from '@/types/app/cate';
 import { getCateListAPI } from '@/api/cate';
+import { getCateNavHref, getCateNavRel, getCateNavTarget } from '@/utils/cateNav';
 
 import { useConfigStore } from '@/stores';
 
@@ -107,7 +108,7 @@ export default () => {
                 {/* 渲染分类 */}
                 {one.type === 'cate' && (
                   <li className="group/one relative">
-                    <Link href={`/cate/${one.id}?name=${one.name}`} target={`${one.url.startsWith('http') ? '_blank' : '_self'}`} className={`flex items-center p-5 text-[15px] whitespace-nowrap group-hover/one:!text-primary   ${isPathSty || isScrolled ? 'text-[#333] dark:text-white' : 'text-white'}`}>
+                    <Link href={getCateNavHref(one)} target={getCateNavTarget(one.type)} rel={getCateNavRel(one.type)} className={`flex items-center p-5 text-[15px] whitespace-nowrap group-hover/one:!text-primary   ${isPathSty || isScrolled ? 'text-[#333] dark:text-white' : 'text-white'}`}>
                       {one.icon} {one.name}
                       <Show is={!!one.children.length}>
                         <IoIosArrowDown className="ml-2" />
@@ -122,8 +123,37 @@ export default () => {
                             className="opacity-0 -translate-x-2 group-hover/one:opacity-100 group-hover/one:translate-x-0 transition-all duration-300 ease-out"
                             style={{ transitionDelay: `${index * 45 + 60}ms` }}
                           >
-                            <Link href={`/cate/${two.id}?name=${two.name}`} target={`${two.url.startsWith('http') ? '_blank' : '_self'}`} title={two.name} className={`${submenuItemClass} truncate`}>
+                            <Link href={getCateNavHref(two)} target={getCateNavTarget(two.type)} rel={getCateNavRel(two.type)} title={two.name} className={`${submenuItemClass} truncate`}>
                               {two.name}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </Show>
+                  </li>
+                )}
+
+                {/* 渲染页面 */}
+                {one.type === 'page' && (
+                  <li className="group/one relative">
+                    <Link href={getCateNavHref(one)} target={getCateNavTarget(one.type)} rel={getCateNavRel(one.type)} className={`flex items-center p-5 px-10 text-[15px] whitespace-nowrap group-hover/one:!text-primary ${isPathSty || isScrolled ? 'text-[#333] dark:text-white' : 'text-white'}`}>
+                      {one.icon} {one.name}
+                      <Show is={!!one.children?.length}>
+                        <IoIosArrowDown className="ml-2" />
+                      </Show>
+                    </Link>
+
+                    <Show is={!!one.children?.length}>
+                      <ul className={`${submenuPanelClass} bg-[rgba(255,255,255,0.95)] dark:bg-[rgba(44,51,62,0.95)]`} style={{ boxShadow: '0 12px 32px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(0, 0, 0, 0.08)' }}>
+                        {one.children?.map((two, index) => (
+                          <li
+                            key={two.id}
+                            className="opacity-0 -translate-x-2 group-hover/one:opacity-100 group-hover/one:translate-x-0 transition-all duration-300 ease-out"
+                            style={{ transitionDelay: `${index * 45 + 60}ms` }}
+                          >
+                            <Link href={getCateNavHref(two)} target={getCateNavTarget(two.type)} rel={getCateNavRel(two.type)} title={two.name} className={`${submenuItemClass} gap-1.5`}>
+                              <span className="shrink-0 transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover/item:scale-125 group-hover/item:-rotate-6">{two.icon}</span>
+                              <span className="truncate">{two.name}</span>
                             </Link>
                           </li>
                         ))}
@@ -135,7 +165,7 @@ export default () => {
                 {/* 渲染导航 */}
                 {one.type === 'nav' && (
                   <li className="group/one relative">
-                    <Link href={one.url} className={`flex items-center p-5 px-10 text-[15px] whitespace-nowrap group-hover/one:!text-primary ${isPathSty || isScrolled ? 'text-[#333] dark:text-white' : 'text-white'}`}>
+                    <Link href={getCateNavHref(one)} target={getCateNavTarget(one.type)} rel={getCateNavRel(one.type)} className={`flex items-center p-5 px-10 text-[15px] whitespace-nowrap group-hover/one:!text-primary ${isPathSty || isScrolled ? 'text-[#333] dark:text-white' : 'text-white'}`}>
                       {one.icon} {one.name}
                       {/* 如果有子分类就显示下拉三角 */}
                       <Show is={!!one.children?.length}>
@@ -151,7 +181,7 @@ export default () => {
                             className="opacity-0 -translate-x-2 group-hover/one:opacity-100 group-hover/one:translate-x-0 transition-all duration-300 ease-out"
                             style={{ transitionDelay: `${index * 45 + 60}ms` }}
                           >
-                            <Link href={two.url} title={two.name} className={`${submenuItemClass} gap-1.5`}>
+                            <Link href={getCateNavHref(two)} target={getCateNavTarget(two.type)} rel={getCateNavRel(two.type)} title={two.name} className={`${submenuItemClass} gap-1.5`}>
                               <span className="shrink-0 transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover/item:scale-125 group-hover/item:-rotate-6">{two.icon}</span>
                               <span className="truncate">{two.name}</span>
                             </Link>

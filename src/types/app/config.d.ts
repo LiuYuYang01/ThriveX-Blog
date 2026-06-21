@@ -43,16 +43,21 @@ export interface Theme {
     record_info: string
 }
 
-// 其他配置
-export interface Other {
-    baidu_token: string,
-    hcaptcha_key: string,
+// 配置项
+export interface Config {
+    baidu_statis_key: {
+        key: string,
+    },
+    hcaptcha_key: {
+        key: string,
+    },
+    gaode_map_key: {
+        key_code: string,
+        security_code: string,
+    },
 }
 
-
-export type EnvConfigName = 'baidu_statis' | 'email' | 'gaode_map' | 'gaode_coordinate'
-
-export interface Config {
+export interface PageConfig {
     id: string,
     name: string,
     value: any,

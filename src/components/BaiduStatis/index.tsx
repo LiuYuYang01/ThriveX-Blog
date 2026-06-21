@@ -4,13 +4,13 @@ import { useEffect } from 'react';
 import { useConfigStore } from '@/stores';
 
 export default function BaiduAnalytics() {
-  const other = useConfigStore((state) => state.other);
+  const baiduKey = useConfigStore((state) => state.config.baidu_statis_key?.key);
 
   useEffect(() => {
-    if (other?.baidu_token) {
+    if (baiduKey?.trim()) {
       window._hmt = window._hmt || [];
       const baiduScript = document.createElement('script');
-      baiduScript.src = `https://hm.baidu.com/hm.js?${other.baidu_token}`;
+      baiduScript.src = `https://hm.baidu.com/hm.js?${baiduKey}`;
       baiduScript.async = true;
       document.head.appendChild(baiduScript);
 
@@ -18,7 +18,7 @@ export default function BaiduAnalytics() {
         document.head.removeChild(baiduScript);
       };
     }
-  }, [other]);
+  }, [baiduKey]);
 
   return null;
 }

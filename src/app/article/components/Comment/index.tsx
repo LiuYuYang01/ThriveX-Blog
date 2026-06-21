@@ -52,9 +52,8 @@ const CommentForm = ({ articleId }: Props) => {
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [captchaError, setCaptchaError] = useState<string>('');
 
-  // 获取HCaptcha配置
-  const config = useConfigStore();
-  const hasHCaptcha = !!config?.other?.hcaptcha_key;
+  const hcaptcha = useConfigStore((state) => state.config.hcaptcha_key);
+  const hasHCaptcha = Boolean(hcaptcha?.key?.trim() || process.env.NEXT_PUBLIC_HCAPTCHA_KEY?.trim());
 
   const {
     register,

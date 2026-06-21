@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
-import { Other, Theme, Web } from '@/types/app/config';
+import { Config, Theme, Web } from '@/types/app/config';
 
 interface ConfigState {
   // 是否暗黑模式
@@ -15,9 +15,9 @@ interface ConfigState {
   theme: Theme;
   setTheme: (data: Theme) => void;
 
-  // 其他配置
-  other: Other;
-  setOther: (data: Other) => void;
+  // 公开配置
+  config: Config;
+  setConfig: (data: Config) => void;
 }
 
 export default create(
@@ -32,8 +32,8 @@ export default create(
       theme: {} as Theme,
       setTheme: (data: Theme) => set(() => ({ theme: data })),
 
-      other: {} as Other,
-      setOther: (data: Other) => set(() => ({ other: data }))
+      config: {} as Config,
+      setConfig: (data: Config) => set(() => ({ config: data }))
     }),
     {
       name: 'config_storage',

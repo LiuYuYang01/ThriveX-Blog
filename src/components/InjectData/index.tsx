@@ -2,24 +2,22 @@
 
 import { useEffect } from 'react';
 
-import { getWebConfigDataAPI } from '@/api/config';
+import { getPublicConfigAPI, getWebConfigDataAPI } from '@/api/config';
 import { useAuthorStore, useConfigStore } from '@/stores';
-import { Web, Theme, Other } from '@/types/app/config';
+import { Web, Theme } from '@/types/app/config';
 import { getAuthorDataAPI } from '@/api/user';
 import { loadRuntimeConfig } from '@/utils/config';
 
 export default () => {
   const setAuthor = useAuthorStore((state) => state.setAuthor);
 
-  // 获取作者信息
   const getAuthorData = async () => {
     const { data: user } = await getAuthorDataAPI();
     setAuthor(user);
   };
 
-  const { setWeb, setTheme, setOther } = useConfigStore();
+  const { setWeb, setTheme, setConfig } = useConfigStore();
 
-  // 获取项目配置
   const getConfigData = async () => {
     const webResponse = await getWebConfigDataAPI<{ value: Web }>('web');
     const web = webResponse?.data?.value as Web;
@@ -29,13 +27,11 @@ export default () => {
     const theme = themeResponse?.data?.value as Theme;
     setTheme(theme);
 
-    const otherResponse = await getWebConfigDataAPI<{ value: Other }>('other');
-    const other = otherResponse?.data?.value as Other;
-    setOther(other);
+    const { data } = await getPublicConfigAPI();
+    setConfig(data);
   };
 
   useEffect(() => {
-    // 加载运行时配置后再获取其他数据
     loadRuntimeConfig().then(() => {
       getAuthorData();
       getConfigData();

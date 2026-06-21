@@ -8,7 +8,7 @@ import { PhotoProvider, PhotoView } from 'react-photo-view';
 import 'react-photo-view/dist/react-photo-view.css';
 import dayjs from 'dayjs';
 import Masonry from 'react-masonry-css';
-import { getGaodeMapConfigDataAPI } from '@/api/config';
+import { useConfigStore } from '@/stores';
 
 const breakpointColumnsObj = {
   default: 4,
@@ -17,6 +17,7 @@ const breakpointColumnsObj = {
 };
 
 export default function MapContainer() {
+  const gaodeMap = useConfigStore((state) => state.config.gaode_map_key);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [isDismissable, setIsDismissable] = useState(true);
   const [list, setList] = useState<Footprint[]>([]);
@@ -37,22 +38,16 @@ export default function MapContainer() {
   useEffect(() => {
     if (!list.length) return;
 
-    // 确保代码仅在客户端执行
+    const { key_code, security_code } = gaodeMap ?? {};
+    if (!key_code?.trim() || !security_code?.trim()) {
+      setMapLoadError(
+        '无法获取地图配置。请稍后刷新页面重试；若持续失败，请联系站长检查后台高德 Key 与安全密钥是否已正确填写。',
+      );
+      return;
+    }
+
     import('@amap/amap-jsapi-loader').then(async (AMapLoader) => {
       setMapLoadError(null);
-
-      let key_code: string;
-      let security_code: string;
-      try {
-        const { data: cfg } = await getGaodeMapConfigDataAPI();
-        ({ key_code, security_code } = cfg as { key_code: string; security_code: string });
-      } catch (e) {
-        console.error('加载地图配置失败：', e);
-        setMapLoadError(
-          '无法获取地图配置。请稍后刷新页面重试；若持续失败，请联系站长检查后台高德 Key 与安全密钥是否已正确填写。',
-        );
-        return;
-      }
 
       (window as any)._AMapSecurityConfig = {
         securityJsCode: security_code,
@@ -194,7 +189,7 @@ export default function MapContainer() {
         infoWindow?.destroy();
       };
     });
-  }, [list]);
+  }, [list, gaodeMap]);
 
   return (
     <>

@@ -5,19 +5,19 @@ import { useEffect } from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 
-import { getGaodeMapConfigDataAPI } from '@/api/config';
+import { useConfigStore } from '@/stores';
 
 export default function MapContainer({ position }: { position: number[] }) {
+  const gaodeMap = useConfigStore((state) => state.config.gaode_map_key);
   let map: any;
 
   useEffect(() => {
     AOS.init();
 
-    // 确保代码仅在客户端执行
-    import('@amap/amap-jsapi-loader').then(async (AMapLoader) => {
-      const { data } = await getGaodeMapConfigDataAPI();
-      const { key_code, security_code } = data as { key_code: string; security_code: string };
+    const { key_code, security_code } = gaodeMap ?? {};
+    if (!key_code?.trim() || !security_code?.trim()) return;
 
+    import('@amap/amap-jsapi-loader').then(async (AMapLoader) => {
       (window as any)._AMapSecurityConfig = {
         securityJsCode: security_code,
       };
@@ -29,14 +29,14 @@ export default function MapContainer({ position }: { position: number[] }) {
       })
         .then((AMap) => {
           map = new AMap.Map('container', {
-            viewMode: '3D', // 是否为3D地图模式
+            viewMode: '3D',
             zoom: 7,
-            center: position, // 初始化地图中心点位置
+            center: position,
           });
 
           new AMap.Marker({
-            position, // 标记位置
-            map, // 将标记添加到地图
+            position,
+            map,
           });
         })
         .catch((e) => {
@@ -45,7 +45,7 @@ export default function MapContainer({ position }: { position: number[] }) {
 
       return () => map?.destroy();
     });
-  }, []);
+  }, [gaodeMap, position]);
 
   return (
     <>

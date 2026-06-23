@@ -188,18 +188,20 @@ export default function RecordCommentPanel({ recordId }: Props) {
                         <RandomAvatar className="w-8 h-8 rounded-full shrink-0" />
                       )}
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          {item.url ? (
-                            <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-primary">
-                              {item.name}
-                            </a>
-                          ) : (
-                            <span className="text-sm font-medium text-slate-700 dark:text-slate-200">{item.name}</span>
-                          )}
-                          <span className="text-xs text-slate-400">{dayjs(+item.createTime).format('MM-DD HH:mm')}</span>
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex min-w-0 flex-wrap items-center gap-2">
+                            {item.url ? (
+                              <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-primary">
+                                {item.name}
+                              </a>
+                            ) : (
+                              <span className="text-sm font-medium text-slate-700 dark:text-slate-200">{item.name}</span>
+                            )}
+                            <span className="text-xs text-slate-400">{dayjs(+item.createTime).format('MM-DD HH:mm')}</span>
+                          </div>
                           <button
                             type="button"
-                            className="text-xs text-slate-400 hover:text-primary"
+                            className="shrink-0 text-xs text-slate-400 hover:text-primary cursor-pointer"
                             onClick={() => replyComment(item.id!, item.name)}
                           >
                             回复
@@ -229,7 +231,7 @@ export default function RecordCommentPanel({ recordId }: Props) {
                               </div>
                               <button
                                 type="button"
-                                className="shrink-0 text-xs text-slate-400 hover:text-primary"
+                                className="shrink-0 text-xs text-slate-400 hover:text-primary cursor-pointer"
                                 onClick={() => replyComment(reply.id!, reply.name)}
                               >
                                 回复

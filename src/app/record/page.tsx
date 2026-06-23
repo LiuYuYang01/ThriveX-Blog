@@ -11,6 +11,8 @@ import Show from '@/components/Show';
 import Loading from '@/components/Loading';
 import { getWebConfigDataAPI } from '@/api/config';
 import { Theme } from '@/types/app/config';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default () => {
   const [records, setRecords] = useState<Record[]>([]);
@@ -176,6 +178,8 @@ export default () => {
           )}
         </div>
       </div>
+
+      <ToastContainer position="top-right" autoClose={5000} theme="colored" />
     </>
   );
 };

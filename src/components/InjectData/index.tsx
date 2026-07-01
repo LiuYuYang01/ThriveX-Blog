@@ -6,7 +6,6 @@ import { getWebConfigDataAPI } from '@/api/config';
 import { useAuthorStore, useConfigStore } from '@/stores';
 import { Web, Theme, Other } from '@/types/app/config';
 import { getAuthorDataAPI } from '@/api/user';
-import { loadRuntimeConfig } from '@/utils/config';
 
 export default () => {
   const setAuthor = useAuthorStore((state) => state.setAuthor);
@@ -35,11 +34,8 @@ export default () => {
   };
 
   useEffect(() => {
-    // 加载运行时配置后再获取其他数据
-    loadRuntimeConfig().then(() => {
-      getAuthorData();
-      getConfigData();
-    });
+    getAuthorData();
+    getConfigData();
   }, []);
 
   return null;

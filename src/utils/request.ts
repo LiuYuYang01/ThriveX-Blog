@@ -1,9 +1,8 @@
 import { params } from './url';
-import { getApiUrl, getCachingTime } from './config';
 
 export const Request = async <T>(method: string, api: string, data?: any, caching = true) => {
-    const url = getApiUrl();
-    const cachingTime = getCachingTime();
+    const url = process.env.NEXT_PUBLIC_PROJECT_API || '';
+    const cachingTime = +(process.env.NEXT_PUBLIC_CACHING_TIME || 1);
     
     const query = params(data?.params ?? {});
 

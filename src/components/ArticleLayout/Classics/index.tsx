@@ -2,11 +2,7 @@ import Link from 'next/link';
 import { getRandomImage } from '@/utils';
 import { getThemeCovers } from '@/lib/theme';
 import { Article } from '@/types/app/article';
-import dayjs from 'dayjs';
-
-import { RiFireLine } from 'react-icons/ri';
-import { IoTimeOutline } from 'react-icons/io5';
-import { GoTag } from 'react-icons/go';
+import ArticleMeta from '@/components/ArticleLayout/components/ArticleMeta';
 import Empty from '@/components/Empty';
 import Show from '@/components/Show';
 
@@ -49,28 +45,10 @@ const Classics = async ({ data }: ClassicsProps) => {
               <h3 className="overflow-hidden relative w-full my-2.5 text-white hover:text-primary text-lg md:text-xl lg:text-[22px] xl:text-2xl   line-clamp-1">{item.title}</h3>
               <p className="text-[#cecece] text-sm sm:text-[15px] leading-7 sm:indent-8 line-clamp-2 xl:line-clamp-3">{genArticleInfo(item)}</p>
 
-              <div className={`flex ${index % 2 === 0 ? 'sm:justify-start' : 'sm:justify-end'} justify-center pt-5 text-end space-x-4 sm:space-x-8`}>
-                <div className="flex items-center text-xs text-white">
-                  <span className="pr-1">
-                    <IoTimeOutline className="p-1 mt-[-2px] mr-[3px] text-[23px] text-white rounded-full align-middle bg-[#539dfd]" />
-                  </span>
-                  <span>{dayjs(+item.createTime!).format('YYYY-MM-DD')}</span>
-                </div>
-
-                <div className="flex items-center text-xs text-white">
-                  <span className="pr-1">
-                    <RiFireLine className="p-1 mt-[-2px] mr-[3px] text-[23px] text-white rounded-full align-middle bg-[#eb373a]" />
-                  </span>
-                  <span>{item.view}</span>
-                </div>
-
-                <div className="flex items-center text-xs text-white">
-                  <span className="pr-1">
-                    <GoTag className="p-1 mt-[-2px] mr-[3px] text-[23px] text-white rounded-full align-middle bg-[#f5a630]" />
-                  </span>
-                  <span>{item.cateList[0]?.name}</span>
-                </div>
-              </div>
+              <ArticleMeta
+                article={item}
+                className={`justify-center ${index % 2 === 0 ? ' sm:justify-end' : 'sm:justify-start'}`}
+              />
             </Link>
           </div>
 

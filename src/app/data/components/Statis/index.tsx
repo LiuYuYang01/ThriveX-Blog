@@ -84,8 +84,8 @@ export default ({ aTotal }: Props) => {
   return (
     <section className="space-y-10">
       <div className="flex items-center gap-3">
-        <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-primary/10 dark:bg-primary/20">
-          <Image src={statis.src} alt="统计" width={28} height={28} className="opacity-90" />
+        <div className="flex items-center justify-center w-12 h-12 rounded-xl">
+          <Image src={statis.src} alt="统计" width={34} height={34} className="opacity-90" />
         </div>
         <div>
           <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 tracking-tight">数据统计</h2>

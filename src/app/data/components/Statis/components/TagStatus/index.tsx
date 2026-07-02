@@ -29,8 +29,8 @@ export default () => {
   return (
     <div className="rounded-2xl border border-slate-200 dark:border-slate-700/50 bg-slate-50/50 dark:bg-slate-800/30 p-6 overflow-hidden">
       <div className="flex items-center gap-3 mb-6">
-        <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-violet-500/10 dark:bg-violet-500/20">
-          <Image src={tag.src} alt="标签墙" width={22} height={22} className="opacity-90" />
+        <div className="flex items-center justify-center w-10 h-10 rounded-lg">
+          <Image src={tag.src} alt="标签墙" width={30} height={30} className="opacity-90" />
         </div>
         <div>
           <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100">标签墙</h3>

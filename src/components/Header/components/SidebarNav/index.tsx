@@ -23,12 +23,16 @@ export default ({ list, open, onClose }: Props) => {
                   <div key={one.id}>
                     {one.type === 'cate' && (
                       <li className="group/one relative hover:bg-[#e0e6ec] dark:hover:bg-[#495362] rounded-md  ">
-                        <Link href={getCateNavHref(one)} target={getCateNavTarget(one.type)} rel={getCateNavRel(one.type)} className={`flex justify-between items-center p-3 px-5 text-[15px] group-hover/one:!text-primary   text-[#333] dark:text-white whitespace-nowrap`} onClick={onClose}>
-                          {one.icon} {one.name}
-                          <Show is={!!one.children.length}>
+                        {one.children.length ? (
+                          <span className="flex justify-between items-center p-3 px-5 text-[15px] group-hover/one:!text-primary text-[#333] dark:text-white whitespace-nowrap cursor-default">
+                            {one.icon} {one.name}
                             <IoIosArrowDown className="ml-2" />
-                          </Show>
-                        </Link>
+                          </span>
+                        ) : (
+                          <Link href={getCateNavHref(one)} target={getCateNavTarget(one.type)} rel={getCateNavRel(one.type)} className={`flex justify-between items-center p-3 px-5 text-[15px] group-hover/one:!text-primary   text-[#333] dark:text-white whitespace-nowrap`} onClick={onClose}>
+                            {one.icon} {one.name}
+                          </Link>
+                        )}
 
                         <Show is={!!one.children.length}>
                           <ul className="overflow-hidden top-[50px] w-full rounded-md">
@@ -46,12 +50,16 @@ export default ({ list, open, onClose }: Props) => {
 
                     {one.type === 'page' && (
                       <li className="group/one relative hover:bg-[#e0e6ec] dark:hover:bg-[#495362] rounded-md  ">
-                        <Link href={getCateNavHref(one)} target={getCateNavTarget(one.type)} rel={getCateNavRel(one.type)} className={`flex justify-between items-center p-3 px-5 text-[15px] group-hover/one:!text-primary   text-[#333] dark:text-white whitespace-nowrap`} onClick={onClose}>
-                          {one.icon} {one.name}
-                          <Show is={!!one.children.length}>
+                        {one.children.length ? (
+                          <span className="flex justify-between items-center p-3 px-5 text-[15px] group-hover/one:!text-primary text-[#333] dark:text-white whitespace-nowrap cursor-default">
+                            {one.icon} {one.name}
                             <IoIosArrowDown className="ml-2" />
-                          </Show>
-                        </Link>
+                          </span>
+                        ) : (
+                          <Link href={getCateNavHref(one)} target={getCateNavTarget(one.type)} rel={getCateNavRel(one.type)} className={`flex justify-between items-center p-3 px-5 text-[15px] group-hover/one:!text-primary   text-[#333] dark:text-white whitespace-nowrap`} onClick={onClose}>
+                            {one.icon} {one.name}
+                          </Link>
+                        )}
 
                         <Show is={!!one.children.length}>
                           <ul className="overflow-hidden top-[50px] w-full rounded-md">
@@ -69,12 +77,16 @@ export default ({ list, open, onClose }: Props) => {
 
                     {one.type === 'nav' && (
                       <li className="group/one relative hover:bg-[#e0e6ec] dark:hover:bg-[#495362] rounded-md  ">
-                        <Link href={getCateNavHref(one)} target={getCateNavTarget(one.type)} rel={getCateNavRel(one.type)} className={`flex justify-between items-center p-3 px-5 text-[15px] group-hover/one:!text-primary   text-[#333] dark:text-white whitespace-nowrap`} onClick={onClose}>
-                          {one.icon} {one.name}
-                          <Show is={!!one.children.length}>
+                        {one.children.length ? (
+                          <span className="flex justify-between items-center p-3 px-5 text-[15px] group-hover/one:!text-primary text-[#333] dark:text-white whitespace-nowrap cursor-default">
+                            {one.icon} {one.name}
                             <IoIosArrowDown className="ml-2" />
-                          </Show>
-                        </Link>
+                          </span>
+                        ) : (
+                          <Link href={getCateNavHref(one)} target={getCateNavTarget(one.type)} rel={getCateNavRel(one.type)} className={`flex justify-between items-center p-3 px-5 text-[15px] group-hover/one:!text-primary   text-[#333] dark:text-white whitespace-nowrap`} onClick={onClose}>
+                            {one.icon} {one.name}
+                          </Link>
+                        )}
 
                         <Show is={!!one.children.length}>
                           <ul className="overflow-hidden top-[50px] w-full rounded-md">

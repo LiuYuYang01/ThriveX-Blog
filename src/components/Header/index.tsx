@@ -108,12 +108,16 @@ export default () => {
                 {/* 渲染分类 */}
                 {one.type === 'cate' && (
                   <li className="group/one relative">
-                    <Link href={getCateNavHref(one)} target={getCateNavTarget(one.type)} rel={getCateNavRel(one.type)} className={`flex items-center p-5 text-[15px] whitespace-nowrap group-hover/one:!text-primary   ${isPathSty || isScrolled ? 'text-[#333] dark:text-white' : 'text-white'}`}>
-                      {one.icon} {one.name}
-                      <Show is={!!one.children.length}>
+                    {one.children.length ? (
+                      <span className={`flex items-center p-5 text-[15px] whitespace-nowrap group-hover/one:!text-primary cursor-default ${isPathSty || isScrolled ? 'text-[#333] dark:text-white' : 'text-white'}`}>
+                        {one.icon} {one.name}
                         <IoIosArrowDown className="ml-2 transition-transform duration-200 group-hover/one:rotate-180" />
-                      </Show>
-                    </Link>
+                      </span>
+                    ) : (
+                      <Link href={getCateNavHref(one)} target={getCateNavTarget(one.type)} rel={getCateNavRel(one.type)} className={`flex items-center p-5 text-[15px] whitespace-nowrap group-hover/one:!text-primary   ${isPathSty || isScrolled ? 'text-[#333] dark:text-white' : 'text-white'}`}>
+                        {one.icon} {one.name}
+                      </Link>
+                    )}
 
                     <Show is={!!one.children.length}>
                       <ul className={`${submenuPanelClass} backdrop-blur-[5px] bg-[rgba(255,255,255,0.95)] dark:bg-[rgba(44,51,62,0.95)]`} style={{ boxShadow: '0 12px 32px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(0, 0, 0, 0.08)' }}>
@@ -132,12 +136,16 @@ export default () => {
                 {/* 渲染页面 */}
                 {one.type === 'page' && (
                   <li className="group/one relative">
-                    <Link href={getCateNavHref(one)} target={getCateNavTarget(one.type)} rel={getCateNavRel(one.type)} className={`flex items-center p-5 px-10 text-[15px] whitespace-nowrap group-hover/one:!text-primary ${isPathSty || isScrolled ? 'text-[#333] dark:text-white' : 'text-white'}`}>
-                      {one.icon} {one.name}
-                      <Show is={!!one.children?.length}>
+                    {one.children?.length ? (
+                      <span className={`flex items-center p-5 px-10 text-[15px] whitespace-nowrap group-hover/one:!text-primary cursor-default ${isPathSty || isScrolled ? 'text-[#333] dark:text-white' : 'text-white'}`}>
+                        {one.icon} {one.name}
                         <IoIosArrowDown className="ml-2 transition-transform duration-200 group-hover/one:rotate-180" />
-                      </Show>
-                    </Link>
+                      </span>
+                    ) : (
+                      <Link href={getCateNavHref(one)} target={getCateNavTarget(one.type)} rel={getCateNavRel(one.type)} className={`flex items-center p-5 px-10 text-[15px] whitespace-nowrap group-hover/one:!text-primary ${isPathSty || isScrolled ? 'text-[#333] dark:text-white' : 'text-white'}`}>
+                        {one.icon} {one.name}
+                      </Link>
+                    )}
 
                     <Show is={!!one.children?.length}>
                       <ul className={`${submenuPanelClass} bg-[rgba(255,255,255,0.95)] dark:bg-[rgba(44,51,62,0.95)]`} style={{ boxShadow: '0 12px 32px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(0, 0, 0, 0.08)' }}>
@@ -157,13 +165,16 @@ export default () => {
                 {/* 渲染导航 */}
                 {one.type === 'nav' && (
                   <li className="group/one relative">
-                    <Link href={getCateNavHref(one)} target={getCateNavTarget(one.type)} rel={getCateNavRel(one.type)} className={`flex items-center p-5 px-10 text-[15px] whitespace-nowrap group-hover/one:!text-primary ${isPathSty || isScrolled ? 'text-[#333] dark:text-white' : 'text-white'}`}>
-                      {one.icon} {one.name}
-                      {/* 如果有子分类就显示下拉三角 */}
-                      <Show is={!!one.children?.length}>
+                    {one.children?.length ? (
+                      <span className={`flex items-center p-5 px-10 text-[15px] whitespace-nowrap group-hover/one:!text-primary cursor-default ${isPathSty || isScrolled ? 'text-[#333] dark:text-white' : 'text-white'}`}>
+                        {one.icon} {one.name}
                         <IoIosArrowDown className="ml-2 transition-transform duration-200 group-hover/one:rotate-180" />
-                      </Show>
-                    </Link>
+                      </span>
+                    ) : (
+                      <Link href={getCateNavHref(one)} target={getCateNavTarget(one.type)} rel={getCateNavRel(one.type)} className={`flex items-center p-5 px-10 text-[15px] whitespace-nowrap group-hover/one:!text-primary ${isPathSty || isScrolled ? 'text-[#333] dark:text-white' : 'text-white'}`}>
+                        {one.icon} {one.name}
+                      </Link>
+                    )}
 
                     <Show is={!!one.children?.length}>
                       <ul className={`${submenuPanelClass} bg-[rgba(255,255,255,0.95)] dark:bg-[rgba(44,51,62,0.95)]`} style={{ boxShadow: '0 12px 32px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(0, 0, 0, 0.08)' }}>

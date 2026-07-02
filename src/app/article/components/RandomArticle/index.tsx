@@ -6,24 +6,11 @@ import { useEffect, useState } from 'react';
 import { getRandomArticleListAPI } from '@/api/article';
 import { useConfigStore } from '@/stores';
 import { Article } from '@/types/app/article';
-import { getRandom } from '@/utils';
+import { getRandomImage } from '@/utils';
 import RandomArticleSvg from '@/assets/svg/other/article.svg';
 
 const RandomArticle = () => {
   const { theme } = useConfigStore();
-  const coversRaw = theme?.covers;
-  const covers: string[] = Array.isArray(coversRaw)
-    ? coversRaw
-    : typeof coversRaw === 'string'
-      ? (() => {
-        try {
-          const parsed = JSON.parse(coversRaw);
-          return Array.isArray(parsed) ? parsed : [];
-        } catch {
-          return [];
-        }
-      })()
-      : [];
 
   const [list, setList] = useState<Article[]>([]);
 
@@ -35,10 +22,6 @@ const RandomArticle = () => {
   useEffect(() => {
     getRandomArticleList();
   }, []);
-
-  const getCoverUrl = (item: Article) => {
-    return item.cover || (covers.length ? covers[getRandom(0, covers.length - 1)] : '');
-  };
 
   if (!list.length) return null;
 
@@ -58,7 +41,7 @@ const RandomArticle = () => {
         >
           <div className="flex gap-4 pb-1 min-w-min">
             {list.map((item) => {
-              const coverUrl = getCoverUrl(item);
+              const coverUrl = getRandomImage(item.cover, theme.covers);
               return (
                 <Link
                   key={item.id}

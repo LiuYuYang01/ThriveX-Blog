@@ -6,14 +6,12 @@ import Card from './Card';
 import Pagination from '../Pagination';
 
 import { getArticlePagingAPI } from '@/api/article';
-import { getWebConfigDataAPI } from '@/api/config';
-import { Theme } from '@/types/app/config';
+import { getThemeConfig } from '@/lib/theme';
 import { getSwiperListAPI } from '@/api/swiper';
 
 export default async ({ page }: { page: number }) => {
   const { data: swiper } = await getSwiperListAPI();
-  const themeResponse = await getWebConfigDataAPI<{ value: Theme }>('theme');
-  const theme = themeResponse?.data?.value as Theme;
+  const theme = await getThemeConfig();
   const sidebar = theme?.right_sidebar ?? [];
 
   // 按order排序轮播图（顺序越小越靠前）

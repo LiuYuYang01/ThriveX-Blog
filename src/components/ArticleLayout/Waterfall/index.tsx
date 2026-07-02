@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useConfigStore } from '@/stores';
 import { Article } from '@/types/app/article';
-import { getRandom } from '@/utils';
+import { getRandomImage } from '@/utils';
 import Masonry from 'react-masonry-css';
 
 interface WaterfallProps {
@@ -18,7 +18,6 @@ const breakpointColumnsObj = {
 
 export default ({ data }: WaterfallProps) => {
   const { theme } = useConfigStore();
-  const covers = theme.covers ?? [];
 
   return (
     <>
@@ -27,7 +26,7 @@ export default ({ data }: WaterfallProps) => {
           <div key={item.id} className="group overflow-hidden mt-2.5 rounded-xl bg-white dark:bg-black-b border dark:border-black-b hover:shadow-[0_10px_20px_1px_rgb(83,157,253,.1)]   cursor-pointer">
             <Link href={`/article/${item.id}`}>
               <div className="overflow-hidden h-32">
-                <div className="relative h-full bg-cover bg-no-repeat bg-center scale-100 hover:scale-125 z-10 transition-transform" style={{ backgroundImage: `url(${item.cover ?? covers[getRandom(0, covers.length - 1)]})` }} />
+                <div className="relative h-full bg-cover bg-no-repeat bg-center scale-100 hover:scale-125 z-10 transition-transform" style={{ backgroundImage: `url(${getRandomImage(item.cover, theme.covers)})` }} />
               </div>
 
               <div className="py-2 px-4">

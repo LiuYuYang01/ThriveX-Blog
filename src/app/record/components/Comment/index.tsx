@@ -270,20 +270,6 @@ export default function RecordCommentPanel({ recordId }: Props) {
               <input
                 type="text"
                 className="tw_form h-9 px-3 text-sm"
-                placeholder="邮箱（选填）"
-                {...register('email', {
-                  pattern: { value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, message: '邮箱格式不正确' },
-                })}
-              />
-              <input
-                type="text"
-                className="tw_form h-9 px-3 text-sm"
-                placeholder="头像链接（选填）"
-                {...register('avatar', { pattern: { value: /^https?:\/\//, message: '请输入有效链接' } })}
-              />
-              <input
-                type="text"
-                className="tw_form h-9 px-3 text-sm"
                 placeholder="网站（选填）"
                 {...register('url', { pattern: { value: /^https?:\/\//, message: '请输入有效链接' } })}
               />

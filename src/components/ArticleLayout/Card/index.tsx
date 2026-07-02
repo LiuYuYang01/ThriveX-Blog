@@ -1,5 +1,6 @@
 import Link from 'next/link';
-import { getRandom } from '@/utils';
+import { getRandomImage } from '@/utils';
+import { getThemeCovers } from '@/lib/theme';
 import { Article } from '@/types/app/article';
 import dayjs from 'dayjs';
 
@@ -9,17 +10,13 @@ import { GoTag } from 'react-icons/go';
 import Empty from '@/components/Empty';
 import Show from '@/components/Show';
 
-import { getWebConfigDataAPI } from '@/api/config';
-import { Theme } from '@/types/app/config';
 
 interface CardProps {
   data: Paginate<Article[]>;
 }
 
 const Card = async ({ data }: CardProps) => {
-  const themeResponse = await getWebConfigDataAPI<{ value: Theme }>('theme');
-  const theme = themeResponse?.data?.value as Theme;
-  const covers = theme.covers ?? [];
+  const covers = await getThemeCovers();
 
   // 生成文章摘要，取前100个字
   const genArticleInfo = (data: Article) => {
@@ -68,7 +65,7 @@ const Card = async ({ data }: CardProps) => {
             className="absolute w-full h-60 bg-cover bg-center"
             style={{
               filter: 'blur(1.8rem) brightness(0.9)',
-              backgroundImage: `url(${item.cover ?? covers[getRandom(0, covers.length - 1)]})`,
+              backgroundImage: `url(${getRandomImage(item.cover, covers)})`,
             }}
           />
         </div>

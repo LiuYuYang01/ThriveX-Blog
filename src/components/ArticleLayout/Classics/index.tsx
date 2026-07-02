@@ -1,5 +1,6 @@
 import Link from 'next/link';
-import { getRandom } from '@/utils';
+import { getRandomImage } from '@/utils';
+import { getThemeCovers } from '@/lib/theme';
 import { Article } from '@/types/app/article';
 import dayjs from 'dayjs';
 
@@ -9,18 +10,13 @@ import { GoTag } from 'react-icons/go';
 import Empty from '@/components/Empty';
 import Show from '@/components/Show';
 
-import { getWebConfigDataAPI } from '@/api/config';
-import { Theme } from '@/types/app/config';
 
 interface ClassicsProps {
   data: Paginate<Article[]>;
 }
 
 const Classics = async ({ data }: ClassicsProps) => {
-  const themeResponse = await getWebConfigDataAPI<{ value: Theme }>('theme');
-  const theme = themeResponse?.data?.value as Theme;
-
-  const covers = theme.covers ?? [];
+  const covers = await getThemeCovers();
 
   // 生成文章摘要，取前100个字
   const genArticleInfo = (data: Article) => {
@@ -33,14 +29,17 @@ const Classics = async ({ data }: ClassicsProps) => {
 
   return (
     <div className="space-y-2">
-      {data?.result?.map((item, index) => (
+      {data?.result?.map((item, index) => {
+        const cover = getRandomImage(item.cover, covers);
+
+        return (
         <div key={item.id} className="relative overflow-hidden flex h-[190px] md:h-60 lg:h-52 xl:h-60 bg-black-b tw_container">
           {index % 2 === 0 && (
             <div
               className="hidden sm:block relative min-w-[45%] bg-cover bg-no-repeat bg-center scale-100 hover:scale-125 z-10 transition-transform"
               style={{
                 clipPath: 'polygon(0 0, 100% 0, 90% 100%, 0 100%)',
-                backgroundImage: `url(${item.cover ?? covers[getRandom(0, covers.length - 1)]})`,
+                backgroundImage: `url(${cover})`,
               }}
             />
           )}
@@ -79,7 +78,7 @@ const Classics = async ({ data }: ClassicsProps) => {
             className="absolute w-full h-60 bg-cover bg-center"
             style={{
               filter: 'blur(2.5rem) brightness(0.6)',
-              backgroundImage: `url(${item.cover ?? covers[getRandom(0, covers.length - 1)]})`,
+              backgroundImage: `url(${cover})`,
             }}
           />
 
@@ -88,12 +87,13 @@ const Classics = async ({ data }: ClassicsProps) => {
               className="relative min-w-[45%] bg-cover bg-no-repeat bg-center scale-100 z-10 hover:scale-125 transition-transform hidden sm:block"
               style={{
                 clipPath: 'polygon(10% 0, 100% 0, 100% 100%, 0 100%)',
-                backgroundImage: `url(${item.cover ?? covers[getRandom(0, covers.length - 1)]})`,
+                backgroundImage: `url(${cover})`,
               }}
             />
           )}
         </div>
-      ))}
+        );
+      })}
 
       <Show is={!data?.total}>
         <Empty info="暂无文章" />

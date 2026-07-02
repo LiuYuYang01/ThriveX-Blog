@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode } from 'react';
+import { ReactNode, useMemo } from 'react';
 import Ripple from '@/components/Ripple';
 import { getRandomImage } from '@/utils';
 import { useConfigStore } from '@/stores';
@@ -16,13 +16,16 @@ interface Props {
 export default ({ src, isRipple = true, fullImage = false, children }: Props) => {
   const theme = useConfigStore((state) => state.theme);
 
+  const fallbackImage = useMemo(() => getRandomImage(undefined, theme.covers), [theme.covers]);
+  const bgImage = src?.trim() || fallbackImage;
+
   const sty = {
-    backgroundImage: `url(${getRandomImage(src, theme.covers)})`,
+    backgroundImage: bgImage ? `url(${bgImage})` : undefined,
   };
 
   const containerClass = fullImage
     ? 'overflow-hidden w-full aspect-video relative bg-cover bg-center'
-    : 'overflow-hidden h-[300px] sm:h-[400px] md:h-[500px] relative bg-cover bg-center';
+    : 'overflow-hidden h-[300px] sm:h-[500px] md:h-[650px] relative bg-cover bg-center';
 
   return (
     <>

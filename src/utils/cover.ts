@@ -21,3 +21,13 @@ export const getRandomImage = (src: string | null | undefined, defaults: unknown
   if (!list.length) return '';
   return list[getRandom(0, list.length - 1)];
 };
+
+// 根据 seed 稳定选取，避免 SSR / 客户端 hydration 结果不一致
+export const getStableImage = (src: string | null | undefined, defaults: unknown, seed: string): string => {
+  if (src?.trim()) return src;
+  const list = parseThemeCovers(defaults);
+  if (!list.length) return '';
+  let hash = 0;
+  for (let i = 0; i < seed.length; i++) hash = (hash * 31 + seed.charCodeAt(i)) >>> 0;
+  return list[hash % list.length];
+};

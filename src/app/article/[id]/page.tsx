@@ -1,6 +1,7 @@
 import { getArticleDataAPI, recordViewAPI } from '@/api/article';
 import { getWebConfigDataAPI } from '@/api/config';
-import { Web } from '@/types/app/config';
+import { Theme, Web } from '@/types/app/config';
+import { getStableImage } from '@/utils';
 import { Metadata } from 'next';
 
 import Starry from '@/components/Starry';
@@ -86,7 +87,11 @@ export default async (props: Props) => {
   const id = params.id;
   const password = searchParams.password;
 
-  const { code, data } = password ? await getArticleDataAPI(id, password) : await getArticleDataAPI(id);
+  const [{ code, data }, themeRes] = await Promise.all([
+    password ? getArticleDataAPI(id, password) : getArticleDataAPI(id),
+    getWebConfigDataAPI<{ value: Theme }>('theme'),
+  ]);
+  const heroSrc = getStableImage(data?.cover, themeRes?.data?.value?.covers, String(id));
 
   const errorCodes = [400, 404, 611];
 
@@ -108,7 +113,7 @@ export default async (props: Props) => {
         <meta name="description" content={data.description} />
 
         <div className="ArticlePage">
-          <Slide>
+          <Slide src={heroSrc}>
             {/* 星空背景组件 */}
             <Starry />
 

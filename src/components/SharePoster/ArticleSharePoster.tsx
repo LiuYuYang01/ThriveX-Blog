@@ -175,7 +175,6 @@ export default function ArticleSharePoster({ data, minimal = false, className, s
                 ) : posterUrl ? (
                   <div className="flex flex-col items-center gap-4">
                     <div className="overflow-hidden rounded-xl border border-slate-200/80 shadow-lg dark:border-white/10">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={posterUrl} alt="文章分享海报" className="max-h-[420px] w-auto object-contain" />
                     </div>
                     <p className="text-center text-xs text-slate-400">长按或下载保存，分享给好友吧</p>

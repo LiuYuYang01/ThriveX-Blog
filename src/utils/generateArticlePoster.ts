@@ -110,7 +110,7 @@ interface ContentLayout {
 }
 
 function measureLayout(ctx: CanvasRenderingContext2D, options: ArticlePosterOptions): ContentLayout {
-  const { title, description, authorName, createTime, view = 0, likeCount = 0 } = options;
+  const { title, description } = options;
   const desc = (description || title).slice(0, 120);
 
   let inner = CARD_PAD_TOP;

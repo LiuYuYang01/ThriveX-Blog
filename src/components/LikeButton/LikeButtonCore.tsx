@@ -3,6 +3,13 @@
 import { useCallback, useRef, useState } from 'react';
 import { RiHeartFill } from 'react-icons/ri';
 import { cn } from '@/lib/utils';
+import {
+  actionCardClass,
+  actionCardDividerClass,
+  actionIconWrapClass,
+  actionLabelClass,
+  actionTextColClass,
+} from '@/components/ActionCard/styles';
 
 interface Particle {
   id: number;
@@ -39,10 +46,18 @@ interface Props {
   onLike: () => void;
   size?: 'md' | 'lg';
   variant?: 'default' | 'hero';
+  showHint?: boolean;
   className?: string;
 }
 
-export default function LikeButtonCore({ count, onLike, size = 'lg', variant = 'default', className }: Props) {
+export default function LikeButtonCore({
+  count,
+  onLike,
+  size = 'lg',
+  variant = 'default',
+  showHint = true,
+  className,
+}: Props) {
   const [popping, setPopping] = useState(false);
   const [comboShaking, setComboShaking] = useState(false);
   const [countBump, setCountBump] = useState(false);
@@ -137,8 +152,8 @@ export default function LikeButtonCore({ count, onLike, size = 'lg', variant = '
   const iconClass = cn('text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.15)]', ICON_SIZE[isHero ? 'sm' : size]);
 
   const countClass = cn(
-    'tabular-nums font-black leading-none text-rose-500 dark:text-rose-400',
-    isLarge ? 'text-4xl tracking-tight' : 'text-xl',
+    'tabular-nums font-black leading-none text-rose-500 transition-colors dark:text-rose-400',
+    isLarge ? 'text-[1.75rem] tracking-tight' : 'text-xl',
     countBump && 'animate-like-number-bump',
   );
 
@@ -146,7 +161,7 @@ export default function LikeButtonCore({ count, onLike, size = 'lg', variant = '
     combo >= 5 ? '停不下来了吧 😆' : combo >= 3 ? '继续点，作者会看到的~' : '点击为作者加油 ❤️';
 
   const likeButton = (
-    <div className={cn('relative flex shrink-0 items-center justify-center', isLarge ? 'p-1' : 'p-0.5')}>
+    <div className={cn(actionIconWrapClass, !isLarge && 'p-0.5')}>
       {showGlow && (
         <span
           className="pointer-events-none absolute -inset-2 z-0 animate-like-glow-pulse rounded-full bg-[radial-gradient(circle,rgba(244,63,94,0.35)_0%,transparent_70%)]"
@@ -187,64 +202,62 @@ export default function LikeButtonCore({ count, onLike, size = 'lg', variant = '
     </div>
   );
 
-  return (
+  if (isHero) {
+    return (
+      <div className={cn('relative mb-2 inline-flex select-none flex-row items-center gap-1', className)}>
+        {likeButton}
+        <span className="text-inherit">点赞：{count}</span>
+      </div>
+    );
+  }
+
+  const card = (
     <div
       className={cn(
-        'relative inline-flex select-none',
-        isHero ? 'mb-2 flex-row items-center gap-1' : 'flex-col items-center',
+        isLarge
+          ? actionCardClass('rose')
+          : cn(
+              'relative flex h-auto items-center overflow-visible rounded-2xl border border-rose-100/90 bg-gradient-to-br from-rose-50/80 via-white to-orange-50/40 px-3 py-2',
+              'shadow-[0_4px_20px_-4px_rgba(244,63,94,0.15)] dark:border-rose-500/15 dark:from-rose-500/8 dark:via-white/[0.02] dark:to-orange-500/5 dark:shadow-none',
+            ),
         className,
       )}
     >
-      {isHero ? (
-        <>
-          {likeButton}
-          <span className="text-inherit">点赞：{count}</span>
-        </>
-      ) : (
-        <>
-          <div
-            className={cn(
-              'relative flex items-center overflow-visible',
-              'rounded-2xl border border-rose-100/90 bg-gradient-to-br from-rose-50/80 via-white to-orange-50/40',
-              'shadow-[0_4px_20px_-4px_rgba(244,63,94,0.15)]',
-              'dark:border-rose-500/15 dark:from-rose-500/8 dark:via-white/[0.02] dark:to-orange-500/5 dark:shadow-none',
-              isLarge ? 'px-5 py-3.5' : 'px-3 py-2',
-            )}
-          >
-            {combo >= 2 && (
-              <span
-                key={combo}
-                className="pointer-events-none absolute -top-3 left-1/2 z-20 -translate-x-1/2 animate-like-combo-pop whitespace-nowrap rounded-full bg-gradient-to-r from-orange-500 to-red-500 px-2.5 py-0.5 text-[0.7rem] font-bold text-white shadow-like-combo"
-              >
-                连击 ×{combo} {comboMsg}
-              </span>
-            )}
-
-            {likeButton}
-
-            <div
-              className={cn(
-                'mx-3 w-px shrink-0 self-stretch bg-gradient-to-b from-transparent via-rose-200/80 to-transparent dark:via-rose-500/25',
-                isLarge ? 'min-h-[3.25rem]' : 'min-h-[2.5rem] mx-2.5',
-              )}
-              aria-hidden
-            />
-
-            <div className={cn('flex flex-col justify-center', isLarge ? 'min-w-[4rem] pr-0.5' : 'min-w-[2.5rem]')}>
-              <span className={countClass}>{count}</span>
-              <span className="mt-1 text-[11px] font-medium tracking-wide text-slate-400 dark:text-slate-500">
-                {count === 0 ? '点个赞吧' : '次赞'}
-              </span>
-            </div>
-          </div>
-
-          {isLarge && (
-            <p className="mt-2.5 max-w-[220px] text-center text-xs leading-relaxed text-slate-400 dark:text-slate-500">
-              {hintText}
-            </p>
-          )}
-        </>
+      {combo >= 2 && isLarge && (
+        <span
+          key={combo}
+          className="pointer-events-none absolute -top-3 left-1/2 z-20 -translate-x-1/2 animate-like-combo-pop whitespace-nowrap rounded-full bg-gradient-to-r from-orange-500 to-red-500 px-2.5 py-0.5 text-[0.7rem] font-bold text-white shadow-like-combo"
+        >
+          连击 ×{combo} {comboMsg}
+        </span>
       )}
+
+      {likeButton}
+
+      <div
+        className={cn(
+          isLarge ? actionCardDividerClass('rose') : 'mx-2.5 min-h-[2.5rem] w-px shrink-0 self-stretch bg-gradient-to-b from-transparent via-rose-200/80 to-transparent dark:via-rose-500/25',
+        )}
+        aria-hidden
+      />
+
+      <div className={cn(isLarge ? actionTextColClass : 'flex min-w-[2.5rem] flex-col justify-center')}>
+        <span className={countClass}>{count}</span>
+        <span className={actionLabelClass}>{count === 0 ? '点个赞吧' : '次赞'}</span>
+      </div>
+    </div>
+  );
+
+  if (!showHint || !isLarge) {
+    return <div className="relative inline-flex select-none">{card}</div>;
+  }
+
+  return (
+    <div className="relative inline-flex select-none flex-col items-center">
+      {card}
+      <p className="mt-2.5 max-w-[220px] text-center text-xs leading-relaxed text-slate-400 dark:text-slate-500">
+        {hintText}
+      </p>
     </div>
   );
 }

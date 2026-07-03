@@ -12,7 +12,8 @@ import Copyright from '../components/Copyright';
 import UpAndDown from '../components/UpAndDown';
 import RandomArticle from '../components/RandomArticle';
 import Comment from '../components/Comment';
-import { ArticleLikeProvider, ArticleLikeHero, ArticleLikeFooter } from '../components/Like';
+import { ArticleLikeProvider, ArticleLikeHero } from '../components/Like';
+import { ArticleActionBar } from '../components/ActionBar';
 import MD from '../components/MD';
 import Summary from '../components/Summary';
 import Nav from '../components/Nav';
@@ -159,7 +160,16 @@ export default async (props: Props) => {
             <Summary content={data?.description || ''} />
             <MD data={data?.content} />
 
-            <ArticleLikeFooter />
+            <ArticleActionBar
+              share={{
+                articleId: id,
+                title: data.title,
+                description: data.description || '',
+                cover: data.cover || heroSrc,
+                createTime: data.createTime,
+                view: data.view,
+              }}
+            />
 
             <div className="w-full">
               <Tag data={data?.tagList} />

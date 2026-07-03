@@ -10,9 +10,9 @@ interface ArticleLikeContextValue {
   like: () => void;
 }
 
-const ArticleLikeContext = createContext<ArticleLikeContextValue | null>(null);
+export const ArticleLikeContext = createContext<ArticleLikeContextValue | null>(null);
 
-function useArticleLike() {
+export function useArticleLike() {
   const ctx = useContext(ArticleLikeContext);
   if (!ctx) throw new Error('useArticleLike must be used within ArticleLikeProvider');
   return ctx;
@@ -34,13 +34,4 @@ export function ArticleLikeProvider({
 export function ArticleLikeHero() {
   const { count, like } = useArticleLike();
   return <LikeButtonCore count={count} onLike={like} variant="hero" />;
-}
-
-export function ArticleLikeFooter() {
-  const { count, like } = useArticleLike();
-  return (
-    <div className="my-8 flex justify-center">
-      <LikeButtonCore count={count} onLike={like} size="lg" />
-    </div>
-  );
 }

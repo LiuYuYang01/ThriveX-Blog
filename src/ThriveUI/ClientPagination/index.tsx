@@ -12,9 +12,9 @@ export interface ClientPaginationProps {
 }
 
 const itemCls =
-  'flex h-9 min-w-9 cursor-pointer items-center justify-center rounded-xl px-2 text-sm transition-colors hover:bg-neutral-200 dark:hover:bg-black-b';
+  'flex h-9 min-w-9 cursor-pointer items-center justify-center rounded-xl px-2 text-sm text-neutral-700 dark:text-neutral-300 transition-none hover:bg-neutral-200 dark:hover:bg-[#323e50]';
 const navCls =
-  'flex h-9 w-9 cursor-pointer items-center justify-center rounded-xl bg-neutral-200/50 hover:bg-neutral-200/80 dark:bg-neutral-700/40 dark:hover:bg-neutral-700 disabled:cursor-not-allowed disabled:opacity-40';
+  'flex h-9 w-9 cursor-pointer items-center justify-center rounded-xl bg-neutral-200/50 text-neutral-700 transition-none hover:bg-neutral-200/80 dark:bg-[#3d4654]/80 dark:text-neutral-200 dark:hover:bg-[#455162] disabled:cursor-not-allowed disabled:opacity-40';
 
 export function ClientPagination({
   total,

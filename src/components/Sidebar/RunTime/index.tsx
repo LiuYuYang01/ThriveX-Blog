@@ -223,7 +223,7 @@ export default () => {
             value={timeDiff.totalDays}
             className="text-2xl font-semibold text-primary tabular-nums"
           />
-          <span className="text-sm text-slate-500 dark:text-gray-400 font-medium">天</span>
+          <span className="text-sm text-slate-500 dark:text-[#8c9ab1] font-medium transition-none">天</span>
         </div>
       </motion.div>
 
@@ -235,13 +235,13 @@ export default () => {
       >
         {statItems.map(({ key, label }, index) => (
           <div key={key} className="flex items-center gap-1.5">
-            {index > 0 && <span className="text-slate-200 dark:text-zinc-700">|</span>}
-            <div className="flex items-baseline gap-0.5 px-2 py-1 rounded-lg bg-slate-50 dark:bg-black-a/60">
+            {index > 0 && <span className="text-slate-200 dark:text-[#3d4654] transition-none">|</span>}
+            <div className="flex items-baseline gap-0.5 px-2 py-1 rounded-lg bg-slate-50 dark:bg-[#323e50] transition-none">
               <AnimatedNumber
                 value={timeDiff[key]}
-                className="text-sm font-semibold text-slate-700 dark:text-gray-200 tabular-nums"
+                className="text-sm font-semibold text-slate-700 dark:text-[#e5e7eb] tabular-nums transition-none"
               />
-              <span className="text-xs text-slate-400 dark:text-zinc-500">{label}</span>
+              <span className="text-xs text-slate-400 dark:text-[#8c9ab1] transition-none">{label}</span>
             </div>
           </div>
         ))}

@@ -27,11 +27,11 @@ const RandomArticle = async () => {
         contentClassName="flex flex-col px-3 py-2 w-full"
       >
         {list?.map((item: Article) => (
-          <div key={item.id} className="border-b border-dashed border-gray-100 dark:border-white/10 last:border-none">
-            <Link href={`/article/${item.id}`} target="_blank" className="group flex items-center justify-between py-3.5 w-full">
-              <span className="text-sm font-medium text-gray-600 dark:text-[#8c9ab1] group-hover:text-primary dark:group-hover:text-primary line-clamp-1 pr-4">{item.title}</span>
+          <div key={item.id} className="border-b border-dashed border-gray-100 dark:border-[#3d4654] last:border-none">
+            <Link href={`/article/${item.id}`} target="_blank" className="group flex items-center justify-between py-3.5 w-full transition-none">
+              <span className="text-sm font-medium text-gray-600 dark:text-[#8c9ab1] group-hover:text-primary line-clamp-1 pr-4 transition-none">{item.title}</span>
 
-              <IoIosArrowForward className="text-gray-300 dark:text-gray-600 group-hover:text-primary dark:group-hover:text-primary shrink-0 text-base transform group-hover:translate-x-1 transition-transform duration-200" />
+              <IoIosArrowForward className="text-gray-300 dark:text-[#8c9ab1] group-hover:text-primary shrink-0 text-base transform group-hover:translate-x-1 transition-transform duration-200" />
             </Link>
           </div>
         ))}

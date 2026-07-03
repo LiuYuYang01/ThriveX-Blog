@@ -12,7 +12,7 @@ type Props = {
 const TOC_WIDTH = 220;
 const TOC_OFFSET = 48;
 const TOC_VIEWPORT_MIN = 12;
-const HEADER_OFFSET = 96;
+const HEADER_OFFSET = 62;
 const LEVEL_INDENT: Record<number, string> = {
   1: 'pl-2',
   2: 'pl-4',
@@ -42,20 +42,14 @@ function TocNav({
               <button
                 type="button"
                 onClick={() => onSelect(heading.id)}
-                className={`relative w-full rounded-lg text-left text-[13px] leading-snug transition-colors cursor-pointer ${overlay ? 'py-2' : 'py-1.5'} ${indent} ${
-                  active
-                    ? 'bg-primary/10 font-medium text-primary'
-                    : overlay
+                className={`w-full rounded-lg border-l-2 text-left text-[13px] leading-snug cursor-pointer transition-[background-color,color,border-color] duration-200 ${overlay ? 'py-2' : 'py-1.5'} ${indent} ${active
+                    ? 'border-primary bg-primary/10 font-medium text-primary'
+                    : `border-transparent ${overlay
                       ? 'text-[#4d4d4d] dark:text-[#8c9ab1]'
                       : 'text-[#4d4d4d] hover:bg-neutral-100 hover:text-neutral-900 dark:text-[#8c9ab1] dark:hover:bg-[#313d4e99] dark:hover:text-neutral-200'
-                }`}
+                    }`
+                  }`}
               >
-                {active ? (
-                  <span
-                    aria-hidden
-                    className="absolute left-0 top-1/2 h-3.5 w-0.5 -translate-y-1/2 rounded-full bg-primary"
-                  />
-                ) : null}
                 <span className="line-clamp-2">{heading.text}</span>
               </button>
             </li>
@@ -68,6 +62,8 @@ function TocNav({
 
 export default function ArticleTOC({ headings, children }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const isManualScrollingRef = useRef(false);
+  const manualScrollTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const [canShow, setCanShow] = useState(false);
   const [isPinned, setIsPinned] = useState(false);
   const [fixedLeft, setFixedLeft] = useState(0);
@@ -128,6 +124,8 @@ export default function ArticleTOC({ headings, children }: Props) {
 
       observer = new IntersectionObserver(
         (entries) => {
+          if (isManualScrollingRef.current) return;
+
           const visible = entries
             .filter((entry) => entry.isIntersecting)
             .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
@@ -161,15 +159,31 @@ export default function ArticleTOC({ headings, children }: Props) {
     return () => document.removeEventListener('keydown', onKeyDown);
   }, [mobileOpen]);
 
+  const releaseManualScroll = () => {
+    isManualScrollingRef.current = false;
+  };
+
   const handleSelect = (id: string) => {
     const element = document.getElementById(id);
-    if (element) {
-      const top = element.getBoundingClientRect().top + window.scrollY - HEADER_OFFSET;
-      window.scrollTo({ top, behavior: 'smooth' });
-      setActiveId(id);
-      setMobileOpen(false);
-    }
+    if (!element) return;
+
+    isManualScrollingRef.current = true;
+    setActiveId(id);
+    setMobileOpen(false);
+
+    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    clearTimeout(manualScrollTimerRef.current);
+    manualScrollTimerRef.current = setTimeout(releaseManualScroll, 800);
+    window.addEventListener('scrollend', releaseManualScroll, { once: true });
   };
+
+  useEffect(() => {
+    return () => {
+      clearTimeout(manualScrollTimerRef.current);
+      window.removeEventListener('scrollend', releaseManualScroll);
+    };
+  }, []);
 
   const panel = (
     <TocNav headings={headings} activeId={activeId} onSelect={handleSelect} />
@@ -201,7 +215,7 @@ export default function ArticleTOC({ headings, children }: Props) {
           <div
             role="dialog"
             aria-label="文章目录"
-            className="fixed bottom-[4.5rem] left-4 z-50 w-[min(18rem,calc(100vw-2rem))] overflow-hidden rounded-2xl border border-black/5 bg-white/80 backdrop-blur-2xl shadow-lg dark:border-white/10 dark:bg-black-b/80"
+            className="fixed bottom-18 left-4 z-50 w-[min(18rem,calc(100vw-2rem))] overflow-hidden rounded-2xl border border-black/5 bg-white/80 backdrop-blur-2xl shadow-lg dark:border-white/10 dark:bg-black-b/80"
           >
             <div className="border-b border-neutral-100/80 px-4 py-2.5 text-center dark:border-[#4e5969]/50">
               <span className="text-sm font-medium text-[#333] dark:text-[#e5e7eb]">目录</span>

@@ -15,7 +15,7 @@ $shadow-focus: 0 10px 20px 1px rgb(83 157 253 / 10%);
   }
 
   .dark & {
-    border-color: transparent;
+    border-color: #3d4654;
   }
 
   &__header {
@@ -27,6 +27,7 @@ $shadow-focus: 0 10px 20px 1px rgb(83 157 253 / 10%);
     font-size: 17px;
     font-weight: 400;
     color: #333;
+    transition: none;
 
     > img {
       width: 30px;
@@ -34,7 +35,8 @@ $shadow-focus: 0 10px 20px 1px rgb(83 157 253 / 10%);
     }
 
     .dark & {
-      border-bottom-color: $color-black-a;
+      border-bottom-color: #3d4654;
+      color: #e5e7eb;
     }
   }
 }

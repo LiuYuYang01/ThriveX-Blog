@@ -11,6 +11,9 @@ import Rss from '../Tools/components/Rss';
 import { LuMoonStar } from 'react-icons/lu';
 import { FaRegSun } from 'react-icons/fa';
 
+const floatingBtnClass =
+  'transition-none! bg-white! text-gray-600! shadow-[0_2px_8px_rgba(0,0,0,0.1)] border border-gray-200/80 hover:bg-gray-50! dark:bg-[#2c333e]! dark:text-gray-200! dark:border-gray-600/80 dark:hover:bg-[#323e50]!';
+
 const FloatingBlock = () => {
   const [isExpanded, setIsExpanded] = useState(false); // 展开状态的变量
   const [isDragging, setIsDragging] = useState(false); // 拖拽状态
@@ -87,6 +90,7 @@ const FloatingBlock = () => {
   };
 
   return (
+    <>
     <div ref={constraintsRef} className="fixed inset-0 pointer-events-none z-50">
       <motion.div
         className="absolute pointer-events-auto"
@@ -102,99 +106,73 @@ const FloatingBlock = () => {
           cursor: isDragging ? 'grabbing' : 'grab',
         }}
       >
-      {/* 围绕的功能项 */}
-      <AnimatePresence>
-        {isExpanded && (
-          <>
-            {actionItems.map((item, index) => {
-              const position = getItemPosition(index, actionItems.length);
-              return (
-                <motion.div
-                  key={item.id}
-                  initial={{
-                    // 初始状态
-                    opacity: 0,
-                    scale: 0,
-                    x: 0,
-                    y: 0,
-                  }}
-                  animate={{
-                    // 动画状态
-                    opacity: 1,
-                    scale: 1,
-                    x: position.x,
-                    y: position.y,
-                  }}
-                  exit={{
-                    // 退出状态
-                    opacity: 0,
-                    scale: 0,
-                    x: 0,
-                    y: 0,
-                  }}
-                  transition={{
-                    // 过渡动画
-                    duration: 0.4,
-                    delay: index * 0.1,
-                    ease: [0.25, 0.46, 0.45, 0.94],
-                  }}
-                  className="absolute"
-                  style={{
-                    left: '50%',
-                    top: '50%',
-                    transform: 'translate(-50%, -50%)',
-                  }}
-                >
-                  <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }} className="relative">
-                    <Button
-                      isIconOnly
-                      size="md"
-                      className="bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300
-                                            shadow-lg border border-gray-200 dark:border-gray-600 hover:bg-gray-50
-                                            dark:hover:bg-gray-700 -translate-x-5 -translate-y-5"
-                      onPress={item.onClick}
-                      title={item.label}
-                      aria-label={item.label}
-                    >
-                      <item.icon className="w-5 h-5" />
-                    </Button>
+        <div className="relative size-10">
+          {/* 围绕的功能项 */}
+          <AnimatePresence>
+            {isExpanded &&
+              actionItems.map((item, index) => {
+                const position = getItemPosition(index, actionItems.length);
+                return (
+                  <motion.div
+                    key={item.id}
+                    className="absolute left-1/2 top-1/2"
+                    initial={{ opacity: 0, scale: 0, x: 0, y: 0 }}
+                    animate={{ opacity: 1, scale: 1, x: position.x, y: position.y }}
+                    exit={{ opacity: 0, scale: 0, x: 0, y: 0 }}
+                    transition={{
+                      duration: 0.4,
+                      delay: index * 0.1,
+                      ease: [0.25, 0.46, 0.45, 0.94],
+                    }}
+                  >
+                    <div className="-translate-x-1/2 -translate-y-1/2">
+                      <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
+                        <Button
+                          isIconOnly
+                          size="md"
+                          className={floatingBtnClass}
+                          onPress={item.onClick}
+                          title={item.label}
+                          aria-label={item.label}
+                        >
+                          <item.icon className="w-5 h-5" />
+                        </Button>
+                      </motion.div>
+                    </div>
                   </motion.div>
-                </motion.div>
-              );
-            })}
-          </>
-        )}
-      </AnimatePresence>
+                );
+              })}
+          </AnimatePresence>
 
-      {/* 主按钮 */}
-      <motion.div 
-        whileHover={{ scale: isDragging ? 1 : 1.1 }} 
-        whileTap={{ scale: isDragging ? 1 : 0.95 }} 
-        transition={{ duration: 0.2 }} 
-        className="relative"
-      >
-        <Button 
-          isIconOnly 
-          size="lg" 
-          className="bg-blue-500 hover:bg-blue-600 text-white shadow-lg rounded-full" 
-          onPress={toggleExpanded} 
-          aria-label={isExpanded ? '收起功能菜单' : '展开功能菜单'} 
-          title={isExpanded ? '收起功能菜单' : '展开功能菜单'}
-          style={{ cursor: isDragging ? 'grabbing' : 'pointer' }}
-        >
-          <motion.div animate={{ rotate: isExpanded ? 180 : 0 }} transition={{ duration: 0.3 }}>
-            {isExpanded ? <BiCommand className="w-6 h-6" /> : <BiCog className="w-6 h-6" />}
+          {/* 主按钮 */}
+          <motion.div
+            whileHover={{ scale: isDragging ? 1 : 1.1 }}
+            whileTap={{ scale: isDragging ? 1 : 0.95 }}
+            transition={{ duration: 0.2 }}
+            className="relative z-10"
+          >
+            <Button
+              isIconOnly
+              size="md"
+              className={floatingBtnClass}
+              onPress={toggleExpanded}
+              aria-label={isExpanded ? '收起功能菜单' : '展开功能菜单'}
+              title={isExpanded ? '收起功能菜单' : '展开功能菜单'}
+              style={{ cursor: isDragging ? 'grabbing' : 'pointer' }}
+            >
+              <motion.div animate={{ rotate: isExpanded ? 180 : 0 }} transition={{ duration: 0.3 }}>
+                {isExpanded ? <BiCommand className="w-5 h-5" /> : <BiCog className="w-5 h-5" />}
+              </motion.div>
+            </Button>
           </motion.div>
-        </Button>
-      </motion.div>
-
-      {/* 搜索组件 */}
-      <Search disclosure={{ isOpen: isSearchOpen, onClose: onSearchClose }} />
-
-      {/* 查看Rss地址 */}
-      <Rss data={web} disclosure={{ isOpen: isRssOpen, onClose: onRssClose }} />
+        </div>
       </motion.div>
     </div>
+
+    {/* Modal 须放在 motion.div 外，否则 drag 的 transform 会使 fixed 定位失效 */}
+    <Search disclosure={{ isOpen: isSearchOpen, onClose: onSearchClose }} />
+    <Rss data={web} disclosure={{ isOpen: isRssOpen, onClose: onRssClose }} />
+    </>
   );
 };
 

@@ -184,10 +184,10 @@ function DoubleChevronIcon({ className }: { className?: string; }) {
 }
 
 const navBtnClass =
-  'flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-neutral-200/50 text-foreground outline-none transition-colors hover:bg-neutral-200/80 active:bg-neutral-200/80 dark:bg-neutral-700/40 dark:hover:bg-neutral-700 dark:active:bg-neutral-700 aria-disabled:pointer-events-none aria-disabled:cursor-default aria-disabled:bg-neutral-200/35 aria-disabled:text-neutral-300 aria-disabled:hover:bg-neutral-200/35 dark:aria-disabled:bg-surface dark:aria-disabled:text-neutral-600 dark:aria-disabled:hover:bg-surface';
+  'flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-neutral-200/50 text-neutral-700 outline-none transition-none hover:bg-neutral-200/80 active:bg-neutral-200/80 dark:bg-[#3d4654]/80 dark:text-neutral-200 dark:hover:bg-[#455162] dark:active:bg-[#455162] aria-disabled:pointer-events-none aria-disabled:cursor-default aria-disabled:bg-neutral-200/35 aria-disabled:text-neutral-300 aria-disabled:hover:bg-neutral-200/35 dark:aria-disabled:bg-[#2c333e] dark:aria-disabled:text-neutral-500 dark:aria-disabled:hover:bg-[#2c333e]';
 
 const pageItemClass =
-  'relative z-10 flex h-9 min-w-9 shrink-0 items-center justify-center rounded-xl px-2 text-sm text-foreground outline-none transition-colors hover:bg-neutral-200 active:bg-neutral-200 dark:hover:bg-surface dark:active:bg-surface';
+  'relative z-10 flex h-9 min-w-9 shrink-0 items-center justify-center rounded-xl px-2 text-sm text-neutral-700 outline-none transition-none hover:bg-neutral-200 active:bg-neutral-200 dark:text-neutral-300 dark:hover:bg-[#323e50] dark:active:bg-[#323e50]';
 
 const pageItemActiveClass =
   'pointer-events-none hover:bg-transparent active:bg-transparent';

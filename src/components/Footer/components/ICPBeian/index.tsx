@@ -48,13 +48,13 @@ export default function ICPBeian({ icp }: ICPBeianProps) {
           <Image src={ICPIcon} alt="ICP" width={20} height={22} className="w-5 h-[22px]" />
         )}
         {isHtml ? (
-          <div ref={icpRef} className="group-hover:text-primary flex items-center" />
+          <div ref={icpRef} className="group-hover:text-primary flex items-center text-[#666] dark:text-[#8c9ab1] [&_a]:text-inherit [&_a]:hover:text-primary" />
         ) : (
           <a
             href="https://beian.miit.gov.cn"
             target="_blank"
             rel="noopener noreferrer"
-            className="group-hover:text-primary"
+            className="text-[#666] dark:text-[#8c9ab1] group-hover:text-primary"
           >
             {icp}
           </a>

@@ -49,9 +49,16 @@ export default ({ data, className }: { data: SwiperType[]; className?: string })
           <div key={index} className={`absolute top-0 left-0 w-full h-full ${index === current ? 'opacity-100' : 'opacity-0'} transition-opacity`}>
             <img key={index} src={item.image} alt={item.title} className="w-full h-full object-cover" width={1694} height={700} />
 
-            <div className="flex flex-col absolute bottom-7 left-5 z-10 gap-2 animation_bottom">
-              <h2 className="text-white text-xl lg:text-2xl font-bold text_shadow">{item.title}</h2>
-              <Button color="primary" variant="shadow" endContent={<BiChevronRight className="text-2xl" />} className="!w-28 mt-2 hover:translate-x-2 transition-transform" onPress={() => window.open(item.url, '_blank')}>
+            <div className="flex flex-col absolute bottom-6 left-5 sm:bottom-8 sm:left-8 z-10 gap-3 animation_bottom max-w-[calc(100%-2.5rem)]">
+              <h2 className="text-white text-lg sm:text-xl lg:text-2xl font-bold text_shadow line-clamp-2">{item.title}</h2>
+              <Button
+                color="primary"
+                variant="shadow"
+                size="sm"
+                endContent={<BiChevronRight className="text-lg shrink-0" />}
+                className="w-fit whitespace-nowrap px-4 hover:translate-x-1 transition-transform"
+                onPress={() => window.open(item.url, '_blank')}
+              >
                 立刻围观
               </Button>
             </div>
@@ -64,7 +71,13 @@ export default ({ data, className }: { data: SwiperType[]; className?: string })
 
         <div className="absolute bottom-5 right-8 z-20 flex items-center gap-2">
           {data?.map((_, index) => (
-            <div key={index} onClick={() => setCurrent(index)} className={`w-6 h-1 rounded-full hover:bg-white hover:w-8 ${index === current ? '!bg-[#539dfd] w-8 shadow-[0_0_10px_#539dfd]' : 'bg-[#fff5]'} transition-shadow cursor-pointer`} />
+            <div
+              key={index}
+              onClick={() => setCurrent(index)}
+              className={`h-1 rounded-full cursor-pointer transition-[width,background-color,box-shadow] duration-300 ease-out hover:bg-white hover:w-8 ${
+                index === current ? 'w-8 bg-[#539dfd]! shadow-[0_0_10px_#539dfd]' : 'w-6 bg-[#fff5]'
+              }`}
+            />
           ))}
         </div>
       </div>

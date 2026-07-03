@@ -1,0 +1,62 @@
+$color-primary: #539dfd;
+$color-border: #eeeeee;
+$color-black-a: #232931;
+$color-black-b: #2c333e;
+$shadow-focus: 0 10px 20px 1px rgb(83 157 253 / 10%);
+
+// 右侧边栏面板公共布局
+.panel {
+  border: 1px solid $color-border;
+  border-radius: 12px;
+  transition: box-shadow 300ms ease-in-out;
+
+  &:hover {
+    box-shadow: $shadow-focus;
+  }
+
+  .dark & {
+    border-color: transparent;
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid $color-border;
+    font-size: 17px;
+    font-weight: 400;
+    color: #333;
+
+    > img {
+      width: 30px;
+      height: 1.25rem;
+    }
+
+    .dark & {
+      border-bottom-color: $color-black-a;
+    }
+  }
+}
+
+.form-control {
+  box-sizing: border-box;
+  border: 1px solid $color-border;
+  border-radius: 6px;
+  outline: none;
+  transition: box-shadow 300ms ease-in-out;
+
+  &:hover {
+    border-color: $color-primary !important;
+  }
+
+  &:focus {
+    border: 2px solid $color-primary;
+    box-shadow: $shadow-focus;
+  }
+
+  .dark & {
+    border-color: $color-black-b;
+    background-color: $color-black-b;
+  }
+}

@@ -35,7 +35,7 @@ const Author = async () => {
 
   return (
     <div
-      className="flex flex-col items-center pt-16 bg-no-repeat bg-white dark:bg-black-b w-full h-[350px] mb-3 tw_container"
+      className="panel flex flex-col items-center pt-16 bg-no-repeat bg-white dark:bg-black-b w-full h-[350px] mb-3"
       style={{
         backgroundSize: `100% 35%`,
         backgroundImage: `url(${avatarBg.src})`,

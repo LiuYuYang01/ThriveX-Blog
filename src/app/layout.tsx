@@ -14,8 +14,9 @@ import { getWebConfigDataAPI } from '@/api/config';
 import { Web } from '@/types/app/config';
 
 // 加载样式文件
-import '@/styles/index.scss';
 import '@/styles/tailwind.css';
+import '@/styles/global.scss';
+import '@/styles/index.scss';
 import BaiduStatis from '@/components/BaiduStatis';
 import FloatingBlock from '@/components/FloatingBlock';
 import InjectData from '@/components/InjectData';
@@ -113,7 +114,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
       {/* 监听路由变化 */}
       <RouteChangeHandler />
 
-      <body id="root" className={`dark:!bg-black-a`}>
+      <body id="root" className={`dark:bg-black-a!`}>
         {/* 数据注入 */}
         <InjectData />
         {/* 🎉 礼花效果 */}

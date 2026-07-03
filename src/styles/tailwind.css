@@ -2,11 +2,6 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-@source '../ThriveUI/**/*.{js,ts,jsx,tsx}';
-@source '../app/**/*.{js,ts,jsx,tsx}';
-@source '../components/**/*.{js,ts,jsx,tsx}';
-@source '../pages/**/*.{js,ts,jsx,tsx}';
-
 @theme {
   --color-primary: #539dfd;
   --color-foreground: #333333;
@@ -14,82 +9,13 @@
   --color-background: #f9f9f9;
   --color-black-a: #232931;
   --color-black-b: #2c333e;
-  /* v4 默认边框/分割线颜色（替代 currentColor，避免纯黑边框） */
   --color-border: #eeeeee;
-  --default-border-color: var(--color-border);
-  --default-divide-color: var(--color-border);
-
-  --color-wx-bg: #ededed;
-  --color-wx-blue: #576b95;
-  --color-wx-text: #111111;
-  --color-wx-gray: #f7f7f7;
-  --color-wx-light: #b2b2b2;
-  --color-wx-border: #e5e5e5;
 
   --shadow-panel: 0 4px 24px -4px rgba(0, 0, 0, 0.12);
-  --shadow-wx-menu: 0 0 8px rgba(0, 0, 0, 0.15);
-  --shadow-like-btn: 0 8px 24px rgba(244, 63, 94, 0.45), 0 0 0 4px rgba(244, 63, 94, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.35);
-  --shadow-like-btn-hover: 0 12px 32px rgba(244, 63, 94, 0.55), 0 0 0 6px rgba(244, 63, 94, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.4);
-  --shadow-like-btn-combo: 0 12px 36px rgba(244, 63, 94, 0.65), 0 0 0 8px rgba(251, 146, 60, 0.25), 0 0 40px rgba(244, 63, 94, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.4);
-  --shadow-like-hero: 0 2px 8px rgba(233, 30, 99, 0.4);
-  --shadow-like-combo: 0 4px 14px rgba(239, 68, 68, 0.45);
 
   --breakpoint-xs: 400px;
 
   --default-transition-duration: 300ms;
-
-  --animate-like-heart-pop: like-heart-pop 0.38s cubic-bezier(0.34, 1.56, 0.64, 1);
-  --animate-like-particle-float: like-particle-float 0.75s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-  --animate-like-ripple: like-ripple 0.65s ease-out forwards;
-  --animate-like-number-bump: like-number-bump 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-  --animate-like-combo-pop: like-combo-pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-  --animate-like-combo-shake: like-combo-shake 0.28s ease-in-out;
-  --animate-like-glow-pulse: like-glow-pulse 0.6s ease-out;
-
-  @keyframes like-heart-pop {
-    0% { transform: scale(1); }
-    25% { transform: scale(1.28) rotate(-8deg); }
-    50% { transform: scale(0.92) rotate(4deg); }
-    75% { transform: scale(1.12) rotate(-2deg); }
-    100% { transform: scale(1) rotate(0deg); }
-  }
-
-  @keyframes like-particle-float {
-    0% { opacity: 1; transform: translate(0, 0) scale(0.6) rotate(0deg); }
-    100% {
-      opacity: 0;
-      transform: translate(var(--tx, 0), var(--ty, -48px)) scale(1.2) rotate(var(--rot, 15deg));
-    }
-  }
-
-  @keyframes like-ripple {
-    0% { opacity: 0.8; transform: scale(0.85); }
-    100% { opacity: 0; transform: scale(1.8); }
-  }
-
-  @keyframes like-number-bump {
-    0% { transform: scale(1); }
-    40% { transform: scale(1.45); }
-    100% { transform: scale(1); }
-  }
-
-  @keyframes like-combo-pop {
-    0% { transform: scale(0.5) translateY(4px); opacity: 0; }
-    100% { transform: scale(1) translateY(0); opacity: 1; }
-  }
-
-  @keyframes like-combo-shake {
-    0%, 100% { transform: rotate(0deg) scale(1); }
-    20% { transform: rotate(-6deg) scale(1.05); }
-    40% { transform: rotate(6deg) scale(1.08); }
-    60% { transform: rotate(-4deg) scale(1.05); }
-    80% { transform: rotate(3deg) scale(1.02); }
-  }
-
-  @keyframes like-glow-pulse {
-    0% { opacity: 0.8; transform: scale(0.9); }
-    100% { opacity: 0; transform: scale(1.4); }
-  }
 }
 
 .dark {
@@ -97,8 +23,6 @@
   --color-surface: #2c333e;
   --color-background: #232931;
   --color-border: #4e5969;
-  --default-border-color: var(--color-border);
-  --default-divide-color: var(--color-border);
   --shadow-panel: 0 4px 24px -4px rgba(0, 0, 0, 0.45);
 }
 
@@ -108,24 +32,6 @@
   ::before,
   ::backdrop,
   ::file-selector-button {
-    border-color: var(--default-border-color);
-  }
-}
-
-@layer components {
-  .tw_container {
-    @apply rounded-xl border border-border transition-shadow ease-in-out hover:shadow-[0_10px_20px_1px_rgb(83,157,253,.1)] dark:border-transparent;
-  }
-
-  .tw_title {
-    @apply flex items-center justify-center border-b border-border pb-4 text-[17px] font-normal text-[#333] dark:border-black-a [&>img]:h-5 [&>img]:w-[30px];
-  }
-
-  .tw_form {
-    @apply box-border rounded-md border border-border outline-none transition-shadow ease-in-out hover:!border-primary dark:border-black-b dark:bg-black-b;
-
-    &:focus {
-      @apply border-2 border-primary shadow-[0_10px_20px_1px_rgb(83,157,253,.1)];
-    }
+    border-color: var(--color-border);
   }
 }

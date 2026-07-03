@@ -196,7 +196,7 @@
   }
 
   blockquote {
-    @apply my-5 pl-4 bg-[rgba(246,248,250)] border-l-[4px] border-[#11181C] dark:border-gray-500 dark:bg-[rgba(246,248,250,0.1)];
+    @apply my-5 pl-4 bg-[rgba(246,248,250)] border-l-4 border-[#11181C] dark:border-gray-500 dark:bg-[rgba(246,248,250,0.1)];
   }
 
   .footnotes {
@@ -206,7 +206,7 @@
     }
 
     &::before {
-      @apply block w-full h-[1px] bg-gray-300;
+      @apply block w-full h-px bg-gray-300;
     }
 
     & ol {

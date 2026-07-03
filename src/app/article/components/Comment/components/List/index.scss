@@ -5,19 +5,19 @@
     padding: 30px 0;
 
     .name {
-        @apply text-[#444] dark:text-[#fff];
+        @apply text-[#444] dark:text-white;
     }
 
     .active {
-        @apply text-primary dark:!text-primary;
+        @apply text-primary dark:text-primary!;
     }
 
     .comment_main {
-        @apply text-[#666] dark:!text-[#cdcdcd];
+        @apply text-[#666] dark:text-[#cdcdcd]!;
     }
 
     .item{
-        @apply border-b border-[#eee] border-dashed dark:!border-[#4e5969] hover:bg-[#f3f8fe] dark:hover:bg-[#2e3745];
+        @apply border-b border-[#eee] border-dashed dark:border-[#4e5969]! hover:bg-[#f3f8fe] dark:hover:bg-[#2e3745];
     }
 
     /* 评论内容 */

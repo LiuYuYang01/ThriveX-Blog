@@ -231,7 +231,7 @@ export default function MapContainer() {
         }}
         preventClose={!isDismissable}
         title={<span className="text-center text-white">{data?.title}</span>}
-        className="max-w-4xl bg-[rgba(36,40,45,0.9)] !border-neutral-700/60"
+        className="max-w-4xl bg-[rgba(36,40,45,0.9)] border-neutral-700/60!"
       >
         <div className="flex flex-col">
           <div className="mb-8 flex w-full flex-col justify-between">

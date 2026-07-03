@@ -214,7 +214,7 @@ export default () => {
         initial={{ opacity: 0, y: 6 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="flex items-center gap-3"
+        className="flex items-center justify-center gap-3"
       >
         <AnimatedAlarmClock />
 
@@ -231,7 +231,7 @@ export default () => {
         initial={{ opacity: 0, y: 6 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.15 }}
-        className="flex items-center gap-1.5"
+        className="flex items-center justify-center gap-1.5"
       >
         {statItems.map(({ key, label }, index) => (
           <div key={key} className="flex items-center gap-1.5">

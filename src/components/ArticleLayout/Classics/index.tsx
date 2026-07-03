@@ -29,7 +29,7 @@ const Classics = async ({ data }: ClassicsProps) => {
         const cover = getRandomImage(item.cover, covers);
 
         return (
-        <div key={item.id} className="relative overflow-hidden flex h-[190px] md:h-60 lg:h-52 xl:h-60 bg-black-b tw_container">
+        <div key={item.id} className="panel relative overflow-hidden flex h-[190px] md:h-60 lg:h-52 xl:h-60 bg-black-b">
           {index % 2 === 0 && (
             <div
               className="hidden sm:block relative min-w-[45%] bg-cover bg-no-repeat bg-center scale-100 hover:scale-125 z-10 transition-transform"

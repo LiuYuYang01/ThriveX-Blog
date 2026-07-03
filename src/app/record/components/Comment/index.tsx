@@ -1,9 +1,9 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { type SubmitHandler } from 'react-hook-form';
 import { Bounce, ToastOptions, toast } from 'react-toastify';
-import { Spinner } from '@/ThriveUI';
+import { Button, FormProvider, Input, Spinner, Textarea, useForm } from '@/ThriveUI';
 import HCaptchaType from '@hcaptcha/react-hcaptcha';
 import dayjs from 'dayjs';
 import { RiMessage3Line } from 'react-icons/ri';
@@ -45,7 +45,6 @@ export default function RecordCommentPanel({ recordId }: Props) {
   const [showForm, setShowForm] = useState(false);
   const [commentId, setCommentId] = useState(0);
   const [placeholder, setPlaceholder] = useState('写评论…');
-  const contentRef = useRef<HTMLTextAreaElement>(null);
   const captchaRef = useRef<HCaptchaType>(null);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [captchaError, setCaptchaError] = useState('');
@@ -53,13 +52,8 @@ export default function RecordCommentPanel({ recordId }: Props) {
   const config = useConfigStore();
   const hasHCaptcha = !!config?.other?.hcaptcha_key;
 
-  const {
-    register,
-    formState: { errors },
-    handleSubmit,
-    setValue,
-    reset,
-  } = useForm<CommentForm>({});
+  const methods = useForm<CommentForm>({});
+  const { setValue, setFocus, reset, handleSubmit } = methods;
 
   const fetchComments = useCallback(async () => {
     setLoading(true);
@@ -99,17 +93,17 @@ export default function RecordCommentPanel({ recordId }: Props) {
     setCommentId(0);
     setPlaceholder('写评论…');
     setShowForm(true);
-    requestAnimationFrame(() => contentRef.current?.focus());
+    requestAnimationFrame(() => setFocus('content'));
   };
 
   const replyComment = (id: number, name: string) => {
     setCommentId(id);
     setPlaceholder(`回复 ${name}：`);
     setShowForm(true);
-    requestAnimationFrame(() => contentRef.current?.focus());
+    requestAnimationFrame(() => setFocus('content'));
   };
 
-  const onSubmit = async (data: CommentForm) => {
+  const onSubmit: SubmitHandler<CommentForm> = async (data) => {
     setCaptchaError('');
     if (hasHCaptcha && !captchaToken) {
       setCaptchaError('请完成人机验证');
@@ -207,7 +201,7 @@ export default function RecordCommentPanel({ recordId }: Props) {
                             回复
                           </button>
                         </div>
-                        <p className="mt-1 text-sm text-slate-600 dark:text-slate-300 break-words">{item.content}</p>
+                        <p className="mt-1 text-sm text-slate-600 dark:text-slate-300 wrap-break-word">{item.content}</p>
                       </div>
                     </div>
 
@@ -221,7 +215,7 @@ export default function RecordCommentPanel({ recordId }: Props) {
                               <RandomAvatar className="w-6 h-6 rounded-full shrink-0 mt-0.5" />
                             )}
                             <div className="flex-1 min-w-0 flex items-start justify-between gap-3">
-                              <div className="min-w-0 text-sm leading-relaxed break-words">
+                              <div className="min-w-0 text-sm leading-relaxed wrap-break-word">
                                 <span className="font-medium text-slate-700 dark:text-slate-200">{reply.name}</span>
                                 <span className="text-slate-400">: </span>
                                 {reply.replyName && (
@@ -253,48 +247,50 @@ export default function RecordCommentPanel({ recordId }: Props) {
         )}
 
         <Show is={showForm}>
-          <form className="space-y-2" onSubmit={handleSubmit(onSubmit)}>
-            <textarea
-              {...register('content', { required: '请输入评论内容' })}
-              placeholder={placeholder}
-              className="tw_form w-full p-3 min-h-20 text-sm"
-              ref={(e) => {
-                register('content').ref(e);
-                contentRef.current = e;
-              }}
-            />
-            {errors.content && <span className="text-red-400 text-xs">{errors.content.message}</span>}
-
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-              <input type="text" className="tw_form h-9 px-3 text-sm" placeholder="昵称" {...register('name', { required: '请输入昵称' })} />
-              <input
-                type="text"
-                className="tw_form h-9 px-3 text-sm"
-                placeholder="网站（选填）"
-                {...register('url', { pattern: { value: /^https?:\/\//, message: '请输入有效链接' } })}
+          <FormProvider {...methods}>
+            <form className="space-y-3" onSubmit={handleSubmit(onSubmit)}>
+              <Textarea
+                name="content"
+                placeholder={placeholder}
+                rules={{ required: '请输入评论内容' }}
+                fieldClassName="w-full"
+                className="min-h-20 text-sm"
               />
-            </div>
 
-            {hasHCaptcha && (
-              <div>
-                <HCaptcha ref={captchaRef} setToken={(token) => { setCaptchaToken(token); setCaptchaError(''); }} />
-                {captchaError && <span className="text-red-400 text-xs">{captchaError}</span>}
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                <Input
+                  name="name"
+                  placeholder="昵称"
+                  rules={{ required: '请输入昵称' }}
+                  fieldClassName="min-w-0"
+                  className="text-sm"
+                />
+                <Input
+                  name="url"
+                  placeholder="网站（选填）"
+                  rules={{ pattern: { value: /^https?:\/\//, message: '请输入有效链接' } }}
+                  fieldClassName="min-w-0"
+                  className="text-sm"
+                />
               </div>
-            )}
 
-            <div className="flex items-center gap-2">
-              <button type="button" className="text-xs text-slate-400 hover:text-slate-600" onClick={closeForm}>
-                取消
-              </button>
-              {submitting ? (
-                <Spinner size="sm" />
-              ) : (
-                <button type="submit" className="ml-auto px-4 h-9 text-sm text-white rounded-lg bg-primary hover:bg-primary/80">
-                  发表评论
-                </button>
+              {hasHCaptcha && (
+                <div>
+                  <HCaptcha ref={captchaRef} setToken={(token) => { setCaptchaToken(token); setCaptchaError(''); }} />
+                  {captchaError && <span className="text-xs text-red-400">{captchaError}</span>}
+                </div>
               )}
-            </div>
-          </form>
+
+              <div className="flex items-center gap-2">
+                <Button type="button" variant="light" size="sm" onPress={closeForm}>
+                  取消
+                </Button>
+                <Button type="submit" color="primary" size="sm" isLoading={submitting} className="ml-auto">
+                  发表评论
+                </Button>
+              </div>
+            </form>
+          </FormProvider>
         </Show>
       </div>
     </div>

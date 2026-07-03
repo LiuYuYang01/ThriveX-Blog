@@ -1,5 +1,24 @@
 import { cn } from '@/lib/utils';
 
+export const actionBarClass =
+  'inline-flex items-center gap-0.5 rounded-full p-1';
+
+export const actionPillClass =
+  'inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium text-slate-600 transition-colors dark:text-slate-300';
+
+/** ActionBar 简约模式：整项 hover / active 触发动画 */
+export const actionMinimalItemClass =
+  'group/action relative inline-flex select-none flex-col items-center';
+
+export const actionMinimalButtonClass =
+  'px-2 py-2 transition-colors duration-200 hover:bg-white dark:hover:bg-white/5';
+
+export const actionMinimalIconClass =
+  'transition-transform duration-200 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover/action:-translate-y-0.5 group-hover/action:scale-110 group-active/action:translate-y-0 group-active/action:scale-95';
+
+export const actionMinimalCountClass =
+  'transition-transform duration-200 ease-out group-hover/action:scale-110 group-active/action:scale-95';
+
 export type ActionCardTone = 'rose' | 'blue';
 
 const toneStyles: Record<ActionCardTone, { card: string; divider: string }> = {

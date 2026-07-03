@@ -2,29 +2,36 @@
 
 import LikeButtonCore from '@/components/LikeButton/LikeButtonCore';
 import ArticleSharePoster, { type ArticleShareData } from '@/components/SharePoster/ArticleSharePoster';
+import CommentAction from './CommentAction';
+import { actionBarClass } from '@/components/ActionCard/styles';
 import { useArticleLike } from '../Like';
+import { useArticleShare } from '../Share';
+import { cn } from '@/lib/utils';
 
 interface ActionBarProps {
   share: Omit<ArticleShareData, 'likeCount'>;
+  commentCount?: number;
 }
 
-export function ArticleActionBar({ share }: ActionBarProps) {
+export function ArticleActionBar({ share, commentCount = 0 }: ActionBarProps) {
   const { count, like } = useArticleLike();
+  const { count: shareCount, recordShare } = useArticleShare();
 
   return (
-    <div className="my-8 flex flex-col items-center gap-2.5">
-      <div className="flex flex-wrap items-stretch justify-center gap-4">
-        <LikeButtonCore count={count} onLike={like} size="lg" showHint={false} />
+    <div className="my-8 flex justify-center">
+      <div className={cn(actionBarClass, 'items-start')}>
+        <LikeButtonCore count={count} onLike={like} size="lg" minimal showHint={false} />
         <ArticleSharePoster
+          minimal
+          shareCount={shareCount}
+          onShare={() => void recordShare()}
           data={{
             ...share,
             likeCount: count,
           }}
         />
+        <CommentAction count={commentCount} />
       </div>
-      <p className="text-center text-xs leading-relaxed text-slate-400 dark:text-slate-500">
-        点击为作者加油 ❤️ · 生成海报分享给好友
-      </p>
     </div>
   );
 }

@@ -13,6 +13,7 @@ import UpAndDown from '../components/UpAndDown';
 import RandomArticle from '../components/RandomArticle';
 import Comment from '../components/Comment';
 import { ArticleLikeProvider, ArticleLikeHero } from '../components/Like';
+import { ArticleShareProvider } from '../components/Share';
 import { ArticleActionBar } from '../components/ActionBar';
 import MD from '../components/MD';
 import Summary from '../components/Summary';
@@ -111,6 +112,7 @@ export default async (props: Props) => {
   if ((data?.config?.isEncrypt !== 1) || (password && data?.config?.isEncrypt === 1)) {
     return (
       <ArticleLikeProvider articleId={id} initialCount={data?.likeCount ?? 0}>
+        <ArticleShareProvider articleId={id} initialCount={data?.shareCount ?? 0}>
         <title>{data.title}</title>
         <meta name="description" content={data.description} />
 
@@ -161,6 +163,7 @@ export default async (props: Props) => {
             <MD data={data?.content} />
 
             <ArticleActionBar
+              commentCount={data?.comment ?? 0}
               share={{
                 articleId: id,
                 title: data.title,
@@ -183,6 +186,7 @@ export default async (props: Props) => {
 
           <Nav />
         </div>
+        </ArticleShareProvider>
       </ArticleLikeProvider>
     );
   } else {

@@ -8,6 +8,11 @@ import {
   actionCardDividerClass,
   actionIconWrapClass,
   actionLabelClass,
+  actionMinimalButtonClass,
+  actionMinimalCountClass,
+  actionMinimalIconClass,
+  actionMinimalItemClass,
+  actionPillClass,
   actionTextColClass,
 } from '@/components/ActionCard/styles';
 
@@ -47,6 +52,7 @@ interface Props {
   size?: 'md' | 'lg';
   variant?: 'default' | 'hero';
   showHint?: boolean;
+  minimal?: boolean;
   className?: string;
 }
 
@@ -56,6 +62,7 @@ export default function LikeButtonCore({
   size = 'lg',
   variant = 'default',
   showHint = true,
+  minimal = false,
   className,
 }: Props) {
   const [popping, setPopping] = useState(false);
@@ -73,8 +80,8 @@ export default function LikeButtonCore({
   const comboTimerRef = useRef<number>(null);
 
   const isHero = variant === 'hero';
-  const btnSize = isHero ? 'sm' : size;
-  const isLarge = size === 'lg';
+  const btnSize = isHero ? 'sm' : minimal ? 'md' : size;
+  const isLarge = size === 'lg' && !minimal;
 
   const spawnParticles = useCallback((intensity: number) => {
     const particleCount = Math.min(intensity >= 5 ? 4 : intensity >= 3 ? 3 : 2, 4);
@@ -144,6 +151,7 @@ export default function LikeButtonCore({
   const btnClass = cn(
     BTN_BASE,
     BTN_SIZE[btnSize],
+    minimal && 'bg-none bg-rose-500 shadow-md shadow-rose-500/30 group-hover/action:shadow-lg group-hover/action:shadow-rose-500/40',
     popping && 'animate-like-heart-pop',
     comboShaking && !isHero && 'animate-like-combo-shake shadow-like-btn-combo',
     isHero && 'bg-[#e11e63] shadow-like-hero hover:shadow-like-hero',
@@ -160,15 +168,16 @@ export default function LikeButtonCore({
   const hintText =
     combo >= 5 ? '停不下来了吧 😆' : combo >= 3 ? '继续点，作者会看到的~' : '点击为作者加油 ❤️';
 
-  const likeButton = (
-    <div className={cn(actionIconWrapClass, !isLarge && 'p-0.5')}>
+  const ariaLabel = `点赞，当前 ${count} 次${combo >= 2 ? `，连击 ${combo}` : ''}`;
+
+  const likeEffects = (
+    <>
       {showGlow && (
         <span
           className="pointer-events-none absolute -inset-2 z-0 animate-like-glow-pulse rounded-full bg-[radial-gradient(circle,rgba(244,63,94,0.35)_0%,transparent_70%)]"
           aria-hidden
         />
       )}
-
       {ripples.map((r) => (
         <span
           key={r.id}
@@ -176,7 +185,6 @@ export default function LikeButtonCore({
           aria-hidden
         />
       ))}
-
       {particles.map((p) => (
         <span
           key={p.id}
@@ -190,13 +198,19 @@ export default function LikeButtonCore({
           {p.type === 'heart' ? '♥' : '+1'}
         </span>
       ))}
+    </>
+  );
 
-      <button
-        type="button"
-        onClick={handleLike}
-        className={btnClass}
-        aria-label={`点赞，当前 ${count} 次${combo >= 2 ? `，连击 ${combo}` : ''}`}
-      >
+  const heartCircle = (
+    <span className={cn(btnClass, minimal && 'pointer-events-none')}>
+      <RiHeartFill className={iconClass} />
+    </span>
+  );
+
+  const likeButton = (
+    <div className={cn(actionIconWrapClass, !isLarge && !minimal && 'p-0.5', minimal && 'p-0')}>
+      {likeEffects}
+      <button type="button" onClick={handleLike} className={btnClass} aria-label={ariaLabel}>
         <RiHeartFill className={iconClass} />
       </button>
     </div>
@@ -211,15 +225,50 @@ export default function LikeButtonCore({
     );
   }
 
+  if (minimal) {
+    return (
+      <div className={cn(actionMinimalItemClass, className)}>
+        {combo >= 2 && (
+          <span
+            key={combo}
+            className="pointer-events-none absolute -top-2.5 left-1/2 z-30 -translate-x-1/2 animate-like-combo-pop whitespace-nowrap rounded-full bg-gradient-to-r from-orange-500 to-red-500 px-2 py-0.5 text-[10px] font-bold text-white shadow-like-combo"
+          >
+            ×{combo}
+          </span>
+        )}
+        <button
+          type="button"
+          onClick={handleLike}
+          className={cn(actionPillClass, actionMinimalButtonClass, 'relative')}
+          aria-label={ariaLabel}
+        >
+          <span className={cn(actionIconWrapClass, actionMinimalIconClass, 'relative p-0')}>
+            {likeEffects}
+            {heartCircle}
+          </span>
+        </button>
+        <span
+          className={cn(
+            'mt-1 min-w-[2rem] rounded-full px-2 py-0.5 text-center text-xs font-bold leading-none text-rose-600 tabular-nums',
+            actionMinimalCountClass,
+            countBump && 'animate-like-number-bump',
+          )}
+        >
+          {count}
+        </span>
+      </div>
+    );
+  }
+
   const card = (
     <div
       className={cn(
         isLarge
           ? actionCardClass('rose')
           : cn(
-              'relative flex h-auto items-center overflow-visible rounded-2xl border border-rose-100/90 bg-gradient-to-br from-rose-50/80 via-white to-orange-50/40 px-3 py-2',
-              'shadow-[0_4px_20px_-4px_rgba(244,63,94,0.15)] dark:border-rose-500/15 dark:from-rose-500/8 dark:via-white/[0.02] dark:to-orange-500/5 dark:shadow-none',
-            ),
+            'relative flex h-auto items-center overflow-visible rounded-2xl border border-rose-100/90 bg-gradient-to-br from-rose-50/80 via-white to-orange-50/40 px-3 py-2',
+            'shadow-[0_4px_20px_-4px_rgba(244,63,94,0.15)] dark:border-rose-500/15 dark:from-rose-500/8 dark:via-white/[0.02] dark:to-orange-500/5 dark:shadow-none',
+          ),
         className,
       )}
     >

@@ -161,7 +161,7 @@ const CommentForm = ({ articleId }: Props) => {
   };
 
   return (
-    <div className="CommentComponent">
+    <div id="article-comment" className="CommentComponent">
       <div className="mt-[70px]">
         <div className="title relative top-0 left-0 w-full h-[1px] mb-10 bg-[#f7f7f7] dark:bg-black-b  "></div>
 

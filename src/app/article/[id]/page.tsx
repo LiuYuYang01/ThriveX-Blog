@@ -12,6 +12,7 @@ import Copyright from '../components/Copyright';
 import UpAndDown from '../components/UpAndDown';
 import RandomArticle from '../components/RandomArticle';
 import Comment from '../components/Comment';
+import { ArticleLikeProvider, ArticleLikeHero, ArticleLikeFooter } from '../components/Like';
 import MD from '../components/MD';
 import Summary from '../components/Summary';
 import Nav from '../components/Nav';
@@ -108,7 +109,7 @@ export default async (props: Props) => {
   // 如果文章没有加密或者密码正确，则显示文章
   if ((data?.config?.isEncrypt !== 1) || (password && data?.config?.isEncrypt === 1)) {
     return (
-      <>
+      <ArticleLikeProvider articleId={id} initialCount={data?.likeCount ?? 0}>
         <title>{data.title}</title>
         <meta name="description" content={data.description} />
 
@@ -142,6 +143,8 @@ export default async (props: Props) => {
                   <span>评论数量：{data?.comment}</span>
                 </div>
 
+                <ArticleLikeHero />
+
                 <div className="flex mb-2">
                   <span className={`${iconSty} bg-[#5A9CF8]`}>
                     <LuTimer />
@@ -156,6 +159,8 @@ export default async (props: Props) => {
             <Summary content={data?.description || ''} />
             <MD data={data?.content} />
 
+            <ArticleLikeFooter />
+
             <div className="w-full">
               <Tag data={data?.tagList} />
 
@@ -168,7 +173,7 @@ export default async (props: Props) => {
 
           <Nav />
         </div>
-      </>
+      </ArticleLikeProvider>
     );
   } else {
     return !password && <Encrypt id={id} />;

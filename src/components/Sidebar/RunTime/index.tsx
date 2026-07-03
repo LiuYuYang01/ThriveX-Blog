@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
-import dayjs from 'dayjs';
 import { useConfigStore } from '@/stores';
 import { motion, useMotionValue, useTransform, animate, useInView } from 'framer-motion';
 import TimerSvg from '@/assets/svg/other/timer.svg';
@@ -201,8 +200,6 @@ export default () => {
 
     return () => clearInterval(timer);
   }, [web?.create_time]);
-
-  const startDate = web?.create_time ? dayjs(+web.create_time).format('YYYY-MM-DD') : '';
 
   return (
     <SidebarCard

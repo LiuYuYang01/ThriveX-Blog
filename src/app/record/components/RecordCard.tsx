@@ -1,6 +1,8 @@
 import ImageList from './ImageList';
 import Editor from './Editor';
 import RecordCommentPanel from './Comment';
+import LikeButton from '@/components/LikeButton';
+import { likeRecordAPI } from '@/api/record';
 import dayjs from 'dayjs';
 import { User } from '@/types/app/user';
 
@@ -8,6 +10,7 @@ interface RecordItemProps {
   id: number | string;
   content: string;
   images: string | string[] | null;
+  likeCount?: number;
   createTime?: string | number | Date;
   user: Pick<User, 'avatar' | 'name'> | null;
 }
@@ -46,7 +49,7 @@ function getRelativeTimeLabel(ts: string | number | Date | undefined): string {
   return '';
 }
 
-export default function RecordCard({ id, content, images, createTime, user }: RecordItemProps) {
+export default function RecordCard({ id, content, images, likeCount, createTime, user }: RecordItemProps) {
   const imageList: string[] = Array.isArray(images) ? images : JSON.parse((images as string) ?? '[]');
 
   return (
@@ -95,6 +98,10 @@ export default function RecordCard({ id, content, images, createTime, user }: Re
           {/* Body: 图片展示 */}
           <div className="mt-3">
             <ImageList list={imageList} />
+          </div>
+
+          <div className="mt-4 flex items-center justify-center py-2">
+            <LikeButton entityId={Number(id)} initialCount={likeCount ?? 0} likeAPI={likeRecordAPI} size="md" />
           </div>
 
           <RecordCommentPanel recordId={Number(id)} />

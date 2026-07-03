@@ -141,7 +141,7 @@ export default () => {
           ) : (
             <>
               <div>
-                {!!records?.length && records.map((item) => <RecordCard key={item.id} id={item.id as any} content={item.content as any} images={item.images as any} createTime={item.createTime as any} user={user as any} />)}
+                {!!records?.length && records.map((item) => <RecordCard key={item.id} id={item.id as any} content={item.content as any} images={item.images as any} likeCount={item.likeCount} createTime={item.createTime as any} user={user as any} />)}
 
                 <Show is={!records?.length}>
                   <Empty info="内容为空~" />

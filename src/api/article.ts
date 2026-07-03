@@ -27,3 +27,7 @@ export const getRecommendedArticleListAPI = async () => {
 export const recordViewAPI = async (id: number) => {
     return await Request<void>('GET', `/article/view/${id}`);
 }
+
+// 递增文章点赞数（count 为本次累计增量，由前端防抖合并后提交）
+export const likeArticleAPI = (id: number, count: number) =>
+    Request<number>('POST', `/article/${id}/like`, { count }, false)

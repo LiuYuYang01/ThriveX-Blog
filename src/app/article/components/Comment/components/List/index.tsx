@@ -9,7 +9,7 @@ import { Comment } from '@/types/app/comment';
 import { RiMessage3Line } from 'react-icons/ri';
 import dayjs from 'dayjs';
 import { getArticleCommentListAPI } from '@/api/comment';
-import { Pagination } from '@heroui/react';
+import { ClientPagination } from '@/ThriveUI';
 import './index.scss';
 
 interface Props {
@@ -187,7 +187,7 @@ const CommentList = forwardRef(({ id, reply }: Props, ref) => {
         </ul>
       </Show>
 
-      {!data.result?.length ? <Empty info="评论列表为空~"></Empty> : <Pagination showControls total={data.pages} page={page} onChange={onPaginateChange} className="flex justify-center mt-2" classNames={{ item: 'shadow-none bg-transparent dark:hover:!bg-black-b  ', prev: 'dark:bg-black-b  ', next: 'dark:bg-black-b  ' }} />}
+      {!data.result?.length ? <Empty info="评论列表为空~"></Empty> : <ClientPagination showControls total={data.pages} page={page} onChange={onPaginateChange} className="mt-2 flex justify-center" />}
     </div>
   );
 });

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { Checkbox } from '@heroui/react';
+import { Checkbox } from '@/ThriveUI';
 
 import AOS from 'aos';
 import 'aos/dist/aos.css';
@@ -26,7 +26,7 @@ export default ({ data }: Props) => {
         <div className="flex flex-col space-y-2">
           {data?.map((item, index) => (
             <div key={index} className="flex flex-wrap justify-between items-center">
-              <Checkbox key={index} defaultSelected={item.status === 3} className="[&>input]:hidden space-x-2">
+              <Checkbox key={index} isSelected={item.status === 3} className="space-x-2 [&>input]:hidden">
                 {item.value}
               </Checkbox>
 

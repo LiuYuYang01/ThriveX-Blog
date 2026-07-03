@@ -1,7 +1,6 @@
 import localFont from 'next/font/local';
 import { Metadata } from 'next';
 
-import HeroUIProvider from '@/components/HeroUIProvider';
 import NProgress from '@/components/NProgress';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -16,7 +15,7 @@ import { Web } from '@/types/app/config';
 
 // 加载样式文件
 import '@/styles/index.scss';
-import '@/styles/tailwind.scss';
+import '@/styles/tailwind.css';
 import BaiduStatis from '@/components/BaiduStatis';
 import FloatingBlock from '@/components/FloatingBlock';
 import InjectData from '@/components/InjectData';
@@ -126,9 +125,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
         <Header />
 
         {/* 主体内容 */}
-        <HeroUIProvider>
-          <div className="min-h-[calc(100vh-300px)]">{children}</div>
-        </HeroUIProvider>
+        <div className="min-h-[calc(100vh-300px)]">{children}</div>
 
         {/* 底部组件 */}
         <Footer />

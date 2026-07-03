@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Bounce, ToastOptions, toast } from 'react-toastify';
-import { Spinner } from '@heroui/react';
+import { Spinner } from '@/ThriveUI';
 import HCaptchaType from '@hcaptcha/react-hcaptcha';
 import dayjs from 'dayjs';
 import { RiMessage3Line } from 'react-icons/ri';

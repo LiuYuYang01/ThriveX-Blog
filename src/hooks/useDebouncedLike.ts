@@ -11,7 +11,7 @@ export default function useDebouncedLike(entityId: number, initialCount: number,
   const [displayCount, setDisplayCount] = useState(initialCount);
   const confirmedCountRef = useRef(initialCount);
   const pendingDeltaRef = useRef(0);
-  const timerRef = useRef<number>();
+  const timerRef = useRef<number | undefined>(undefined);
   const flushingRef = useRef(false);
   const likeAPIRef = useRef(likeAPI);
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@heroui/react';
+import { Button } from '@/ThriveUI';
 import { useState, useEffect, useRef } from 'react';
 import { BiChevronRight } from 'react-icons/bi';
 import { BiChevronLeft } from 'react-icons/bi';

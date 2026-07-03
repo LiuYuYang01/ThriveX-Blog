@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { Pagination } from '@heroui/react';
+import { ClientPagination } from '@/ThriveUI';
 
 interface Props {
   total: number;
@@ -25,7 +25,7 @@ export default ({ total, page, path, className }: Props) => {
 
   return (
     <div className={className}>
-      <Pagination showControls total={total} page={+page} onChange={onChange} classNames={{ item: 'shadow-none bg-transparent dark:hover:!bg-black-b  ', prev: 'dark:bg-black-b  ', next: 'dark:bg-black-b  ' }} />
+      <ClientPagination showControls total={total} page={+page} onChange={onChange} />
     </div>
   );
 };

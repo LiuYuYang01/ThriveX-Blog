@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 
 import { Article } from '@/types/app/article';
 
-import { Accordion, AccordionItem, Spinner } from '@heroui/react';
+import { Accordion, AccordionItem, Spinner } from '@/ThriveUI';
 
 import archiving from './svg/archiving.svg';
 import { AiOutlineEye } from 'react-icons/ai';
@@ -93,51 +93,7 @@ export default ({ list }: { list: Article[] }) => {
       </div>
 
       {result.length ? (
-        <Accordion
-          className="[&>hr]:!bg-slate-200 dark:[&>hr]:!bg-slate-600/50 !px-0 [&_[data-hover=true]]:!bg-transparent"
-          itemClasses={{
-            base: 'py-4',
-            title: 'text-base font-medium',
-            trigger: 'px-4 py-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/50',
-            content: 'px-4 pb-4',
-          }}
-          motionProps={{
-            variants: {
-              enter: {
-                y: 0,
-                opacity: 1,
-                height: 'auto',
-                transition: {
-                  height: {
-                    type: 'spring',
-                    stiffness: 500,
-                    damping: 30,
-                    duration: 1,
-                  },
-                  opacity: {
-                    ease: 'easeInOut',
-                    duration: 1,
-                  },
-                },
-              },
-              exit: {
-                y: -10,
-                opacity: 0,
-                height: 0,
-                transition: {
-                  height: {
-                    ease: 'easeInOut',
-                    duration: 0.25,
-                  },
-                  opacity: {
-                    ease: 'easeInOut',
-                    duration: 0.3,
-                  },
-                },
-              },
-            },
-          }}
-        >
+        <Accordion className="!px-0">
           {result.map((item, index) => (
             <AccordionItem key={index} aria-label={item.year + '年'} title={<Title data={item} />}>
               <div className="space-y-6 pl-2">

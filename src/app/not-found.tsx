@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import NotFoundSvg from '@/assets/svg/other/404.svg';
-import { Button } from '@heroui/react';
+import { Button } from '@/ThriveUI';
 
 export default function NotFound() {
   const router = useRouter();

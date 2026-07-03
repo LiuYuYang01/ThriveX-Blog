@@ -1,6 +1,6 @@
 'use client';
 
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, useDisclosure, Button, Input } from '@heroui/react';
+import { Modal, Button, TextField, useDisclosure } from '@/ThriveUI';
 import { MdEnhancedEncryption } from 'react-icons/md';
 import { useEffect, useRef, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
@@ -17,19 +17,20 @@ export default function Encrypt({ id }: Props) {
 
   const [password, setPassword] = useState('');
 
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const { isOpen, onOpen } = useDisclosure();
 
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // 在模态框打开后自动聚焦到 Input 组件
   useEffect(() => {
     onOpen();
+  }, [onOpen]);
+
+  useEffect(() => {
     if (isOpen && inputRef.current) {
       inputRef.current.focus();
     }
   }, [isOpen]);
 
-  // 验证访问密码
   const handleVerifyPassword = async () => {
     const res = await getArticleDataAPI(id, password);
 
@@ -40,47 +41,38 @@ export default function Encrypt({ id }: Props) {
     }
   };
 
-  // 表单样式
-  const inputWrapper = 'hover:!border-primary group-data-[focus=true]:border-primary rounded-md';
-
   return (
     <>
-      <Modal isOpen={isOpen} backdrop="blur" placement="top-center" isDismissable={false} hideCloseButton={true} onOpenChange={onOpenChange}>
-        <ModalContent>
-          {() => (
-            <>
-              <ModalHeader className="flex flex-col gap-1">🔑 该文章已加密</ModalHeader>
-
-              <ModalBody>
-                <Input
-                  ref={inputRef}
-                  classNames={{ inputWrapper }}
-                  endContent={<MdEnhancedEncryption className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />}
-                  label="访问密码"
-                  type="password"
-                  placeholder="文章受保护，请输入密码"
-                  variant="bordered"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.code === 'Enter') {
-                      handleVerifyPassword();
-                    }
-                  }}
-                />
-              </ModalBody>
-
-              <ModalFooter>
-                <Button color="default" onPress={() => router.push('/')}>
-                  返回
-                </Button>
-                <Button color="primary" onPress={handleVerifyPassword}>
-                  校验
-                </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
+      <Modal
+        open={isOpen}
+        onClose={() => {}}
+        preventClose
+        title="🔑 该文章已加密"
+        footer={
+          <>
+            <Button variant="light" onPress={() => router.push('/')}>
+              返回
+            </Button>
+            <Button color="primary" onPress={handleVerifyPassword}>
+              校验
+            </Button>
+          </>
+        }
+      >
+        <TextField
+          ref={inputRef}
+          endContent={<MdEnhancedEncryption className="pointer-events-none flex-shrink-0 text-2xl text-neutral-400" />}
+          label="访问密码"
+          type="password"
+          placeholder="文章受保护，请输入密码"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.code === 'Enter') {
+              handleVerifyPassword();
+            }
+          }}
+        />
       </Modal>
 
       <ToastContainer />

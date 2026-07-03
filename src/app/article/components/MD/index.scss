@@ -1,9 +1,10 @@
-@use "@/styles/var" as *;
-@use "@/styles/fun" as *;
+@use '@/styles/var' as *;
+@use '@/styles/fun' as *;
+@reference '../../../../styles/tailwind.css';
 
 .ContentMdComponent {
   .markdown-body {
-    @apply font-[inherit] dark:bg-transparent dark:text-gray-400 !important;
+    @apply font-[inherit] dark:bg-transparent! dark:text-gray-400!;
 
     pre.mac-style {
       position: relative;

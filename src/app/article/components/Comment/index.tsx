@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { addCommentDataAPI } from '@/api/comment';
 import { Bounce, ToastOptions, toast } from 'react-toastify';
-import { Spinner, Popover, PopoverTrigger, PopoverContent } from '@heroui/react';
+import { Spinner, Popover, PopoverTrigger, PopoverContent } from '@/ThriveUI';
 import HCaptchaType from '@hcaptcha/react-hcaptcha';
 import List from './components/List';
 import HCaptcha from '@/components/HCaptcha';
@@ -178,7 +178,7 @@ const CommentForm = ({ articleId }: Props) => {
             />
             <span className="text-red-400 text-sm pl-3">{errors.content?.message}</span>
 
-            {/* 表情按钮与面板（HeroUI Popover） */}
+            {/* 表情按钮与面板 */}
             <div className="absolute bottom-5 right-5">
               <Popover placement="bottom" isOpen={isEmojiOpen} onOpenChange={setIsEmojiOpen}>
                 <PopoverTrigger>

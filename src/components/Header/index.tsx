@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useState, useEffect } from 'react';
 
-import { Switch } from '@heroui/react';
+import { Switch } from '@/ThriveUI';
 import Show from '@/components/Show';
 import SidebarNav from './components/SidebarNav';
 

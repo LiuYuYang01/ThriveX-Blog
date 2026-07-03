@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Progress, Tooltip } from '@heroui/react';
+import { Progress, Tooltip } from '@/ThriveUI';
 import INFJ from '@/assets/image/INFJ.png';
 import { BiQuestionMark } from 'react-icons/bi';
 
@@ -22,7 +22,7 @@ interface Props {
 
 export default ({ data }: Props) => {
   // 提前把颜色写好，否则会导致样式丢失
-  const colors = ['[&>div>div]:bg-[#4298b4]', '[&>div>div]:bg-[#e4ae3a]', '[&>div>div]:bg-[#33a474]', '[&>div>div]:bg-[#88619a]', '[&>div>div]:bg-[#f25e62]'];
+  const colors = ['[&>div]:bg-[#4298b4]', '[&>div]:bg-[#e4ae3a]', '[&>div]:bg-[#33a474]', '[&>div]:bg-[#88619a]', '[&>div]:bg-[#f25e62]'];
 
   useEffect(() => {
     AOS.init();
@@ -49,7 +49,7 @@ export default ({ data }: Props) => {
                 <span className="min-w-[80px] dark:text-[#8c9ab1] text-xs sm:text-base">{text1}</span>
 
                 <div className="relative w-full max-w-md">
-                  <Progress value={value} className={`relative [&>div]:justify-center ${colors[index]}`} />
+                  <Progress value={value} className={`relative ${colors[index]}`} />
                   <div className="absolute -top-[25px] -translate-x-1/2 left-0 h-full flex items-center justify-center" style={{ left: `${value}%` }}>
                     <span className={`flex items-center text-[${color}]`}>
                       {value}%

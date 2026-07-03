@@ -1,15 +1,7 @@
 'use client';
 
 import { useCallback, useState } from 'react';
-import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Button,
-  Spinner,
-} from '@heroui/react';
+import { Modal, Button, Spinner } from '@/ThriveUI';
 import { RiDownloadLine, RiLink } from 'react-icons/ri';
 import { ShareActionIcon } from '@/components/ActionBar/icons';
 import { toast } from 'react-toastify';
@@ -156,45 +148,37 @@ export default function ArticleSharePoster({ data, minimal = false, className, s
       </div>
 
       <Modal
-        isOpen={open}
-        onOpenChange={setOpen}
-        size="md"
-        scrollBehavior="inside"
-        classNames={{ base: 'bg-white dark:bg-black-b', header: 'border-b border-slate-100 dark:border-white/5' }}
+        open={open}
+        onClose={() => setOpen(false)}
+        title="分享海报"
+        className="max-w-md"
+        footer={
+          <>
+            <Button variant="light" onPress={() => setOpen(false)}>
+              关闭
+            </Button>
+            <Button variant="flat" color="primary" startContent={<RiLink />} onPress={() => void handleCopyLink()} isDisabled={loading}>
+              复制链接
+            </Button>
+            <Button color="primary" startContent={<RiDownloadLine />} onPress={handleDownload} isDisabled={loading || !posterUrl}>
+              下载海报
+            </Button>
+          </>
+        }
       >
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader className="text-base font-bold text-slate-800 dark:text-slate-100">分享海报</ModalHeader>
-              <ModalBody className="py-5">
-                {loading ? (
-                  <div className="flex flex-col items-center justify-center gap-3 py-16">
-                    <Spinner size="lg" color="primary" />
-                    <p className="text-sm text-slate-400">正在生成海报…</p>
-                  </div>
-                ) : posterUrl ? (
-                  <div className="flex flex-col items-center gap-4">
-                    <div className="overflow-hidden rounded-xl border border-slate-200/80 shadow-lg dark:border-white/10">
-                      <img src={posterUrl} alt="文章分享海报" className="max-h-[420px] w-auto object-contain" />
-                    </div>
-                    <p className="text-center text-xs text-slate-400">长按或下载保存，分享给好友吧</p>
-                  </div>
-                ) : null}
-              </ModalBody>
-              <ModalFooter className="gap-2">
-                <Button variant="light" onPress={onClose}>
-                  关闭
-                </Button>
-                <Button variant="flat" startContent={<RiLink />} onPress={() => void handleCopyLink()} isDisabled={loading}>
-                  复制链接
-                </Button>
-                <Button color="primary" startContent={<RiDownloadLine />} onPress={handleDownload} isDisabled={loading || !posterUrl}>
-                  下载海报
-                </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
+        {loading ? (
+          <div className="flex flex-col items-center justify-center gap-3 py-16">
+            <Spinner size="lg" color="primary" />
+            <p className="text-sm text-slate-400">正在生成海报…</p>
+          </div>
+        ) : posterUrl ? (
+          <div className="flex flex-col items-center gap-4">
+            <div className="overflow-hidden rounded-xl border border-slate-200/80 shadow-lg dark:border-white/10">
+              <img src={posterUrl} alt="文章分享海报" className="max-h-[420px] w-auto object-contain" />
+            </div>
+            <p className="text-center text-xs text-slate-400">长按或下载保存，分享给好友吧</p>
+          </div>
+        ) : null}
       </Modal>
     </>
   );

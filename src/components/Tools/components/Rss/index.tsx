@@ -1,41 +1,19 @@
 'use client';
 
 import { Web } from '@/types/app/config';
-import { Modal, ModalContent, ModalHeader, ModalBody, UseDisclosureProps, Snippet } from '@heroui/react';
+import { Modal, Snippet, type DisclosureProps } from '@/ThriveUI';
 
 interface Props {
-  disclosure: UseDisclosureProps & { onOpenChange: () => void };
+  disclosure: DisclosureProps;
   data: Web;
 }
 
 export default ({ disclosure, data }: Props) => {
-  const { isOpen, onOpenChange } = disclosure;
+  const { isOpen, onClose } = disclosure;
 
   return (
-    <>
-      <Modal
-        size="lg"
-        backdrop="opaque"
-        isOpen={isOpen}
-        onOpenChange={onOpenChange}
-        classNames={{
-          backdrop: 'bg-gradient-to-t from-zinc-900 to-zinc-900/10 backdrop-opacity-20',
-        }}
-      >
-        <ModalContent>
-          {() => (
-            <>
-              <ModalHeader className="flex flex-col gap-1">查看订阅地址</ModalHeader>
-
-              <ModalBody>
-                <Snippet symbol="" className="mb-6">
-                  {data?.url + '/api/rss'}
-                </Snippet>
-              </ModalBody>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
-    </>
+    <Modal open={isOpen} onClose={onClose} title="查看订阅地址" className="max-w-2xl">
+      <Snippet symbol="">{data?.url + '/api/rss'}</Snippet>
+    </Modal>
   );
 };

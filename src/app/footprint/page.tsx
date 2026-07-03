@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure } from '@heroui/react';
+import { Modal, Button, useDisclosure } from '@/ThriveUI';
 import { getFootprintListAPI } from '@/api/footprint';
 import { Footprint } from '@/types/app/footprint';
 import { PhotoProvider, PhotoView } from 'react-photo-view';
@@ -205,91 +205,61 @@ export default function MapContainer() {
       </div>
 
       <Modal
-        isOpen={!!mapLoadError}
-        placement="center"
-        backdrop="blur"
-        scrollBehavior="inside"
-        onOpenChange={(open) => {
-          if (!open) setMapLoadError(null);
-        }}
-        classNames={{
-          backdrop: 'bg-slate-900/40 backdrop-blur-sm',
-          base: 'border border-primary/25 shadow-[0_10px_40px_1px_rgb(83,157,253,.12)] dark:border-primary/35',
-          header: 'border-b border-primary/15 flex-col gap-1 text-primary dark:border-white/10',
-          body: 'py-5',
-          footer: 'border-t border-primary/10 dark:border-white/10',
-        }}
+        open={!!mapLoadError}
+        onClose={() => setMapLoadError(null)}
+        title="提示"
+        footer={
+          <>
+            <Button variant="light" className="text-slate-600 dark:text-slate-400" onPress={() => setMapLoadError(null)}>
+              关闭
+            </Button>
+            <Button color="primary" className="font-medium shadow-[0_2px_12px_rgba(83,157,253,0.35)]" onPress={() => window.location.reload()}>
+              刷新
+            </Button>
+          </>
+        }
       >
-        <ModalContent className="bg-white dark:bg-black-b">
-          {() => (
-            <>
-              <ModalHeader className="text-lg font-semibold text-slate-800 dark:text-slate-100">提示</ModalHeader>
-              <ModalBody>
-                <p className="text-left text-sm leading-relaxed text-slate-600 dark:text-slate-300" role="alert">
-                  {mapLoadError}
-                </p>
-              </ModalBody>
-              <ModalFooter className="gap-2">
-                <Button variant="light" className="text-slate-600 dark:text-slate-400" onPress={() => setMapLoadError(null)}>
-                  关闭
-                </Button>
-                <Button color="primary" className="font-medium shadow-[0_2px_12px_rgba(83,157,253,0.35)]" onPress={() => window.location.reload()}>
-                  刷新
-                </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
+        <p className="text-left text-sm leading-relaxed text-slate-600 dark:text-slate-300" role="alert">
+          {mapLoadError}
+        </p>
       </Modal>
 
       <Modal
-        size="4xl"
-        backdrop="opaque"
-        isDismissable={isDismissable}
-        isOpen={isOpen}
-        onOpenChange={(open) => {
-          if (isDismissable || !open) onOpenChange();
+        open={isOpen}
+        onClose={() => {
+          if (isDismissable) onOpenChange(false);
         }}
-        classNames={{
-          backdrop: 'bg-gradient-to-t from-zinc-900 to-zinc-900/10 backdrop-opacity-20',
-        }}
+        preventClose={!isDismissable}
+        title={<span className="text-center text-white">{data?.title}</span>}
+        className="max-w-4xl bg-[rgba(36,40,45,0.9)] !border-neutral-700/60"
       >
-        <ModalContent className="bg-[rgba(36,40,45,0.9)]">
-          {() => (
-            <>
-              <ModalHeader className="flex flex-col gap-1 text-center pb-2 text-white">{data?.title}</ModalHeader>
-              <ModalBody>
-                <div className="flex flex-col">
-                  <div className="flex flex-col justify-between w-full mb-8">
-                    <p className="overflow-auto max-h-[210px] text-[#d6d6d6] px-[5px]">{data?.content}</p>
-                    <div className="text-sm text-end text-[#a5a5a5] pt-2">
-                      <p>时间：{dayjs(+data?.createTime).format('YYYY-MM-DD HH:mm')}</p>
-                      <p>地址：{data?.address}</p>
-                    </div>
-                  </div>
+        <div className="flex flex-col">
+          <div className="mb-8 flex w-full flex-col justify-between">
+            <p className="max-h-[210px] overflow-auto px-[5px] text-[#d6d6d6]">{data?.content}</p>
+            <div className="pt-2 text-end text-sm text-[#a5a5a5]">
+              <p>时间：{dayjs(+data?.createTime).format('YYYY-MM-DD HH:mm')}</p>
+              <p>地址：{data?.address}</p>
+            </div>
+          </div>
 
-                  <div className={`overflow-auto flex justify-center w-full ${data?.images.length !== 1 ? 'max-h-96' : ''} mb-5 hide_sliding`}>
-                    <PhotoProvider
-                      speed={() => 800}
-                      easing={(type) => (type === 2 ? 'cubic-bezier(0.36, 0, 0.66, -0.56)' : 'cubic-bezier(0.34, 1.56, 0.64, 1)')}
-                      onVisibleChange={(visible) => {
-                        setIsDismissable(!visible);
-                      }}
-                    >
-                      <Masonry breakpointCols={breakpointColumnsObj} className="masonry-grid mb-12" columnClassName="masonry-grid_column">
-                        {data?.images?.map((item, index) => (
-                          <PhotoView src={item} key={index}>
-                            <img src={item} alt="" className="rounded-2xl w-full mb-3 cursor-pointer" />
-                          </PhotoView>
-                        ))}
-                      </Masonry>
-                    </PhotoProvider>
-                  </div>
-                </div>
-              </ModalBody>
-            </>
-          )}
-        </ModalContent>
+          <div className={`flex w-full justify-center overflow-auto ${data?.images?.length !== 1 ? 'max-h-96' : ''} mb-5 hide_sliding`}>
+            <PhotoProvider
+              speed={() => 800}
+              easing={(type) => (type === 2 ? 'cubic-bezier(0.36, 0, 0.66, -0.56)' : 'cubic-bezier(0.34, 1.56, 0.64, 1)')}
+              onVisibleChange={(visible) => {
+                setIsDismissable(!visible);
+              }}
+            >
+              <Masonry breakpointCols={breakpointColumnsObj} className="masonry-grid mb-12" columnClassName="masonry-grid_column">
+                {data?.images?.map((item, index) => (
+                  <PhotoView src={item} key={index}>
+                    <img src={item} alt="" className="mb-3 w-full cursor-pointer rounded-2xl" />
+                  </PhotoView>
+                ))}
+              </Masonry>
+            </PhotoProvider>
+          </div>
+        </div>
       </Modal>
     </>
   );

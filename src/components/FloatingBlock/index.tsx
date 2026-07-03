@@ -2,7 +2,7 @@
 
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Button, useDisclosure } from '@heroui/react';
+import { Button, useDisclosure } from '@/ThriveUI';
 import { BiCog, BiCommand } from 'react-icons/bi';
 import { IoSearchOutline, IoArrowUpOutline, IoLogoRss } from 'react-icons/io5';
 import { useConfigStore } from '@/stores';
@@ -16,8 +16,8 @@ const FloatingBlock = () => {
   const [isDragging, setIsDragging] = useState(false); // 拖拽状态
   const constraintsRef = useRef(null); // 拖拽约束参考
   const { isDark, setIsDark, web } = useConfigStore();
-  const { isOpen: isSearchOpen, onClose: onSearchClose, onOpenChange: onSearchOpenChange } = useDisclosure();
-  const { isOpen: isRssOpen, onClose: onRssClose, onOpenChange: onRssOpenChange } = useDisclosure();
+  const { isOpen: isSearchOpen, onOpen: onSearchOpen, onClose: onSearchClose } = useDisclosure();
+  const { isOpen: isRssOpen, onOpen: onRssOpen, onClose: onRssClose } = useDisclosure();
 
   const toggleExpanded = () => {
     // 如果正在拖拽，不触发展开/收起
@@ -61,13 +61,13 @@ const FloatingBlock = () => {
       icon: IoSearchOutline,
       id: 'search',
       label: '搜索',
-      onClick: onSearchOpenChange,
+      onClick: onSearchOpen,
     },
     {
       icon: IoLogoRss,
       id: 'rss',
       label: 'RSS 订阅',
-      onClick: onRssOpenChange,
+      onClick: onRssOpen,
     },
     {
       icon: IoArrowUpOutline,
@@ -189,10 +189,10 @@ const FloatingBlock = () => {
       </motion.div>
 
       {/* 搜索组件 */}
-      <Search disclosure={{ isOpen: isSearchOpen, onClose: onSearchClose, onOpenChange: onSearchOpenChange }} />
+      <Search disclosure={{ isOpen: isSearchOpen, onClose: onSearchClose }} />
 
       {/* 查看Rss地址 */}
-      <Rss data={web} disclosure={{ isOpen: isRssOpen, onClose: onRssClose, onOpenChange: onRssOpenChange }} />
+      <Rss data={web} disclosure={{ isOpen: isRssOpen, onClose: onRssClose }} />
       </motion.div>
     </div>
   );

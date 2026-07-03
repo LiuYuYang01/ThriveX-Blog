@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { getTagListAPI } from '@/api/tag';
 import { Tag } from '@/types/app/tag';
 import { getRandom } from '@/utils';
-import { Tooltip } from '@heroui/react';
+import { Tooltip } from '@/ThriveUI';
 import tag from './svg/tag.svg';
 
 export default () => {

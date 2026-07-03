@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { Project } from '@/types/app/my';
-import { Tabs, Tab, Card, CardBody } from '@heroui/react';
+import { Tabs, Tab, Card, CardBody } from '@/ThriveUI';
 import { PhotoProvider, PhotoView } from 'react-photo-view';
 import 'react-photo-view/dist/react-photo-view.css';
 
@@ -21,9 +21,9 @@ export default ({ data }: { data: Project[] }) => {
 
         <div className="w-[80%] xl:w-[1200px] mx-auto">
           <div className="flex w-full flex-col">
-            <Tabs aria-label="Options" placement="top" classNames={{ tabList: 'dark:bg-black-b', tabWrapper: 'flex flex-col', base: 'justify-center', tab: '[&>span]:dark:bg-[#3a4250]' }}>
+            <Tabs className="flex w-full flex-col justify-center">
               {data?.map((item, index) => (
-                <Tab key={index} title={item.name}>
+                <Tab key={index} tabKey={String(index)} title={item.name}>
                   <Card>
                     <CardBody className="flex-col md:flex-row md:space-x-10 py-5 dark:bg-black-b  ">
                       <div className="sticky top-0 w-full md:w-2/6 px-4">

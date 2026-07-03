@@ -17,7 +17,8 @@ import { ArticleShareProvider } from '../components/Share';
 import { ArticleActionBar } from '../components/ActionBar';
 import MD from '../components/MD';
 import Summary from '../components/Summary';
-import Nav from '../components/Nav';
+import ArticleTOC from '../components/ArticleTOC';
+import { extractArticleHeadings } from '@/utils/article';
 
 import { IoMdPricetags } from 'react-icons/io';
 import { FaHotjar } from 'react-icons/fa';
@@ -105,6 +106,8 @@ export default async (props: Props) => {
   // 记录文章访问量
   await recordViewAPI(id);
 
+  const headings = extractArticleHeadings(data?.content);
+
   // 图标样式
   const iconSty = 'flex justify-center items-center w-5 h-5 rounded-full text-xs mr-1';
 
@@ -117,7 +120,8 @@ export default async (props: Props) => {
         <meta name="description" content={data.description} />
 
         <div className="ArticlePage">
-          <Slide src={heroSrc}>
+          <div id="article-hero">
+            <Slide src={heroSrc}>
             {/* 星空背景组件 */}
             <Starry />
 
@@ -156,11 +160,13 @@ export default async (props: Props) => {
                 </div>
               </div>
             </div>
-          </Slide>
+            </Slide>
+          </div>
 
           <div className="w-[90%] xl:w-6/12 mx-auto mt-12 relative">
-            <Summary content={data?.description || ''} />
-            <MD data={data?.content} />
+            <ArticleTOC headings={headings}>
+              <Summary content={data?.description || ''} />
+              <MD data={data?.content} headings={headings} />
 
             <ArticleActionBar
               commentCount={data?.comment ?? 0}
@@ -182,9 +188,8 @@ export default async (props: Props) => {
               <UpAndDown currentId={id} prev={data?.prev} next={data?.next} />
               <Comment articleId={id} articleTitle={data.title} />
             </div>
+            </ArticleTOC>
           </div>
-
-          <Nav />
         </div>
         </ArticleShareProvider>
       </ArticleLikeProvider>

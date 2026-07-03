@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useEffect, useRef, useState, useMemo } from 'react';
-import ReactMarkdown from 'react-markdown';
+import ReactMarkdown, { type Components } from 'react-markdown';
+import type { TocHeading } from '@/utils/article';
 import { useConfigStore } from '@/stores';
 import { PhotoProvider, PhotoView } from 'react-photo-view';
 import { ToastContainer, toast } from 'react-toastify';
@@ -27,11 +28,28 @@ import 'highlight.js/styles/atom-one-dark.css';
 
 interface Props {
   data: string;
+  headings?: TocHeading[];
 }
 
-const ContentMD = ({ data }: Props) => {
+function createHeadingComponents(headings: TocHeading[], indexRef: React.MutableRefObject<number>): Components {
+  const nextId = () => headings[indexRef.current++]?.id;
+
+  return {
+    h1: ({ children }) => <h1 id={nextId()}>{children}</h1>,
+    h2: ({ children }) => <h2 id={nextId()}>{children}</h2>,
+    h3: ({ children }) => <h3 id={nextId()}>{children}</h3>,
+  };
+}
+
+const ContentMD = ({ data, headings = [] }: Props) => {
   const { isDark } = useConfigStore();
   const [isClient, setIsClient] = useState(false);
+  const headingIndexRef = useRef(0);
+
+  const headingComponents = useMemo(
+    () => createHeadingComponents(headings, headingIndexRef),
+    [headings],
+  );
 
   useEffect(() => {
     setIsClient(true);
@@ -224,13 +242,15 @@ const ContentMD = ({ data }: Props) => {
     },
   };
 
+  headingIndexRef.current = 0;
+
   return (
     <div className="ContentMdComponent">
       <ToastContainer autoClose={1000} hideProgressBar />
 
       <PhotoProvider>
         <div className="content markdown-body">
-          <ReactMarkdown components={renderers} remarkPlugins={[[remarkGfm, { singleTilde: false }], remarkMath, remarkMark]} rehypePlugins={[rehypeRaw, rehypeKatex, rehypeCallouts, rehypeSemanticBlockquotes]}>
+          <ReactMarkdown components={{ ...renderers, ...headingComponents }} remarkPlugins={[[remarkGfm, { singleTilde: false }], remarkMath, remarkMark]} rehypePlugins={[rehypeRaw, rehypeKatex, rehypeCallouts, rehypeSemanticBlockquotes]}>
             {data}
           </ReactMarkdown>
         </div>

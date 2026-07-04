@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import RecordCard from './components/RecordCard';
+import RecordSidebar from './components/Sidebar';
 import { getRecordListAPI } from '@/api/record';
 import { getAuthorDataAPI } from '@/api/user';
 import { Record } from '@/types/app/record';
@@ -9,33 +10,33 @@ import { User } from '@/types/app/user';
 import Empty from '@/components/Empty';
 import Show from '@/components/Show';
 import Loading from '@/components/Loading';
-import { getWebConfigDataAPI } from '@/api/config';
-import { Theme } from '@/types/app/config';
+import { TextField } from '@/ThriveUI';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
+const RECORD_PAGE = {
+  title: '日记',
+  subtitle: '记录生活，遇见美好',
+  metaTitle: '闪念',
+} as const;
 
 export default () => {
   const [records, setRecords] = useState<Record[]>([]);
   const [user, setUser] = useState<User | null>(null);
-  const [theme, setTheme] = useState<Theme>({} as Theme);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [initialLoading, setInitialLoading] = useState(true);
+  const [keyword, setKeyword] = useState('');
   const currentPageRef = useRef(1);
 
-  // 获取记录列表
   const fetchRecordList = useCallback(async (page: number, append: boolean = false) => {
     setLoading(true);
     try {
       const { data: recordData } = await getRecordListAPI({ pageNum: page, pageSize: 8 });
 
-      if (recordData?.result && recordData?.result?.length > 0) {
-        if (append) {
-          setRecords((prev) => [...prev, ...recordData.result]);
-        } else {
-          setRecords(recordData.result);
-        }
+      if (recordData?.result?.length) {
+        setRecords((prev) => (append ? [...prev, ...recordData.result] : recordData.result));
         setTotalPages(recordData.pages ?? 1);
         setHasMore(page < (recordData.pages ?? 1));
         currentPageRef.current = page;
@@ -51,21 +52,11 @@ export default () => {
     }
   }, []);
 
-  // 初始加载：获取用户信息、主题配置和第一页记录
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
-        // 并行获取用户信息、主题配置和第一页记录
-        const [userResponse, themeResponse] = await Promise.all([getAuthorDataAPI(), getWebConfigDataAPI<{ value: Theme }>('theme')]);
-
-        if (userResponse?.data) {
-          setUser(userResponse.data);
-        }
-        if (themeResponse?.data?.value) {
-          setTheme(themeResponse.data.value);
-        }
-
-        // 获取第一页记录
+        const userResponse = await getAuthorDataAPI();
+        if (userResponse?.data) setUser(userResponse.data);
         setRecords([]);
         setHasMore(true);
         setInitialLoading(true);
@@ -79,102 +70,105 @@ export default () => {
     fetchInitialData();
   }, [fetchRecordList]);
 
-  // 滚动监听
   useEffect(() => {
     const handleScroll = () => {
-      // 如果正在加载或没有更多数据，则不处理
       if (loading || !hasMore) return;
-
-      // 检查是否滚动到底部（距离底部100px时触发）
       const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
       const windowHeight = window.innerHeight;
       const documentHeight = document.documentElement.scrollHeight;
-
       if (scrollTop + windowHeight >= documentHeight - 100) {
         const nextPage = currentPageRef.current + 1;
-        if (nextPage <= totalPages) {
-          fetchRecordList(nextPage, true);
-        }
+        if (nextPage <= totalPages) fetchRecordList(nextPage, true);
       }
     };
-
-    // 使用防抖优化滚动事件
     let timeoutId: NodeJS.Timeout;
-    const debouncedHandleScroll = () => {
+    const debounced = () => {
       clearTimeout(timeoutId);
       timeoutId = setTimeout(handleScroll, 200);
     };
-
-    window.addEventListener('scroll', debouncedHandleScroll);
+    window.addEventListener('scroll', debounced);
     return () => {
-      window.removeEventListener('scroll', debouncedHandleScroll);
+      window.removeEventListener('scroll', debounced);
       clearTimeout(timeoutId);
     };
   }, [hasMore, loading, totalPages, fetchRecordList]);
 
+  const filteredRecords = useMemo(() => {
+    const q = keyword.trim().toLowerCase();
+    if (!q) return records;
+    return records.filter(
+      (r) =>
+        r.content?.toLowerCase().includes(q) ||
+        r.location?.toLowerCase().includes(q) ||
+        r.mood?.includes(q),
+    );
+  }, [records, keyword]);
+
   return (
     <>
-      <title>🏕️ 闪念</title>
-      <meta name="description" content="🏕️ 闪念" />
+      <title>🏕️ {RECORD_PAGE.metaTitle}</title>
+      <meta name="description" content={RECORD_PAGE.subtitle} />
 
-      {/* 背景装饰 */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(148,163,184,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,0.06)_1px,transparent_1px)] bg-[size:64px_64px]" />
-        <div className="absolute -top-1/2 left-1/2 -translate-x-1/2 w-[800px] h-[800px] rounded-full bg-primary/6 blur-[120px]" />
-        <div className="absolute top-1/4 right-0 w-96 h-96 rounded-full bg-violet-400/8 blur-[80px]" />
-        <div className="absolute bottom-1/4 left-0 w-80 h-80 rounded-full bg-cyan-400/8 blur-[80px]" />
-      </div>
+      <div className="min-h-screen bg-[linear-gradient(110deg,#fbfbfc_0%,#f7f8fa_58%,#fbfbfc_100%)] px-4 py-10 pt-24 dark:bg-[linear-gradient(to_right,#232931_0%,#232931_100%)] sm:px-6">
+        <div className="mx-auto max-w-[1200px]">
+          <header className="mb-4 sm:mb-10 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h1 className="m-0 text-[32px] font-semibold tracking-normal text-[#161a22] dark:text-slate-100">
+                {RECORD_PAGE.title}
+              </h1>
+              <p className="mt-2 text-sm text-[#788190] dark:text-slate-400">{RECORD_PAGE.subtitle}</p>
+            </div>
 
-      <div className="min-h-screen bg-slate-50 dark:bg-[linear-gradient(to_right,#232931_0%,#232931_100%)] py-10 px-4 sm:px-6 pt-24">
-        <div className="max-w-2xl mx-auto">
-          {/* 顶部标题区 */}
-          <header className="flex items-center flex-col p-6 sm:p-8 mb-12 rounded-2xl bg-white dark:bg-black-b shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] dark:shadow-none border border-slate-100 dark:border-black-b bg-[url('https://bu.dusays.com/2025/12/04/6930fe4e06985.jpg')] bg-no-repeat bg-center bg-cover text-center">
-            <img src={user?.avatar || ''} alt="作者头像" width={80} height={80} className="w-20 h-20 rounded-full object-cover ring-4 ring-white/30 dark:ring-slate-800/50 shadow-lg avatar-animation" />
-            <h1 className="mt-4 text-2xl sm:text-3xl font-serif font-bold text-white tracking-tight drop-shadow-sm">{theme?.record_name}</h1>
-            <p className="mt-2 text-sm text-white/90 drop-shadow-sm">{theme?.record_info}</p>
+            <TextField
+              value={keyword}
+              onChange={(e) => setKeyword(e.target.value)}
+              type="text"
+              inputMode="search"
+              placeholder="搜索日记、标签..."
+              fieldClassName="w-full sm:w-[250px]"
+              className="text-[13px] shadow-[0_10px_34px_rgba(37,45,60,0.05)] dark:bg-black-b"
+              endContent={
+                <svg className="h-4 w-4 text-[#313845] dark:text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.85">
+                  <circle cx="11" cy="11" r="7" />
+                  <path d="m20 20-3.5-3.5" />
+                </svg>
+              }
+            />
           </header>
 
           {initialLoading ? (
-            <div className="flex justify-center items-center py-20">
+            <div className="flex justify-center py-20">
               <Loading />
             </div>
           ) : (
-            <>
-              <div>
-                {!!records?.length && records.map((item) => <RecordCard key={item.id} id={item.id as any} content={item.content as any} images={item.images as any} likeCount={item.likeCount} createTime={item.createTime as any} user={user as any} />)}
-
-                <Show is={!records?.length}>
-                  <Empty info="内容为空~" />
+            <div className="grid items-start gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(280px,374px)]">
+              <section className="grid gap-3">
+                {filteredRecords.map((item) => (
+                  <RecordCard
+                    key={item.id}
+                    id={item.id as number}
+                    content={item.content}
+                    images={item.images}
+                    likeCount={item.likeCount}
+                    mood={item.mood}
+                    location={item.location}
+                    createTime={item.createTime}
+                    user={user}
+                  />
+                ))}
+                <Show is={!filteredRecords.length}>
+                  <Empty info={keyword ? '没有匹配的闪念~' : '内容为空~'} />
                 </Show>
-              </div>
+                {loading && records.length > 0 && (
+                  <div className="flex justify-center py-6 text-sm text-slate-500">正在加载...</div>
+                )}
+                {!hasMore && records.length > 0 && (
+                  <div className="flex justify-center py-6 text-sm text-slate-500">没有更多内容了</div>
+                )}
+              </section>
 
-              {/* 底部结束符 */}
-              {records.length > 0 && (
-                <div className="flex justify-center mt-8 opacity-50">
-                  <div className="w-1.5 h-1.5 bg-slate-300 dark:bg-slate-600 rounded-full mx-1" />
-                  <div className="w-1.5 h-1.5 bg-slate-300 dark:bg-slate-600 rounded-full mx-1" />
-                  <div className="w-1.5 h-1.5 bg-slate-300 dark:bg-slate-600 rounded-full mx-1" />
-                </div>
-              )}
-
-              {/* 懒加载指示器 */}
-              {loading && records.length > 0 && (
-                <div className="flex justify-center items-center py-8 mt-5 gap-2">
-                  <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400 text-sm">
-                    <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                    </svg>
-                    <span>正在加载...</span>
-                  </div>
-                </div>
-              )}
-              {!hasMore && records.length > 0 && (
-                <div className="flex justify-center items-center py-8 mt-5">
-                  <div className="text-slate-500 dark:text-slate-400 text-sm">没有更多内容了</div>
-                </div>
-              )}
-            </>
+              <RecordSidebar records={records} user={user} />
+            </div>
           )}
         </div>
       </div>

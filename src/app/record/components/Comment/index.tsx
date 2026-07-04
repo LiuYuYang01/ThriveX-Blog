@@ -16,6 +16,7 @@ import { useConfigStore } from '@/stores';
 
 interface Props {
   recordId: number;
+  onCountChange?: (count: number) => void;
 }
 
 interface CommentForm {
@@ -38,11 +39,11 @@ const toastConfig: ToastOptions = {
   transition: Bounce,
 };
 
-export default function RecordCommentPanel({ recordId }: Props) {
+export default function RecordCommentPanel({ recordId, onCountChange }: Props) {
   const [comments, setComments] = useState<RecordComment[]>([]);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [showForm, setShowForm] = useState(false);
+  const [showForm, setShowForm] = useState(true);
   const [commentId, setCommentId] = useState(0);
   const [placeholder, setPlaceholder] = useState('写评论…');
   const captchaRef = useRef<HCaptchaType>(null);
@@ -60,12 +61,13 @@ export default function RecordCommentPanel({ recordId }: Props) {
     try {
       const { data } = await getRecordCommentListAPI(recordId, { pageNum: 1, pageSize: 50 });
       setComments(data.result ?? []);
+      onCountChange?.(data.total ?? 0);
     } catch (error) {
       console.error('获取说说评论失败:', error);
     } finally {
       setLoading(false);
     }
-  }, [recordId]);
+  }, [recordId, onCountChange]);
 
   useEffect(() => {
     const info = JSON.parse(localStorage.getItem('comment_data') || '{}');
@@ -137,31 +139,31 @@ export default function RecordCommentPanel({ recordId }: Props) {
 
     toast.success('🎉 评论已提交！请等待管理员审核', toastConfig);
     reset({ ...data, content: '' });
-    closeForm();
+    setCommentId(0);
+    setPlaceholder('写评论…');
+    setCaptchaToken(null);
+    setCaptchaError('');
+    captchaRef.current?.resetCaptcha();
     localStorage.setItem('comment_data', JSON.stringify(data));
     setSubmitting(false);
     void fetchComments();
   };
 
-  const totalCount = comments.reduce((sum, item) => sum + 1 + (item.children?.length ?? 0), 0);
-
   return (
-    <div className="mt-4 pt-4 border-t border-slate-100 dark:border-slate-700/50">
+    <div>
       <div className="flex items-center justify-between gap-2 text-sm text-slate-400 dark:text-slate-500">
         <div className="flex items-center gap-1.5">
           <RiMessage3Line className="w-4 h-4" />
-          <span>{totalCount > 0 ? `${totalCount} 条评论` : '评论'}</span>
+          <span>想对我说些什么？</span>
         </div>
-        {!showForm && (
-          <button
-            type="button"
-            onClick={openCommentForm}
-            className="flex items-center justify-center w-8 h-8 rounded-lg text-slate-400 hover:text-primary hover:bg-slate-100 dark:hover:bg-white/5 transition-colors"
-            aria-label="评论"
-          >
-            <RiMessage3Line className="w-4 h-4" />
-          </button>
-        )}
+        <button
+          type="button"
+          onClick={openCommentForm}
+          className="flex items-center justify-center w-8 h-8 rounded-lg text-slate-400 hover:text-primary hover:bg-slate-100 dark:hover:bg-white/5 transition-colors cursor-pointer"
+          aria-label="评论"
+        >
+          <RiMessage3Line className="w-4 h-4" />
+        </button>
       </div>
 
       <div className="mt-3 space-y-3">
@@ -257,19 +259,19 @@ export default function RecordCommentPanel({ recordId }: Props) {
                 className="min-h-20 text-sm"
               />
 
-              <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+              <div className="flex gap-2">
                 <Input
                   name="name"
                   placeholder="昵称"
                   rules={{ required: '请输入昵称' }}
-                  fieldClassName="min-w-0"
+                  fieldClassName="w-28 shrink-0 sm:w-32"
                   className="text-sm"
                 />
                 <Input
                   name="url"
                   placeholder="网站（选填）"
                   rules={{ pattern: { value: /^https?:\/\//, message: '请输入有效链接' } }}
-                  fieldClassName="min-w-0"
+                  fieldClassName="min-w-0 flex-1"
                   className="text-sm"
                 />
               </div>
@@ -281,11 +283,12 @@ export default function RecordCommentPanel({ recordId }: Props) {
                 </div>
               )}
 
-              <div className="flex items-center gap-2">
-                <Button type="button" variant="light" size="sm" onPress={closeForm}>
+              <div className="flex items-end gap-2">
+                <div className="flex-1"></div>
+                <Button type="button" variant="flat" onPress={closeForm}>
                   取消
                 </Button>
-                <Button type="submit" color="primary" size="sm" isLoading={submitting} className="ml-auto">
+                <Button type="submit" color="primary" isLoading={submitting}>
                   发表评论
                 </Button>
               </div>

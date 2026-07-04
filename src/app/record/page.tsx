@@ -14,12 +14,6 @@ import { TextField } from '@/ThriveUI';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const RECORD_PAGE = {
-  title: '日记',
-  subtitle: '记录生活，遇见美好',
-  metaTitle: '闪念',
-} as const;
-
 export default () => {
   const [records, setRecords] = useState<Record[]>([]);
   const [user, setUser] = useState<User | null>(null);
@@ -106,17 +100,17 @@ export default () => {
 
   return (
     <>
-      <title>🏕️ {RECORD_PAGE.metaTitle}</title>
-      <meta name="description" content={RECORD_PAGE.subtitle} />
+      <title>日记</title>
+      <meta name="description" content="记录生活，遇见美好" />
 
       <div className="min-h-screen bg-[linear-gradient(110deg,#fbfbfc_0%,#f7f8fa_58%,#fbfbfc_100%)] px-4 py-10 pt-24 dark:bg-[linear-gradient(to_right,#232931_0%,#232931_100%)] sm:px-6">
         <div className="mx-auto max-w-[1200px]">
           <header className="mb-4 sm:mb-10 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h1 className="m-0 text-[32px] font-semibold tracking-normal text-[#161a22] dark:text-slate-100">
-                {RECORD_PAGE.title}
+                日记
               </h1>
-              <p className="mt-2 text-sm text-[#788190] dark:text-slate-400">{RECORD_PAGE.subtitle}</p>
+              <p className="mt-2 text-sm text-[#788190] dark:text-slate-400">记录生活，遇见美好</p>
             </div>
 
             <TextField

@@ -86,7 +86,7 @@ export default () => {
   return (
     <>
       <div className={`header fixed inset-x-0 top-0 w-full h-[50px] z-50 overflow-visible after:content-[''] after:block after:w-full after:h-0 after:bg-[linear-gradient(#fff,transparent_70%)] dark:after:bg-[linear-gradient(#2b333e,transparent_70%)] ${isPathSty || isScrolled ? 'bg-[rgba(255,255,255,0.5)] dark:bg-[rgba(44,51,62,0.7)] backdrop-blur-md border-b dark:border-[#2b333e] after:h-5! after:transition-height]' : 'border-transparent'}`}>
-        <div className="grid grid-cols-[auto_1fr_auto] grid-rows-[50px] h-[50px] md:flex md:justify-between items-center w-full max-w-[1200px] mx-auto px-4 md:px-6">
+        <div className="grid grid-cols-[auto_1fr_auto] grid-rows-[50px] h-[50px] md:flex md:justify-between items-center w-full max-w-[1200px] mx-auto px-4 md:px-6 lg:px-0!">
           <div
             className="md:hidden group flex items-center justify-center size-9 shrink-0 rounded-full transition-colors cursor-pointer hover:bg-[#e9edf4] dark:hover:bg-[#455162]"
             onClick={() => setIsOpenSidebarNav(true)}
@@ -96,7 +96,7 @@ export default () => {
 
           <div className="flex h-[50px] items-center justify-center md:justify-start min-w-0 md:flex-1 overflow-visible">
             {/* logo */}
-            <Link href="/" className="flex items-center h-[50px] px-5 text-[15px]">
+            <Link href="/" className="flex items-center h-[50px] text-[15px]">
               {isDark ? <img src={theme?.dark_logo} alt="Logo" className="h-10 w-auto object-contain pr-0 md:pr-5 hover:scale-90 transition-transform" /> : <img src={isPathSty || isScrolled ? theme?.light_logo : theme?.dark_logo} alt="Logo" className="h-10 w-auto object-contain pr-0 md:pr-5 hover:scale-90 transition-transform" />}
             </Link>
 

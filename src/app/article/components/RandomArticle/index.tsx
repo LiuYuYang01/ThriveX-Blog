@@ -65,7 +65,7 @@ const RandomArticle = () => {
                       <div className="absolute inset-0 bg-slate-400/50 dark:bg-slate-600/50" />
                     )}
                     <div
-                      className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent pointer-events-none"
+                      className="absolute inset-0 bg-linear-to-t from-black/70 via-transparent to-transparent pointer-events-none"
                       aria-hidden
                     />
                     <h4 className="absolute bottom-3 left-3 right-3 text-[0.9375rem] font-semibold text-white m-0 line-clamp-2 overflow-hidden leading-snug [text-shadow:0_1px_2px_rgba(0,0,0,0.5)] z-[2] group-hover:text-primary transition-colors">

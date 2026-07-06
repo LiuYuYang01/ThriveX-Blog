@@ -12,7 +12,7 @@ import Masonry from 'react-masonry-css';
 import { dayFormat } from '@/utils';
 
 // 引入图标
-import { HiOutlineClock, HiOutlineHashtag } from 'react-icons/hi2';
+import { HiOutlineClock, HiOutlineHashtag, HiOutlineArrowTopRightOnSquare } from 'react-icons/hi2';
 import { TbRipple } from 'react-icons/tb';
 
 // 瀑布流断点配置
@@ -50,7 +50,7 @@ export default function FishpondPage() {
   const ContentRenderer = ({ content, mode = 'html' }: { content: string; mode?: 'html' | 'text' }) => {
     if (mode === 'text') {
       const summary = HTMLParser.getSummary(content, 150);
-      return <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-400 text-justify line-clamp-4">{summary.text}</p>;
+      return <p className="text-[13px] leading-relaxed text-[#788190] dark:text-slate-400 text-justify line-clamp-4">{summary.text}</p>;
     }
 
     const cleanHTML = HTMLParser.sanitize(content, {
@@ -59,12 +59,12 @@ export default function FishpondPage() {
       maxLength: 150,
     });
 
-    return <div className="text-sm leading-relaxed text-slate-600 dark:text-slate-400 text-justify line-clamp-4 prose prose-sm dark:prose-invert max-w-none prose-a:text-blue-500 prose-a:no-underline hover:prose-a:underline">{parse(cleanHTML)}</div>;
+    return <div className="text-[13px] leading-relaxed text-[#788190] dark:text-slate-400 text-justify line-clamp-4 prose prose-sm dark:prose-invert max-w-none prose-a:text-primary prose-a:no-underline">{parse(cleanHTML)}</div>;
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-[linear-gradient(110deg,#fbfbfc_0%,#f7f8fa_58%,#fbfbfc_100%)] dark:bg-[linear-gradient(to_right,#232931_0%,#232931_100%)]">
         <Loading />
       </div>
     );
@@ -75,62 +75,52 @@ export default function FishpondPage() {
       <title>🐟 鱼塘 | Rss Feed</title>
       <meta name="description" content="汇聚好友与订阅的动态鱼塘" />
 
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(148,163,184,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,0.06)_1px,transparent_1px)] bg-[size:64px_64px]" />
-        <div className="absolute -top-1/2 left-1/2 -translate-x-1/2 w-[800px] h-[800px] rounded-full bg-primary/6 blur-[120px]" />
-        <div className="absolute top-1/4 right-0 w-96 h-96 rounded-full bg-violet-400/8 blur-[80px]" />
-        <div className="absolute bottom-1/4 left-0 w-80 h-80 rounded-full bg-cyan-400/8 blur-[80px]" />
-      </div>
-
-      <div className="w-full min-h-screen pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-[1920px] mx-auto">
-        <div className="relative mb-14 flex flex-col items-center select-none pt-6 md:pt-12">
-          <div className="inline-flex items-center justify-center gap-3 mb-4">
-            <TbRipple className="text-4xl text-blue-500 animate-pulse" />
-            <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white">鱼 塘</h2>
+      <div className="min-h-screen bg-[linear-gradient(110deg,#fbfbfc_0%,#f7f8fa_58%,#fbfbfc_100%)] dark:bg-[linear-gradient(to_right,#232931_0%,#232931_100%)] pt-24 pb-12 px-4 sm:px-6 lg:px-8">
+        <div className="w-full max-w-[1920px] mx-auto">
+          <div className="relative mb-14 flex flex-col items-center select-none pt-6 md:pt-12">
+            <div className="inline-flex items-center justify-center gap-3 mb-4">
+              <TbRipple className="text-4xl text-blue-500 animate-pulse" />
+              <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight text-[#161a22] dark:text-slate-100">鱼 塘</h2>
+            </div>
+            <p className="text-[#788190] dark:text-slate-400 text-sm md:text-base">潜入信息的海洋，捕获最新鲜的动态</p>
           </div>
-          <p className="text-slate-500 dark:text-slate-400 text-sm md:text-base">潜入信息的海洋，捕获最新鲜的动态</p>
-          <div className="absolute -bottom-6 w-32 h-1 bg-gradient-to-r from-transparent via-blue-500/50 to-transparent rounded-full blur-[1px]"></div>
-        </div>
 
-        <div className="mt-24">
+          <div className="mt-10">
           {rssData && rssData.length > 0 ? (
-            <Masonry breakpointCols={breakpointColumnsObj} className="flex w-auto -ml-6" columnClassName="pl-2 bg-clip-padding flex flex-col gap-2">
+            <Masonry breakpointCols={breakpointColumnsObj} className="flex w-auto -ml-5" columnClassName="pl-5 bg-clip-padding flex flex-col gap-5">
               {rssData.map((item, index) => {
                 const authorName = item.email ? item.email.split('@')[0] : '匿名用户';
 
                 return (
-                  <article key={`${item.url}-${index}`} className="group relative bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl border border-white/50 dark:border-slate-800/80 rounded-2xl p-5 sm:p-6 transition-[transform,box-shadow] duration-300 hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] dark:hover:shadow-[0_8px_30px_rgba(255,255,255,0.02)] hover:-translate-y-1 overflow-hidden break-inside-avoid">
-                    <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-blue-500/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-
-                    <div className="flex justify-between items-start mb-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-11 h-11 rounded-full overflow-hidden ring-2 ring-slate-100 dark:ring-slate-800 flex-shrink-0 bg-slate-50 dark:bg-slate-800">{item.image ? <img src={item.image} alt={authorName} className="w-full h-full object-cover" /> : <RandomAvatar className="w-full h-full" />}</div>
-                        <div className="flex flex-col">
-                          <span className="text-sm font-bold text-slate-800 dark:text-slate-200 line-clamp-1">{authorName}</span>
-                          <div className="flex items-center text-[11px] text-slate-400 dark:text-slate-500 mt-0.5 font-medium">
-                            <HiOutlineClock className="mr-1 text-[13px]" />
-                            {item.createTime ? dayFormat(item.createTime) : '近期'}
-                          </div>
+                  <article key={`${item.url}-${index}`} className="relative flex flex-col cursor-pointer rounded-xl border border-[#edf0f4] bg-white/85 px-5 py-5 shadow-[0_18px_55px_rgba(33,42,58,0.08)] dark:border-white/10 dark:bg-black-b dark:shadow-none sm:px-6 sm:py-6 overflow-hidden break-inside-avoid">
+                    <div className="flex items-center gap-3 pb-4 mb-4 border-b border-[#edf0f4] dark:border-white/5">
+                      <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 bg-[#f7f8fa] dark:bg-white/5">{item.image ? <img src={item.image} alt={authorName} className="w-full h-full object-cover" /> : <RandomAvatar className="w-full h-full" />}</div>
+                      <div className="flex flex-col min-w-0">
+                        <span className="text-sm font-semibold text-[#161a22] dark:text-slate-100 line-clamp-1">{authorName}</span>
+                        <div className="flex items-center text-[11px] text-[#8a94a3] dark:text-slate-500 mt-0.5">
+                          <HiOutlineClock className="mr-1 text-xs shrink-0" />
+                          {item.createTime ? dayFormat(item.createTime) : '近期'}
                         </div>
                       </div>
                     </div>
 
-                    <div className="mb-5">
-                      <h3 className="text-lg font-bold leading-tight mb-3">
-                        <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-slate-900 dark:text-slate-100 no-underline group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-[color] duration-300 inline-flex items-baseline gap-1.5">
+                    <div className="flex-1 mb-4">
+                      <h3 className="text-base sm:text-[17px] font-bold leading-snug mb-2.5">
+                        <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-[#161a22] dark:text-slate-100 no-underline inline-flex items-start gap-1.5">
                           <span className="line-clamp-2">{item.title}</span>
+                          <HiOutlineArrowTopRightOnSquare className="w-3.5 h-3.5 mt-1 shrink-0 opacity-40" />
                         </a>
                       </h3>
 
                       <div className="relative">
                         <ContentRenderer content={item.description} />
-                        <div className="absolute bottom-0 left-0 w-full h-8 bg-gradient-to-t from-white/70 dark:from-slate-900/60 to-transparent pointer-events-none"></div>
+                        <div className="absolute bottom-0 left-0 w-full h-10 bg-linear-to-t from-white/85 dark:from-black-b to-transparent pointer-events-none" />
                       </div>
                     </div>
 
-                    <div className="flex items-center mt-auto pt-4 border-t border-slate-100 dark:border-slate-800/80">
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 text-[11px] rounded-lg font-medium hover:bg-slate-200 dark:hover:bg-slate-700">
-                        <HiOutlineHashtag className="text-blue-500/80" />
+                    <div className="flex items-center pt-3 border-t border-[#edf0f4] dark:border-white/5">
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-[#f7f8fa] text-[#788190] text-[11px] rounded-full font-medium dark:bg-white/5 dark:text-slate-400">
+                        <HiOutlineHashtag className="text-xs" />
                         {item.type || '未分类'}
                       </span>
                     </div>
@@ -143,6 +133,7 @@ export default function FishpondPage() {
               <Empty info="鱼塘里暂时没有鱼儿游过~" />
             </div>
           )}
+          </div>
         </div>
       </div>
     </>

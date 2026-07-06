@@ -119,7 +119,7 @@ export default ({ data }: { data: Resume }) => {
         <div className="absolute bottom-1/4 left-0 w-80 h-80 rounded-full bg-cyan-400/8 blur-[80px]" />
       </div>
 
-      <div className="min-h-screen py-8 mt-[60px] px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+      <div className="min-h-screen py-8 mt-[60px] px-4 sm:px-6 lg:px-8 bg-linear-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
         <motion.div initial="hidden" animate="visible" variants={containerVariants} className="max-w-5xl mx-auto">
           {/* 个人信息头部 */}
           <motion.div variants={itemVariants} className="mt-4 mb-8 bg-white dark:bg-gray-800 rounded-2xl border dark:border-black-a overflow-hidden">

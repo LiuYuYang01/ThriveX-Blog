@@ -33,7 +33,7 @@ const COMBO_RESET_MS = 900;
 const COMBO_MESSAGES = ['Nice!', '加油!', '太棒了!', '🔥', '666', '❤️‍🔥'];
 
 const BTN_BASE =
-  'like-btn relative z-[2] flex items-center justify-center rounded-full cursor-pointer border-0 outline-none transition-transform duration-[120ms] ease-[cubic-bezier(0.34,1.56,0.64,1)] bg-gradient-to-br from-rose-400 via-rose-500 to-rose-600 active:scale-[0.88]';
+  'like-btn relative z-[2] flex items-center justify-center rounded-full cursor-pointer border-0 outline-none transition-transform duration-[120ms] ease-[cubic-bezier(0.34,1.56,0.64,1)] bg-linear-to-br from-rose-400 via-rose-500 to-rose-600 active:scale-[0.88]';
 
 const BTN_SIZE = {
   sm: 'w-5 h-5 p-0',
@@ -152,7 +152,7 @@ export default function LikeButtonCore({
   const btnClass = cn(
     BTN_BASE,
     BTN_SIZE[btnSize],
-    minimal && 'bg-none bg-rose-500 shadow-md shadow-rose-500/30 group-hover/action:shadow-lg group-hover/action:shadow-rose-500/40',
+    minimal && 'bg-none bg-rose-500 shadow-md shadow-rose-500/30 group-hover:shadow-lg group-hover:shadow-rose-500/40',
     popping && 'like-btn--popping',
     comboShaking && !isHero && 'like-btn--combo-shake',
     isHero && 'like-btn--hero bg-[#e11e63]',

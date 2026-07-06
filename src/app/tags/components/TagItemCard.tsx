@@ -13,7 +13,7 @@ interface TagItemCardProps {
 }
 
 // 颜色数组提取到组件外部，避免重复创建
-const COLORS = ['bg-blue-400', 'bg-green-400', 'bg-yellow-400', 'bg-red-400', 'bg-indigo-400', 'bg-purple-400', 'bg-pink-400'] as const;
+const COLORS = ['bg-blue-400/20', 'bg-green-400/20', 'bg-yellow-400/20', 'bg-red-400/20', 'bg-indigo-400/20', 'bg-purple-400/20', 'bg-pink-400/20'] as const;
 
 const TagItemCard = memo(
   ({ data, count, index }: TagItemCardProps) => {
@@ -26,7 +26,7 @@ const TagItemCard = memo(
     return (
       <Link
         href={href}
-        className={clsx('flex h-10 bg-opacity-20 transition-transform duration-200 hover:scale-105', color)}
+        className={clsx('flex h-10 transition-transform duration-200 hover:scale-105', color)}
         style={{
           borderRadius: '0.5rem',
           margin: '0.5rem',
@@ -38,11 +38,11 @@ const TagItemCard = memo(
         }}
         prefetch={false} // 禁用预取，减少初始加载
       >
-        <LiaTagsSolid className="h-4 w-4 text-gray-400 flex-shrink-0" aria-hidden="true" />
+        <LiaTagsSolid className="h-4 w-4 text-gray-400 shrink-0" aria-hidden="true" />
         <span className="ml-2 truncate max-w-[200px]" title={data?.name}>
           {data?.name}
         </span>
-        <span className="ml-4 text-sm text-gray-400 dark:text-gray-500 flex-shrink-0">{count}</span>
+        <span className="ml-4 text-sm text-gray-400 dark:text-gray-500 shrink-0">{count}</span>
       </Link>
     );
   },

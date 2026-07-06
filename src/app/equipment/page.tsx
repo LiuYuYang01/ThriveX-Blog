@@ -78,7 +78,7 @@ export default async () => {
                     className="group flex flex-col relative bg-white dark:bg-zinc-900 rounded-3xl overflow-hidden border border-zinc-200/80 dark:border-zinc-800/80 transition-[transform,shadow] duration-500 hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-primary/5"
                   >
                     <div className="relative h-56 flex items-center justify-center p-6 overflow-hidden" style={{ backgroundColor: item.color }}>
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-white/10 mix-blend-overlay" />
+                      <div className="absolute inset-0 bg-linear-to-t from-black/20 to-white/10 mix-blend-overlay" />
                       {/* 修复了一点小细节：给 bg-white 加上 /20，不然在浅色模式下可能会太白挡住原产品图 */}
                       <div className="absolute inset-0 bg-white/20 dark:bg-black/20 backdrop-blur-[2px]" />
 

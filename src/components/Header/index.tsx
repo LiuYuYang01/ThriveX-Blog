@@ -109,7 +109,7 @@ export default () => {
 
               {/* 文章分类 */}
               {cateList?.map((one) => (
-                <div key={one.id}>
+                <React.Fragment key={one.id}>
                   {/* 渲染分类 */}
                   {one.type === 'cate' && (
                     <li className="group/one relative">
@@ -195,7 +195,7 @@ export default () => {
                       </Show>
                     </li>
                   )}
-                </div>
+                </React.Fragment>
               ))}
             </ul>
           </div>

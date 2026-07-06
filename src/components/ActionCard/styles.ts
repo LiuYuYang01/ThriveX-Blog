@@ -24,7 +24,7 @@ export type ActionCardTone = 'rose' | 'blue';
 const toneStyles: Record<ActionCardTone, { card: string; divider: string }> = {
   rose: {
     card: cn(
-      'border-rose-100/90 bg-gradient-to-br from-rose-50/80 via-white to-orange-50/40',
+      'border-rose-100/90 bg-linear-to-br from-rose-50/80 via-white to-orange-50/40',
       'shadow-[0_4px_20px_-4px_rgba(244,63,94,0.15)]',
       'dark:border-rose-500/15 dark:from-rose-500/8 dark:via-white/[0.02] dark:to-orange-500/5 dark:shadow-none',
     ),
@@ -32,7 +32,7 @@ const toneStyles: Record<ActionCardTone, { card: string; divider: string }> = {
   },
   blue: {
     card: cn(
-      'border-slate-200/90 bg-gradient-to-br from-slate-50/90 via-white to-blue-50/40',
+      'border-slate-200/90 bg-linear-to-br from-slate-50/90 via-white to-blue-50/40',
       'shadow-[0_4px_20px_-4px_rgba(83,157,253,0.12)]',
       'hover:border-primary/30 hover:shadow-[0_4px_24px_-4px_rgba(83,157,253,0.22)]',
       'dark:border-white/10 dark:from-white/[0.03] dark:via-transparent dark:to-primary/5 dark:shadow-none',
@@ -51,7 +51,7 @@ export function actionCardClass(tone: ActionCardTone, className?: string) {
 
 export function actionCardDividerClass(tone: ActionCardTone) {
   return cn(
-    'mx-3 w-px shrink-0 self-stretch min-h-[3.25rem] bg-gradient-to-b from-transparent to-transparent',
+    'mx-3 w-px shrink-0 self-stretch min-h-[3.25rem] bg-linear-to-b from-transparent to-transparent',
     toneStyles[tone].divider,
   );
 }

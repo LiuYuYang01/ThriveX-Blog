@@ -28,7 +28,7 @@ const TagItem = memo<TagItemProps>(({ icon: Icon, text, isLeft, delay }) => (
     transition={{ duration: 5, delay, repeat: Infinity, repeatType: 'loop', ease: 'linear' }}
     style={{ willChange: 'transform, opacity' }} // 优化动画性能
   >
-    <div className={clsx('inline-flex items-center space-x-2 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-400 px-3 py-1 text-sm shadow-sm')}>
+    <div className={clsx('inline-flex items-center gap-2 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-400 px-3 py-1 text-sm shadow-sm')}>
       <Icon size={14} />
       <span>{text}</span>
     </div>
@@ -57,7 +57,7 @@ const TagRow = memo<TagRowProps>(({ isLeft, rowIndex, tags }) => {
   );
 
   return (
-    <div className={`flex ${isLeft ? 'justify-start' : 'justify-end'} space-x-4 my-8`} style={{ contain: 'layout' }}>
+    <div className={`flex ${isLeft ? 'justify-start' : 'justify-end'} gap-4 my-8`}>
       {rowTags.map((tag) => (
         <TagItem key={tag.key} icon={tag.icon} text={tag.text} isLeft={isLeft} delay={tag.delay} />
       ))}

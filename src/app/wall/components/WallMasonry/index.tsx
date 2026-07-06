@@ -69,7 +69,7 @@ export default ({ walls }: WallMasonryProps) => {
             </div>
 
             {/* Hover 时的光效 */}
-            <div className="absolute inset-0 bg-gradient-to-br from-white/0 via-white/0 to-white/20 dark:from-transparent dark:via-transparent dark:to-white/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+            <div className="absolute inset-0 bg-linear-to-br from-white/0 via-white/0 to-white/20 dark:from-transparent dark:via-transparent dark:to-white/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
           </div>
         );
       })}

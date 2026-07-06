@@ -115,7 +115,7 @@ export default () => {
 
       {/* 背景装饰 */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(148,163,184,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,0.06)_1px,transparent_1px)] bg-[size:64px_64px]" />
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(148,163,184,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,0.06)_1px,transparent_1px)] bg-size-[64px_64px]" />
         <div className="absolute -top-1/2 left-1/2 -translate-x-1/2 w-[800px] h-[800px] rounded-full bg-primary/6 blur-[120px]" />
         <div className="absolute top-1/4 right-0 w-96 h-96 rounded-full bg-violet-400/8 blur-[80px]" />
         <div className="absolute bottom-1/4 left-0 w-80 h-80 rounded-full bg-cyan-400/8 blur-[80px]" />
@@ -128,7 +128,7 @@ export default () => {
             <div className="relative text-center mb-10">
               <h2 className="text-5xl mb-3">留言墙</h2>
               <p className="text-sm text-gray-600 mb-4">有什么想对我说的，来吧</p>
-              <div className="absolute left-1/2 transform -translate-x-1/2 bottom-0 w-24 h-1 bg-gradient-to-r from-transparent via-blue-400 to-transparent rounded-full"></div>
+              <div className="absolute left-1/2 transform -translate-x-1/2 bottom-0 w-24 h-1 bg-linear-to-r from-transparent via-blue-400 to-transparent rounded-full"></div>
             </div>
 
             <div className="mb-8">

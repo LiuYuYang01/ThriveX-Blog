@@ -26,7 +26,7 @@ export default function CateHero({ children, image }: Props) {
   return (
     <header
       id="cate-hero"
-      className="relative flex flex-col items-center justify-center overflow-hidden px-4 pt-16 pb-10 text-center transition-opacity duration-500 ease-out max-md:h-[min(48vh,20rem)] max-md:min-h-[17.5rem] md:min-h-[100dvh] md:px-6 md:pb-24 md:pt-28"
+      className="relative flex flex-col items-center justify-center overflow-hidden px-4 pt-16 pb-10 text-center transition-opacity duration-500 ease-out max-md:h-[min(48vh,20rem)] max-md:min-h-70 md:min-h-dvh md:px-6 md:pb-24 md:pt-28"
       style={{ opacity }}
     >
       <div aria-hidden className="absolute inset-0">
@@ -39,9 +39,9 @@ export default function CateHero({ children, image }: Props) {
           sizes="100vw"
           quality={80}
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/45 via-black/25 to-black/10" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-black/10 via-45% to-transparent md:via-55%" />
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[58%] bg-gradient-to-t from-[#f9f9f9] from-5% via-[#f9f9f9]/75 to-transparent dark:from-black-a dark:via-black-a/75 max-md:h-[68%] md:h-[42%]" />
+        <div className="absolute inset-0 bg-linear-to-r from-black/45 via-black/25 to-black/10" />
+        <div className="absolute inset-0 bg-linear-to-b from-black/35 via-black/10 via-45% to-transparent md:via-55%" />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[58%] bg-linear-to-t from-background from-5% via-background/75 to-transparent dark:from-black-a dark:via-black-a/75 max-md:h-[68%] md:h-[42%]" />
       </div>
 
       <div className="relative z-10 flex w-full max-w-4xl flex-col items-center justify-center px-2 sm:px-6">

@@ -2,6 +2,7 @@ import Show from '@/components/Show';
 import { Cate } from '@/types/app/cate';
 import { getCateNavHref, getCateNavRel, getCateNavTarget } from '@/utils/cateNav';
 import Link from 'next/link';
+import { Fragment } from 'react';
 import { IoIosArrowDown } from 'react-icons/io';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -20,7 +21,7 @@ export default ({ list, open, onClose }: Props) => {
             <motion.div initial={{ width: 0, opacity: 0 }} animate={{ width: '100%', opacity: 1 }} exit={{ width: 0, opacity: 0 }} transition={{ type: 'spring', stiffness: 200, damping: 30, opacity: { duration: 0.2 } }} className="overflow-auto p-5 dark:border-[#2b333e] bg-[rgba(255,255,255,0.9)] dark:bg-[rgba(44,51,62,0.9)] backdrop-blur-[5px] hide_sliding">
               <ul className="flex flex-col space-y-2">
                 {list?.map((one) => (
-                  <div key={one.id}>
+                  <Fragment key={one.id}>
                     {one.type === 'cate' && (
                       <li className="group/one relative hover:bg-[#e0e6ec] dark:hover:bg-[#495362] rounded-md  ">
                         {one.children.length ? (
@@ -101,7 +102,7 @@ export default ({ list, open, onClose }: Props) => {
                         </Show>
                       </li>
                     )}
-                  </div>
+                  </Fragment>
                 ))}
               </ul>
             </motion.div>

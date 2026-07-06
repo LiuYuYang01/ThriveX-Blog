@@ -92,7 +92,7 @@ export default function FishpondPage() {
                 const authorName = item.email ? item.email.split('@')[0] : '匿名用户';
 
                 return (
-                  <article key={`${item.url}-${index}`} className="relative flex flex-col cursor-pointer rounded-xl border border-[#edf0f4] bg-white/85 px-5 py-5 shadow-[0_18px_55px_rgba(33,42,58,0.08)] dark:border-white/10 dark:bg-black-b dark:shadow-none sm:px-6 sm:py-6 overflow-hidden break-inside-avoid">
+                  <article key={`${item.url}-${index}`} className="group relative flex flex-col cursor-pointer rounded-xl border border-[#edf0f4] bg-white/85 px-5 py-5 shadow-[0_18px_55px_rgba(33,42,58,0.08)] dark:border-white/10 dark:bg-black-b dark:shadow-none sm:px-6 sm:py-6 overflow-hidden break-inside-avoid transition-[translate,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:border-primary/30 hover:shadow-[0_22px_65px_rgba(33,42,58,0.14)] dark:hover:border-primary/20 dark:hover:shadow-[0_22px_65px_rgba(0,0,0,0.35)]">
                     <div className="flex items-center gap-3 pb-4 mb-4 border-b border-[#edf0f4] dark:border-white/5">
                       <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 bg-[#f7f8fa] dark:bg-white/5">{item.image ? <img src={item.image} alt={authorName} className="w-full h-full object-cover" /> : <RandomAvatar className="w-full h-full" />}</div>
                       <div className="flex flex-col min-w-0">
@@ -106,9 +106,9 @@ export default function FishpondPage() {
 
                     <div className="flex-1 mb-4">
                       <h3 className="text-base sm:text-[17px] font-bold leading-snug mb-2.5">
-                        <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-[#161a22] dark:text-slate-100 no-underline inline-flex items-start gap-1.5">
+                        <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-[#161a22] dark:text-slate-100 no-underline inline-flex items-start gap-1.5 group-hover:text-primary">
                           <span className="line-clamp-2">{item.title}</span>
-                          <HiOutlineArrowTopRightOnSquare className="w-3.5 h-3.5 mt-1 shrink-0 opacity-40" />
+                          <HiOutlineArrowTopRightOnSquare className="w-3.5 h-3.5 mt-1 shrink-0 opacity-40 transition-opacity duration-300 ease-out group-hover:opacity-100" />
                         </a>
                       </h3>
 

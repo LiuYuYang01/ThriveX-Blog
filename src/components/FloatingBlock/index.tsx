@@ -12,7 +12,7 @@ import { LuMoonStar } from 'react-icons/lu';
 import { FaRegSun } from 'react-icons/fa';
 
 const floatingBtnClass =
-  'transition-none! bg-white! text-gray-600! shadow-[0_2px_8px_rgba(0,0,0,0.1)] border border-gray-200/80 hover:bg-gray-50! dark:bg-[#2c333e]! dark:text-gray-200! dark:border-gray-600/80 dark:hover:bg-[#323e50]!';
+  'transition-none! bg-white! text-gray-600! bg-primary! shadow-[0_2px_8px_rgba(0,0,0,0.1)] border border-gray-200/80 hover:bg-gray-50! dark:bg-[#2c333e]! dark:text-gray-200! dark:border-gray-600/80 dark:hover:bg-[#323e50]!';
 
 const FloatingBlock = () => {
   const [isExpanded, setIsExpanded] = useState(false); // 展开状态的变量

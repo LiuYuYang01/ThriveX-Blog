@@ -42,7 +42,7 @@ export default async () => {
       <meta name="description" content="🔭 分享我的生产力工具" />
 
       <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(148,163,184,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,0.08)_1px,transparent_1px)] bg-[size:32px_32px] [mask-image:radial-gradient(ellipse_80%_80%_at_50%_0%,#000_70%,transparent_100%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(148,163,184,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,0.08)_1px,transparent_1px)] bg-size-[32px_32px] mask-[radial-gradient(ellipse_80%_80%_at_50%_0%,#000_70%,transparent_100%)]" />
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] rounded-full bg-primary/10 blur-[120px] dark:bg-primary/15" />
         <div className="absolute top-1/4 right-[-10%] w-96 h-96 rounded-full bg-violet-500/10 blur-[100px]" />
         <div className="absolute bottom-1/4 left-[-10%] w-80 h-80 rounded-full bg-cyan-500/10 blur-[100px]" />

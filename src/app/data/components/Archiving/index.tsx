@@ -93,7 +93,7 @@ export default ({ list }: { list: Article[] }) => {
       </div>
 
       {result.length ? (
-        <Accordion className="!px-0">
+        <Accordion className="px-0!">
           {result.map((item, index) => (
             <AccordionItem key={index} aria-label={item.year + '年'} title={<Title data={item} />}>
               <div className="space-y-6 pl-2">

@@ -1,6 +1,5 @@
 'use client';
 
-import { useMemo } from 'react';
 import dayjs from 'dayjs';
 import { Record } from '@/types/app/record';
 import { User } from '@/types/app/user';
@@ -17,60 +16,56 @@ const WEEKDAYS = ['一', '二', '三', '四', '五', '六', '日'];
 const panelClass =
   'rounded-[10px] border border-[#edf0f4] bg-white/85 p-5 shadow-[0_18px_55px_rgba(33,42,58,0.08)] dark:border-white/10 dark:bg-black-b dark:shadow-none';
 
+function buildChartData(moodPoints: { emoji: string; score: number }[]) {
+  const w = 330;
+  const h = 96;
+  const bottom = 96;
+  const padding = 9;
+
+  if (moodPoints.length === 0) return null;
+
+  if (moodPoints.length === 1) {
+    const p = moodPoints[0];
+    const x = w / 2;
+    const y = bottom - (p.score / 5) * h;
+    const points = [{ x, y, emoji: p.emoji, score: p.score }];
+    const linePath = `M${padding} ${y} L${w - padding} ${y}`;
+    const areaPath = `${linePath} L${w - padding} ${bottom} L${padding} ${bottom}Z`;
+    return { points, linePath, areaPath, highlightIndex: 0 };
+  }
+
+  const step = (w - padding * 2) / (moodPoints.length - 1);
+  const points = moodPoints.map((p, i) => ({
+    x: padding + i * step,
+    y: bottom - (p.score / 5) * h,
+    emoji: p.emoji,
+    score: p.score,
+  }));
+  const linePath = points.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x} ${p.y}`).join(' ');
+  const areaPath = `${linePath} L${points[points.length - 1].x} ${bottom} L${points[0].x} ${bottom}Z`;
+
+  return { points, linePath, areaPath, highlightIndex: points.length - 1 };
+}
+
 export default function RecordSidebar({ records, user }: Props) {
-  const monthKey = dayjs().format('YYYY-MM');
-  const stats = useMemo(() => computeRecordStats(records), [records]);
+  const stats = computeRecordStats(records);
 
-  const moodByDate = useMemo(() => {
-    const map = new Map<string, { mood: string; time: number }>();
-    records.forEach((r) => {
-      if (!r.mood || !r.createTime) return;
-      const time = +r.createTime;
-      const key = dayjs(time).format('YYYY-MM-DD');
-      const prev = map.get(key);
-      if (!prev || time > prev.time) map.set(key, { mood: r.mood, time });
-    });
-    return map;
-  }, [records]);
+  const moodByDate = new Map<string, { mood: string; time: number }>();
+  records.forEach((r) => {
+    if (!r.mood || !r.createTime) return;
+    const time = +r.createTime;
+    const key = dayjs(time).format('YYYY-MM-DD');
+    const prev = moodByDate.get(key);
+    if (!prev || time > prev.time) moodByDate.set(key, { mood: r.mood, time });
+  });
 
-  const moodPoints = useMemo(() => {
-    return records
-      .filter((r) => r.mood?.trim() && r.createTime)
-      .sort((a, b) => +a.createTime! - +b.createTime!)
-      .slice(-10)
-      .map((r) => ({ emoji: r.mood!.trim(), score: moodScore(r.mood) }));
-  }, [records]);
+  const moodPoints = records
+    .filter((r) => r.mood?.trim() && r.createTime)
+    .sort((a, b) => +a.createTime! - +b.createTime!)
+    .slice(-10)
+    .map((r) => ({ emoji: r.mood!.trim(), score: moodScore(r.mood) }));
 
-  const chartData = useMemo(() => {
-    const w = 330;
-    const h = 96;
-    const bottom = 96;
-    const padding = 9;
-
-    if (moodPoints.length === 0) return null;
-
-    if (moodPoints.length === 1) {
-      const p = moodPoints[0];
-      const x = w / 2;
-      const y = bottom - (p.score / 5) * h;
-      const points = [{ x, y, emoji: p.emoji, score: p.score }];
-      const linePath = `M${padding} ${y} L${w - padding} ${y}`;
-      const areaPath = `${linePath} L${w - padding} ${bottom} L${padding} ${bottom}Z`;
-      return { points, linePath, areaPath, highlightIndex: 0 };
-    }
-
-    const step = (w - padding * 2) / (moodPoints.length - 1);
-    const points = moodPoints.map((p, i) => ({
-      x: padding + i * step,
-      y: bottom - (p.score / 5) * h,
-      emoji: p.emoji,
-      score: p.score,
-    }));
-    const linePath = points.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x} ${p.y}`).join(' ');
-    const areaPath = `${linePath} L${points[points.length - 1].x} ${bottom} L${points[0].x} ${bottom}Z`;
-
-    return { points, linePath, areaPath, highlightIndex: points.length - 1 };
-  }, [moodPoints]);
+  const chartData = buildChartData(moodPoints);
 
   const emojiColor = (score: number) => {
     if (score >= 4) return '#f2a20e';
@@ -78,26 +73,23 @@ export default function RecordSidebar({ records, user }: Props) {
     return '#8ea0bd';
   };
 
-  const calendarCells = useMemo(() => {
-    const month = dayjs();
-    const start = month.startOf('month');
-    const end = month.endOf('month');
-    const offset = (start.day() + 6) % 7;
-    const cells: { date: dayjs.Dayjs; muted: boolean }[] = [];
+  const month = dayjs();
+  const start = month.startOf('month');
+  const end = month.endOf('month');
+  const offset = (start.day() + 6) % 7;
+  const calendarCells: { date: dayjs.Dayjs; muted: boolean }[] = [];
 
-    for (let i = offset - 1; i >= 0; i--) {
-      cells.push({ date: start.subtract(i + 1, 'day'), muted: true });
-    }
-    for (let d = 0; d < end.date(); d++) {
-      cells.push({ date: start.add(d, 'day'), muted: false });
-    }
-    let next = end.add(1, 'day');
-    while (cells.length % 7 !== 0) {
-      cells.push({ date: next, muted: true });
-      next = next.add(1, 'day');
-    }
-    return cells;
-  }, [monthKey]);
+  for (let i = offset - 1; i >= 0; i--) {
+    calendarCells.push({ date: start.subtract(i + 1, 'day'), muted: true });
+  }
+  for (let d = 0; d < end.date(); d++) {
+    calendarCells.push({ date: start.add(d, 'day'), muted: false });
+  }
+  let next = end.add(1, 'day');
+  while (calendarCells.length % 7 !== 0) {
+    calendarCells.push({ date: next, muted: true });
+    next = next.add(1, 'day');
+  }
 
   const avgScore = moodPoints.length
     ? (moodPoints.reduce((s, p) => s + p.score, 0) / moodPoints.length).toFixed(1)

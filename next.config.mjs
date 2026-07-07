@@ -19,6 +19,8 @@ const nextConfig = {
             expire: 86400,
         },
     },
+    // React Compiler：自动 memo，减少 useMemo/useCallback 样板代码
+    reactCompiler: true,
     // 启用 Turbopack 文件系统缓存，加快开发时候的构建速度
     experimental: {
         turbopackFileSystemCacheForDev: true,

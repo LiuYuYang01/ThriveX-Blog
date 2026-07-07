@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import RecordCard from '../RecordCard';
 import RecordSidebar from '../Sidebar';
 import { getRecordListAPI } from '@/api/record';
@@ -26,7 +26,7 @@ export default function RecordPageClient({ user, initialRecords, totalPages: ini
   const [keyword, setKeyword] = useState('');
   const currentPageRef = useRef(1);
 
-  const fetchRecordList = useCallback(async (page: number, append: boolean = false) => {
+  const fetchRecordList = async (page: number, append: boolean = false) => {
     setLoading(true);
     try {
       const { data: recordData } = await getRecordListAPI({ pageNum: page, pageSize: 8 });
@@ -45,7 +45,7 @@ export default function RecordPageClient({ user, initialRecords, totalPages: ini
     } finally {
       setLoading(false);
     }
-  }, []);
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -70,16 +70,15 @@ export default function RecordPageClient({ user, initialRecords, totalPages: ini
     };
   }, [hasMore, loading, totalPages, fetchRecordList]);
 
-  const filteredRecords = useMemo(() => {
-    const q = keyword.trim().toLowerCase();
-    if (!q) return records;
-    return records.filter(
-      (r) =>
-        r.content?.toLowerCase().includes(q) ||
-        r.location?.toLowerCase().includes(q) ||
-        r.mood?.includes(q),
-    );
-  }, [records, keyword]);
+  const q = keyword.trim().toLowerCase();
+  const filteredRecords = !q
+    ? records
+    : records.filter(
+        (r) =>
+          r.content?.toLowerCase().includes(q) ||
+          r.location?.toLowerCase().includes(q) ||
+          r.mood?.includes(q),
+      );
 
   return (
     <>

@@ -61,19 +61,13 @@ export default () => {
   }, [cate, cateList, getWallList]);
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-[#f4f4f8] text-gray-900 antialiased dark:bg-[#08080d] dark:text-white">
+    <div className="relative min-h-screen overflow-x-hidden bg-gray-50 text-gray-900 antialiased dark:bg-[#0f172a] dark:text-white">
       <title>💌 留言墙</title>
       <meta name="description" content="💌 留言墙" />
 
-      {/* 颗粒纹理 */}
-      <div className="wall-grain-overlay pointer-events-none fixed inset-0 z-50 opacity-[0.025] dark:opacity-[0.03]" aria-hidden="true" />
-
-      {/* 背景渐变光斑 */}
-      <div className="fixed inset-0 pointer-events-none" aria-hidden="true">
-        <div className="absolute -top-24 left-[8%] w-[550px] h-[550px] rounded-full bg-violet-500/8 blur-[140px] dark:bg-violet-600/6" />
-        <div className="absolute top-[28%] right-[4%] w-[460px] h-[460px] rounded-full bg-rose-400/8 blur-[120px] dark:bg-rose-500/5" />
-        <div className="absolute bottom-[5%] left-[30%] w-[400px] h-[400px] rounded-full bg-cyan-400/6 blur-[100px] dark:bg-cyan-500/4" />
-        <div className="absolute top-[58%] left-[2%] w-[320px] h-[320px] rounded-full bg-amber-400/6 blur-[90px] dark:bg-amber-500/4" />
+      {/* 网格背景 */}
+      <div className="pointer-events-none fixed inset-0 overflow-hidden" aria-hidden="true">
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(148,163,184,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,0.06)_1px,transparent_1px)] bg-size-[64px_64px]" />
       </div>
 
       {/* 头部 */}

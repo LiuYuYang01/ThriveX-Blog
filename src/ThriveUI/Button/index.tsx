@@ -31,14 +31,25 @@ const iconSizeCls: Record<ButtonSize, string> = {
   lg: 'h-12 w-12 min-w-12 p-0',
 };
 
+const primaryGrad = 'bg-linear-to-br from-primary to-[#3d87f0]';
+
 function variantCls(variant: ButtonVariant, color: ButtonColor) {
   if (color === 'primary') {
-    if (variant === 'light') return 'bg-primary/10 text-primary hover:bg-primary/15';
-    if (variant === 'flat') return 'bg-primary/15 text-primary hover:bg-primary/20';
-    return 'bg-primary text-white hover:bg-primary/90 shadow-[0_4px_14px_rgba(83,157,253,0.35)]';
+    if (variant === 'light')
+      return 'border border-primary/15 bg-primary/10 text-primary hover:border-primary/25 hover:bg-primary/15';
+    if (variant === 'flat') return 'bg-primary/12 text-primary hover:bg-primary/20';
+    if (variant === 'shadow')
+      return `${primaryGrad} text-white shadow-[0_6px_20px_-4px_rgba(83,157,253,0.45)] hover:opacity-95`;
+    return `${primaryGrad} text-white shadow-[0_4px_14px_rgba(83,157,253,0.38)] hover:opacity-95`;
   }
-  if (variant === 'light') return 'bg-transparent text-neutral-600 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800';
-  return 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-200 dark:hover:bg-neutral-700';
+
+  if (variant === 'light')
+    return 'bg-transparent text-slate-600 hover:bg-primary/8 hover:text-primary dark:text-slate-300 dark:hover:bg-primary/10 dark:hover:text-primary';
+  if (variant === 'flat')
+    return 'bg-slate-100/80 text-slate-700 hover:bg-primary/10 hover:text-primary dark:bg-white/8 dark:text-slate-200 dark:hover:bg-primary/12 dark:hover:text-primary';
+  if (variant === 'shadow')
+    return 'border border-slate-200/70 bg-linear-to-br from-white via-white to-blue-50/45 text-slate-600 shadow-[0_4px_12px_-2px_rgba(83,157,253,0.12)] hover:border-primary/30 hover:text-primary dark:border-white/10 dark:from-[#323e50] dark:via-[#2c333e] dark:to-primary/8 dark:text-slate-300 dark:hover:border-primary/30 dark:hover:text-primary';
+  return 'border border-slate-200/70 bg-linear-to-br from-slate-50/90 via-white to-blue-50/35 text-slate-700 shadow-[0_2px_8px_rgba(83,157,253,0.08)] hover:border-primary/20 hover:text-primary dark:border-white/10 dark:from-white/5 dark:via-[#2c333e] dark:to-primary/6 dark:text-slate-200 dark:hover:border-primary/25 dark:hover:text-primary';
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -75,7 +86,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           onClick?.(e);
           onPress?.();
         }}
-        className={`inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
+        className={`inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl font-medium transition-[color,background-color,border-color,opacity] duration-150 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100 ${
           isIconOnly ? iconSizeCls[size] : sizeCls[size]
         } ${variantCls(variant, color)} ${className}`}
         {...props}

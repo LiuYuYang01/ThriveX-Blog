@@ -93,7 +93,7 @@ export default () => {
             留言墙
           </span>
         </h1>
-        <p className="text-neutral-500 dark:text-neutral-400 text-base sm:text-lg tracking-[0.2em] font-light">每一个想法，都值得被看见</p>
+        <p className="text-neutral-500 dark:text-neutral-400 text-base sm:text-lg tracking-[0.2em] font-light">想对我说些什么？来吧</p>
 
         <div className="mt-8 flex items-center justify-center gap-3">
           <div className="w-20 h-px bg-linear-to-r from-transparent to-neutral-300 dark:to-neutral-700" />

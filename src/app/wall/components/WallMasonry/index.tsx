@@ -1,9 +1,9 @@
 'use client';
 
-import Masonry from 'react-masonry-css';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { LuChevronDown } from 'react-icons/lu';
 import { Wall } from '@/types/app/wall';
 import { getRelativeTimeLabel } from '@/utils';
-import '@/components/ArticleLayout/Waterfall/index.scss';
 
 const colorThemes: Record<string, { bg: string; pushpin: string; badge: string }> = {
   '#fcafa24d': {
@@ -36,15 +36,8 @@ const colorThemes: Record<string, { bg: string; pushpin: string; badge: string }
 const defaultTheme = colorThemes['#ffe3944d'];
 const rotations = [-3, 2.5, -1.8, 4, -2.8, 1.5, -3.5, 3, -2, 1.8, -3.2, 2.5];
 
-const breakpointColumnsObj = {
-  default: 4,
-  1024: 3,
-  768: 2,
-  640: 1,
-};
-
 const msgCardClass =
-  'wall-paper-texture relative mb-14 cursor-default rounded-2xl p-6 ' +
+  'wall-paper-texture relative rounded-2xl p-6 ' +
   'shadow-[0_2px_8px_-2px_rgba(0,0,0,0.06)] dark:shadow-[0_2px_8px_-2px_rgba(0,0,0,0.18)] ' +
   'transition-[rotate,scale,translate,box-shadow,opacity] duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ' +
   'animate-[wall-card-enter_0.65s_ease_forwards] ' +
@@ -56,41 +49,139 @@ const pushpinClass =
   'shadow-[0_2px_6px_rgba(0,0,0,0.35),inset_0_-3px_6px_rgba(0,0,0,0.15),inset_0_3px_6px_rgba(255,255,255,0.4)] ' +
   "after:absolute after:top-[3px] after:left-1 after:size-[5px] after:rounded-full after:bg-white/45 after:content-['']";
 
+function getColumnCount(width: number) {
+  if (width < 640) return 1;
+  if (width < 768) return 2;
+  if (width < 1024) return 3;
+  return 4;
+}
+
+function estimateCardHeight(wall: Wall) {
+  const lines = Math.ceil(wall.content.length / 16);
+  return 150 + Math.min(lines, 7) * 22;
+}
+
+function distributeToShortestColumns(walls: Wall[], columnCount: number) {
+  const columns: Wall[][] = Array.from({ length: columnCount }, () => []);
+  const heights = Array(columnCount).fill(0);
+
+  walls.forEach((wall) => {
+    const targetCol = heights.indexOf(Math.min(...heights));
+    columns[targetCol].push(wall);
+    heights[targetCol] += estimateCardHeight(wall) + 32;
+  });
+
+  return columns;
+}
+
+function WallCardContent({ content }: { content: string }) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [canScroll, setCanScroll] = useState(false);
+  const [atBottom, setAtBottom] = useState(false);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    const update = () => {
+      setCanScroll(el.scrollHeight > el.clientHeight + 1);
+      setAtBottom(el.scrollHeight - el.scrollTop <= el.clientHeight + 1);
+    };
+
+    update();
+
+    const observer = new ResizeObserver(update);
+    observer.observe(el);
+    el.addEventListener('scroll', update, { passive: true });
+
+    return () => {
+      observer.disconnect();
+      el.removeEventListener('scroll', update);
+    };
+  }, [content]);
+
+  const showHint = canScroll && !atBottom;
+
+  const scrollMore = () => {
+    scrollRef.current?.scrollBy({ top: 72, behavior: 'smooth' });
+  };
+
+  return (
+    <div className="relative z-10 mb-4">
+      <div
+        ref={scrollRef}
+        className={`hide_sliding max-h-40 overflow-y-auto overscroll-y-contain text-sm leading-[1.75] text-stone-800 touch-pan-y ${
+          showHint ? '[mask-image:linear-gradient(to_bottom,black_78%,transparent)]' : ''
+        }`}
+        onWheel={(e) => e.stopPropagation()}
+      >
+        {content}
+      </div>
+      {showHint && (
+        <button
+          type="button"
+          onClick={scrollMore}
+          className="mt-2 flex w-full cursor-pointer items-center justify-center gap-1.5 border-0 bg-transparent py-0.5 text-[11px] text-stone-400/90 transition-colors hover:text-stone-600"
+        >
+          <span className="h-px w-8 bg-stone-400/25" />
+          <LuChevronDown className="size-3.5 animate-bounce" strokeWidth={2} />
+          <span className="h-px w-8 bg-stone-400/25" />
+        </button>
+      )}
+    </div>
+  );
+}
+
 interface WallMasonryProps {
   walls: Wall[];
 }
 
 export default ({ walls }: WallMasonryProps) => {
-  return (
-    <Masonry
-      breakpointCols={breakpointColumnsObj}
-      className="masonry-grid -ml-5 sm:ml-[-15px] md:-ml-5 lg:-ml-6"
-      columnClassName="masonry-grid_column pl-3"
-    >
-      {walls.map((item, index) => {
-        const theme = colorThemes[item.color] || defaultTheme;
-        const rotate = rotations[index % rotations.length];
+  const [columnCount, setColumnCount] = useState(4);
 
-        return (
-          <div
-            key={item.id}
-            className={msgCardClass}
-            style={{
-              rotate: `${rotate}deg`,
-              background: theme.bg,
-              animationDelay: `${index * 90 + 300}ms`,
-            }}
-          >
-            <div className={pushpinClass} style={{ background: theme.pushpin }} />
-            <span className={`mb-3 inline-block rounded-full px-2.5 py-0.5 text-xs font-medium ${theme.badge}`}>{item.cate.name}</span>
-            <p className="hide_sliding mb-5 min-h-16 overflow-auto text-sm leading-relaxed text-stone-800">{item.content}</p>
-            <div className="flex items-center justify-between text-xs">
-              <span className="font-medium text-stone-600 dark:text-black">{item.name ? item.name : '匿名'}</span>
-              <span className="text-stone-400 dark:text-stone-600">{getRelativeTimeLabel(item.createTime)}</span>
-            </div>
-          </div>
-        );
-      })}
-    </Masonry>
+  useEffect(() => {
+    const updateColumnCount = () => setColumnCount(getColumnCount(window.innerWidth));
+    updateColumnCount();
+    window.addEventListener('resize', updateColumnCount);
+    return () => window.removeEventListener('resize', updateColumnCount);
+  }, []);
+
+  const columns = useMemo(() => distributeToShortestColumns(walls, columnCount), [walls, columnCount]);
+  const wallIndexMap = useMemo(() => new Map(walls.map((wall, index) => [wall.id, index])), [walls]);
+
+  return (
+    <div className="flex items-start gap-5 sm:gap-6 lg:gap-7">
+      {columns.map((column, colIndex) => (
+        <div key={colIndex} className="flex min-w-0 flex-1 flex-col gap-8">
+          {column.map((item) => {
+            const index = wallIndexMap.get(item.id) ?? 0;
+            const theme = colorThemes[item.color] || defaultTheme;
+            const rotate = rotations[index % rotations.length];
+
+            return (
+              <div
+                key={item.id}
+                className={msgCardClass}
+                style={{
+                  rotate: `${rotate}deg`,
+                  background: theme.bg,
+                  animationDelay: `${index * 90 + 300}ms`,
+                }}
+              >
+                <div className={pushpinClass} style={{ background: theme.pushpin }} />
+                <span className={`relative z-10 mb-3 inline-block rounded-full px-2.5 py-0.5 text-xs font-medium ${theme.badge}`}>
+                  {item.cate.name}
+                </span>
+                <WallCardContent content={item.content} />
+                <div className="relative z-10 flex items-center justify-between gap-3 text-xs">
+                  <span className="shrink-0 font-medium text-stone-600 dark:text-black">{item.name ? item.name : '匿名'}</span>
+                  <span className="shrink-0 text-stone-400 dark:text-stone-600">{getRelativeTimeLabel(item.createTime)}</span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ))}
+    </div>
   );
 };

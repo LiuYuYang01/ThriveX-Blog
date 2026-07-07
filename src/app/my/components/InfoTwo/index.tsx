@@ -24,7 +24,7 @@ export default ({ data }: { data: InfoTwo }) => {
         </div>
 
         <div className="avatar">
-          <img src={data.avatar_url} alt={data.author} className="avatar-img dark:!border-[rgba(56,64,76)]" />
+          <img src={data.avatar_url} alt={data.author} className="avatar-img dark:border-[rgba(56,64,76)]!" />
         </div>
 
         <div className="info-right">
@@ -37,7 +37,7 @@ export default ({ data }: { data: InfoTwo }) => {
       </div>
 
       <div className="about-me-2 flex flex-col">
-        <button className="trigger dark:bg-black-b !border dark:border-[#4e5969] dark:text-white">{data.author}</button>
+        <button className="trigger dark:bg-black-b border! dark:border-[#4e5969] dark:text-white">{data.author}</button>
 
         <Link href={data.know_me} target="_blank" className="text-xs text-[#2764b2] mt-3">
           去了解我

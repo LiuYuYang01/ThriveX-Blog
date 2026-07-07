@@ -42,7 +42,7 @@ export function Tabs({ children, className = '', defaultSelectedKey }: TabsProps
               onClick={() => setActive(key)}
               className={`cursor-pointer rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
                 selected
-                  ? 'bg-white text-primary shadow-sm dark:bg-[#3a4250]'
+                  ? 'bg-white text-primary shadow-xs dark:bg-[#3a4250]'
                   : 'text-neutral-600 hover:text-foreground dark:text-neutral-400'
               }`}
             >

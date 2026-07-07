@@ -228,7 +228,7 @@ const CommentForm = ({ articleId }: Props) => {
               <Spinner />
             </div>
           ) : (
-            <button className="w-full h-10 text-white rounded-md bg-primary hover:bg-primary/80 active:bg-primary/90 active:scale-95 transition-transform text-center cursor-pointer" type="submit">
+            <button className="w-full h-10 text-white rounded-md bg-primary hover:bg-primary/80 active:bg-primary/90 active:scale-95 transition-[scale] text-center cursor-pointer" type="submit">
               发表评论
             </button>
           )}

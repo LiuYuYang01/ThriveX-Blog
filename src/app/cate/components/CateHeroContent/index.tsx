@@ -32,7 +32,7 @@ const titleClassName =
   'max-w-[92vw] text-balance px-1 text-xl font-bold leading-snug tracking-tight text-white custom_text_shadow xs:text-2xl sm:max-w-2xl sm:text-4xl md:text-5xl md:leading-tight';
 
 const metaClassName =
-  'mt-3 inline-flex max-w-[92vw] items-center justify-center gap-1.5 rounded-full border border-white/15 bg-black/15 px-3 py-1.5 text-xs text-white/85 shadow-sm backdrop-blur-sm xs:mt-4 xs:px-4 xs:py-2 xs:text-sm sm:mt-6 sm:px-5 sm:py-2.5 sm:text-[15px]';
+  'mt-3 inline-flex max-w-[92vw] items-center justify-center gap-1.5 rounded-full border border-white/15 bg-black/15 px-3 py-1.5 text-xs text-white/85 shadow-xs backdrop-blur-xs xs:mt-4 xs:px-4 xs:py-2 xs:text-sm sm:mt-6 sm:px-5 sm:py-2.5 sm:text-[15px]';
 
 const sectionClassName = 'flex w-full flex-col items-center px-1 text-center xs:px-2';
 

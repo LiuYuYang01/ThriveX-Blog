@@ -61,7 +61,7 @@ export default function Encrypt({ id }: Props) {
       >
         <TextField
           ref={inputRef}
-          endContent={<MdEnhancedEncryption className="pointer-events-none flex-shrink-0 text-2xl text-neutral-400" />}
+          endContent={<MdEnhancedEncryption className="pointer-events-none shrink-0 text-2xl text-neutral-400" />}
           label="访问密码"
           type="password"
           placeholder="文章受保护，请输入密码"

@@ -231,7 +231,7 @@ export default function ArticleTOC({ headings, children }: Props) {
           aria-label={mobileOpen ? '关闭文章目录' : '打开文章目录'}
           aria-expanded={mobileOpen}
           onClick={() => setMobileOpen((open) => !open)}
-          className="relative z-50 flex h-11 w-11 items-center justify-center rounded-full bg-primary text-white shadow-[0_4px_20px_-4px_rgba(83,157,253,0.55)] transition-transform active:scale-95 cursor-pointer"
+          className="relative z-50 flex h-11 w-11 items-center justify-center rounded-full bg-primary text-white shadow-[0_4px_20px_-4px_rgba(83,157,253,0.55)] transition-[scale] active:scale-95 cursor-pointer"
         >
           {mobileOpen ? <LuX className="h-5 w-5" /> : <LuList className="h-5 w-5" />}
         </button>

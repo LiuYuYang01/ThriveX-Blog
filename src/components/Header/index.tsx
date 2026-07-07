@@ -23,7 +23,7 @@ const submenuPanelClass =
   'invisible opacity-0 scale-[0.98] pointer-events-none group-hover/one:visible group-hover/one:opacity-100 group-hover/one:scale-100 group-hover/one:pointer-events-auto transition-[opacity,scale,visibility] duration-200 ease-out absolute left-0 top-[calc(100%-4px)] z-10 pt-0.5 min-w-full w-max max-w-[220px] overflow-hidden rounded-md before:absolute before:inset-x-0 before:-top-1 before:h-1 before:content-[""]';
 
 const submenuItemClass =
-  'group/item relative flex w-full items-center min-w-0 px-5 py-2.5 text-[15px] text-[#666] dark:text-white transition-colors duration-150 hover:!text-primary hover:bg-[#f2f2f2] dark:hover:bg-[#323e50] before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:h-0 before:w-[3px] before:rounded-r-full before:bg-primary before:transition-[height] before:duration-150 hover:before:h-[50%]';
+  'group/item relative flex w-full items-center min-w-0 px-5 py-2.5 text-[15px] text-[#666] dark:text-white transition-colors duration-150 hover:text-primary! hover:bg-[#f2f2f2] dark:hover:bg-[#323e50] before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:h-0 before:w-[3px] before:rounded-r-full before:bg-primary before:transition-[height] before:duration-150 hover:before:h-[50%]';
 
 export default () => {
   const patchName = usePathname();
@@ -97,7 +97,7 @@ export default () => {
           <div className="flex h-[50px] items-center justify-center md:justify-start min-w-0 md:flex-1 overflow-visible">
             {/* logo */}
             <Link href="/" className="flex items-center h-[50px] text-[15px]">
-              {isDark ? <img src={theme?.dark_logo} alt="Logo" className="h-10 w-auto object-contain pr-0 md:pr-5 hover:scale-90 transition-transform" /> : <img src={isPathSty || isScrolled ? theme?.light_logo : theme?.dark_logo} alt="Logo" className="h-10 w-auto object-contain pr-0 md:pr-5 hover:scale-90 transition-transform" />}
+              {isDark ? <img src={theme?.dark_logo} alt="Logo" className="h-10 w-auto object-contain pr-0 md:pr-5 hover:scale-90 transition-[scale]" /> : <img src={isPathSty || isScrolled ? theme?.light_logo : theme?.dark_logo} alt="Logo" className="h-10 w-auto object-contain pr-0 md:pr-5 hover:scale-90 transition-[scale]" />}
             </Link>
 
             <ul className="hidden md:flex items-center h-[50px] overflow-visible">
@@ -116,7 +116,7 @@ export default () => {
                       {one.children.length ? (
                         <span className={`flex items-center h-[50px] px-5 text-[15px] whitespace-nowrap group-hover/one:text-primary! cursor-default ${isPathSty || isScrolled ? 'text-[#333] dark:text-white' : 'text-white'}`}>
                           {one.icon} {one.name}
-                          <IoIosArrowDown className="ml-2 transition-transform duration-200 group-hover/one:rotate-180" />
+                          <IoIosArrowDown className="ml-2 transition-[rotate] duration-200 group-hover/one:rotate-180" />
                         </span>
                       ) : (
                         <Link href={getCateNavHref(one)} target={getCateNavTarget(one.type)} rel={getCateNavRel(one.type)} className={`flex items-center h-[50px] px-5 text-[15px] whitespace-nowrap group-hover/one:text-primary! ${isPathSty || isScrolled ? 'text-[#333] dark:text-white' : 'text-white'}`}>
@@ -144,7 +144,7 @@ export default () => {
                       {one.children?.length ? (
                         <span className={`flex items-center h-[50px] px-10 text-[15px] whitespace-nowrap group-hover/one:text-primary! cursor-default ${isPathSty || isScrolled ? 'text-[#333] dark:text-white' : 'text-white'}`}>
                           {one.icon} {one.name}
-                          <IoIosArrowDown className="ml-2 transition-transform duration-200 group-hover/one:rotate-180" />
+                          <IoIosArrowDown className="ml-2 transition-[rotate] duration-200 group-hover/one:rotate-180" />
                         </span>
                       ) : (
                         <Link href={getCateNavHref(one)} target={getCateNavTarget(one.type)} rel={getCateNavRel(one.type)} className={`flex items-center h-[50px] px-10 text-[15px] whitespace-nowrap group-hover/one:text-primary! ${isPathSty || isScrolled ? 'text-[#333] dark:text-white' : 'text-white'}`}>
@@ -173,7 +173,7 @@ export default () => {
                       {one.children?.length ? (
                         <span className={`flex items-center h-[50px] px-10 text-[15px] whitespace-nowrap group-hover/one:text-primary! cursor-default ${isPathSty || isScrolled ? 'text-[#333] dark:text-white' : 'text-white'}`}>
                           {one.icon} {one.name}
-                          <IoIosArrowDown className="ml-2 transition-transform duration-200 group-hover/one:rotate-180" />
+                          <IoIosArrowDown className="ml-2 transition-[rotate] duration-200 group-hover/one:rotate-180" />
                         </span>
                       ) : (
                         <Link href={getCateNavHref(one)} target={getCateNavTarget(one.type)} rel={getCateNavRel(one.type)} className={`flex items-center h-[50px] px-10 text-[15px] whitespace-nowrap group-hover/one:text-primary! ${isPathSty || isScrolled ? 'text-[#333] dark:text-white' : 'text-white'}`}>

@@ -24,7 +24,7 @@ export default ({ list }: Props) => {
               {i === 3 && list.length > 4 && (
                 <>
                   <span className="absolute inset-0 bg-[rgba(17,22,25,0.35)]" />
-                  <span className="absolute inset-0 z-[2] grid place-items-center text-[22px] font-bold text-white">+{list.length - 3}</span>
+                  <span className="absolute inset-0 z-2 grid place-items-center text-[22px] font-bold text-white">+{list.length - 3}</span>
                 </>
               )}
             </button>

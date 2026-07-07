@@ -31,7 +31,7 @@ export function ArticleLikeProvider({
   return <ArticleLikeContext.Provider value={value}>{children}</ArticleLikeContext.Provider>;
 }
 
-export function ArticleLikeHero() {
+export function ArticleLikeHero({ className }: { className?: string }) {
   const { count, like } = useArticleLike();
-  return <LikeButtonCore count={count} onLike={like} variant="hero" />;
+  return <LikeButtonCore count={count} onLike={like} variant="hero" className={className} />;
 }

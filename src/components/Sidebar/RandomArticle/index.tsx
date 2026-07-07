@@ -53,7 +53,7 @@ const HotArticle = () => {
           </Link>
 
           <span
-            className={`absolute top-2.5 -left-4 w-[30px] h-[25px] pl-[7px] flex items-center text-white rounded-tr-full rounded-br-full font-black box-border z-20 after:content-[''] after:absolute after:-bottom-[5px] after:left-0 after:w-0 after:h-0 after:border-[5px] after:border-solid after:border-t-transparent after:border-r-transparent after:border-b-transparent ${RANKING_COLORS[Math.min(index, 4)]}`}
+            className={`absolute top-2.5 -left-4 w-[30px] h-[25px] pl-[7px] flex items-center text-white rounded-tr-full rounded-br-full font-black box-border z-20 after:content-[''] after:absolute after:bottom-[-5px] after:left-0 after:w-0 after:h-0 after:border-[5px] after:border-solid after:border-t-transparent after:border-r-transparent after:border-b-transparent ${RANKING_COLORS[Math.min(index, 4)]}`}
           >
             {index + 1}
           </span>

@@ -70,11 +70,11 @@ export default function Dynamic({ className = '' }: { className?: string }) {
         group flex flex-row items-center justify-between w-full px-4 py-3 mb-2 
         bg-slate-50 dark:bg-black-b
         border dark:border-zinc-800/80
-        rounded-xl hover:shadow-sm
+        rounded-xl hover:shadow-xs
         ${className}
       `}
     >
-      <div className="flex items-center flex-shrink-0 mr-3 lg:mr-5">
+      <div className="flex items-center shrink-0 mr-3 lg:mr-5">
         <span className="relative flex h-2 w-2 mr-2.5">
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
           <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
@@ -100,7 +100,7 @@ export default function Dynamic({ className = '' }: { className?: string }) {
           </span>
         </div>
 
-        <FiChevronRight className="flex-shrink-0 text-slate-400 group-hover:text-blue-500 ml-2 group-hover:translate-x-0.5 duration-200" />
+        <FiChevronRight className="shrink-0 text-slate-400 group-hover:text-blue-500 ml-2 group-hover:translate-x-0.5 duration-200" />
       </Link>
     </div>
   );

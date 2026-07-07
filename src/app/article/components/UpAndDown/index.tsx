@@ -16,7 +16,7 @@ export interface ArticleNavigationProps {
 const cardBaseClass = cn(
   'group relative flex w-full flex-col justify-center rounded-2xl border p-5 sm:p-6',
   'transition duration-300 ease-out',
-  'focus:outline-none focus:ring-2 focus:ring-primary/50',
+  'focus:outline-hidden focus:ring-2 focus:ring-primary/50',
 );
 
 const cardActiveClass = cn(

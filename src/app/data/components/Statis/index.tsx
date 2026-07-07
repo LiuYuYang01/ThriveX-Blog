@@ -49,7 +49,7 @@ export default ({ aTotal }: Props) => {
       icon: article,
       gradient: 'from-sky-500 to-blue-600',
       bgLight: 'bg-sky-50 dark:bg-sky-500/10',
-      borderColor: 'border-sky-200 dark:border-sky-500/30',
+      borderColor: 'border-sky-200 dark:border-sky-500/30 hover:border-sky-200/80 dark:hover:border-sky-500/40',
       textColor: 'text-sky-600 dark:text-sky-400',
     },
     {
@@ -58,7 +58,7 @@ export default ({ aTotal }: Props) => {
       icon: comment,
       gradient: 'from-amber-500 to-orange-500',
       bgLight: 'bg-amber-50 dark:bg-amber-500/10',
-      borderColor: 'border-amber-200 dark:border-amber-500/30',
+      borderColor: 'border-amber-200 dark:border-amber-500/30 hover:border-amber-200/80 dark:hover:border-amber-500/40',
       textColor: 'text-amber-600 dark:text-amber-400',
     },
     {
@@ -67,7 +67,7 @@ export default ({ aTotal }: Props) => {
       icon: cate,
       gradient: 'from-emerald-500 to-teal-500',
       bgLight: 'bg-emerald-50 dark:bg-emerald-500/10',
-      borderColor: 'border-emerald-200 dark:border-emerald-500/30',
+      borderColor: 'border-emerald-200 dark:border-emerald-500/30 hover:border-emerald-200/80 dark:hover:border-emerald-500/40',
       textColor: 'text-emerald-600 dark:text-emerald-400',
     },
     {
@@ -76,7 +76,7 @@ export default ({ aTotal }: Props) => {
       icon: friend,
       gradient: 'from-rose-500 to-red-500',
       bgLight: 'bg-rose-50 dark:bg-rose-500/10',
-      borderColor: 'border-rose-200 dark:border-rose-500/30',
+      borderColor: 'border-rose-200 dark:border-rose-500/30 hover:border-rose-200/80 dark:hover:border-rose-500/40',
       textColor: 'text-rose-600 dark:text-rose-400',
     },
   ];
@@ -97,7 +97,7 @@ export default ({ aTotal }: Props) => {
         {statCards.map((card, index) => (
           <div
             key={index}
-            className={`group relative overflow-hidden rounded-2xl border ${card.borderColor} ${card.bgLight} p-5 transition-[translate,box-shadow] duration-300 ease-out hover:shadow-lg hover:-translate-y-0.5 hover:border-opacity-80`}
+            className={`group relative overflow-hidden rounded-2xl border ${card.borderColor} ${card.bgLight} p-5 transition-[translate,box-shadow] duration-300 ease-out hover:shadow-lg hover:-translate-y-0.5`}
           >
             <div className="relative flex items-center justify-between">
               <div className="flex items-center justify-center rounded-xl dark:bg-black/20">

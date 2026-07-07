@@ -1,4 +1,4 @@
-import { LuAlignLeft, LuTextQuote } from 'react-icons/lu';
+import { LuTextQuote } from 'react-icons/lu';
 
 interface SummaryProps {
   content: string;

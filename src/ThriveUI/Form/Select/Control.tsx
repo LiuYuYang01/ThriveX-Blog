@@ -439,7 +439,7 @@ export default function SelectControl<T extends string | number = string | numbe
           <LuLoader className="h-4 w-4 shrink-0 animate-spin text-neutral-400" strokeWidth={1.75} />
         ) : (
           <LuChevronDown
-            className={`h-4 w-4 shrink-0 text-neutral-400 transition-transform duration-200 ${
+            className={`h-4 w-4 shrink-0 text-neutral-400 transition-[rotate] duration-200 ${
               open ? 'rotate-180' : ''
             }`}
             strokeWidth={1.75}

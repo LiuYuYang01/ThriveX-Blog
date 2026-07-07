@@ -49,7 +49,7 @@ export function Accordion({ children, className = '', defaultExpandedKeys = [] }
             >
               <span className="min-w-0 flex-1 text-base font-medium">{el.props.title}</span>
               <LuChevronDown
-                className={`h-4 w-4 shrink-0 text-neutral-400 transition-transform ${open ? 'rotate-180' : ''}`}
+                className={`h-4 w-4 shrink-0 text-neutral-400 transition-[rotate] ${open ? 'rotate-180' : ''}`}
                 strokeWidth={1.75}
               />
             </button>

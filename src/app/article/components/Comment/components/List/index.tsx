@@ -72,12 +72,12 @@ const CommentList = forwardRef(({ id, reply }: Props, ref) => {
 
               {one?.children?.length
                 ? one.children?.map((two) => (
-                    <div className="comment_user_two !ml-5 sm:!ml-12" key={two.id}>
+                    <div className="comment_user_two ml-5! sm:ml-12!" key={two.id}>
                       <div className="comment_user_two_info">
                         {two.avatar ? <img src={two.avatar} alt="" className="avatar" /> : <RandomAvatar className="avatar" />}
 
                         {two.url ? (
-                          <a href={two.url} className="name active !text-primary" target="_blank" rel="noopener noreferrer">
+                          <a href={two.url} className="name active text-primary!" target="_blank" rel="noopener noreferrer">
                             {two.name}
                           </a>
                         ) : (
@@ -97,12 +97,12 @@ const CommentList = forwardRef(({ id, reply }: Props, ref) => {
 
                       {two.children?.map((three) => (
                         <div key={three.id}>
-                          <div className="comment_user_three !ml-5 sm:!ml-12">
+                          <div className="comment_user_three ml-5! sm:ml-12!">
                             <div className="comment_user_three_info">
                               {three.avatar ? <img src={three.avatar} alt="" className="avatar" /> : <RandomAvatar className="avatar" />}
 
                               {three.url ? (
-                                <a href={three.url} className="name active !text-primary" target="_blank" rel="noopener noreferrer">
+                                <a href={three.url} className="name active text-primary!" target="_blank" rel="noopener noreferrer">
                                   {three.name}
                                 </a>
                               ) : (
@@ -124,12 +124,12 @@ const CommentList = forwardRef(({ id, reply }: Props, ref) => {
 
                           {three.children?.map((four) => (
                             <div key={four.id}>
-                              <div className="comment_user_three !ml-5 sm:!ml-12">
+                              <div className="comment_user_three ml-5! sm:ml-12!">
                                 <div className="comment_user_three_info">
                                   {four.avatar ? <img src={four.avatar} alt="" className="avatar" /> : <RandomAvatar className="avatar" />}
 
                                   {four.url ? (
-                                    <a href={four.url} className="name active !text-primary" target="_blank" rel="noopener noreferrer">
+                                    <a href={four.url} className="name active text-primary!" target="_blank" rel="noopener noreferrer">
                                       {four.name}
                                     </a>
                                   ) : (
@@ -150,12 +150,12 @@ const CommentList = forwardRef(({ id, reply }: Props, ref) => {
                               </div>
 
                               {four.children?.map((five) => (
-                                <div key={five.id} className="comment_user_three !ml-5 sm:!ml-12">
+                                <div key={five.id} className="comment_user_three ml-5! sm:ml-12!">
                                   <div className="comment_user_three_info">
                                     {five.avatar ? <img src={five.avatar} alt="" className="avatar" /> : <RandomAvatar className="avatar" />}
 
                                     {five.url ? (
-                                      <a href={five.url} className="name active !text-primary" target="_blank" rel="noopener noreferrer">
+                                      <a href={five.url} className="name active text-primary!" target="_blank" rel="noopener noreferrer">
                                         {five.name}
                                       </a>
                                     ) : (

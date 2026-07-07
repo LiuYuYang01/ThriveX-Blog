@@ -13,7 +13,7 @@ export interface CardBodyProps extends HTMLAttributes<HTMLDivElement> {
 export function Card({ children, className = '', ...props }: CardProps) {
   return (
     <div
-      className={`overflow-hidden rounded-2xl border border-neutral-200/80 bg-surface shadow-sm dark:border-neutral-700/60 ${className}`}
+      className={`overflow-hidden rounded-2xl border border-neutral-200/80 bg-surface shadow-xs dark:border-neutral-700/60 ${className}`}
       {...props}
     >
       {children}

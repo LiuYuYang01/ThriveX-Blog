@@ -21,7 +21,7 @@ const Copyright = () => {
 
       <div className="relative z-10 flex flex-col gap-3.5">
         <div className="flex items-center gap-3 text-sm sm:text-base text-gray-700 dark:text-gray-300">
-          <div className="flex items-center justify-center shrink-0 w-7 h-7 rounded-full bg-gray-50 dark:bg-transparent shadow-sm text-primary dark:text-gray-400">
+          <div className="flex items-center justify-center shrink-0 w-7 h-7 rounded-full bg-gray-50 dark:bg-transparent shadow-xs text-primary dark:text-gray-400">
             <FiUser className="text-base" />
           </div>
           <p>
@@ -30,7 +30,7 @@ const Copyright = () => {
         </div>
 
         <div className="flex items-start sm:items-center gap-3 text-sm sm:text-base text-gray-700 dark:text-gray-300">
-          <div className="flex items-center justify-center shrink-0 w-7 h-7 rounded-full bg-gray-50 dark:bg-transparent shadow-sm mt-0.5 sm:mt-0 text-primary dark:text-gray-400">
+          <div className="flex items-center justify-center shrink-0 w-7 h-7 rounded-full bg-gray-50 dark:bg-transparent shadow-xs mt-0.5 sm:mt-0 text-primary dark:text-gray-400">
             <FiShield className="text-base" />
           </div>
           <p className="leading-relaxed">

@@ -99,7 +99,7 @@ export default async () => {
                         </div>
 
                         {/* 取消了 hover 背景变色，仅保留文字变色和旋转动画 */}
-                        <button className="w-8 h-8 rounded-full bg-zinc-50 dark:bg-zinc-800 flex items-center justify-center text-zinc-400 group-hover:text-primary transition-transform duration-300 transform group-hover:rotate-12">
+                        <button className="w-8 h-8 rounded-full bg-zinc-50 dark:bg-zinc-800 flex items-center justify-center text-zinc-400 group-hover:text-primary transition-[rotate] duration-300 group-hover:rotate-12">
                           <FiArrowUpRight size={16} />
                         </button>
                       </div>

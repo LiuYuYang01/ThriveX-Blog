@@ -293,7 +293,7 @@ export default ({ onEmojiSelect, className = '' }: Props) => {
             </svg>
           </div>
 
-          <input type="text" placeholder="搜索表情名称..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent outline-none" />
+          <input type="text" placeholder="搜索表情名称..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent outline-hidden" />
         </div>
       </div>
 
@@ -306,7 +306,7 @@ export default ({ onEmojiSelect, className = '' }: Props) => {
             const horizontalClass = colIndex === 0 ? 'left-0 translate-x-0' : colIndex === 5 ? 'right-0 translate-x-0' : 'left-1/2 -translate-x-1/2';
 
             return (
-              <button key={`${emojiItem.emoji}-${index}`} onClick={() => handleEmojiClick(emojiItem)} className="w-10 h-10 flex items-center justify-center text-2xl hover:bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer group relative" aria-label={emojiItem.name}>
+              <button key={`${emojiItem.emoji}-${index}`} onClick={() => handleEmojiClick(emojiItem)} className="w-10 h-10 flex items-center justify-center text-2xl hover:bg-gray-100 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-blue-400 cursor-pointer group relative" aria-label={emojiItem.name}>
                 {emojiItem.emoji}
                 {/* 悬停时显示名称：第一排向下，其余向上，并做左右边界处理 */}
                 <div className={`absolute ${isFirstRow ? 'top-full mt-2' : 'bottom-full mb-2'} ${horizontalClass} transform px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-10 pointer-events-none`}>{emojiItem.name}</div>

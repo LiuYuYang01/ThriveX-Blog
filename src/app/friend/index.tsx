@@ -34,7 +34,7 @@ const TiltCard = ({ children, className = '' }: { children: React.ReactNode; cla
   return (
     <div
       ref={cardRef}
-      className={`transition-transform duration-200 ease-out ${className}`}
+      className={`transition-[scale] duration-200 ease-out ${className}`}
       style={{ transform: 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)' }}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
@@ -71,7 +71,7 @@ const MagneticCard = ({ children, className = '' }: { children: React.ReactNode;
   return (
     <div
       ref={cardRef}
-      className={`transition-transform duration-300 ease-out ${className}`}
+      className={`transition-[scale] duration-300 ease-out ${className}`}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >
@@ -190,7 +190,7 @@ const FriendCard = ({ item, type, index }: { item: Web; type: string; index: num
                 <img
                   src={item.image}
                   alt={item.title}
-                  className={`relative w-14 h-14 rounded-full object-cover bg-gray-100 dark:bg-gray-800 border-2 border-white dark:border-gray-700 shadow-md transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3`}
+                  className={`relative w-14 h-14 rounded-full object-cover bg-gray-100 dark:bg-gray-800 border-2 border-white dark:border-gray-700 shadow-md transition-[scale,rotate] duration-500 group-hover:scale-110 group-hover:rotate-3`}
                   onError={(e) => {
                     const el = e.target as HTMLImageElement;
                     if (el.src !== DEFAULT_AVATAR) el.src = DEFAULT_AVATAR;
@@ -272,7 +272,7 @@ export default ({ data }: { data: { [string: string]: { order: number; list: Web
                             <img
                               src={author?.avatar || '/favicon.ico'}
                               alt="Site Logo"
-                              className="w-full h-full object-cover transition-transform duration-500 group-hover/avatar:scale-105 group-hover/avatar:rotate-6"
+                              className="w-full h-full object-cover transition-[scale,rotate] duration-500 group-hover/avatar:scale-105 group-hover/avatar:rotate-6"
                             />
                           </div>
                         </div>
@@ -372,7 +372,7 @@ export default ({ data }: { data: { [string: string]: { order: number; list: Web
                     <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 z-10 relative px-2">
                       {type}
                     </h3>
-                    <span className="absolute bottom-1 left-0 w-full h-3 bg-primary/20 -skew-x-12 rounded-sm" />
+                    <span className="absolute bottom-1 left-0 w-full h-3 bg-primary/20 -skew-x-12 rounded-xs" />
                   </div>
                   <div className="h-px flex-1 bg-linear-to-r from-gray-200 to-transparent dark:from-gray-800" />
                   {sectionIndex === 0 && (
@@ -400,7 +400,7 @@ export default ({ data }: { data: { [string: string]: { order: number; list: Web
                               <img
                                 src="https://q1.qlogo.cn/g?b=qq&nk=3311118881&s=640"
                                 alt="项目作者"
-                                className="relative w-14 h-14 rounded-full object-cover border-2 border-white dark:border-gray-700 shadow-md transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3"
+                                className="relative w-14 h-14 rounded-full object-cover border-2 border-white dark:border-gray-700 shadow-md transition-[scale,rotate] duration-500 group-hover:scale-110 group-hover:rotate-3"
                               />
                             </div>
                             <div className="flex-1 min-w-0">

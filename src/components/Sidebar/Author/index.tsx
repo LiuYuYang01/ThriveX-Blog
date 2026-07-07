@@ -43,7 +43,7 @@ const Author = async () => {
     >
       {/* 作者头像 */}
       <div className="avatar flex justify-center items-center w-[90px] h-[90px] rounded-full bg-white shadow-md overflow-hidden">
-        <img src={user?.avatar} alt="" className="w-[90%] h-[90%] rounded-full transition-transform hover:scale-110" />
+        <img src={user?.avatar} alt="" className="w-[90%] h-[90%] rounded-full transition-[scale] hover:scale-110" />
       </div>
 
       {/* 作者介绍 */}
@@ -54,7 +54,7 @@ const Author = async () => {
 
       {/* 社交账号 */}
       <div className="socializing w-full pt-8">
-        <div className="title relative w-full h-[1px] bg-[#eee] dark:bg-black-a">
+        <div className="title relative w-full h-px bg-[#eee] dark:bg-black-a">
           <span className="absolute top-[-10px] left-1/2 transform -translate-x-1/2 w-[110px] bg-white dark:bg-black-b text-center text-sm text-[#666] dark:text-[#979797]  ">社交账号</span>
         </div>
 

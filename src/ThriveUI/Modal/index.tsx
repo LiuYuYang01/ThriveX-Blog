@@ -152,7 +152,7 @@ export function ModalFab({
       <button
         type="button"
         onClick={onClick}
-        className={`pointer-events-auto inline-flex cursor-pointer items-center gap-2 rounded-full border border-white/20 bg-neutral-900/85 px-5 py-2.5 text-sm font-medium text-white shadow-[0_8px_32px_-8px_rgba(0,0,0,0.45)] backdrop-blur-md transition-transform hover:scale-[1.04] active:scale-[0.97] dark:border-white/15 dark:bg-white/10 ${className}`}
+        className={`pointer-events-auto inline-flex cursor-pointer items-center gap-2 rounded-full border border-white/20 bg-neutral-900/85 px-5 py-2.5 text-sm font-medium text-white shadow-[0_8px_32px_-8px_rgba(0,0,0,0.45)] backdrop-blur-md transition-[scale] hover:scale-[1.04] active:scale-[0.97] dark:border-white/15 dark:bg-white/10 ${className}`}
       >
         {icon}
         {children}

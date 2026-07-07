@@ -36,7 +36,7 @@ export function Switch({
       } ${trackSize[size]} ${disabled ? 'cursor-not-allowed opacity-50' : ''} ${className}`}
     >
       <span
-        className={`pointer-events-none inline-flex items-center justify-center rounded-full bg-white shadow transition-transform ${
+        className={`pointer-events-none inline-flex items-center justify-center rounded-full bg-white shadow-sm transition-[translate,scale] ${
           thumbSize[size]
         } ${isSelected ? thumbOn[size] : 'translate-x-0.5'}`}
       >

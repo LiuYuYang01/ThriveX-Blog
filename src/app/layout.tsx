@@ -1,5 +1,6 @@
 import localFont from 'next/font/local';
 import { Metadata } from 'next';
+import { Suspense } from 'react';
 
 import NProgress from '@/components/NProgress';
 import Header from '@/components/Header';
@@ -109,7 +110,9 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
       </head>
 
       {/* 监听路由变化 */}
-      <RouteChangeHandler />
+      <Suspense fallback={null}>
+        <RouteChangeHandler />
+      </Suspense>
 
       <body id="root" className={`dark:bg-black-a!`}>
         <AppConfigProvider web={data} theme={theme} other={other} author={author}>
@@ -119,7 +122,9 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
           {/* 进度条组件 */}
           <NProgress />
           {/* 顶部导航组件 */}
-          <Header theme={theme} />
+          <Suspense fallback={null}>
+            <Header theme={theme} />
+          </Suspense>
 
           {/* 主体内容 */}
           <div className="min-h-[calc(100vh-300px)]">{children}</div>

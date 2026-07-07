@@ -1,31 +1,52 @@
-import { cache } from 'react';
+import { cacheLife, cacheTag } from 'next/cache';
 
 import { getWebConfigDataAPI } from '@/api/config';
 import { getAuthorDataAPI } from '@/api/user';
+import { CACHE_TAGS } from '@/lib/cache-tags';
 import { Other, Theme, Web } from '@/types/app/config';
 import { User } from '@/types/app/user';
 
-export const getWebConfigCacheAPI = cache(async () => {
+export async function getWebConfigCacheAPI() {
+  'use cache';
+  cacheLife('config');
+  cacheTag(CACHE_TAGS.config, CACHE_TAGS.configWeb);
+
   const { data } = await getWebConfigDataAPI<{ value: Web }>('web');
   return data?.value as Web;
-});
+}
 
-export const getThemeConfigCacheAPI = cache(async () => {
+export async function getThemeConfigCacheAPI() {
+  'use cache';
+  cacheLife('config');
+  cacheTag(CACHE_TAGS.config, CACHE_TAGS.configTheme);
+
   const { data } = await getWebConfigDataAPI<{ value: Theme }>('theme');
   return data?.value as Theme;
-});
+}
 
-export const getOtherConfigCacheAPI = cache(async () => {
+export async function getOtherConfigCacheAPI() {
+  'use cache';
+  cacheLife('config');
+  cacheTag(CACHE_TAGS.config, CACHE_TAGS.configOther);
+
   const { data } = await getWebConfigDataAPI<{ value: Other }>('other');
   return data?.value as Other;
-});
+}
 
-export const getAuthorDataCacheAPI = cache(async () => {
+export async function getAuthorDataCacheAPI() {
+  'use cache';
+  cacheLife('config');
+  cacheTag(CACHE_TAGS.config, CACHE_TAGS.configAuthor);
+
   const { data } = await getAuthorDataAPI();
   return data as User;
-});
+}
 
-export const getAppConfigCacheAPI = cache(async () => {
+export async function getAppConfigCacheAPI() {
+  'use cache';
+  cacheLife('config');
+  cacheTag(CACHE_TAGS.config);
+
   const [web, theme, other, author] = await Promise.all([
     getWebConfigCacheAPI(),
     getThemeConfigCacheAPI(),
@@ -33,4 +54,4 @@ export const getAppConfigCacheAPI = cache(async () => {
     getAuthorDataCacheAPI(),
   ]);
   return { web, theme, other, author };
-});
+}

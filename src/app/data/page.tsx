@@ -3,7 +3,7 @@ import Slide from '@/components/Slide';
 import Starry from '@/components/Starry';
 import Statis from './components/Statis';
 import Archiving from './components/Archiving';
-import { getArticlePagingAPI } from '@/api/article';
+import { getArticlePagingCacheAPI } from '@/lib/article';
 
 export const metadata: Metadata = {
   title: '📊 数据统计',
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 };
 
 export default async () => {
-  const { data } = await getArticlePagingAPI();
+  const { data } = await getArticlePagingCacheAPI();
 
   return (
     <>

@@ -5,7 +5,7 @@ import Waterfall from './Waterfall';
 import Card from './Card';
 import Pagination from '../Pagination';
 
-import { getArticlePagingAPI } from '@/api/article';
+import { getArticlePagingCacheAPI } from '@/lib/article';
 import { getThemeConfigCacheAPI, getThemeCoversCacheAPI } from '@/lib/theme';
 import { getSwiperListAPI } from '@/api/swiper';
 
@@ -19,7 +19,7 @@ export default async ({ page }: { page: number }) => {
   swiper.result = swiper.result?.sort((a, b) => (a.order || 0) - (b.order || 0)) ?? [];
   
   // 如果是瀑布流布局就显示28条数据，否则显示8条
-  const { data } = await getArticlePagingAPI({
+  const { data } = await getArticlePagingCacheAPI({
     pageNum: page || 1,
     pageSize: theme.is_article_layout === 'waterfall' ? 28 : 8
   });

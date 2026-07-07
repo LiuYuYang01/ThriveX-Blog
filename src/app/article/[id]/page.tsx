@@ -1,8 +1,10 @@
 import { getArticleDataAPI, recordViewAPI } from '@/api/article';
-import { getWebConfigDataAPI } from '@/api/config';
-import { Theme, Web } from '@/types/app/config';
+import { getWebConfigCacheAPI } from '@/lib/config';
+import { getArticleCacheAPI } from '@/lib/article';
+import { getThemeConfigCacheAPI } from '@/lib/theme';
 import { getStableImage } from '@/utils';
 import { Metadata } from 'next';
+import { after } from 'next/server';
 
 import Starry from '@/components/Starry';
 import Slide from '@/components/Slide';
@@ -33,14 +35,13 @@ interface Props {
   searchParams: Promise<{ password: string }>;
 }
 
-// 生成文章页面的metadata
+// 生成文章页面的 metadata
 export async function generateMetadata(props: Props): Promise<Metadata> {
   const params = await props.params;
   const id = params.id;
 
-  const { data: article } = await getArticleDataAPI(id);
-  const webResponse = await getWebConfigDataAPI<{ value: Web }>('web');
-  const webConfig = webResponse?.data?.value as Web;
+  const { data: article } = await getArticleCacheAPI(id);
+  const webConfig = await getWebConfigCacheAPI();
 
   const baseUrl = webConfig?.url ?? 'https://liuyuyang.net';
 
@@ -90,11 +91,11 @@ export default async (props: Props) => {
   const id = params.id;
   const password = searchParams.password;
 
-  const [{ code, data }, themeRes] = await Promise.all([
-    password ? getArticleDataAPI(id, password) : getArticleDataAPI(id),
-    getWebConfigDataAPI<{ value: Theme }>('theme'),
+  const [{ code, data }, theme] = await Promise.all([
+    password ? getArticleDataAPI(id, password) : getArticleCacheAPI(id),
+    getThemeConfigCacheAPI(),
   ]);
-  const heroSrc = getStableImage(data?.cover, themeRes?.data?.value?.covers, String(id));
+  const heroSrc = getStableImage(data?.cover, theme?.covers, String(id));
 
   const errorCodes = [400, 404, 611];
 
@@ -103,7 +104,9 @@ export default async (props: Props) => {
   }
 
   // 记录文章访问量
-  await recordViewAPI(id);
+  after(() => {
+    void recordViewAPI(id);
+  });
 
   const headings = extractArticleHeadings(data?.content);
 

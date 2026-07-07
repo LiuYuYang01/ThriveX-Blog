@@ -1,18 +1,14 @@
 import { Feed } from 'feed';
 import { NextResponse } from 'next/server';
 
-import { Web } from '@/types/app/config';
-
-import { getArticlePagingAPI } from '@/api/article';
-import { getWebConfigDataAPI } from '@/api/config';
-import { getAuthorDataAPI } from '@/api/user';
+import { getArticlePagingCacheAPI } from '@/lib/article';
+import { getAuthorDataCacheAPI, getWebConfigCacheAPI } from '@/lib/config';
 import { getRecordListAPI } from '@/api/record';
 
 export async function GET() {
-  const webResponse = await getWebConfigDataAPI<{ value: Web }>('web');
-  const web = webResponse?.data?.value as Web;
-  const { data: user } = await getAuthorDataAPI();
-  const { data: article } = await getArticlePagingAPI({ pageNum: 1, pageSize: 8 });
+  const web = await getWebConfigCacheAPI();
+  const user = await getAuthorDataCacheAPI();
+  const { data: article } = await getArticlePagingCacheAPI({ pageNum: 1, pageSize: 8 });
   const { data: record } = await getRecordListAPI({ pageNum: 1, pageSize: 8 });
 
   const articleList = article?.result ?? [];

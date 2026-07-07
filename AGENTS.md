@@ -2,7 +2,7 @@
 
 ## 核心技术栈
 
-React 19、TypeScript、TailwindCSS 4.1、antd: 5.27.1
+React 19、TypeScript、TailwindCSS 4.1、ThriveUI
 
 参考当前目录中的 `package.json` 文件，要求生成的代码与项目已有的技术栈保持一致。
 
@@ -32,6 +32,8 @@ React 19、TypeScript、TailwindCSS 4.1、antd: 5.27.1
 2、颜色和背景色不要加 `css` 过渡效果，如果有则移除，不然主题切换时候不协调
 
 3、能被点击的东西，比如按钮都加上 `cursor-pointer`
+
+4、优先使用 `ThriveUI` 的组件，如果没有对应的组件，则自定义一个在 `ThriveUI` 里，然后在页面中使用。注意不要所有组件都放在这，必须是复用率高的才行，否则放在全局 `src\components`
 
 ## 图标
 

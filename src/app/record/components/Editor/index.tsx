@@ -28,5 +28,9 @@ export default ({ value }: { value: string }) => {
     };
   }, [editor]);
 
-  return <Editor defaultConfig={editorConfig} value={html} onCreated={setEditor} onChange={(editor) => setHtml(editor.getHtml())} mode="default" />;
+  return (
+    <div className="record-content-viewer">
+      <Editor defaultConfig={editorConfig} value={html} onCreated={setEditor} onChange={(editor) => setHtml(editor.getHtml())} mode="default" />
+    </div>
+  );
 };

@@ -14,7 +14,7 @@ interface Props {
 const WEEKDAYS = ['一', '二', '三', '四', '五', '六', '日'];
 
 const panelClass =
-  'rounded-[10px] border border-[#edf0f4] bg-white/85 p-5 shadow-[0_18px_55px_rgba(33,42,58,0.08)] dark:border-white/10 dark:bg-black-b dark:shadow-none';
+  'overflow-hidden rounded-[22px] border border-white/80 bg-white/85 p-5 shadow-[0_20px_60px_rgba(33,42,58,0.08)] backdrop-blur dark:border-white/10 dark:bg-black-b/85 dark:shadow-none';
 
 function buildChartData(moodPoints: { emoji: string; score: number }[]) {
   const w = 330;
@@ -59,11 +59,10 @@ export default function RecordSidebar({ records, user }: Props) {
     if (!prev || time > prev.time) moodByDate.set(key, { mood: r.mood, time });
   });
 
-  const moodPoints = records
-    .filter((r) => r.mood?.trim() && r.createTime)
-    .sort((a, b) => +a.createTime! - +b.createTime!)
+  const moodPoints = Array.from(moodByDate.values())
+    .sort((a, b) => a.time - b.time)
     .slice(-10)
-    .map((r) => ({ emoji: r.mood!.trim(), score: moodScore(r.mood) }));
+    .map((item) => ({ emoji: item.mood.trim(), score: moodScore(item.mood) }));
 
   const chartData = buildChartData(moodPoints);
 
@@ -96,58 +95,33 @@ export default function RecordSidebar({ records, user }: Props) {
     : null;
 
   return (
-    <aside className="hidden gap-3 lg:grid">
+    <aside className="sticky top-24 hidden gap-4 lg:grid">
       {user && (
-        <section className={panelClass}>
-          <div className="flex items-center gap-3">
-            <img src={user.avatar} alt={user.name} className="h-12 w-12 rounded-full object-cover ring-2 ring-primary/20" />
+        <section className={`${panelClass} relative`}>
+          <div className="pointer-events-none absolute right-[-38px] top-[-38px] h-28 w-28 rounded-full bg-primary/12 blur-2xl" />
+          <div className="relative flex items-center gap-3">
+            <img src={user.avatar} alt={user.name} className="h-12 w-12 rounded-full object-cover ring-4 ring-primary/15" />
             <div className="min-w-0">
               <p className="m-0 truncate text-base font-semibold text-[#161a22] dark:text-slate-100">{user.name}</p>
               <p className="mt-1 text-xs text-[#8a94a3] dark:text-slate-500">记录生活的每一刻</p>
             </div>
           </div>
-          <div className="mt-4 grid grid-cols-3 gap-2 text-center">
-            <div className="rounded-xl bg-[#f7f8fa] px-2 py-2.5 dark:bg-white/5">
-              <p className="m-0 text-lg font-semibold text-[#161a22] dark:text-white">{stats.total}</p>
+          <div className="relative mt-4 grid grid-cols-3 gap-2 text-center">
+            <div className="rounded-2xl bg-[#f7f8fa] px-2 py-3 dark:bg-white/5">
+              <p className="m-0 text-xl font-semibold text-[#161a22] dark:text-white">{stats.total}</p>
               <p className="mt-0.5 text-[11px] text-[#8a94a3]">条闪念</p>
             </div>
-            <div className="rounded-xl bg-[#f7f8fa] px-2 py-2.5 dark:bg-white/5">
-              <p className="m-0 text-lg font-semibold text-[#161a22] dark:text-white">{stats.thisMonth}</p>
+            <div className="rounded-2xl bg-[#f7f8fa] px-2 py-3 dark:bg-white/5">
+              <p className="m-0 text-xl font-semibold text-[#161a22] dark:text-white">{stats.thisMonth}</p>
               <p className="mt-0.5 text-[11px] text-[#8a94a3]">本月</p>
             </div>
-            <div className="rounded-xl bg-[#f7f8fa] px-2 py-2.5 dark:bg-white/5">
-              <p className="m-0 text-lg font-semibold text-[#161a22] dark:text-white">{avgScore ?? '—'}</p>
+            <div className="rounded-2xl bg-[#f7f8fa] px-2 py-3 dark:bg-white/5">
+              <p className="m-0 text-xl font-semibold text-[#161a22] dark:text-white">{avgScore ?? '—'}</p>
               <p className="mt-0.5 text-[11px] text-[#8a94a3]">均分</p>
             </div>
           </div>
         </section>
       )}
-
-      <section className={panelClass}>
-        <h2 className="m-0 text-center font-semibold text-[#161a22] dark:text-slate-100">每日心情</h2>
-        <div className="mt-4 grid grid-cols-7 gap-y-3 text-center text-[13px]">
-          {WEEKDAYS.map((d) => (
-            <div key={d} className="text-[#9aa3b1] dark:text-slate-500">{d}</div>
-          ))}
-          {calendarCells.map((cell, i) => {
-            const key = cell.date.format('YYYY-MM-DD');
-            const mood = moodByDate.get(key)?.mood;
-
-            return (
-              <div key={i} className="mx-auto flex flex-col items-center gap-0.5">
-                <span
-                  className={`grid h-[24px] w-[24px] place-items-center text-[12px] ${
-                    cell.muted ? 'text-[#9aa3b1] dark:text-slate-600' : 'text-[#242a35] dark:text-slate-300'
-                  }`}
-                >
-                  {cell.date.date()}
-                </span>
-                <span className="h-[14px] text-[13px] leading-none">{mood ?? ''}</span>
-              </div>
-            );
-          })}
-        </div>
-      </section>
 
       <section className={panelClass}>
         <div className="mb-3.5 flex items-center justify-between">
@@ -191,6 +165,38 @@ export default function RecordSidebar({ records, user }: Props) {
         ) : (
           <p className="mt-1 text-sm text-[#8a94a3] dark:text-slate-500">发布带心情的闪念后，这里会展示趋势</p>
         )}
+      </section>
+
+      <section className={panelClass}>
+        <div className="flex items-center justify-between">
+          <h2 className="m-0 font-semibold text-[#161a22] dark:text-slate-100">每日心情</h2>
+          <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs text-primary">{dayjs().format('MM月')}</span>
+        </div>
+        <div className="mt-4 grid grid-cols-7 gap-y-3 rounded-2xl bg-[#fafbfe]/80 p-3 text-center text-[13px] dark:bg-white/5">
+          {WEEKDAYS.map((d) => (
+            <div key={d} className="text-[#9aa3b1] dark:text-slate-500">{d}</div>
+          ))}
+          {calendarCells.map((cell, i) => {
+            const key = cell.date.format('YYYY-MM-DD');
+            const mood = moodByDate.get(key)?.mood;
+
+            return (
+              <div key={i} className="mx-auto flex flex-col items-center gap-0.5">
+                <span
+                  className={`grid h-[26px] w-[26px] place-items-center rounded-full text-[12px] ${mood
+                    ? 'bg-primary/10 font-medium text-primary'
+                    : cell.muted
+                      ? 'text-[#9aa3b1] dark:text-slate-600'
+                      : 'text-[#242a35] dark:text-slate-300'
+                    }`}
+                >
+                  {cell.date.date()}
+                </span>
+                <span className="h-[14px] text-[13px] leading-none">{mood ?? ''}</span>
+              </div>
+            );
+          })}
+        </div>
       </section>
     </aside>
   );

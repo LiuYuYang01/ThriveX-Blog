@@ -23,6 +23,7 @@ const nextConfig = {
     reactCompiler: true,
     // 启用 Turbopack 文件系统缓存，加快开发时候的构建速度
     experimental: {
+        dynamicIO: true,
         turbopackFileSystemCacheForDev: true,
     },
     // 配置图片来源

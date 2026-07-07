@@ -28,10 +28,6 @@ const nextConfig = {
             }
         ],
     },
-    eslint: {
-        // 即使有 ESLint 错误，构建也会继续，不会因为 ESLint 报错而中断
-        ignoreDuringBuilds: true,
-    },
 };
 
 export default nextConfig;

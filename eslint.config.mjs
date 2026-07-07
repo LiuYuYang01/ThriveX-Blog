@@ -9,6 +9,9 @@ import nextPlugin from '@next/eslint-plugin-next';
 
 export default defineConfig([
   {
+    ignores: ['.next/**', 'out/**', 'build/**', 'node_modules/**', 'next-env.d.ts'],
+  },
+  {
     files: ['**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     plugins: { js },
     extends: ['js/recommended'],

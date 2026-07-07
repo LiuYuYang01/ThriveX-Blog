@@ -3,10 +3,10 @@
   "version": "3.0",
   "private": true,
   "scripts": {
-    "dev": "next lint && next dev --turbopack",
+    "dev": "eslint . && next dev",
     "build": "next build",
     "start": "next start -p 9001",
-    "lint": "next lint"
+    "lint": "eslint ."
   },
   "author": {
     "name": "刘宇阳",
@@ -14,7 +14,7 @@
     "url": "https://liuyuyang.net"
   },
   "engines": {
-    "node": ">=20",
+    "node": ">=20.9",
     "npm": ">=10"
   },
   "dependencies": {
@@ -39,10 +39,10 @@
     "html-react-parser": "^5.2.5",
     "katex": "^0.16.22",
     "mdast-util-gfm-autolink-literal": "^2.0.0",
-    "next": "15.1.9",
+    "next": "16.2.10",
     "next-nprogress-bar": "^2.3.13",
-    "react": "19.0.1",
-    "react-dom": "19.0.1",
+    "react": "19.2.7",
+    "react-dom": "19.2.7",
     "react-github-calendar": "^4.5.5",
     "react-hook-form": "^7.53.0",
     "react-icon-cloud": "^4.1.7",
@@ -68,25 +68,26 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.31.0",
-    "@next/eslint-plugin-next": "^16.1.6",
+    "@next/eslint-plugin-next": "16.2.10",
+    "@tailwindcss/postcss": "^4.1.11",
     "@types/aos": "^3.0.7",
     "@types/canvas-confetti": "^1.6.4",
     "@types/markdown-navbar": "^1.4.4",
     "@types/node": "^20",
-    "@types/react": "19.0.10",
-    "@types/react-dom": "19.0.4",
+    "@types/react": "19.2.17",
+    "@types/react-dom": "19.2.3",
     "eslint": "^9.31.0",
+    "eslint-config-next": "^16.2.10",
     "eslint-plugin-react": "^7.37.5",
     "globals": "^16.3.0",
     "postcss": "^8",
     "tailwindcss": "^4.1.11",
-    "@tailwindcss/postcss": "^4.1.11",
     "typescript": "^5",
     "typescript-eslint": "^8.38.0"
   },
   "overrides": {
-    "@types/react": "19.0.10",
-    "@types/react-dom": "19.0.4"
+    "@types/react": "19.2.17",
+    "@types/react-dom": "19.2.3"
   },
   "pnpm": {
     "ignoredBuiltDependencies": [

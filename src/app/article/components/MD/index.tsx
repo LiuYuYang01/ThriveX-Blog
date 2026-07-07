@@ -41,6 +41,44 @@ function createHeadingComponents(headings: TocHeading[], indexRef: React.Mutable
   };
 }
 
+function MarkdownImage({ alt, src, className, ...props }: React.ImgHTMLAttributes<HTMLImageElement>) {
+  const imgRef = useRef<HTMLImageElement>(null);
+  const imageSrc = typeof src === 'string' ? src : undefined;
+
+  useEffect(() => {
+    const img = imgRef.current;
+    if (!img) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setTimeout(() => {
+              img.style.filter = 'blur(0px)';
+            }, 400);
+            observer.unobserve(img);
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    observer.observe(img);
+
+    return () => {
+      observer.unobserve(img);
+    };
+  }, []);
+
+  return (
+    <PhotoView src={imageSrc || ''}>
+      <span className="flex justify-center my-4 dark:brightness-90">
+        <img ref={imgRef} alt={alt} src={imageSrc} className={className ?? 'max-h-[500px]'} {...props} />
+      </span>
+    </PhotoView>
+  );
+}
+
 const ContentMD = ({ data, headings = [] }: Props) => {
   const { isDark } = useConfigStore();
   const [isClient, setIsClient] = useState(false);
@@ -176,43 +214,8 @@ const ContentMD = ({ data, headings = [] }: Props) => {
   };
 
   // 图片渲染支持懒加载和点击大图预览
-  const renderers = {
-    img: ({ alt, src }: { alt?: string; src?: string }) => {
-      const imgRef = useRef<HTMLImageElement>(null);
-
-      useEffect(() => {
-        const img = imgRef.current;
-        if (!img) return;
-
-        const observer = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((entry) => {
-              if (entry.isIntersecting) {
-                setTimeout(() => {
-                  img.style.filter = 'blur(0px)';
-                }, 400);
-                observer.unobserve(img);
-              }
-            });
-          },
-          { threshold: 0.1 }
-        );
-
-        observer.observe(img);
-
-        return () => {
-          observer.unobserve(img);
-        };
-      }, []);
-
-      return (
-        <PhotoView src={src || ''}>
-          <span className="flex justify-center my-4 dark:brightness-90">
-            <img ref={imgRef} alt={alt} src={src} className="max-h-[500px]" />
-          </span>
-        </PhotoView>
-      );
-    },
+  const renderers: Partial<Components> = {
+    img: MarkdownImage,
     a: ({ href, children }: { href?: string; children?: React.ReactNode }) => {
       if (children === 'douyin-video' && href) {
         const videoId = href.split('/').pop();

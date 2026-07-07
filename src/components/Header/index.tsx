@@ -20,7 +20,7 @@ import { getCateNavHref, getCateNavRel, getCateNavTarget } from '@/utils/cateNav
 import { useConfigStore } from '@/stores';
 
 const submenuPanelClass =
-  'invisible opacity-0 scale-[0.98] pointer-events-none group-hover/one:visible group-hover/one:opacity-100 group-hover/one:scale-100 group-hover/one:pointer-events-auto transition-[opacity,transform,visibility] duration-200 ease-out absolute left-0 top-[calc(100%-4px)] z-10 pt-0.5 min-w-full w-max max-w-[220px] overflow-hidden rounded-md before:absolute before:inset-x-0 before:-top-1 before:h-1 before:content-[""]';
+  'invisible opacity-0 scale-[0.98] pointer-events-none group-hover/one:visible group-hover/one:opacity-100 group-hover/one:scale-100 group-hover/one:pointer-events-auto transition-[opacity,scale,visibility] duration-200 ease-out absolute left-0 top-[calc(100%-4px)] z-10 pt-0.5 min-w-full w-max max-w-[220px] overflow-hidden rounded-md before:absolute before:inset-x-0 before:-top-1 before:h-1 before:content-[""]';
 
 const submenuItemClass =
   'group/item relative flex w-full items-center min-w-0 px-5 py-2.5 text-[15px] text-[#666] dark:text-white transition-colors duration-150 hover:!text-primary hover:bg-[#f2f2f2] dark:hover:bg-[#323e50] before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:h-0 before:w-[3px] before:rounded-r-full before:bg-primary before:transition-[height] before:duration-150 hover:before:h-[50%]';

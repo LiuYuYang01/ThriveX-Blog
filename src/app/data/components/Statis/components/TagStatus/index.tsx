@@ -41,7 +41,7 @@ export default () => {
         {list.map((item, index) => (
           <Tooltip key={index} content={item.name} showArrow={true}>
             <span
-              className={`flex justify-center items-center min-w-0 px-3 py-2 text-sm font-medium rounded-xl transition-[transform,box-shadow] hover:scale-105 hover:shadow-md ${tagStyles[getRandom(0, tagStyles.length - 1)]} overflow-hidden text-ellipsis whitespace-nowrap`}
+              className={`flex justify-center items-center min-w-0 px-3 py-2 text-sm font-medium rounded-xl transition-[scale,box-shadow] duration-200 ease-out hover:scale-105 hover:shadow-md ${tagStyles[getRandom(0, tagStyles.length - 1)]} overflow-hidden text-ellipsis whitespace-nowrap`}
             >
               {item.name}
             </span>

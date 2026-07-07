@@ -43,7 +43,7 @@ const HotArticle = () => {
         <div key={index} className="group relative h-32 rounded-md cursor-pointer">
           <div className="absolute inset-0 overflow-hidden rounded-md">
             <div
-              className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-300 ease-out group-hover:scale-105"
+              className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-[scale] duration-300 ease-out group-hover:scale-105"
               style={{ backgroundImage: `url(${getRandomImage(item.cover, theme.covers)})` }}
             />
             <div className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-[linear-gradient(transparent,#000)]" />

@@ -26,7 +26,7 @@ const TagItemCard = memo(
     return (
       <Link
         href={href}
-        className={clsx('flex h-10 transition-transform duration-200 hover:scale-105', color)}
+        className={clsx('flex h-10 transition-[scale] duration-200 ease-out hover:scale-105', color)}
         style={{
           borderRadius: '0.5rem',
           margin: '0.5rem',

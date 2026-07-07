@@ -97,7 +97,7 @@ export default ({ aTotal }: Props) => {
         {statCards.map((card, index) => (
           <div
             key={index}
-            className={`group relative overflow-hidden rounded-2xl border ${card.borderColor} ${card.bgLight} p-5 transition-[transform,box-shadow] duration-300 hover:shadow-lg hover:-translate-y-0.5 hover:border-opacity-80`}
+            className={`group relative overflow-hidden rounded-2xl border ${card.borderColor} ${card.bgLight} p-5 transition-[translate,box-shadow] duration-300 ease-out hover:shadow-lg hover:-translate-y-0.5 hover:border-opacity-80`}
           >
             <div className="relative flex items-center justify-between">
               <div className="flex items-center justify-center rounded-xl dark:bg-black/20">

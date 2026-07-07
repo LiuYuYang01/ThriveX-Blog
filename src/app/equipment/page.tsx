@@ -75,14 +75,14 @@ export default async () => {
                   <div
                     key={idx}
                     // 取消了边框变色，将 transition-all 改为具体的 transform 和 shadow 动画
-                    className="group flex flex-col relative bg-white dark:bg-zinc-900 rounded-3xl overflow-hidden border border-zinc-200/80 dark:border-zinc-800/80 transition-[transform,shadow] duration-500 hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-primary/5"
+                    className="group flex flex-col relative bg-white dark:bg-zinc-900 rounded-3xl overflow-hidden border border-zinc-200/80 dark:border-zinc-800/80 transition-[translate,box-shadow] duration-500 ease-out hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-primary/5"
                   >
                     <div className="relative h-56 flex items-center justify-center p-6 overflow-hidden" style={{ backgroundColor: item.color }}>
                       <div className="absolute inset-0 bg-linear-to-t from-black/20 to-white/10 mix-blend-overlay" />
                       {/* 修复了一点小细节：给 bg-white 加上 /20，不然在浅色模式下可能会太白挡住原产品图 */}
                       <div className="absolute inset-0 bg-white/20 dark:bg-black/20 backdrop-blur-[2px]" />
 
-                      <img src={item.image} alt={item.name} className="relative z-10 h-full w-full object-contain transform transition-transform duration-700 ease-out group-hover:scale-110" />
+                      <img src={item.image} alt={item.name} className="relative z-10 h-full w-full object-contain transition-[scale] duration-700 ease-out group-hover:scale-110" />
                     </div>
 
                     <div className="p-6 flex flex-col flex-1 bg-white dark:bg-zinc-900">

@@ -91,8 +91,7 @@ const ScrollReveal = ({ children, delay = 0 }: { children: React.ReactNode; dela
       ([entry]) => {
         if (entry.isIntersecting) {
           setTimeout(() => {
-            el.style.opacity = '1';
-            el.style.transform = 'translateY(0) scale(1)';
+            el.classList.remove('opacity-0', 'translate-y-8', 'scale-95');
           }, delay);
           observer.unobserve(entry.target);
         }
@@ -106,7 +105,7 @@ const ScrollReveal = ({ children, delay = 0 }: { children: React.ReactNode; dela
   return (
     <div
       ref={ref}
-      className="transition-[transform,opacity] duration-700 ease-out opacity-0 translate-y-8 scale-95"
+      className="transition-[opacity,translate,scale] duration-700 ease-out opacity-0 translate-y-8 scale-95"
     >
       {children}
     </div>
@@ -175,7 +174,7 @@ const FriendCard = ({ item, type, index }: { item: Web; type: string; index: num
             }`}
           >
             {/* 悬停光效 */}
-            <div className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/5 to-primary/0 opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="absolute inset-0 bg-linear-to-r from-primary/0 via-primary/5 to-primary/0 opacity-0 group-hover:opacity-100 transition-opacity" />
             
             {/* 置顶标识 */}
             {isPinned && (
@@ -210,7 +209,7 @@ const FriendCard = ({ item, type, index }: { item: Web; type: string; index: num
               </div>
 
               {/* 箭头指示 */}
-              <div className="shrink-0 opacity-0 group-hover:opacity-100 transition-[transform,opacity] duration-300 transform translate-x-0 group-hover:translate-x-1">
+              <div className="shrink-0 opacity-0 transition-[opacity,translate] duration-300 ease-out group-hover:translate-x-1 group-hover:opacity-100">
                 <svg className="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                 </svg>
@@ -293,7 +292,7 @@ export default ({ data }: { data: { [string: string]: { order: number; list: Web
 
                       {/* 分隔线 */}
                       <div className="hidden lg:block absolute left-[41.666%] top-1/2 -translate-y-1/2 w-px h-3/4">
-                        <div className="w-full h-full bg-gradient-to-b from-transparent via-primary/50 dark:via-primary/30 to-transparent" />
+                        <div className="w-full h-full bg-linear-to-b from-transparent via-primary/50 dark:via-primary/30 to-transparent" />
                         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-primary/50 ring-4 ring-white/80 dark:ring-gray-800/80" />
                       </div>
 
@@ -375,7 +374,7 @@ export default ({ data }: { data: { [string: string]: { order: number; list: Web
                     </h3>
                     <span className="absolute bottom-1 left-0 w-full h-3 bg-primary/20 -skew-x-12 rounded-sm" />
                   </div>
-                  <div className="h-px flex-1 bg-gradient-to-r from-gray-200 to-transparent dark:from-gray-800" />
+                  <div className="h-px flex-1 bg-linear-to-r from-gray-200 to-transparent dark:from-gray-800" />
                   {sectionIndex === 0 && (
                     <div className="shrink-0">
                       <ApplyForAdd />
@@ -391,7 +390,7 @@ export default ({ data }: { data: { [string: string]: { order: number; list: Web
                     <Link href="https://liuyuyang.net" target="_blank" className="group block h-full">
                       <MagneticCard className="h-full">
                         <div className="h-full relative overflow-hidden rounded-2xl bg-primary/5 dark:bg-primary/10 border border-primary/20 dark:border-primary/30 group-hover:shadow-xl group-hover:shadow-primary/10">
-                          <div className="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/5 to-primary/0 opacity-0 group-hover:opacity-100 transition-opacity" />
+                          <div className="absolute inset-0 bg-linear-to-r from-primary/0 via-primary/5 to-primary/0 opacity-0 group-hover:opacity-100 transition-opacity" />
                           <div className="absolute top-3 right-3 px-2.5 py-1 bg-primary text-[10px] font-bold text-white rounded-full shadow-lg shadow-primary/30">
                             OWNER
                           </div>
@@ -412,7 +411,7 @@ export default ({ data }: { data: { [string: string]: { order: number; list: Web
                                 ThriveX 博客管理系统作者
                               </p>
                             </div>
-                            <div className="shrink-0 opacity-0 group-hover:opacity-100 transition-[transform,opacity] duration-300 transform translate-x-0 group-hover:translate-x-1">
+                            <div className="shrink-0 opacity-0 transition-[opacity,translate] duration-300 ease-out group-hover:translate-x-1 group-hover:opacity-100">
                               <svg className="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                               </svg>

@@ -104,7 +104,7 @@ export default () => {
             href={`/wall/${item.mark}`}
             className={`
               relative px-5 py-2.5 text-sm font-medium rounded-full
-              transition-transform cursor-pointer
+              transition-[scale] duration-300 ease-out cursor-pointer
               ${item.mark === cate ? 'text-white bg-primary scale-105' : 'text-gray-700 dark:text-gray-300 bg-white/80 dark:bg-gray-700/80 backdrop-blur-sm border dark:border-gray-700/50 hover:text-primary hover:scale-105'}
             `}
           >

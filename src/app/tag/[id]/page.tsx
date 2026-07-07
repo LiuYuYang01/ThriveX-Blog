@@ -1,3 +1,4 @@
+import { Metadata } from 'next';
 import Starry from '@/components/Starry';
 import Slide from '@/components/Slide';
 import Classics from '@/components/ArticleLayout/Classics';
@@ -8,6 +9,16 @@ import { getThemeCoversCacheAPI } from '@/lib/theme';
 interface Props {
   params: Promise<{ id: number }>;
   searchParams: Promise<{ page: number; name: string }>;
+}
+
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const searchParams = await props.searchParams;
+  const name = searchParams.name ?? '标签';
+
+  return {
+    title: `🔖 ${name} - 标签`,
+    description: name,
+  };
 }
 
 export default async (props: Props) => {
@@ -24,9 +35,6 @@ export default async (props: Props) => {
 
   return (
     <>
-      <title>{`🔖 ${name} - 标签`}</title>
-      <meta name="description" content={name} />
-
       <div>
         <Slide isRipple={false} covers={covers}>
           {/* 星空背景组件 */}

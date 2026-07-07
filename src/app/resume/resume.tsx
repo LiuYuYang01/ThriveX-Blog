@@ -108,9 +108,6 @@ export default ({ data }: { data: Resume }) => {
 
   return (
     <>
-      <title>{`${safePersonalInfo.name || '匿名用户'} - ${safePersonalInfo.title || '前端开发工程师'}`}</title>
-      <meta name="description" content={`${safePersonalInfo.name || '匿名用户'} - ${safePersonalInfo.title || '前端开发工程师'} 的个人简历`} />
-
       {/* 背景装饰 */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute inset-0 bg-[linear-gradient(rgba(148,163,184,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,0.06)_1px,transparent_1px)] bg-[size:64px_64px]" />

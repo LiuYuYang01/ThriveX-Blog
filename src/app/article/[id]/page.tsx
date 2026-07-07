@@ -115,9 +115,6 @@ export default async (props: Props) => {
     return (
       <ArticleLikeProvider articleId={id} initialCount={data?.likeCount ?? 0}>
         <ArticleShareProvider articleId={id} initialCount={data?.shareCount ?? 0}>
-        <title>{data.title}</title>
-        <meta name="description" content={data.description} />
-
         <div className="ArticlePage">
           <div id="article-hero">
             <Slide src={heroSrc}>

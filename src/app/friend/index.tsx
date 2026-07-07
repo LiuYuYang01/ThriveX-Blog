@@ -227,9 +227,6 @@ export default ({ data }: { data: { [string: string]: { order: number; list: Web
 
   return (
     <>
-      <title>😇 朋友圈</title>
-      <meta name="description" content="😇 朋友圈" />
-
       {/* 全局背景装饰（静态，无动画） */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px]" />

@@ -1,5 +1,11 @@
+import { Metadata } from 'next';
 import { getPageConfigDataByNameAPI } from '@/api/config';
 import { FiTag, FiArrowUpRight, FiLayers } from 'react-icons/fi';
+
+export const metadata: Metadata = {
+  title: '🔭 我的设备 - 工欲善其事必先利其器',
+  description: '🔭 分享我的生产力工具',
+};
 
 interface Equipment {
   category: string;
@@ -38,9 +44,6 @@ export default async () => {
 
   return (
     <div className="relative min-h-screen bg-zinc-50 dark:bg-[#0a0a0a] font-sans selection:bg-primary/30">
-      <title>🔭 我的设备 - 工欲善其事必先利其器</title>
-      <meta name="description" content="🔭 分享我的生产力工具" />
-
       <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
         <div className="absolute inset-0 bg-[linear-gradient(rgba(148,163,184,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,0.08)_1px,transparent_1px)] bg-size-[32px_32px] mask-[radial-gradient(ellipse_80%_80%_at_50%_0%,#000_70%,transparent_100%)]" />
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] rounded-full bg-primary/10 blur-[120px] dark:bg-primary/15" />

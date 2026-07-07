@@ -1,17 +1,20 @@
+import { Metadata } from 'next';
 import Slide from '@/components/Slide';
 import Starry from '@/components/Starry';
 import Statis from './components/Statis';
 import Archiving from './components/Archiving';
 import { getArticlePagingAPI } from '@/api/article';
 
+export const metadata: Metadata = {
+  title: '📊 数据统计',
+  description: '📊 数据统计',
+};
+
 export default async () => {
   const { data } = await getArticlePagingAPI();
 
   return (
     <>
-      <title>📊 数据统计</title>
-      <meta name="description" content="📊 数据统计" />
-
       {/* 背景装饰 */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute inset-0 bg-[linear-gradient(rgba(148,163,184,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,0.06)_1px,transparent_1px)] bg-size-[64px_64px]" />

@@ -1,3 +1,4 @@
+import { Metadata } from 'next';
 import { getCateArticleListAPI, getCateListAPI } from '@/api/cate';
 import Classics from '@/components/ArticleLayout/Classics';
 import Pagination from '@/components/Pagination';
@@ -8,6 +9,18 @@ import { CATE_HERO_IMAGE, findCateById } from '../utils';
 interface Props {
   params: Promise<{ id: number }>;
   searchParams: Promise<{ page: number; name: string }>;
+}
+
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const [params, searchParams] = await Promise.all([props.params, props.searchParams]);
+  const { data: cateListData } = await getCateListAPI();
+  const cateInfo = findCateById(cateListData?.result ?? [], params.id);
+  const name = cateInfo?.name ?? searchParams.name ?? '分类';
+
+  return {
+    title: `${name} - 分类`,
+    description: name,
+  };
 }
 
 export default async (props: Props) => {
@@ -26,10 +39,7 @@ export default async (props: Props) => {
 
   return (
     <>
-      <title>{`${cateInfo?.name ?? name} - 分类`}</title>
-      <meta name="description" content={cateInfo?.name ?? name} />
-
-      <div className="min-h-screen bg-[#f9f9f9] text-foreground dark:bg-black-a">
+      <div className="min-h-screen bg-background text-foreground dark:bg-black-a">
         <CateHero image={CATE_HERO_IMAGE}>
           <CateHeroContent
             name={cateInfo?.name ?? name}

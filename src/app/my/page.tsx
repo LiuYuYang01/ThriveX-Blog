@@ -1,3 +1,4 @@
+import { Metadata } from 'next';
 import bg from '@/assets/image/bg.png';
 
 import Goals from './components/Goals';
@@ -10,6 +11,11 @@ import InfoTwo from './components/InfoTwo';
 import InfoOne from './components/InfoOne';
 import { getPageConfigDataByNameAPI } from '@/api/config';
 import { MyData } from '@/types/app/my';
+
+export const metadata: Metadata = {
+  title: '👋 关于我',
+  description: '👋 关于我',
+};
 
 export default async () => {
   const { data } = await getPageConfigDataByNameAPI('my');
@@ -52,9 +58,6 @@ export default async () => {
 
   return (
     <>
-      <title>👋 关于我</title>
-      <meta name="description" content="👋 关于我" />
-
       <div className="bg-white dark:bg-black-a pt-20 bg-cover bg-center bg-fixed" style={{ backgroundImage: `url(${bg.src})` }}>
         <div className="w-[90%] lg:w-[950px] mx-auto">{info_style === 'info_one' ? <InfoOne data={info_one} /> : <InfoTwo data={info_two} />}</div>
 

@@ -6,7 +6,6 @@ import ArticleMeta from '@/components/ArticleLayout/components/ArticleMeta';
 import Empty from '@/components/Empty';
 import Show from '@/components/Show';
 
-
 interface CardProps {
   data: Paginate<Article[]>;
 }
@@ -14,13 +13,11 @@ interface CardProps {
 const Card = async ({ data }: CardProps) => {
   const covers = await getThemeCovers();
 
-  // 生成文章摘要，取前100个字
   const genArticleInfo = (data: Article) => {
     if (data.description?.trim()?.length) {
       return data.description;
-    } else {
-      return data.content.slice(0, 100);
     }
+    return data.content.slice(0, 100);
   };
 
   return (
@@ -31,7 +28,6 @@ const Card = async ({ data }: CardProps) => {
             <Link href={`/article/${item.id}`} className="flex flex-col justify-between h-full text-center sm:text-start">
               <h3 className="overflow-hidden relative w-full my-2.5 text_shadow text-white hover:text-primary text-center text-lg md:text-xl lg:text-[22px] xl:text-2xl   line-clamp-1">{item.title}</h3>
               <p className="text-center text-[#cecece] text-sm sm:text-[15px] leading-7 sm:indent-8 line-clamp-2 xl:line-clamp-3">{genArticleInfo(item)}</p>
-
               <ArticleMeta article={item} className="justify-center sm:justify-start" />
             </Link>
           </div>

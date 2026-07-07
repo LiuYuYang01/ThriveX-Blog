@@ -6,9 +6,8 @@ import { getRandomImage } from '@/utils';
 import { useConfigStore } from '@/stores';
 
 interface Props {
-  src?: string; // 图片列表
-  isRipple?: boolean; // 是否显示波浪
-  /** 按 16:9 比例完整展示背景图，避免固定高度裁切 */
+  src?: string;
+  isRipple?: boolean;
   fullImage?: boolean;
   children?: ReactNode;
 }

@@ -53,16 +53,7 @@ const RandomArticle = () => {
                     className="relative w-full h-40 bg-cover bg-center bg-no-repeat"
                     style={coverUrl ? { backgroundImage: `url(${coverUrl})` } : undefined}
                   >
-                    {coverUrl ? (
-                      <Image
-                        src={coverUrl}
-                        alt={item.title}
-                        fill
-                        className="object-cover transition duration-300 ease-out group-hover:scale-105"
-                      />
-                    ) : (
-                      <div className="absolute inset-0 bg-slate-400/50 dark:bg-slate-600/50" />
-                    )}
+                    {!coverUrl && <div className="absolute inset-0 bg-slate-400/50 dark:bg-slate-600/50" />}
                     <div
                       className="absolute inset-0 bg-linear-to-t from-black/70 via-transparent to-transparent pointer-events-none"
                       aria-hidden

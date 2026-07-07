@@ -190,7 +190,7 @@ const FriendCard = ({ item, type, index }: { item: Web; type: string; index: num
                 <img
                   src={item.image}
                   alt={item.title}
-                  className={`relative w-14 h-14 rounded-full object-cover bg-gray-100 dark:bg-gray-800 border-2 border-white dark:border-gray-700 shadow-md transition-[scale,rotate] duration-500 group-hover:scale-110 group-hover:rotate-3`}
+                  className="relative w-14 h-14 rounded-full object-cover bg-gray-100 dark:bg-gray-800 border-2 border-white dark:border-gray-700 shadow-md transition-[scale,rotate] duration-500 group-hover:scale-110 group-hover:rotate-3"
                   onError={(e) => {
                     const el = e.target as HTMLImageElement;
                     if (el.src !== DEFAULT_AVATAR) el.src = DEFAULT_AVATAR;

@@ -1,13 +1,13 @@
 'use client';
 
 import Link from 'next/link';
-import { useConfigStore } from '@/stores';
 import { Article } from '@/types/app/article';
 import { getRandomImage } from '@/utils';
 import Masonry from 'react-masonry-css';
 
 interface WaterfallProps {
   data: Paginate<Article[]>;
+  covers: string[];
 }
 
 const breakpointColumnsObj = {
@@ -16,9 +16,7 @@ const breakpointColumnsObj = {
   700: 2,
 };
 
-export default ({ data }: WaterfallProps) => {
-  const { theme } = useConfigStore();
-
+export default ({ data, covers }: WaterfallProps) => {
   return (
     <Masonry breakpointCols={breakpointColumnsObj} className="masonry-grid mb-12" columnClassName="masonry-grid_column">
       {data.result.map((item) => (
@@ -27,7 +25,7 @@ export default ({ data }: WaterfallProps) => {
             <div className="overflow-hidden h-32">
               <div
                 className="relative h-full bg-cover bg-no-repeat bg-center scale-100 hover:scale-125 z-10 transition-[scale] duration-300 ease-out"
-                style={{ backgroundImage: `url(${getRandomImage(item.cover, theme.covers)})` }}
+                style={{ backgroundImage: `url(${getRandomImage(item.cover, covers)})` }}
               />
             </div>
             <div className="py-2 px-4">

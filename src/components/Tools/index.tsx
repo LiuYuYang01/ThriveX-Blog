@@ -7,6 +7,7 @@ import moon from './image/moon.svg';
 import search from './image/search.svg';
 import returnTop from './image/returnTop.svg';
 import rss from './image/rss.svg';
+import { useAppConfig } from '@/components/AppConfigProvider';
 import { useConfigStore } from '@/stores';
 import Search from '../Search';
 import Rss from './components/Rss';
@@ -14,7 +15,8 @@ import Rss from './components/Rss';
 const itemSty = 'p-2 hover:bg-[#edf5ff] dark:hover:bg-[#4e5969] cursor-pointer  ';
 
 export default () => {
-  const { isDark, setIsDark, web } = useConfigStore();
+  const { web } = useAppConfig();
+  const { isDark, setIsDark } = useConfigStore();
   const { isOpen: isSwiper, onOpen: onSwiperOpen, onClose: onSwiperClose } = useDisclosure();
   const { isOpen: isRssOpen, onOpen: onRssOpen, onClose: onRssClose } = useDisclosure();
   const onReturnTop = () => {

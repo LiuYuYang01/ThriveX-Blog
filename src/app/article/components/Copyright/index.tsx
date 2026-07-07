@@ -1,10 +1,10 @@
 'use client';
 
-import { useAuthorStore } from '@/stores';
+import { useAppConfig } from '@/components/AppConfigProvider';
 import { FiShield, FiUser } from 'react-icons/fi';
 
 const Copyright = () => {
-  const author = useAuthorStore((state) => state.author);
+  const { author } = useAppConfig();
 
   // 增加一个 fallback，防止未加载时出现空隙
   const authorName = author?.name || '匿名作者';

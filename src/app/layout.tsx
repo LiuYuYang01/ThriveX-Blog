@@ -10,8 +10,7 @@ import Tools from '@/components/Tools';
 import Confetti from '@/components/Confetti';
 import RouteChangeHandler from '@/components/RouteChangeHandler';
 
-import { getWebConfigDataAPI } from '@/api/config';
-import { Web } from '@/types/app/config';
+import { getAppConfigCacheAPI, getWebConfigCacheAPI } from '@/lib/config';
 
 // 加载样式文件
 import '@/styles/tailwind.css';
@@ -19,7 +18,7 @@ import '@/styles/global.scss';
 import '@/styles/index.scss';
 import BaiduStatis from '@/components/BaiduStatis';
 import FloatingBlock from '@/components/FloatingBlock';
-import InjectData from '@/components/InjectData';
+import AppConfigProvider from '@/components/AppConfigProvider';
 
 // 加载本地字体
 const LXGWWenKai = localFont({
@@ -29,8 +28,7 @@ const LXGWWenKai = localFont({
 
 // 生成动态metadata
 export async function generateMetadata(): Promise<Metadata> {
-  const response = await getWebConfigDataAPI<{ value: Web }>('web');
-  const data = response?.data?.value as Web;
+  const data = await getWebConfigCacheAPI();
 
   return {
     title: {
@@ -93,8 +91,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  const response = await getWebConfigDataAPI<{ value: Web }>('web');
-  const data = response?.data?.value as Web;
+  const { web: data, theme, other, author } = await getAppConfigCacheAPI();
 
   return (
     <html lang="zh-CN" className={LXGWWenKai.className}>
@@ -108,33 +105,33 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
           </>
         )}
         {/* 百度统计 */}
-        <BaiduStatis />
+        <BaiduStatis other={other} />
       </head>
 
       {/* 监听路由变化 */}
       <RouteChangeHandler />
 
       <body id="root" className={`dark:bg-black-a!`}>
-        {/* 数据注入 */}
-        <InjectData />
-        {/* 🎉 礼花效果 */}
-        {/* <Confetti /> */}
+        <AppConfigProvider web={data} theme={theme} other={other} author={author}>
+          {/* 🎉 礼花效果 */}
+          {/* <Confetti /> */}
 
-        {/* 进度条组件 */}
-        <NProgress />
-        {/* 顶部导航组件 */}
-        <Header />
+          {/* 进度条组件 */}
+          <NProgress />
+          {/* 顶部导航组件 */}
+          <Header theme={theme} />
 
-        {/* 主体内容 */}
-        <div className="min-h-[calc(100vh-300px)]">{children}</div>
+          {/* 主体内容 */}
+          <div className="min-h-[calc(100vh-300px)]">{children}</div>
 
-        {/* 底部组件 */}
-        <Footer />
-        {/* 右侧工具栏组件 */}
-        {/* <Tools /> */}
+          {/* 底部组件 */}
+          <Footer />
+          {/* 右侧工具栏组件 */}
+          {/* <Tools /> */}
 
-        {/* 悬浮块 */}
-        <FloatingBlock />
+          {/* 悬浮块 */}
+          <FloatingBlock />
+        </AppConfigProvider>
       </body>
     </html>
   );

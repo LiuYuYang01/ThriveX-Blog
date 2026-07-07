@@ -6,12 +6,13 @@ import Card from './Card';
 import Pagination from '../Pagination';
 
 import { getArticlePagingAPI } from '@/api/article';
-import { getThemeConfig } from '@/lib/theme';
+import { getThemeConfigCacheAPI, getThemeCoversCacheAPI } from '@/lib/theme';
 import { getSwiperListAPI } from '@/api/swiper';
 
 export default async ({ page }: { page: number }) => {
   const { data: swiper } = await getSwiperListAPI();
-  const theme = await getThemeConfig();
+  const theme = await getThemeConfigCacheAPI();
+  const covers = await getThemeCoversCacheAPI();
   const sidebar = theme?.right_sidebar ?? [];
 
   // 按order排序轮播图（顺序越小越靠前）
@@ -32,7 +33,7 @@ export default async ({ page }: { page: number }) => {
 
       {theme.is_article_layout === 'classics' && <Classics data={data} />}
       {theme.is_article_layout === 'card' && <Card data={data} />}
-      {theme.is_article_layout === 'waterfall' && <Waterfall data={data} />}
+      {theme.is_article_layout === 'waterfall' && <Waterfall data={data} covers={covers} />}
 
       {!!data.total && <Pagination total={data?.pages} page={page} className="flex justify-center mt-5" />}
     </div>

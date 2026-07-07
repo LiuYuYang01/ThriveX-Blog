@@ -19,7 +19,7 @@ import {
   actionPrimaryClass,
   actionTextColClass,
 } from '@/components/ActionCard/styles';
-import { useConfigStore, useAuthorStore } from '@/stores';
+import { useAppConfig } from '@/components/AppConfigProvider';
 import { generateArticlePoster } from '@/utils/generateArticlePoster';
 import dayjs from 'dayjs';
 
@@ -46,8 +46,7 @@ export default function ArticleSharePoster({ data, minimal = false, className, s
   const [posterUrl, setPosterUrl] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const web = useConfigStore((s) => s.web);
-  const author = useAuthorStore((s) => s.author);
+  const { web, author } = useAppConfig();
 
   const buildPoster = useCallback(async () => {
     setLoading(true);

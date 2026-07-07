@@ -1,19 +1,20 @@
 import HCaptcha from '@hcaptcha/react-hcaptcha';
 import { forwardRef, Ref } from 'react';
+import { useAppConfig } from '@/components/AppConfigProvider';
 import { useConfigStore } from '@/stores';
 
 export default forwardRef(({ setToken }: { setToken: (token: string) => void }, ref: Ref<HCaptcha>) => {
-  const config = useConfigStore();
-  const sitekey = config?.other?.hcaptcha_key;
+  const { other } = useAppConfig();
+  const isDark = useConfigStore((state) => state.isDark);
+  const sitekey = other?.hcaptcha_key;
 
-  // 如果没有配置 hcaptcha_key，不渲染组件
   if (!sitekey) {
     return null;
   }
 
   return (
     <div>
-      <HCaptcha theme={config.isDark ? 'dark' : 'light'} sitekey={sitekey} onVerify={setToken} ref={ref} />
+      <HCaptcha theme={isDark ? 'dark' : 'light'} sitekey={sitekey} onVerify={setToken} ref={ref} />
     </div>
   );
 });

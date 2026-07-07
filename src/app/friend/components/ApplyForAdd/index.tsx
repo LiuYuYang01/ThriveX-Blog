@@ -17,7 +17,7 @@ import { addWebDataAPI, getWebTypeListAPI } from '@/api/web';
 import { Bounce, toast, ToastOptions } from 'react-toastify';
 import HCaptchaType from '@hcaptcha/react-hcaptcha';
 import HCaptcha from '@/components/HCaptcha';
-import { useConfigStore } from '@/stores';
+import { useAppConfig } from '@/components/AppConfigProvider';
 import 'react-toastify/dist/ReactToastify.css';
 
 const toastConfig: ToastOptions = {
@@ -40,8 +40,8 @@ export default () => {
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [captchaError, setCaptchaError] = useState<string>('');
 
-  const config = useConfigStore();
-  const hasHCaptcha = !!config?.other?.hcaptcha_key;
+  const { other } = useAppConfig();
+  const hasHCaptcha = !!other?.hcaptcha_key;
 
   const [typeList, setTypeList] = useState<WebType[]>([]);
   const getWebTypeList = async () => {

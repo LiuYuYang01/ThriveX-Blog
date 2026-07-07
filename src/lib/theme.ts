@@ -1,12 +1,8 @@
 import { cache } from 'react';
 
-import { getWebConfigDataAPI } from '@/api/config';
-import { Theme } from '@/types/app/config';
+import { getThemeConfigCacheAPI } from '@/lib/config';
 import { parseThemeCovers } from '@/utils/cover';
 
-export const getThemeConfig = cache(async () => {
-  const { data } = await getWebConfigDataAPI<{ value: Theme }>('theme');
-  return data?.value as Theme;
-});
+export { getThemeConfigCacheAPI } from '@/lib/config';
 
-export const getThemeCovers = cache(async () => parseThemeCovers((await getThemeConfig())?.covers));
+export const getThemeCoversCacheAPI = cache(async () => parseThemeCovers((await getThemeConfigCacheAPI())?.covers));

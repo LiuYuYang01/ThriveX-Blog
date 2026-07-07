@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { getRandomImage } from '@/utils';
-import { getThemeCovers } from '@/lib/theme';
+import { getThemeCoversCacheAPI } from '@/lib/theme';
 import { Article } from '@/types/app/article';
 import ArticleMeta from '@/components/ArticleLayout/components/ArticleMeta';
 import Empty from '@/components/Empty';
@@ -11,7 +11,7 @@ interface CardProps {
 }
 
 const Card = async ({ data }: CardProps) => {
-  const covers = await getThemeCovers();
+  const covers = await getThemeCoversCacheAPI();
 
   const genArticleInfo = (data: Article) => {
     if (data.description?.trim()?.length) {

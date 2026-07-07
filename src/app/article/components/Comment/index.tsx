@@ -9,7 +9,7 @@ import HCaptchaType from '@hcaptcha/react-hcaptcha';
 import List from './components/List';
 import HCaptcha from '@/components/HCaptcha';
 import EmojiBag from '@/components/EmojiBag';
-import { useConfigStore } from '@/stores';
+import { useAppConfig } from '@/components/AppConfigProvider';
 import 'react-toastify/dist/ReactToastify.css';
 import './index.scss';
 
@@ -52,9 +52,8 @@ const CommentForm = ({ articleId }: Props) => {
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [captchaError, setCaptchaError] = useState<string>('');
 
-  // 获取HCaptcha配置
-  const config = useConfigStore();
-  const hasHCaptcha = !!config?.other?.hcaptcha_key;
+  const { other } = useAppConfig();
+  const hasHCaptcha = !!other?.hcaptcha_key;
 
   const {
     register,

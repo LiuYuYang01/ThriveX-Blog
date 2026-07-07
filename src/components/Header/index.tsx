@@ -14,6 +14,7 @@ import { LuMenu } from 'react-icons/lu';
 import { BsFillMoonStarsFill } from 'react-icons/bs';
 
 import { Cate } from '@/types/app/cate';
+import { Theme } from '@/types/app/config';
 import { getCateListAPI } from '@/api/cate';
 import { getCateNavHref, getCateNavRel, getCateNavTarget } from '@/utils/cateNav';
 
@@ -25,10 +26,10 @@ const submenuPanelClass =
 const submenuItemClass =
   'group/item relative flex w-full items-center min-w-0 px-5 py-2.5 text-[15px] text-[#666] dark:text-white transition-colors duration-150 hover:text-primary! hover:bg-[#f2f2f2] dark:hover:bg-[#323e50] before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:h-0 before:w-[3px] before:rounded-r-full before:bg-primary before:transition-[height] before:duration-150 hover:before:h-[50%]';
 
-export default () => {
+export default ({ theme }: { theme: Theme }) => {
   const patchName = usePathname();
 
-  const { isDark, setIsDark, theme } = useConfigStore();
+  const { isDark, setIsDark } = useConfigStore();
 
   // 这些路径段不需要改变导航样式
   const isPathSty = ['/my', '/wall', '/record', '/equipment', '/tags', '/resume', '/album', '/fishpond', '/friend'].some((path) => patchName.includes(path));

@@ -3,6 +3,7 @@ import Slide from '@/components/Slide';
 import Classics from '@/components/ArticleLayout/Classics';
 import Pagination from '@/components/Pagination';
 import { getTagArticleListAPI } from '@/api/tag';
+import { getThemeCoversCacheAPI } from '@/lib/theme';
 
 interface Props {
   params: Promise<{ id: number }>;
@@ -16,7 +17,10 @@ export default async (props: Props) => {
   const page = searchParams.page ?? 1;
   const name = searchParams.name;
 
-  const { data } = await getTagArticleListAPI(id, { pageNum: page, pageSize: 8 });
+  const [{ data }, covers] = await Promise.all([
+    getTagArticleListAPI(id, { pageNum: page, pageSize: 8 }),
+    getThemeCoversCacheAPI(),
+  ]);
 
   return (
     <>
@@ -24,7 +28,7 @@ export default async (props: Props) => {
       <meta name="description" content={name} />
 
       <div>
-        <Slide isRipple={false}>
+        <Slide isRipple={false} covers={covers}>
           {/* 星空背景组件 */}
           <Starry />
 

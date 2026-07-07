@@ -1,11 +1,9 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useConfigStore } from '@/stores';
+import { Other } from '@/types/app/config';
 
-export default function BaiduAnalytics() {
-  const other = useConfigStore((state) => state.other);
-
+export default function BaiduAnalytics({ other }: { other: Other }) {
   useEffect(() => {
     if (other?.baidu_token) {
       window._hmt = window._hmt || [];

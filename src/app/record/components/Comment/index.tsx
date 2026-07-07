@@ -12,7 +12,7 @@ import HCaptcha from '@/components/HCaptcha';
 import Show from '@/components/Show';
 import { addRecordCommentDataAPI, getRecordCommentListAPI } from '@/api/recordComment';
 import { RecordComment } from '@/types/app/recordComment';
-import { useConfigStore } from '@/stores';
+import { useAppConfig } from '@/components/AppConfigProvider';
 
 interface Props {
   recordId: number;
@@ -50,8 +50,8 @@ export default function RecordCommentPanel({ recordId, onCountChange }: Props) {
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [captchaError, setCaptchaError] = useState('');
 
-  const config = useConfigStore();
-  const hasHCaptcha = !!config?.other?.hcaptcha_key;
+  const { other } = useAppConfig();
+  const hasHCaptcha = !!other?.hcaptcha_key;
 
   const methods = useForm<CommentForm>({});
   const { setValue, setFocus, reset, handleSubmit } = methods;

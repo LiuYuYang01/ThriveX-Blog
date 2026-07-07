@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { getRandomArticleListAPI } from '@/api/article';
-import { useConfigStore } from '@/stores';
+import { useAppConfig } from '@/components/AppConfigProvider';
 import { Article } from '@/types/app/article';
 import { getRandomImage } from '@/utils';
 import RandomArticleSvg from '@/assets/svg/other/article.svg';
@@ -19,7 +19,7 @@ const RANKING_COLORS = [
 ] as const;
 
 const HotArticle = () => {
-  const { theme } = useConfigStore();
+  const { theme } = useAppConfig();
 
   const [list, setList] = useState<Article[]>([]);
 

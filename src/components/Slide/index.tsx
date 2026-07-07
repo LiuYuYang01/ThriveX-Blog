@@ -3,19 +3,17 @@
 import { ReactNode, useMemo } from 'react';
 import Ripple from '@/components/Ripple';
 import { getRandomImage } from '@/utils';
-import { useConfigStore } from '@/stores';
 
 interface Props {
   src?: string;
+  covers?: string[];
   isRipple?: boolean;
   fullImage?: boolean;
   children?: ReactNode;
 }
 
-export default ({ src, isRipple = true, fullImage = false, children }: Props) => {
-  const theme = useConfigStore((state) => state.theme);
-
-  const fallbackImage = useMemo(() => getRandomImage(undefined, theme.covers), [theme.covers]);
+export default ({ src, covers = [], isRipple = true, fullImage = false, children }: Props) => {
+  const fallbackImage = useMemo(() => getRandomImage(undefined, covers), [covers]);
   const bgImage = src?.trim() || fallbackImage;
 
   const sty = {

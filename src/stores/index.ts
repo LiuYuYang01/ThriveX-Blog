@@ -1,4 +1,3 @@
-import useConfigStore from './modules/config'
-import useAuthorStore from './modules/author'
+import useConfigStore from './modules/config';
 
-export { useConfigStore, useAuthorStore };
+export { useConfigStore };

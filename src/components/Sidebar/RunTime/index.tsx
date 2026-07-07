@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
-import { useConfigStore } from '@/stores';
+import { useAppConfig } from '@/components/AppConfigProvider';
 import { motion, useMotionValue, useTransform, animate, useInView } from 'framer-motion';
 import TimerSvg from '@/assets/svg/other/timer.svg';
 import SidebarCard from '@/components/Sidebar/SidebarCard';
@@ -188,7 +188,7 @@ const statItems = [
 ] as const;
 
 export default () => {
-  const { web } = useConfigStore();
+  const { web } = useAppConfig();
   const [timeDiff, setTimeDiff] = useState(() => calculateTimeDifference(web?.create_time));
 
   useEffect(() => {

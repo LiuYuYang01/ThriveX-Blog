@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { Button, useDisclosure } from '@/ThriveUI';
 import { BiCog, BiCommand } from 'react-icons/bi';
 import { IoSearchOutline, IoArrowUpOutline, IoLogoRss } from 'react-icons/io5';
+import { useAppConfig } from '@/components/AppConfigProvider';
 import { useConfigStore } from '@/stores';
 import Search from '../Search';
 import Rss from '../Tools/components/Rss';
@@ -20,7 +21,8 @@ const FloatingBlock = () => {
   const [isExpanded, setIsExpanded] = useState(false); // 展开状态的变量
   const [isDragging, setIsDragging] = useState(false); // 拖拽状态
   const constraintsRef = useRef(null); // 拖拽约束参考
-  const { isDark, setIsDark, web } = useConfigStore();
+  const { web } = useAppConfig();
+  const { isDark, setIsDark } = useConfigStore();
   const { isOpen: isSearchOpen, onOpen: onSearchOpen, onClose: onSearchClose } = useDisclosure();
   const { isOpen: isRssOpen, onOpen: onRssOpen, onClose: onRssClose } = useDisclosure();
 

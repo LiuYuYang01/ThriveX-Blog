@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Web } from '@/types/app/web';
-import { useConfigStore, useAuthorStore } from '@/stores';
+import { useAppConfig } from '@/components/AppConfigProvider';
 import ApplyForAdd from './components/ApplyForAdd';
 
 // 默认头像
@@ -223,8 +223,7 @@ const FriendCard = ({ item, type, index }: { item: Web; type: string; index: num
 };
 
 export default ({ data }: { data: { [string: string]: { order: number; list: Web[] } } }) => {
-  const web = useConfigStore((state) => state.web);
-  const author = useAuthorStore((state) => state.author);
+  const { web, author } = useAppConfig();
 
   return (
     <>

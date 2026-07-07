@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { LuChevronDown } from 'react-icons/lu';
 import { Wall } from '@/types/app/wall';
 import { getRelativeTimeLabel } from '@/utils';
@@ -146,8 +146,8 @@ export default ({ walls }: WallMasonryProps) => {
     return () => window.removeEventListener('resize', updateColumnCount);
   }, []);
 
-  const columns = useMemo(() => distributeToShortestColumns(walls, columnCount), [walls, columnCount]);
-  const wallIndexMap = useMemo(() => new Map(walls.map((wall, index) => [wall.id, index])), [walls]);
+  const columns = distributeToShortestColumns(walls, columnCount);
+  const wallIndexMap = new Map(walls.map((wall, index) => [wall.id, index]));
 
   return (
     <div className="flex items-start gap-5 sm:gap-6 lg:gap-7">

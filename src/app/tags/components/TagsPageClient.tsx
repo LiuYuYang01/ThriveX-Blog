@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React from 'react';
 import { Tag } from '@/types/app/tag';
 import TagCloudBackground from '@/app/tags/components/TagCloudBackground';
 import PageHeroHeader, { PageHeroGrid } from '@/components/PageHeroHeader';
@@ -11,10 +11,7 @@ interface TagsPageClientProps {
 }
 
 export default function TagsPageClient({ tags }: TagsPageClientProps) {
-  // 使用 useMemo 缓存标签名称数组
-  const tagNames = useMemo(() => {
-    return tags.map((item: Tag) => item.name).filter(Boolean);
-  }, [tags]);
+  const tagNames = tags.map((item: Tag) => item.name).filter(Boolean);
 
   return (
     <div className="relative min-h-screen hide_sliding">

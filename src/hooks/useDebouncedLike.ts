@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const DEBOUNCE_MS = 600;
 
@@ -23,7 +23,7 @@ export default function useDebouncedLike(entityId: number, initialCount: number,
     setDisplayCount(initialCount ?? 0);
   }, [initialCount, entityId]);
 
-  const flush = useCallback(async () => {
+  const flush = async () => {
     const delta = pendingDeltaRef.current;
     if (delta === 0 || flushingRef.current) return;
 
@@ -48,18 +48,18 @@ export default function useDebouncedLike(entityId: number, initialCount: number,
         timerRef.current = window.setTimeout(() => void flush(), DEBOUNCE_MS);
       }
     }
-  }, [entityId]);
+  };
 
-  const scheduleFlush = useCallback(() => {
+  const scheduleFlush = () => {
     if (timerRef.current) clearTimeout(timerRef.current);
     timerRef.current = window.setTimeout(() => void flush(), DEBOUNCE_MS);
-  }, [flush]);
+  };
 
-  const like = useCallback(() => {
+  const like = () => {
     pendingDeltaRef.current += 1;
     setDisplayCount(confirmedCountRef.current + pendingDeltaRef.current);
     scheduleFlush();
-  }, [scheduleFlush]);
+  };
 
   useEffect(() => {
     return () => {

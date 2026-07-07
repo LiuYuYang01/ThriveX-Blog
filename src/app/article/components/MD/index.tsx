@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState, useMemo } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import ReactMarkdown, { type Components } from 'react-markdown';
 import type { TocHeading } from '@/utils/article';
 import { useConfigStore } from '@/stores';
@@ -84,10 +84,7 @@ const ContentMD = ({ data, headings = [] }: Props) => {
   const [isClient, setIsClient] = useState(false);
   const headingIndexRef = useRef(0);
 
-  const headingComponents = useMemo(
-    () => createHeadingComponents(headings, headingIndexRef),
-    [headings],
-  );
+  const headingComponents = createHeadingComponents(headings, headingIndexRef);
 
   useEffect(() => {
     setIsClient(true);
@@ -142,7 +139,7 @@ const ContentMD = ({ data, headings = [] }: Props) => {
     const [expanded, setExpanded] = useState(false);
     const isLong = value.split('\n').length > 10;
 
-    const highlightedLines = useMemo(() => {
+    const highlightedLines = (() => {
       try {
         if (hljs.getLanguage(language)) {
           return hljs.highlight(value, { language }).value.split('\n');
@@ -152,7 +149,7 @@ const ContentMD = ({ data, headings = [] }: Props) => {
       }
 
       return hljs.highlightAuto(value).value.split('\n');
-    }, [value, language]);
+    })();
 
     const linesToRender = highlightedLines;
     if (linesToRender.length > 1 && linesToRender[linesToRender.length - 1] === '') {

@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode, useMemo } from 'react';
+import { ReactNode } from 'react';
 import Ripple from '@/components/Ripple';
 import { getRandomImage } from '@/utils';
 
@@ -13,7 +13,7 @@ interface Props {
 }
 
 export default ({ src, covers = [], isRipple = true, fullImage = false, children }: Props) => {
-  const fallbackImage = useMemo(() => getRandomImage(undefined, covers), [covers]);
+  const fallbackImage = getRandomImage(undefined, covers);
   const bgImage = src?.trim() || fallbackImage;
 
   const sty = {

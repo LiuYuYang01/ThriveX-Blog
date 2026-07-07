@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   FiChevronLeft,
   FiChevronRight,
@@ -38,17 +38,14 @@ export default function PhotoPreview({
   const [switching, setSwitching] = useState(false);
 
   const activeIndex = Math.min(Math.max(index, 0), Math.max(photos.length - 1, 0));
-  const activePhoto = useMemo(() => photos[activeIndex], [photos, activeIndex]);
+  const activePhoto = photos[activeIndex];
   const hasMultiple = photos.length > 1;
 
-  const setIndex = useCallback(
-    (next: number) => {
-      onIndexChange?.((next + photos.length) % photos.length);
-    },
-    [onIndexChange, photos.length],
-  );
+  const setIndex = (next: number) => {
+    onIndexChange?.((next + photos.length) % photos.length);
+  };
 
-  const goPrev = useCallback(() => {
+  const goPrev = () => {
     if (!hasMultiple) return;
     setSwitching(true);
     window.setTimeout(() => {
@@ -57,9 +54,9 @@ export default function PhotoPreview({
       setScale(1);
       setSwitching(false);
     }, 180);
-  }, [activeIndex, hasMultiple, setIndex]);
+  };
 
-  const goNext = useCallback(() => {
+  const goNext = () => {
     if (!hasMultiple) return;
     setSwitching(true);
     window.setTimeout(() => {
@@ -68,7 +65,7 @@ export default function PhotoPreview({
       setScale(1);
       setSwitching(false);
     }, 180);
-  }, [activeIndex, hasMultiple, setIndex]);
+  };
 
   useEffect(() => {
     if (!open) return;

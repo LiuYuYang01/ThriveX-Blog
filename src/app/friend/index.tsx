@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -16,7 +16,7 @@ const DEFAULT_AVATAR =
 const TiltCard = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => {
   const cardRef = useRef<HTMLDivElement>(null);
 
-  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!cardRef.current) return;
     const rect = cardRef.current.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
@@ -24,12 +24,12 @@ const TiltCard = ({ children, className = '' }: { children: React.ReactNode; cla
     const rotateX = ((e.clientY - centerY) / (rect.height / 2)) * -8;
     const rotateY = ((e.clientX - centerX) / (rect.width / 2)) * 8;
     cardRef.current.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
-  }, []);
+  };
 
-  const handleMouseLeave = useCallback(() => {
+  const handleMouseLeave = () => {
     if (!cardRef.current) return;
     cardRef.current.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
-  }, []);
+  };
 
   return (
     <div
@@ -48,7 +48,7 @@ const TiltCard = ({ children, className = '' }: { children: React.ReactNode; cla
 const MagneticCard = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => {
   const cardRef = useRef<HTMLDivElement>(null);
 
-  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!cardRef.current) return;
     const rect = cardRef.current.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
@@ -61,12 +61,12 @@ const MagneticCard = ({ children, className = '' }: { children: React.ReactNode;
       const strength = (1 - distance / maxDistance) * 15;
       cardRef.current.style.transform = `translate(${(mouseX / rect.width) * strength}px, ${(mouseY / rect.height) * strength}px)`;
     }
-  }, []);
+  };
 
-  const handleMouseLeave = useCallback(() => {
+  const handleMouseLeave = () => {
     if (!cardRef.current) return;
     cardRef.current.style.transform = 'translate(0px, 0px)';
-  }, []);
+  };
 
   return (
     <div

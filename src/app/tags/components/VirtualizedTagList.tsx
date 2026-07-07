@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import TagItemCard from './TagItemCard';
 import { Tag } from '@/types/app/tag';
 
@@ -57,15 +57,13 @@ const VirtualizedTagList: React.FC<VirtualizedTagListProps> = ({
     };
   }, [containerHeight]);
 
-  // 使用 requestAnimationFrame 优化加载
-  const loadMore = useCallback(() => {
+  const loadMore = () => {
     if (isLoadingRef.current || visibleCount >= tags.length) {
       return;
     }
 
     isLoadingRef.current = true;
 
-    // 使用 requestAnimationFrame 优化性能
     requestAnimationFrame(() => {
       setVisibleCount((prev) => {
         const next = Math.min(prev + batchSize, tags.length);
@@ -73,7 +71,7 @@ const VirtualizedTagList: React.FC<VirtualizedTagListProps> = ({
         return next;
       });
     });
-  }, [visibleCount, tags.length, batchSize]);
+  };
 
   // 使用 Intersection Observer 实现懒加载（优化配置）
   useEffect(() => {
@@ -104,12 +102,9 @@ const VirtualizedTagList: React.FC<VirtualizedTagListProps> = ({
     return () => {
       observer.disconnect();
     };
-  }, [visibleCount, tags.length, loadMore]);
+  }, [visibleCount, tags.length]);
 
-  // 获取可见的标签（使用 useMemo 优化）
-  const visibleTags = useMemo(() => {
-    return tags.slice(0, visibleCount);
-  }, [tags, visibleCount]);
+  const visibleTags = tags.slice(0, visibleCount);
 
   return (
     <div

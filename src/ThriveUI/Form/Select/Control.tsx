@@ -1,11 +1,9 @@
 'use client';
 
 import {
-  useCallback,
   useEffect,
   useId,
   useLayoutEffect,
-  useMemo,
   useRef,
   useState,
   useSyncExternalStore,
@@ -126,11 +124,11 @@ export default function SelectControl<T extends string | number = string | numbe
     openRef.current = open;
   }, [open]);
 
-  const enabledIndices = useMemo(() => getEnabledIndices(options), [options]);
-  const selectedIndex = useMemo(() => findOptionIndex(options, value), [options, value]);
+  const enabledIndices = getEnabledIndices(options);
+  const selectedIndex = findOptionIndex(options, value);
   const selectedOption = selectedIndex >= 0 ? options[selectedIndex] : null;
 
-  const updateCoords = useCallback(() => {
+  const updateCoords = () => {
     const trigger = triggerRef.current;
     const panel = panelRef.current;
     if (!trigger) return;
@@ -149,17 +147,16 @@ export default function SelectControl<T extends string | number = string | numbe
       top: placement === 'bottom' ? rect.bottom + gap : rect.top - gap,
       placement,
     });
-  }, [maxHeight]);
+  };
 
-  const close = useCallback(() => {
+  const close = () => {
     if (openRef.current) onBlur?.();
     setOpen(false);
     setActiveIndex(-1);
     setCoords(null);
-  }, [onBlur]);
+  };
 
-  const selectIndex = useCallback(
-    (index: number) => {
+  const selectIndex = (index: number) => {
       const option = options[index];
       if (!option || option.disabled) return;
 
@@ -167,11 +164,9 @@ export default function SelectControl<T extends string | number = string | numbe
       onChange?.(option.value, option);
       close();
       triggerRef.current?.focus();
-    },
-    [close, isControlled, onChange, options],
-  );
+  };
 
-  const openPanel = useCallback(() => {
+  const openPanel = () => {
     if (disabled || loading) return;
     setOpen(true);
 
@@ -180,10 +175,9 @@ export default function SelectControl<T extends string | number = string | numbe
         ? selectedIndex
         : (enabledIndices[0] ?? -1);
     setActiveIndex(startIndex);
-  }, [disabled, enabledIndices, loading, options, selectedIndex]);
+  };
 
-  const moveActive = useCallback(
-    (direction: 1 | -1) => {
+  const moveActive = (direction: 1 | -1) => {
       if (enabledIndices.length === 0) return;
 
       setActiveIndex((current) => {
@@ -198,9 +192,7 @@ export default function SelectControl<T extends string | number = string | numbe
             : (pos - 1 + enabledIndices.length) % enabledIndices.length;
         return enabledIndices[nextPos];
       });
-    },
-    [enabledIndices],
-  );
+  };
 
   const handleTriggerBlur = (event: FocusEvent<HTMLButtonElement>) => {
     const next = event.relatedTarget as Node | null;

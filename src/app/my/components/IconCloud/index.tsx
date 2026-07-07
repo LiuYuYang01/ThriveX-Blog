@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Cloud, fetchSimpleIcons, type ICloud, renderSimpleIcon, type SimpleIcon } from 'react-icon-cloud';
 
 export const cloudProps: Omit<ICloud, 'children'> = {
@@ -60,11 +60,9 @@ export default function IconCloud({ iconSlugs }: { iconSlugs: string[] }) {
     fetchSimpleIcons({ slugs: iconSlugs }).then(setData);
   }, [iconSlugs]);
 
-  const renderedIcons = useMemo(() => {
-    if (!data) return null;
-
-    return Object.values(data.simpleIcons).map((icon) => renderCustomIcon(icon, 'light'));
-  }, [data]);
+  const renderedIcons = data
+    ? Object.values(data.simpleIcons).map((icon) => renderCustomIcon(icon, 'light'))
+    : null;
 
   return (
     <Cloud {...cloudProps}>

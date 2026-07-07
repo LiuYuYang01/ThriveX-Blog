@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { RiHeartFill } from 'react-icons/ri';
 import { cn } from '@/lib/utils';
 import {
@@ -84,7 +84,7 @@ export default function LikeButtonCore({
   const btnSize = isHero ? 'sm' : minimal ? 'md' : size;
   const isLarge = size === 'lg' && !minimal;
 
-  const spawnParticles = useCallback((intensity: number) => {
+  const spawnParticles = (intensity: number) => {
     const particleCount = Math.min(intensity >= 5 ? 4 : intensity >= 3 ? 3 : 2, 4);
     const newParticles: Particle[] = [];
 
@@ -104,13 +104,13 @@ export default function LikeButtonCore({
     window.setTimeout(() => {
       setParticles((prev) => prev.filter((p) => !newParticles.some((n) => n.id === p.id)));
     }, 750);
-  }, []);
+  };
 
-  const spawnRipple = useCallback(() => {
+  const spawnRipple = () => {
     const id = ++rippleIdRef.current;
     setRipples((prev) => [...prev, { id }]);
     window.setTimeout(() => setRipples((prev) => prev.filter((r) => r.id !== id)), 650);
-  }, []);
+  };
 
   const handleLike = () => {
     onLike();

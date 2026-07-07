@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useMemo, memo } from 'react';
+import React, { useEffect, useState, memo } from 'react';
 import { motion } from 'framer-motion';
 import { FaBook, FaBookmark, FaFileAlt, FaHashtag, FaLink, FaPaperclip, FaTag, FaFont } from 'react-icons/fa';
 import { clsx } from 'clsx';
@@ -44,17 +44,12 @@ interface TagRowProps {
 }
 
 const TagRow = memo<TagRowProps>(({ isLeft, rowIndex, tags }) => {
-  // 优化：进一步减少每行的标签数量，从 4 个减少到 3 个
-  const rowTags = useMemo(
-    () =>
-      Array.from({ length: 3 }, (_, i) => ({
-        icon: getRandomIcon(rowIndex * 3 + i),
-        text: getRandomTag(tags, rowIndex * 3 + i),
-        delay: i * 0.5 + rowIndex * 0.2,
-        key: `${rowIndex}-${i}`,
-      })),
-    [rowIndex, tags]
-  );
+  const rowTags = Array.from({ length: 3 }, (_, i) => ({
+    icon: getRandomIcon(rowIndex * 3 + i),
+    text: getRandomTag(tags, rowIndex * 3 + i),
+    delay: i * 0.5 + rowIndex * 0.2,
+    key: `${rowIndex}-${i}`,
+  }));
 
   return (
     <div className={`flex ${isLeft ? 'justify-start' : 'justify-end'} gap-4 my-8`}>
@@ -97,12 +92,7 @@ function TagCloudBackground({ tags }: { tags: string[] }) {
     setRows(Array.from({ length: numberOfRows }, (_, i) => ({ isLeft: i % 2 === 0, index: i })));
   }, [reducedMotion]);
 
-  // 优化：使用 useMemo 缓存标签数组，避免重复计算，并且只取前100个标签用于背景动画
-  const safeTags = useMemo(() => {
-    const tagArray = tags && tags.length > 0 ? tags : [];
-    // 只使用前100个标签，减少计算量
-    return tagArray.slice(0, 100);
-  }, [tags]);
+  const safeTags = (tags && tags.length > 0 ? tags : []).slice(0, 100);
 
   if (safeTags.length === 0) {
     return null;

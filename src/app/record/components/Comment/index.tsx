@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { type SubmitHandler } from 'react-hook-form';
 import { Bounce, ToastOptions, toast } from 'react-toastify';
 import { Button, FormProvider, Input, Spinner, Textarea, useForm } from '@/ThriveUI';
@@ -56,7 +56,7 @@ export default function RecordCommentPanel({ recordId, onCountChange }: Props) {
   const methods = useForm<CommentForm>({});
   const { setValue, setFocus, reset, handleSubmit } = methods;
 
-  const fetchComments = useCallback(async () => {
+  const fetchComments = async () => {
     setLoading(true);
     try {
       const { data } = await getRecordCommentListAPI(recordId, { pageNum: 1, pageSize: 50 });
@@ -67,7 +67,7 @@ export default function RecordCommentPanel({ recordId, onCountChange }: Props) {
     } finally {
       setLoading(false);
     }
-  }, [recordId, onCountChange]);
+  };
 
   useEffect(() => {
     const info = JSON.parse(localStorage.getItem('comment_data') || '{}');
@@ -79,7 +79,7 @@ export default function RecordCommentPanel({ recordId, onCountChange }: Props) {
 
   useEffect(() => {
     void fetchComments();
-  }, [fetchComments]);
+  }, [recordId]);
 
   const closeForm = () => {
     setShowForm(false);

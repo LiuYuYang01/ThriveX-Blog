@@ -1,6 +1,6 @@
 'use client';
 
-import React, { memo, useMemo } from 'react';
+import React, { memo } from 'react';
 import Link from 'next/link';
 import { LiaTagsSolid } from 'react-icons/lia';
 import { Tag } from '@/types/app/tag';
@@ -17,11 +17,8 @@ const COLORS = ['bg-blue-400/20', 'bg-green-400/20', 'bg-yellow-400/20', 'bg-red
 
 const TagItemCard = memo(
   ({ data, count, index }: TagItemCardProps) => {
-    // 使用 useMemo 缓存颜色计算
-    const color = useMemo(() => COLORS[index % COLORS.length], [index]);
-
-    // 使用 useMemo 缓存链接 URL
-    const href = useMemo(() => `/tag/${data?.id}?name=${encodeURIComponent(data?.name || '')}`, [data?.id, data?.name]);
+    const color = COLORS[index % COLORS.length];
+    const href = `/tag/${data?.id}?name=${encodeURIComponent(data?.name || '')}`;
 
     return (
       <Link

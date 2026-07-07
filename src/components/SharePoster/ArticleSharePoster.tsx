@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import { Modal, Button, Spinner } from '@/ThriveUI';
 import { RiDownloadLine, RiLink } from 'react-icons/ri';
 import { ShareActionIcon } from '@/components/ActionBar/icons';
@@ -48,7 +48,7 @@ export default function ArticleSharePoster({ data, minimal = false, className, s
 
   const { web, author } = useAppConfig();
 
-  const buildPoster = useCallback(async () => {
+  const buildPoster = async () => {
     setLoading(true);
     setPosterUrl('');
     try {
@@ -76,7 +76,7 @@ export default function ArticleSharePoster({ data, minimal = false, className, s
     } finally {
       setLoading(false);
     }
-  }, [author?.name, data, web?.favicon, web?.title, web?.url]);
+  };
 
   const handleOpen = () => {
     onShare?.();

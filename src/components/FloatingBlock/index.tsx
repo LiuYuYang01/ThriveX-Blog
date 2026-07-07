@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, useState, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Button, useDisclosure } from '@/ThriveUI';
 import { BiCog, BiCommand } from 'react-icons/bi';
@@ -57,46 +57,41 @@ const FloatingBlock = () => {
     setIsDark(!isDark);
   };
 
-  const actionItems = useMemo(
-    () => [
-      {
-        icon: isDark ? FaRegSun : LuMoonStar,
-        id: 'theme',
-        label: isDark ? '切换到亮色模式' : '切换到暗色模式',
-        onClick: onToggleTheme,
-      },
-      {
-        icon: IoSearchOutline,
-        id: 'search',
-        label: '搜索',
-        onClick: onSearchOpen,
-      },
-      {
-        icon: IoLogoRss,
-        id: 'rss',
-        label: 'RSS 订阅',
-        onClick: onRssOpen,
-      },
-      {
-        icon: IoArrowUpOutline,
-        id: 'top',
-        label: '返回顶部',
-        onClick: onReturnTop,
-      },
-    ],
-    [isDark, onSearchOpen, onRssOpen],
-  );
+  const actionItems = [
+    {
+      icon: isDark ? FaRegSun : LuMoonStar,
+      id: 'theme',
+      label: isDark ? '切换到亮色模式' : '切换到暗色模式',
+      onClick: onToggleTheme,
+    },
+    {
+      icon: IoSearchOutline,
+      id: 'search',
+      label: '搜索',
+      onClick: onSearchOpen,
+    },
+    {
+      icon: IoLogoRss,
+      id: 'rss',
+      label: 'RSS 订阅',
+      onClick: onRssOpen,
+    },
+    {
+      icon: IoArrowUpOutline,
+      id: 'top',
+      label: '返回顶部',
+      onClick: onReturnTop,
+    },
+  ];
 
-  const itemPositions = useMemo(() => {
-    const radius = 50;
-    return actionItems.map((_, index) => {
-      const angle = (index * 360) / actionItems.length - 90;
-      return {
-        x: Math.cos((angle * Math.PI) / 180) * radius,
-        y: Math.sin((angle * Math.PI) / 180) * radius,
-      };
-    });
-  }, [actionItems]);
+  const radius = 50;
+  const itemPositions = actionItems.map((_, index) => {
+    const angle = (index * 360) / actionItems.length - 90;
+    return {
+      x: Math.cos((angle * Math.PI) / 180) * radius,
+      y: Math.sin((angle * Math.PI) / 180) * radius,
+    };
+  });
 
   return (
     <>

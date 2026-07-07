@@ -1,20 +1,16 @@
-import { useCallback, useRef } from 'react';
+import { useRef } from 'react';
 
-// 封装防抖函数
 export default function useDebounce<T extends (...args: any[]) => any>(func: T, wait: number) {
   const timeoutRef = useRef<number | undefined>(null);
+  const funcRef = useRef(func);
+  funcRef.current = func;
 
-  const debouncedFunc = useCallback(
-    (...args: Parameters<T>) => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-      timeoutRef.current = window.setTimeout(() => {
-        func(...args);
-      }, wait);
-    },
-    [func, wait]
-  );
-
-  return debouncedFunc;
+  return (...args: Parameters<T>) => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    timeoutRef.current = window.setTimeout(() => {
+      funcRef.current(...args);
+    }, wait);
+  };
 }

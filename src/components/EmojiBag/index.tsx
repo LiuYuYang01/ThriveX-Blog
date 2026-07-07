@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 
 // 表情数据 - 包含表情符号和中文名称
 const emojiData = {
@@ -249,6 +249,8 @@ const emojiData = {
   ],
 };
 
+const allEmojis = Object.values(emojiData).flat();
+
 interface Props {
   onEmojiSelect?: (emoji: string) => void;
   className?: string;
@@ -256,30 +258,12 @@ interface Props {
 
 export default ({ onEmojiSelect, className = '' }: Props) => {
   const [searchTerm, setSearchTerm] = useState('');
-  // 扁平化所有表情（移除分组逻辑）
-  const allEmojis = useMemo(() => Object.values(emojiData).flat(), []);
+  const filteredEmojis = !searchTerm
+    ? allEmojis
+    : allEmojis.filter(({ emoji, name }) => emoji.includes(searchTerm) || name.includes(searchTerm));
 
-  // 搜索过滤表情
-  const filteredEmojis = useMemo(() => {
-    if (!searchTerm) {
-      return allEmojis;
-    }
-
-    return allEmojis.filter((emojiItem) => {
-      const { emoji, name } = emojiItem;
-      return emoji.includes(searchTerm) || name.includes(searchTerm);
-    });
-  }, [searchTerm, allEmojis]);
-
-  // 处理表情选择
   const handleEmojiClick = (emojiItem: { emoji: string; name: string }) => {
-    // 调用回调函数
     onEmojiSelect?.(emojiItem.emoji);
-  };
-
-  // 获取当前显示的表情
-  const getCurrentEmojis = () => {
-    return filteredEmojis;
   };
 
   return (
@@ -300,7 +284,7 @@ export default ({ onEmojiSelect, className = '' }: Props) => {
       {/* 表情网格 */}
       <div className="p-4">
         <div className="grid grid-cols-6 gap-2 max-h-64 overflow-y-auto">
-          {getCurrentEmojis().map((emojiItem, index) => {
+          {filteredEmojis.map((emojiItem, index) => {
             const isFirstRow = index < 6;
             const colIndex = index % 6;
             const horizontalClass = colIndex === 0 ? 'left-0 translate-x-0' : colIndex === 5 ? 'right-0 translate-x-0' : 'left-1/2 -translate-x-1/2';
@@ -315,7 +299,7 @@ export default ({ onEmojiSelect, className = '' }: Props) => {
           })}
         </div>
 
-        {getCurrentEmojis().length === 0 && <div className="text-center py-8 text-gray-500">{searchTerm ? '未找到匹配的表情' : '暂无表情'}</div>}
+        {filteredEmojis.length === 0 && <div className="text-center py-8 text-gray-500">{searchTerm ? '未找到匹配的表情' : '暂无表情'}</div>}
       </div>
     </div>
   );

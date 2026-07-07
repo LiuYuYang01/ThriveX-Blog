@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 type ShareAPI = (id: number, count: number) => Promise<{ code?: number; data?: number }>;
 
@@ -10,7 +10,7 @@ export default function useShareCount(entityId: number, initialCount: number, sh
     setCount(initialCount ?? 0);
   }, [initialCount, entityId]);
 
-  const recordShare = useCallback(async () => {
+  const recordShare = async () => {
     setCount((prev) => prev + 1);
 
     try {
@@ -21,7 +21,7 @@ export default function useShareCount(entityId: number, initialCount: number, sh
     } catch {
       setCount((prev) => Math.max(0, prev - 1));
     }
-  }, [entityId, shareAPI]);
+  };
 
   return { count, recordShare };
 }

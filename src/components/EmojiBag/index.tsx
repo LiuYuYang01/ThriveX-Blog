@@ -283,7 +283,7 @@ export default ({ onEmojiSelect, className = '' }: Props) => {
   };
 
   return (
-    <div className={`${className}`}>
+    <div className={`w-80 ${className}`}>
       {/* 搜索栏 */}
       <div className="p-4 border-b border-gray-100">
         <div className="relative">

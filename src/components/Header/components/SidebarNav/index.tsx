@@ -36,7 +36,7 @@ export default ({ list, open, onClose }: Props) => {
                         )}
 
                         <Show is={!!one.children.length}>
-                          <ul className="overflow-hidden top-[50px] w-full rounded-md">
+                          <ul className="overflow-hidden top-[60px] w-full rounded-md">
                             {one.children?.map((two) => (
                               <li key={two.id} className="group/two">
                                 <Link href={getCateNavHref(two)} target={getCateNavTarget(two.type)} rel={getCateNavRel(two.type)} className="inline-block w-full p-2.5 pl-10 text-[15px] box-border text-[#666] dark:text-[#8c9ab1] hover:text-primary!" onClick={onClose}>
@@ -63,7 +63,7 @@ export default ({ list, open, onClose }: Props) => {
                         )}
 
                         <Show is={!!one.children.length}>
-                          <ul className="overflow-hidden top-[50px] w-full rounded-md">
+                          <ul className="overflow-hidden top-[60px] w-full rounded-md">
                             {one.children?.map((two) => (
                               <li key={two.id} className="group/two">
                                 <Link href={getCateNavHref(two)} target={getCateNavTarget(two.type)} rel={getCateNavRel(two.type)} className="inline-block w-full p-2.5 pl-10 text-[15px] box-border text-[#666] dark:text-[#8c9ab1] hover:text-primary!" onClick={onClose}>
@@ -90,7 +90,7 @@ export default ({ list, open, onClose }: Props) => {
                         )}
 
                         <Show is={!!one.children.length}>
-                          <ul className="overflow-hidden top-[50px] w-full rounded-md">
+                          <ul className="overflow-hidden top-[60px] w-full rounded-md">
                             {one.children?.map((two) => (
                               <li key={two.id} className="group/two">
                                 <Link href={getCateNavHref(two)} target={getCateNavTarget(two.type)} rel={getCateNavRel(two.type)} className="inline-block w-full p-2.5 pl-10 text-[15px] box-border text-[#666] dark:text-[#8c9ab1] hover:text-primary!" onClick={onClose}>

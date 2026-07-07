@@ -165,50 +165,54 @@ const CommentForm = ({ articleId }: Props) => {
       <div className="mt-[70px]">
         <div className="title relative top-0 left-0 w-full h-px mb-10 bg-[#f7f7f7] dark:bg-black-b  "></div>
 
-        <form className="flex flex-wrap justify-between mt-4 space-y-2 text-xs xs:text-sm" onSubmit={handleSubmit(onSubmit)}>
-          <div className="w-full relative">
-            <textarea
-              {...register('content', { required: '请输入内容' })}
-              placeholder={placeholder}
-              className="form-control w-full p-4 min-h-36"
-              ref={(e) => {
-                register('content').ref(e);
-                contentRef.current = e;
-              }}
-            />
-            <span className="text-red-400 text-sm pl-3">{errors.content?.message}</span>
+        <form className="mt-4 space-y-2 text-xs xs:text-sm" onSubmit={handleSubmit(onSubmit)}>
+          <div className="w-full">
+            <div className="relative w-full">
+              <textarea
+                {...register('content', { required: '请输入内容' })}
+                placeholder={placeholder}
+                className="form-control w-full p-4 pb-12 min-h-36"
+                ref={(e) => {
+                  register('content').ref(e);
+                  contentRef.current = e;
+                }}
+              />
 
-            {/* 表情按钮与面板 */}
-            <div className="absolute bottom-5 right-5">
-              <Popover placement="bottom" isOpen={isEmojiOpen} onOpenChange={setIsEmojiOpen}>
-                <PopoverTrigger>
-                  <button type="button" className="py-1 px-2 text-2xl rounded-md hover:bg-gray-50 border border-transparent hover:border-gray-200">
-                    😀
-                  </button>
-                </PopoverTrigger>
+              <div className="absolute right-3 bottom-3 z-10">
+                <Popover placement="top-end" isOpen={isEmojiOpen} onOpenChange={setIsEmojiOpen}>
+                  <PopoverTrigger>
+                    <button
+                      type="button"
+                      className="cursor-pointer rounded-md border border-transparent px-2 py-1 text-2xl hover:border-gray-200 hover:bg-gray-50 dark:hover:bg-black-b"
+                    >
+                      😀
+                    </button>
+                  </PopoverTrigger>
 
-                <PopoverContent>
-                  <div className="max-w-96 z-50">
+                  <PopoverContent className="p-0">
                     <EmojiBag onEmojiSelect={handleEmojiSelect} />
-                  </div>
-                </PopoverContent>
-              </Popover>
+                  </PopoverContent>
+                </Popover>
+              </div>
             </div>
+            <span className="text-red-400 text-sm pl-3">{errors.content?.message}</span>
           </div>
 
-          <div className="flex flex-col w-[32%]">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+          <div className="flex flex-col">
             <input type="text" className="form-control w-full h-9 pl-4" placeholder="你的名称" {...register('name', { required: '请输入名称' })} />
             <span className="text-red-400 text-sm pl-3 mt-1">{errors.name?.message}</span>
           </div>
 
-          <div className="flex flex-col w-[32%]">
+          <div className="flex flex-col">
             <input type="text" className="form-control w-full h-9 pl-4" placeholder="你的邮箱（选填）" {...register('email', { pattern: { value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, message: '请输入正确的邮箱' } })} />
             <span className="text-red-400 text-sm pl-3 mt-1">{errors.email?.message}</span>
           </div>
 
-          <div className="flex flex-col w-[32%]">
+          <div className="flex flex-col">
             <input type="text" className="form-control w-full h-9 pl-4" placeholder="头像（选填）" {...register('avatar', { pattern: { value: /^https?:\/\//, message: '请输入正确的头像链接' } })} />
             <span className="text-red-400 text-sm pl-3 mt-1">{errors.avatar?.message}</span>
+          </div>
           </div>
 
           <div className="w-full flex flex-col">

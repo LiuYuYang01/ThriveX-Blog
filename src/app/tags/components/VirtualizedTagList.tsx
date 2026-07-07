@@ -124,7 +124,7 @@ const VirtualizedTagList: React.FC<VirtualizedTagListProps> = ({
       className="w-full"
     >
       <div
-        className="flex flex-wrap justify-center w-full py-10 px-0 sm:px-10"
+        className="flex flex-wrap justify-center w-full pb-10 px-0 sm:px-10"
         style={{
           contain: 'layout', // 隔离布局影响
         }}

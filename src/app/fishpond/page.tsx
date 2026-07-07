@@ -13,7 +13,7 @@ import { dayFormat } from '@/utils';
 
 // 引入图标
 import { HiOutlineClock, HiOutlineHashtag, HiOutlineArrowTopRightOnSquare } from 'react-icons/hi2';
-import { TbRipple } from 'react-icons/tb';
+import PageHeroHeader, { PageHeroGrid } from '@/components/PageHeroHeader';
 
 // 瀑布流断点配置
 const breakpointColumnsObj = {
@@ -75,17 +75,13 @@ export default function FishpondPage() {
       <title>🐟 鱼塘 | Rss Feed</title>
       <meta name="description" content="汇聚好友与订阅的动态鱼塘" />
 
-      <div className="min-h-screen bg-[linear-gradient(110deg,#fbfbfc_0%,#f7f8fa_58%,#fbfbfc_100%)] dark:bg-[linear-gradient(to_right,#232931_0%,#232931_100%)] pt-24 pb-12 px-4 sm:px-6 lg:px-8">
-        <div className="w-full max-w-[1920px] mx-auto">
-          <div className="relative mb-14 flex flex-col items-center select-none pt-6 md:pt-12">
-            <div className="inline-flex items-center justify-center gap-3 mb-4">
-              <TbRipple className="text-4xl text-blue-500 animate-pulse" />
-              <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight text-[#161a22] dark:text-slate-100">鱼 塘</h2>
-            </div>
-            <p className="text-[#788190] dark:text-slate-400 text-sm md:text-base">潜入信息的海洋，捕获最新鲜的动态</p>
-          </div>
+      <div className="relative min-h-screen bg-[linear-gradient(110deg,#fbfbfc_0%,#f7f8fa_58%,#fbfbfc_100%)] dark:bg-[linear-gradient(to_right,#232931_0%,#232931_100%)] pb-12 px-4 sm:px-6 lg:px-8">
+        <PageHeroGrid />
 
-          <div className="mt-10">
+        <div className="relative w-full max-w-[1920px] mx-auto">
+          <PageHeroHeader title="鱼塘" subtitle="潜入信息的海洋，捕获最新鲜的动态" className="mb-8" />
+
+          <div className="relative z-10">
           {rssData && rssData.length > 0 ? (
             <Masonry breakpointCols={breakpointColumnsObj} className="flex w-auto -ml-5" columnClassName="pl-5 bg-clip-padding flex flex-col gap-5">
               {rssData.map((item, index) => {

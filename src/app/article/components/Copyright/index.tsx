@@ -17,7 +17,7 @@ const Copyright = () => {
     >
       <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-primary dark:bg-blue-500/80 rounded-l-xl" />
 
-      <FiShield className="absolute right-2.5 top-5 text-7xl text-blue-500/[0.04] dark:text-gray-700 pointer-events-none rotate-12" />
+      <FiShield className="absolute right-2.5 top-5 text-7xl text-blue-500/4 dark:text-gray-700 pointer-events-none rotate-12" />
 
       <div className="relative z-10 flex flex-col gap-3.5">
         <div className="flex items-center gap-3 text-sm sm:text-base text-gray-700 dark:text-gray-300">

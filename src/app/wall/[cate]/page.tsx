@@ -1,13 +1,25 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import { ZCOOL_KuaiLe } from 'next/font/google';
 import AddWallInfo from '../components/AddWallInfo';
 import WallMasonry from '../components/WallMasonry';
 import Loading from '@/components/Loading';
 import { getCateListAPI, getCateWallListAPI } from '@/api/wall';
 import { Cate, Wall } from '@/types/app/wall';
+import '../wall.css';
+
+const zcoolKuaiLe = ZCOOL_KuaiLe({ weight: '400', subsets: ['latin'] });
+
+const floatDots = [
+  { size: 'w-2 h-2', color: 'bg-rose-400/70', delay: '0s' },
+  { size: 'w-1.5 h-1.5', color: 'bg-amber-400/70', delay: '0.5s' },
+  { size: 'w-2.5 h-2.5', color: 'bg-violet-400/70', delay: '1s' },
+  { size: 'w-1.5 h-1.5', color: 'bg-cyan-400/70', delay: '1.5s' },
+  { size: 'w-2 h-2', color: 'bg-emerald-400/70', delay: '2s' },
+];
 
 export default () => {
   const params = useParams();
@@ -15,13 +27,8 @@ export default () => {
 
   const [cateList, setCateList] = useState<Cate[]>([]);
   const [walls, setWalls] = useState<Wall[]>([]);
-  const [totalPages, setTotalPages] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
-  const [initialLoading, setInitialLoading] = useState(true);
-  const currentPageRef = useRef(1);
+  const [loading, setLoading] = useState(true);
 
-  // 获取分类列表
   useEffect(() => {
     const fetchCateList = async () => {
       const { data } = await getCateListAPI();
@@ -31,157 +38,107 @@ export default () => {
     fetchCateList();
   }, []);
 
-  // 获取留言列表
-  const getWallList = useCallback(
-    async (params: Page, append: boolean = false) => {
-      const id = cateList.find((item) => item.mark === cate)?.id ?? 0;
-      if (!id) return;
+  const getWallList = useCallback(async () => {
+    const id = cateList.find((item) => item.mark === cate)?.id ?? 0;
+    if (!id) return;
 
-      setLoading(true);
-      try {
-        const { data: tallList } = await getCateWallListAPI(id, params);
+    setLoading(true);
+    try {
+      const { data } = await getCateWallListAPI(id);
+      setWalls(data?.result ?? []);
+    } catch (error) {
+      console.error('获取留言列表失败:', error);
+      setWalls([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [cate, cateList]);
 
-        if (tallList?.result && tallList?.result?.length > 0) {
-          if (append) {
-            setWalls((prev) => [...prev, ...tallList.result]);
-          } else {
-            setWalls(tallList?.result);
-          }
-          setTotalPages(tallList.pages || 1);
-          setHasMore((params.pageNum ?? 1) < (tallList.pages ?? 1));
-          currentPageRef.current = params.pageSize ?? 1;
-        } else {
-          setHasMore(false);
-        }
-      } catch (error) {
-        console.error('获取留言列表失败:', error);
-        setHasMore(false);
-      } finally {
-        setLoading(false);
-        setInitialLoading(false);
-      }
-    },
-    [cate, cateList]
-  );
-
-  // 初始加载和分类切换时重新加载
   useEffect(() => {
     if (cateList.length > 0 && cate) {
-      setWalls([]);
-      setHasMore(true);
-      setInitialLoading(true);
-      currentPageRef.current = 1;
-      getWallList({ pageNum: 1, pageSize: 8 }, false);
+      getWallList();
     }
   }, [cate, cateList, getWallList]);
 
-  // 滚动监听
-  useEffect(() => {
-    const handleScroll = () => {
-      // 如果正在加载或没有更多数据，则不处理
-      if (loading || !hasMore) return;
-
-      // 检查是否滚动到底部（距离底部100px时触发）
-      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      const windowHeight = window.innerHeight;
-      const documentHeight = document.documentElement.scrollHeight;
-
-      if (scrollTop + windowHeight >= documentHeight - 100) {
-        const nextPage = currentPageRef.current + 1;
-        if (nextPage <= totalPages) {
-          getWallList({ pageNum: nextPage, pageSize: 8 }, true);
-        }
-      }
-    };
-
-    // 使用防抖优化滚动事件
-    let timeoutId: NodeJS.Timeout;
-    const debouncedHandleScroll = () => {
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(handleScroll, 200);
-    };
-
-    window.addEventListener('scroll', debouncedHandleScroll);
-    return () => {
-      window.removeEventListener('scroll', debouncedHandleScroll);
-      clearTimeout(timeoutId);
-    };
-  }, [hasMore, loading, totalPages, getWallList]);
-
   return (
-    <>
+    <div className="relative min-h-screen overflow-x-hidden bg-[#f4f4f8] text-gray-900 antialiased dark:bg-[#08080d] dark:text-white">
       <title>💌 留言墙</title>
       <meta name="description" content="💌 留言墙" />
 
-      {/* 背景装饰 */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(148,163,184,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,0.06)_1px,transparent_1px)] bg-size-[64px_64px]" />
-        <div className="absolute -top-1/2 left-1/2 -translate-x-1/2 w-[800px] h-[800px] rounded-full bg-primary/6 blur-[120px]" />
-        <div className="absolute top-1/4 right-0 w-96 h-96 rounded-full bg-violet-400/8 blur-[80px]" />
-        <div className="absolute bottom-1/4 left-0 w-80 h-80 rounded-full bg-cyan-400/8 blur-[80px]" />
+      {/* 颗粒纹理 */}
+      <div className="wall-grain-overlay pointer-events-none fixed inset-0 z-50 opacity-[0.025] dark:opacity-[0.03]" aria-hidden="true" />
+
+      {/* 背景渐变光斑 */}
+      <div className="fixed inset-0 pointer-events-none" aria-hidden="true">
+        <div className="absolute -top-24 left-[8%] w-[550px] h-[550px] rounded-full bg-violet-500/8 blur-[140px] dark:bg-violet-600/6" />
+        <div className="absolute top-[28%] right-[4%] w-[460px] h-[460px] rounded-full bg-rose-400/8 blur-[120px] dark:bg-rose-500/5" />
+        <div className="absolute bottom-[5%] left-[30%] w-[400px] h-[400px] rounded-full bg-cyan-400/6 blur-[100px] dark:bg-cyan-500/4" />
+        <div className="absolute top-[58%] left-[2%] w-[320px] h-[320px] rounded-full bg-amber-400/6 blur-[90px] dark:bg-amber-500/4" />
       </div>
 
-      <div className="py-16 border-b dark:border-[#4e5969]">
-        <div className="relative z-10">
-          {/* 头部区域 */}
-          <div className="flex flex-col items-center px-4 pt-12 md:pt-16 pb-8">
-            <div className="relative text-center mb-10">
-              <h2 className="text-5xl mb-3">留言墙</h2>
-              <p className="text-sm text-gray-600 mb-4">有什么想对我说的，来吧</p>
-              <div className="absolute left-1/2 transform -translate-x-1/2 bottom-0 w-24 h-1 bg-linear-to-r from-transparent via-blue-400 to-transparent rounded-full"></div>
-            </div>
-
-            <div className="mb-8">
-              <AddWallInfo />
-            </div>
-          </div>
-
-          {/* 分类标签 */}
-          <div className="flex flex-wrap justify-center gap-2 md:gap-3 px-4 mb-8">
-            {cateList?.map((item) => (
-              <Link
-                key={item.id}
-                href={`/wall/${item.mark}`}
-                className={`
-                  relative px-5 py-2.5 text-sm font-medium rounded-full
-                  transition-transform
-                  ${item.mark === cate ? 'text-white bg-primary scale-105' : 'text-gray-700 dark:text-gray-300 bg-white/80 dark:bg-gray-700/80 backdrop-blur-sm border dark:border-gray-700/50 hover:text-primary hover:scale-105'}
-                `}
-              >
-                {item.name}
-              </Link>
-            ))}
-          </div>
-
-          {/* 留言卡片瀑布流 */}
-          {initialLoading ? (
-            <div className="flex justify-center items-center py-20">
-              <Loading />
-            </div>
-          ) : (
-            <div className="w-[90%] xl:w-[1200px] mx-auto mt-8 pb-12">
-              {walls && walls.length > 0 ? (
-                <>
-                  <WallMasonry walls={walls} />
-                  {/* 加载更多指示器 */}
-                  {loading && (
-                    <div className="flex justify-center items-center py-8">
-                      <div className="text-gray-500 dark:text-gray-400 text-sm">加载中...</div>
-                    </div>
-                  )}
-                  {!hasMore && walls.length > 0 && (
-                    <div className="flex justify-center items-center py-8">
-                      <div className="text-gray-500 dark:text-gray-400 text-sm">没有更多留言了</div>
-                    </div>
-                  )}
-                </>
-              ) : (
-                <div className="text-center py-12 text-gray-500 dark:text-gray-400">暂无留言</div>
-              )}
-            </div>
-          )}
+      {/* 头部 */}
+      <header className="relative z-10 pt-20 pb-4 mt-10 text-center">
+        <div className="flex justify-center gap-3 mb-6">
+          {floatDots.map((dot, i) => (
+            <span
+              key={i}
+              className={`animate-[wall-float-dot_3s_ease-in-out_infinite] rounded-full ${dot.size} ${dot.color}`}
+              style={{ animationDelay: dot.delay }}
+            />
+          ))}
         </div>
+
+        <h1 className={`text-6xl sm:text-7xl font-bold tracking-tight mb-5 ${zcoolKuaiLe.className}`}>
+          <span className="bg-size-[200%_auto] bg-linear-to-r from-amber-500 via-rose-500 to-violet-500 bg-clip-text text-transparent animate-[wall-shimmer_5s_ease_infinite] dark:from-amber-300 dark:via-rose-300 dark:to-violet-400">
+            留言墙
+          </span>
+        </h1>
+        <p className="text-neutral-500 dark:text-neutral-400 text-base sm:text-lg tracking-[0.2em] font-light">每一个想法，都值得被看见</p>
+
+        <div className="mt-8 flex items-center justify-center gap-3">
+          <div className="w-20 h-px bg-linear-to-r from-transparent to-neutral-300 dark:to-neutral-700" />
+          <div className="w-2 h-2 rounded-full bg-amber-400/80 shadow-lg shadow-amber-400/20" />
+          <div className="w-20 h-px bg-linear-to-l from-transparent to-neutral-300 dark:to-neutral-700" />
+        </div>
+      </header>
+
+      {/* 分类标签 */}
+      <div className="relative z-10 flex flex-wrap justify-center gap-2 md:gap-3 px-4 mb-8">
+        {cateList?.map((item) => (
+          <Link
+            key={item.id}
+            href={`/wall/${item.mark}`}
+            className={`
+              relative px-5 py-2.5 text-sm font-medium rounded-full
+              transition-transform cursor-pointer
+              ${item.mark === cate ? 'text-white bg-primary scale-105' : 'text-gray-700 dark:text-gray-300 bg-white/80 dark:bg-gray-700/80 backdrop-blur-sm border dark:border-gray-700/50 hover:text-primary hover:scale-105'}
+            `}
+          >
+            {item.name}
+          </Link>
+        ))}
       </div>
-    </>
+
+      {/* 留言卡片瀑布流 */}
+      <main className="relative z-10 max-w-7xl mx-auto px-6 sm:px-10 pb-24">
+        {loading ? (
+          <div className="flex justify-center items-center py-20">
+            <Loading />
+          </div>
+        ) : walls.length > 0 ? (
+          <div className="py-6">
+            <WallMasonry walls={walls} />
+          </div>
+        ) : (
+          <div className="text-center py-12 text-neutral-500 dark:text-neutral-400">暂无留言</div>
+        )}
+      </main>
+
+      <AddWallInfo />
+
+      <footer className="relative z-10 text-center pb-16 pt-4">
+        <p className="text-neutral-400 dark:text-neutral-600 text-sm tracking-[0.3em] font-light">— 每一条留言，都是一颗发光的心 —</p>
+      </footer>
+    </div>
   );
 };

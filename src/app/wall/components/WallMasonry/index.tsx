@@ -1,21 +1,41 @@
 'use client';
 
 import Masonry from 'react-masonry-css';
-import dayjs from 'dayjs';
 import { Wall } from '@/types/app/wall';
+import { getRelativeTimeLabel } from '@/utils';
 import '@/components/ArticleLayout/Waterfall/index.scss';
-import './index.scss';
 
-// 颜色映射表，将颜色值映射到对应的 Tailwind 类名
-const colorMap: Record<string, string> = {
-  '#fcafa24d': 'bg-[#fcafa24d]',
-  '#a8ed8a4d': 'bg-[#a8ed8a4d]',
-  '#caa7f74d': 'bg-[#caa7f74d]',
-  '#ffe3944d': 'bg-[#ffe3944d]',
-  '#92e6f54d': 'bg-[#92e6f54d]',
+const colorThemes: Record<string, { bg: string; pushpin: string; badge: string }> = {
+  '#fcafa24d': {
+    bg: 'linear-gradient(145deg,#FFE4E6,#FECDD3)',
+    pushpin: 'linear-gradient(135deg,#fb7185,#e11d48)',
+    badge: 'bg-rose-400/25 text-rose-800',
+  },
+  '#a8ed8a4d': {
+    bg: 'linear-gradient(145deg,#D1FAE5,#A7F3D0)',
+    pushpin: 'linear-gradient(135deg,#34d399,#059669)',
+    badge: 'bg-emerald-400/25 text-emerald-800',
+  },
+  '#caa7f74d': {
+    bg: 'linear-gradient(145deg,#EDE9FE,#DDD6FE)',
+    pushpin: 'linear-gradient(135deg,#a78bfa,#7c3aed)',
+    badge: 'bg-violet-400/25 text-violet-800',
+  },
+  '#ffe3944d': {
+    bg: 'linear-gradient(145deg,#FEF3C7,#FDE68A)',
+    pushpin: 'linear-gradient(135deg,#fbbf24,#d97706)',
+    badge: 'bg-amber-400/25 text-amber-800',
+  },
+  '#92e6f54d': {
+    bg: 'linear-gradient(145deg,#DBEAFE,#BFDBFE)',
+    pushpin: 'linear-gradient(135deg,#60a5fa,#2563eb)',
+    badge: 'bg-blue-400/25 text-blue-800',
+  },
 };
 
-// 瀑布流断点配置
+const defaultTheme = colorThemes['#ffe3944d'];
+const rotations = [-3, 2.5, -1.8, 4, -2.8, 1.5, -3.5, 3, -2, 1.8, -3.2, 2.5];
+
 const breakpointColumnsObj = {
   default: 4,
   1024: 3,
@@ -23,53 +43,51 @@ const breakpointColumnsObj = {
   640: 1,
 };
 
+const msgCardClass =
+  'wall-paper-texture relative mb-14 cursor-default rounded-2xl p-6 ' +
+  'shadow-[0_2px_8px_-2px_rgba(0,0,0,0.06)] dark:shadow-[0_2px_8px_-2px_rgba(0,0,0,0.18)] ' +
+  'transition-[rotate,scale,translate,box-shadow,opacity] duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ' +
+  'animate-[wall-card-enter_0.65s_ease_forwards] ' +
+  'hover:rotate-0! hover:scale-[1.07] hover:-translate-y-2.5 hover:z-30 ' +
+  'hover:shadow-[0_10px_24px_-6px_rgba(0,0,0,0.12)] dark:hover:shadow-[0_10px_24px_-6px_rgba(0,0,0,0.28)]';
+
+const pushpinClass =
+  'absolute -top-2 left-1/2 z-[5] size-4 -translate-x-1/2 rounded-full ' +
+  'shadow-[0_2px_6px_rgba(0,0,0,0.35),inset_0_-3px_6px_rgba(0,0,0,0.15),inset_0_3px_6px_rgba(255,255,255,0.4)] ' +
+  "after:absolute after:top-[3px] after:left-1 after:size-[5px] after:rounded-full after:bg-white/45 after:content-['']";
+
 interface WallMasonryProps {
   walls: Wall[];
 }
 
 export default ({ walls }: WallMasonryProps) => {
   return (
-    <Masonry breakpointCols={breakpointColumnsObj} className="masonry-grid wall-masonry-grid" columnClassName="masonry-grid_column">
+    <Masonry
+      breakpointCols={breakpointColumnsObj}
+      className="masonry-grid -ml-5 sm:ml-[-15px] md:-ml-5 lg:-ml-6"
+      columnClassName="masonry-grid_column pl-3"
+    >
       {walls.map((item, index) => {
-        const bgColor = colorMap[item.color] || 'bg-[#ffe3944d]';
+        const theme = colorThemes[item.color] || defaultTheme;
+        const rotate = rotations[index % rotations.length];
+
         return (
           <div
             key={item.id}
-            className={`
-              group relative flex flex-col p-5 rounded-2xl
-              ${bgColor}
-              backdrop-blur-sm
-              border border-white/30 dark:border-gray-700/30
-              cursor-pointer overflow-hidden mb-3 animate-fade-in-up
-              hover:scale-105 hover:-translate-y-1 transition-transform
-              transform-gpu
-            `}
+            className={msgCardClass}
             style={{
-              animationDelay: `${index * 50}ms`,
+              rotate: `${rotate}deg`,
+              background: theme.bg,
+              animationDelay: `${index * 90 + 300}ms`,
             }}
           >
-            {/* 卡片装饰边框 */}
-            <div className="absolute inset-0 rounded-2xl border-2 border-white/20 dark:border-gray-600/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-
-            {/* 顶部信息 */}
-            <div className="flex justify-between items-center mb-3 pb-3 border-b border-white/20 dark:border-gray-700/30">
-              <span className="text-xs text-gray-600 dark:text-gray-400 font-medium">{dayjs(+item.createTime!).format('YYYY-MM-DD HH:mm')}</span>
-              <span className="px-2.5 py-1 text-xs font-semibold backdrop-blur-sm text-gray-700 dark:text-white bg-white/60 dark:bg-gray-800/60 rounded-full transition-transform group-hover:scale-105">{item.cate.name}</span>
+            <div className={pushpinClass} style={{ background: theme.pushpin }} />
+            <span className={`mb-3 inline-block rounded-full px-2.5 py-0.5 text-xs font-medium ${theme.badge}`}>{item.cate.name}</span>
+            <p className="hide_sliding mb-5 min-h-16 overflow-auto text-sm leading-relaxed text-stone-800">{item.content}</p>
+            <div className="flex items-center justify-between text-xs">
+              <span className="font-medium text-stone-600 dark:text-black">{item.name ? item.name : '匿名'}</span>
+              <span className="text-stone-400 dark:text-stone-600">{getRelativeTimeLabel(item.createTime)}</span>
             </div>
-
-            {/* 留言内容 */}
-            <div className="flex-1 hide_sliding overflow-auto min-h-20 text-sm md:text-base leading-relaxed text-gray-800 dark:text-gray-200 my-3 px-1">{item.content}</div>
-
-            {/* 底部署名 */}
-            <div className="flex justify-end items-center mt-4 pt-3 border-t border-white/20 dark:border-gray-700/30">
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-gray-500 dark:text-gray-400">—</span>
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300 transition-transform group-hover:translate-x-[-2px]">{item.name ? item.name : '匿名'}</span>
-              </div>
-            </div>
-
-            {/* Hover 时的光效 */}
-            <div className="absolute inset-0 bg-linear-to-br from-white/0 via-white/0 to-white/20 dark:from-transparent dark:via-transparent dark:to-white/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
           </div>
         );
       })}

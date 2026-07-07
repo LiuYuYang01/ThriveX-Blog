@@ -96,9 +96,14 @@ export default () => {
 
   return (
     <>
-      <Button color="primary" onPress={onOpen}>
-        点击留言
-      </Button>
+      <button
+        type="button"
+        onClick={onOpen}
+        aria-label="写留言"
+        className="fixed bottom-8 right-8 z-50 w-14 h-14 rounded-full bg-linear-to-br from-amber-400 to-rose-500 text-white shadow-xl shadow-rose-500/25 flex items-center justify-center text-3xl font-light transition-all duration-300 hover:scale-110 hover:shadow-2xl hover:shadow-rose-500/40 cursor-pointer leading-none"
+      >
+        +
+      </button>
 
       <Modal
         open={isOpen}

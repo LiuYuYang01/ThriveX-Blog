@@ -26,7 +26,7 @@ const toneStyles: Record<ActionCardTone, { card: string; divider: string }> = {
     card: cn(
       'border-rose-100/90 bg-linear-to-br from-rose-50/80 via-white to-orange-50/40',
       'shadow-[0_4px_20px_-4px_rgba(244,63,94,0.15)]',
-      'dark:border-rose-500/15 dark:from-rose-500/8 dark:via-white/[0.02] dark:to-orange-500/5 dark:shadow-none',
+      'dark:border-rose-500/15 dark:from-rose-500/8 dark:via-white/2 dark:to-orange-500/5 dark:shadow-none',
     ),
     divider: 'via-rose-200/80 dark:via-rose-500/25',
   },
@@ -35,7 +35,7 @@ const toneStyles: Record<ActionCardTone, { card: string; divider: string }> = {
       'border-slate-200/90 bg-linear-to-br from-slate-50/90 via-white to-blue-50/40',
       'shadow-[0_4px_20px_-4px_rgba(83,157,253,0.12)]',
       'hover:border-primary/30 hover:shadow-[0_4px_24px_-4px_rgba(83,157,253,0.22)]',
-      'dark:border-white/10 dark:from-white/[0.03] dark:via-transparent dark:to-primary/5 dark:shadow-none',
+      'dark:border-white/10 dark:from-white/3 dark:via-transparent dark:to-primary/5 dark:shadow-none',
     ),
     divider: 'via-blue-200/70 dark:via-primary/25',
   },

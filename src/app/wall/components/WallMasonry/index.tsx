@@ -45,7 +45,7 @@ const msgCardClass =
   'hover:shadow-[0_10px_24px_-6px_rgba(0,0,0,0.12)] dark:hover:shadow-[0_10px_24px_-6px_rgba(0,0,0,0.28)]';
 
 const pushpinClass =
-  'absolute -top-2 left-1/2 z-[5] size-4 -translate-x-1/2 rounded-full ' +
+  'absolute -top-2 left-1/2 z-5 size-4 -translate-x-1/2 rounded-full ' +
   'shadow-[0_2px_6px_rgba(0,0,0,0.35),inset_0_-3px_6px_rgba(0,0,0,0.15),inset_0_3px_6px_rgba(255,255,255,0.4)] ' +
   "after:absolute after:top-[3px] after:left-1 after:size-[5px] after:rounded-full after:bg-white/45 after:content-['']";
 
@@ -111,7 +111,7 @@ function WallCardContent({ content }: { content: string }) {
       <div
         ref={scrollRef}
         className={`hide_sliding max-h-40 overflow-y-auto overscroll-y-contain text-sm leading-[1.75] text-stone-800 touch-pan-y ${
-          showHint ? '[mask-image:linear-gradient(to_bottom,black_78%,transparent)]' : ''
+          showHint ? 'mask-[linear-gradient(to_bottom,black_78%,transparent)]' : ''
         }`}
         onWheel={(e) => e.stopPropagation()}
       >

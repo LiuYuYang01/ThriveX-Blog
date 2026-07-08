@@ -124,7 +124,7 @@ export default function ArticleSharePoster({ data, minimal = false, className, s
           ) : (
             <>
               <span className={actionIconWrapClass}>
-                <ShareActionIcon className="h-[3.75rem] w-[3.75rem]" />
+                <ShareActionIcon className="h-15 w-15" />
               </span>
               <div className={actionCardDividerClass('blue')} aria-hidden />
               <div className={actionTextColClass}>
@@ -137,7 +137,7 @@ export default function ArticleSharePoster({ data, minimal = false, className, s
         {minimal && typeof shareCount === 'number' && (
           <span
             className={cn(
-              'mt-1 min-w-[2rem] rounded-full px-2 py-0.5 text-center text-xs font-bold leading-none text-[#409EFF] tabular-nums',
+              'mt-1 min-w-8 rounded-full px-2 py-0.5 text-center text-xs font-bold leading-none text-[#409EFF] tabular-nums',
               actionMinimalCountClass,
             )}
           >

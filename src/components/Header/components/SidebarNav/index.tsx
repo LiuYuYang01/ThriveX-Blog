@@ -17,7 +17,7 @@ export default ({ list, open, onClose }: Props) => {
     <>
       <AnimatePresence>
         {open && (
-          <div className="flex fixed top-0 left-0 w-full h-full z-[1000]">
+          <div className="flex fixed top-0 left-0 w-full h-full z-1000">
             <motion.div initial={{ width: 0, opacity: 0 }} animate={{ width: '66.666667%', opacity: 1 }} exit={{ width: 0, opacity: 0 }} transition={{ type: 'spring', stiffness: 200, damping: 30, opacity: { duration: 0.2 } }} className="shrink-0 overflow-auto p-5 dark:border-[#2b333e] bg-[rgba(255,255,255,0.9)] dark:bg-[rgba(44,51,62,0.9)] backdrop-blur-[5px] hide_sliding">
               <ul className="flex flex-col space-y-2">
                 {list?.map((one) => (

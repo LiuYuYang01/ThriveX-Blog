@@ -39,9 +39,9 @@ export default function CateHero({ children, image }: Props) {
         sizes="100vw"
         className="object-cover object-[center_45%] max-md:object-[center_32%] sm:object-center"
       />
-      <div aria-hidden className="absolute inset-0 bg-linear-to-r from-black/45 via-black/25 to-black/10 z-[1]" />
-      <div aria-hidden className="absolute inset-0 bg-linear-to-b from-black/35 via-black/10 via-45% to-transparent md:via-55% z-[1]" />
-      <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-[58%] bg-linear-to-t from-background from-5% via-background/75 to-transparent dark:from-black-a dark:via-black-a/75 max-md:h-[68%] md:h-[42%] z-[1]" />
+      <div aria-hidden className="absolute inset-0 bg-linear-to-r from-black/45 via-black/25 to-black/10 z-1" />
+      <div aria-hidden className="absolute inset-0 bg-linear-to-b from-black/35 via-black/10 via-45% to-transparent md:via-55% z-1" />
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-[58%] bg-linear-to-t from-background from-5% via-background/75 to-transparent dark:from-black-a dark:via-black-a/75 max-md:h-[68%] md:h-[42%] z-1" />
 
       <div className="relative z-10 flex w-full max-w-4xl flex-col items-center justify-center px-2 sm:px-6">
         {children}

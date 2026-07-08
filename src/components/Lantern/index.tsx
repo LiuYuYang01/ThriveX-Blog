@@ -17,7 +17,7 @@ export default ({ data }: Props) => {
   return (
     <div className="w-full hidden md:block">
       {data.map((item, index) => (
-        <div key={index} className="lantern-box z-[999]" style={positions[index]}>
+        <div key={index} className="lantern-box z-999" style={positions[index]}>
           <div className="lantern-light">
             <div className="lantern-line"></div>
             <div className="lantern-circle">

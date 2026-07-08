@@ -64,14 +64,14 @@ const CommentList = forwardRef(({ id, reply }: Props, ref) => {
                 </div>
 
                 <div
-                  className="absolute -right-[15%] cursor-pointer rounded-[30px] bg-primary px-2.5 py-1 text-xl text-white transition-[right] duration-300 group-hover/item:right-[2%]"
+                  className="absolute right-[-15%] cursor-pointer rounded-[30px] bg-primary px-2.5 py-1 text-xl text-white transition-[right] duration-300 group-hover/item:right-[2%]"
                   onClick={() => replyComment(one.id!, one.name)}
                 >
                   <RiMessage3Line />
                 </div>
               </div>
 
-              <div className="my-2.5 break-words text-[15px] text-[#666] dark:text-[#cdcdcd]">{one.content}</div>
+              <div className="my-2.5 wrap-break-word text-[15px] text-[#666] dark:text-[#cdcdcd]">{one.content}</div>
 
               {one?.children?.length
                 ? one.children?.map((two) => (
@@ -89,14 +89,14 @@ const CommentList = forwardRef(({ id, reply }: Props, ref) => {
 
                         <span className="text-xs text-[#8599ab] dark:text-[#8c9ab1]">{dayjs(+two.createTime).format('YYYY-MM-DD HH:mm')}</span>
                         <div
-                          className="absolute -right-[15%] cursor-pointer rounded-[30px] bg-primary px-2.5 py-1 text-xl text-white transition-[right] duration-300 group-hover/item:right-[2%]"
+                          className="absolute right-[-15%] cursor-pointer rounded-[30px] bg-primary px-2.5 py-1 text-xl text-white transition-[right] duration-300 group-hover/item:right-[2%]"
                           onClick={() => replyComment(two.id!, two.name)}
                         >
                           <RiMessage3Line />
                         </div>
                       </div>
 
-                      <div className="my-2.5 break-words text-[15px] text-[#666] dark:text-[#cdcdcd] [&_a]:text-primary">
+                      <div className="my-2.5 wrap-break-word text-[15px] text-[#666] dark:text-[#cdcdcd] [&_a]:text-primary">
                         <Link href="#">@{one.name}：</Link>
                         <span>{two.content}</span>
                       </div>
@@ -118,14 +118,14 @@ const CommentList = forwardRef(({ id, reply }: Props, ref) => {
                               <span className="text-xs text-[#8599ab] dark:text-[#8c9ab1]">{dayjs(+three.createTime).format('YYYY-MM-DD HH:mm')}</span>
 
                               <div
-                                className="absolute -right-[15%] cursor-pointer rounded-[30px] bg-primary px-2.5 py-1 text-xl text-white transition-[right] duration-300 group-hover/item:right-[2%]"
+                                className="absolute right-[-15%] cursor-pointer rounded-[30px] bg-primary px-2.5 py-1 text-xl text-white transition-[right] duration-300 group-hover/item:right-[2%]"
                                 onClick={() => replyComment(three.id!, three.name)}
                               >
                                 <RiMessage3Line />
                               </div>
                             </div>
 
-                            <div className="my-2.5 break-words text-[15px] text-[#666] dark:text-[#cdcdcd] [&_a]:text-primary">
+                            <div className="my-2.5 wrap-break-word text-[15px] text-[#666] dark:text-[#cdcdcd] [&_a]:text-primary">
                               <Link href="#">@{two.name}：</Link>
                               <span>{three.content}</span>
                             </div>
@@ -148,14 +148,14 @@ const CommentList = forwardRef(({ id, reply }: Props, ref) => {
                                   <span className="text-xs text-[#8599ab] dark:text-[#8c9ab1]">{dayjs(+four.createTime).format('YYYY-MM-DD HH:mm')}</span>
 
                                   <div
-                                    className="absolute -right-[15%] cursor-pointer rounded-[30px] bg-primary px-2.5 py-1 text-xl text-white transition-[right] duration-300 group-hover/item:right-[2%]"
+                                    className="absolute right-[-15%] cursor-pointer rounded-[30px] bg-primary px-2.5 py-1 text-xl text-white transition-[right] duration-300 group-hover/item:right-[2%]"
                                     onClick={() => replyComment(four.id!, four.name)}
                                   >
                                     <RiMessage3Line />
                                   </div>
                                 </div>
 
-                                <div className="my-2.5 break-words text-[15px] text-[#666] dark:text-[#cdcdcd] [&_a]:text-primary">
+                                <div className="my-2.5 wrap-break-word text-[15px] text-[#666] dark:text-[#cdcdcd] [&_a]:text-primary">
                                   <Link href="#">@{three.name}：</Link>
                                   <span>{four.content}</span>
                                 </div>
@@ -177,14 +177,14 @@ const CommentList = forwardRef(({ id, reply }: Props, ref) => {
                                     <span className="text-xs text-[#8599ab] dark:text-[#8c9ab1]">{dayjs(+five.createTime).format('YYYY-MM-DD HH:mm')}</span>
 
                                     <div
-                                      className="absolute -right-[15%] cursor-pointer rounded-[30px] bg-primary px-2.5 py-1 text-xl text-white transition-[right] duration-300 group-hover/item:right-[2%]"
+                                      className="absolute right-[-15%] cursor-pointer rounded-[30px] bg-primary px-2.5 py-1 text-xl text-white transition-[right] duration-300 group-hover/item:right-[2%]"
                                       onClick={() => replyComment(five.id!, five.name)}
                                     >
                                       <RiMessage3Line />
                                     </div>
                                   </div>
 
-                                  <div className="my-2.5 break-words text-[15px] text-[#666] dark:text-[#cdcdcd] [&_a]:text-primary">
+                                  <div className="my-2.5 wrap-break-word text-[15px] text-[#666] dark:text-[#cdcdcd] [&_a]:text-primary">
                                     <Link href="#">@{four.name}：</Link>
                                     <span>{five.content}</span>
                                   </div>

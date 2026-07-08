@@ -39,13 +39,13 @@ export default ({ src, covers = [], isRipple = true, fullImage = false, priority
           />
         )}
 
-        <div aria-hidden className="pointer-events-none absolute inset-0 z-[1] bg-[rgba(0,0,0,0.2)]" />
+        <div aria-hidden className="pointer-events-none absolute inset-0 z-1 bg-[rgba(0,0,0,0.2)]" />
 
-        <div className="absolute inset-0 z-[2]">{children}</div>
+        <div className="absolute inset-0 z-2">{children}</div>
 
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-x-0 bottom-0 z-[3] h-[20%] bg-[linear-gradient(to_top,#f9f9f9,transparent)] dark:bg-[linear-gradient(to_top,#2c333e,transparent)]"
+          className="pointer-events-none absolute inset-x-0 bottom-0 z-3 h-[20%] bg-[linear-gradient(to_top,#f9f9f9,transparent)] dark:bg-[linear-gradient(to_top,#2c333e,transparent)]"
         />
       </div>
 

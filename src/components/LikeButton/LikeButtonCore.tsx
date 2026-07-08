@@ -33,7 +33,7 @@ const COMBO_RESET_MS = 900;
 const COMBO_MESSAGES = ['Nice!', '加油!', '太棒了!', '🔥', '666', '❤️‍🔥'];
 
 const BTN_BASE =
-  'like-btn relative z-[2] flex items-center justify-center rounded-full cursor-pointer border-0 outline-hidden transition-[scale] duration-[120ms] ease-[cubic-bezier(0.34,1.56,0.64,1)] bg-linear-to-br from-rose-400 via-rose-500 to-rose-600 active:scale-[0.88]';
+  'like-btn relative z-2 flex items-center justify-center rounded-full cursor-pointer border-0 outline-hidden transition-[scale] duration-[120ms] ease-[cubic-bezier(0.34,1.56,0.64,1)] bg-linear-to-br from-rose-400 via-rose-500 to-rose-600 active:scale-[0.88]';
 
 const BTN_SIZE = {
   sm: 'w-5 h-5 p-0',

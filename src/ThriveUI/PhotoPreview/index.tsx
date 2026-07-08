@@ -26,7 +26,11 @@ type PhotoPreviewProps = {
   onIndexChange?: (index: number) => void;
 };
 
+const preloadedUrls = new Set<string>();
+
 function preloadImage(url: string) {
+  if (!url || preloadedUrls.has(url)) return;
+  preloadedUrls.add(url);
   const img = new Image();
   img.src = url;
 }
@@ -40,14 +44,26 @@ export default function PhotoPreview({
 }: PhotoPreviewProps) {
   const [rotation, setRotation] = useState(0);
   const [scale, setScale] = useState(1);
+  const [currentIndex, setCurrentIndex] = useState(index);
 
-  const activeIndex = Math.min(Math.max(index, 0), Math.max(photos.length - 1, 0));
+  const boundedIndex = Math.min(Math.max(index, 0), Math.max(photos.length - 1, 0));
+
+  useEffect(() => {
+    if (!open) return;
+    setCurrentIndex(boundedIndex);
+    setRotation(0);
+    setScale(1);
+  }, [open, boundedIndex]);
+
+  const activeIndex = Math.min(Math.max(currentIndex, 0), Math.max(photos.length - 1, 0));
   const activePhoto = photos[activeIndex];
   const hasMultiple = photos.length > 1;
 
   const setIndex = useCallback(
     (next: number) => {
-      onIndexChange?.((next + photos.length) % photos.length);
+      const normalized = (next + photos.length) % photos.length;
+      setCurrentIndex(normalized);
+      onIndexChange?.(normalized);
     },
     [onIndexChange, photos.length],
   );
@@ -70,17 +86,6 @@ export default function PhotoPreview({
     if (!open) return;
     photos.forEach((photo) => preloadImage(photo.url));
   }, [open, photos]);
-
-  useEffect(() => {
-    if (!open || !hasMultiple) return;
-    preloadImage(photos[(activeIndex + 1) % photos.length].url);
-    preloadImage(photos[(activeIndex - 1 + photos.length) % photos.length].url);
-  }, [open, activeIndex, hasMultiple, photos]);
-
-  useEffect(() => {
-    setRotation(0);
-    setScale(1);
-  }, [activeIndex, open]);
 
   useEffect(() => {
     if (!open) return;

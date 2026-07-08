@@ -16,7 +16,7 @@ export default ({ data }: { data: InfoOne }) => {
     <>
       <div data-aos="zoom-in" className="mt-8 sm:mt-16  ">
         <div className="flex flex-col-reverse sm:flex-row justify-between items-center">
-          <div className="w-full text-center sm:text-start sm:w-6/12 mt-6 sm:mt-0 text-[#353a40] dark:text-[#fff]">
+          <div className="w-full text-center sm:text-start sm:w-6/12 mt-6 sm:mt-0 text-[#353a40] dark:text-white">
             <div className="text-xl lg:text-4xl my-0 lg:my-5 text-[#738bff]">
               I am <span className="name">{data?.name}</span>
             </div>

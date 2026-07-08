@@ -3,7 +3,7 @@ import Image from 'next/image';
 
 import { getRandomArticleListCacheAPI } from '@/lib/article';
 import { getThemeCoversCacheAPI } from '@/lib/theme';
-import { getRandomImage } from '@/utils';
+import { getStableImage } from '@/utils';
 import RandomArticleSvg from '@/assets/svg/other/article.svg';
 import CoverImage from '@/components/CoverImage';
 import SidebarCard from '@/components/Sidebar/SidebarCard';
@@ -33,7 +33,7 @@ const RandomArticle = async () => {
         <div key={index} className="group relative h-32 rounded-md cursor-pointer">
           <div className="absolute inset-0 overflow-hidden rounded-md">
             <CoverImage
-              src={getRandomImage(item.cover, covers)}
+              src={getStableImage(item.cover, covers, String(item.id))}
               alt={item.title}
               containerClassName="absolute inset-0 transition-[scale] duration-300 ease-out group-hover:scale-105"
               sizes="300px"

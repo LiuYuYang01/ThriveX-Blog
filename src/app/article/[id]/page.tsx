@@ -1,7 +1,7 @@
 import { getArticleDataAPI, recordViewAPI } from '@/api/article';
 import { getWebConfigCacheAPI } from '@/lib/config';
 import { getArticleCacheAPI, getArticlePagingCacheAPI } from '@/lib/article';
-import { getThemeConfigCacheAPI } from '@/lib/theme';
+import { getThemeConfigCacheAPI, getThemeCoversCacheAPI } from '@/lib/theme';
 import { getStableImage } from '@/utils';
 import { Metadata } from 'next';
 import { after } from 'next/server';
@@ -103,9 +103,10 @@ export default async (props: Props) => {
   const id = params.id;
   const password = searchParams.password;
 
-  const [{ code, data }, theme] = await Promise.all([
+  const [{ code, data }, theme, covers] = await Promise.all([
     password ? getArticleDataAPI(id, password) : getArticleCacheAPI(id),
     getThemeConfigCacheAPI(),
+    getThemeCoversCacheAPI(),
   ]);
   const heroSrc = getStableImage(data?.cover, theme?.covers, String(id));
 
@@ -134,75 +135,75 @@ export default async (props: Props) => {
     return (
       <ArticleLikeProvider articleId={id} initialCount={data?.likeCount ?? 0}>
         <ArticleShareProvider articleId={id} initialCount={data?.shareCount ?? 0}>
-        <div className="ArticlePage">
-          <div id="article-hero">
-            <Slide src={heroSrc} covers={theme?.covers} priority={!!heroSrc}>
-            {/* 星空背景组件 */}
-            <Starry />
+          <div className="ArticlePage">
+            <div id="article-hero">
+              <Slide src={heroSrc} covers={covers} priority={!!heroSrc}>
+                {/* 星空背景组件 */}
+                <Starry />
 
-            <div className="absolute w-[80%] sm:w-[70%] lg:w-[60%] xl:w-[50%] top-[60%] md:top-1/2 left-1/2 -translate-x-1/2 translate-y-[-65%] text-white custom_text_shadow">
-              <div className="text-xl mb-3 sm:text-2xl lg:text-3xl xl:text-4xl text-center sm:mb-4 md:mb-5">{data?.title}</div>
+                <div className="absolute w-[80%] sm:w-[70%] lg:w-[60%] xl:w-[50%] top-[60%] md:top-1/2 left-1/2 -translate-x-1/2 translate-y-[-65%] text-white custom_text_shadow">
+                  <div className="text-xl mb-3 sm:text-2xl lg:text-3xl xl:text-4xl text-center sm:mb-4 md:mb-5">{data?.title}</div>
 
-              <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs sm:gap-x-10 sm:text-sm">
-                <div className="flex items-center">
-                  <span>{data?.cateList[0]?.name}</span>
+                  <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs sm:gap-x-10 sm:text-sm">
+                    <div className="flex items-center">
+                      <span>{data?.cateList[0]?.name}</span>
+                    </div>
+
+                    <div className="flex items-center">
+                      <span className={`${iconSty} bg-[#EA3B24]`}>
+                        <FaHotjar />
+                      </span>
+                      <span>{data?.view}</span>
+                    </div>
+
+                    <div className="flex items-center">
+                      <span className={`${iconSty} bg-[#4FA759]`}>
+                        <AiOutlineComment />
+                      </span>
+                      <span>{data?.comment}</span>
+                    </div>
+
+                    <ArticleLikeHero className="mb-0" />
+
+                    <div className="flex items-center">
+                      <span className={`${iconSty} bg-[#5A9CF8]`}>
+                        <LuTimer />
+                      </span>
+                      <span>{dayjs(+data?.createTime).format('YYYY-MM-DD HH:mm')}</span>
+                    </div>
+                  </div>
                 </div>
-
-                <div className="flex items-center">
-                  <span className={`${iconSty} bg-[#EA3B24]`}>
-                    <FaHotjar />
-                  </span>
-                  <span>{data?.view}</span>
-                </div>
-
-                <div className="flex items-center">
-                  <span className={`${iconSty} bg-[#4FA759]`}>
-                    <AiOutlineComment />
-                  </span>
-                  <span>{data?.comment}</span>
-                </div>
-
-                <ArticleLikeHero className="mb-0" />
-
-                <div className="flex items-center">
-                  <span className={`${iconSty} bg-[#5A9CF8]`}>
-                    <LuTimer />
-                  </span>
-                  <span>{dayjs(+data?.createTime).format('YYYY-MM-DD HH:mm')}</span>
-                </div>
-              </div>
+              </Slide>
             </div>
-            </Slide>
-          </div>
 
-          <div className="w-[90%] xl:w-6/12 mx-auto mt-12 relative">
-            <ArticleTOC headings={headings}>
-              <Summary content={data?.description || ''} />
-              <MD data={data?.content} headings={headings} />
+            <div className="w-[90%] xl:w-6/12 mx-auto mt-12 relative">
+              <ArticleTOC headings={headings}>
+                <Summary content={data?.description || ''} />
+                <MD data={data?.content} headings={headings} />
 
-            <ArticleActionBar
-              commentCount={data?.comment ?? 0}
-              share={{
-                articleId: id,
-                title: data.title,
-                description: data.description || '',
-                cover: data.cover || heroSrc,
-                createTime: data.createTime,
-                view: data.view,
-              }}
-            />
+                <ArticleActionBar
+                  commentCount={data?.comment ?? 0}
+                  share={{
+                    articleId: id,
+                    title: data.title,
+                    description: data.description || '',
+                    cover: data.cover || heroSrc,
+                    createTime: data.createTime,
+                    view: data.view,
+                  }}
+                />
 
-            <div className="w-full">
-              <Tag data={data?.tagList} />
+                <div className="w-full">
+                  <Tag data={data?.tagList} />
 
-              <Copyright />
-              <RandomArticle />
-              <UpAndDown currentId={id} prev={data?.prev} next={data?.next} />
-              <Comment articleId={id} articleTitle={data.title} />
+                  <Copyright />
+                  <RandomArticle />
+                  <UpAndDown currentId={id} prev={data?.prev} next={data?.next} />
+                  <Comment articleId={id} articleTitle={data.title} />
+                </div>
+              </ArticleTOC>
             </div>
-            </ArticleTOC>
           </div>
-        </div>
         </ArticleShareProvider>
       </ArticleLikeProvider>
     );

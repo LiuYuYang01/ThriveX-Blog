@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { getRandomImage } from '@/utils';
+import { getStableImage } from '@/utils';
 import { getThemeCoversCacheAPI } from '@/lib/theme';
 import { Article } from '@/types/app/article';
 import ArticleMeta from '@/components/ArticleLayout/components/ArticleMeta';
@@ -25,7 +25,7 @@ const Classics = async ({ data, covers: coversProp }: ClassicsProps) => {
   return (
     <div className="space-y-2">
       {data?.result?.map((item, index) => {
-        const cover = getRandomImage(item.cover, covers);
+        const cover = getStableImage(item.cover, covers, String(item.id));
 
         return (
           <div key={item.id} className="panel relative overflow-hidden flex h-[190px] md:h-60 lg:h-52 xl:h-60 bg-black-b">

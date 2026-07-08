@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { Article } from '@/types/app/article';
-import { getRandomImage } from '@/utils';
+import { getStableImage } from '@/utils';
 import CoverImage from '@/components/CoverImage';
 import Masonry from 'react-masonry-css';
 
@@ -25,7 +25,7 @@ export default ({ data, covers }: WaterfallProps) => {
           <Link href={`/article/${item.id}`}>
             <div className="overflow-hidden relative h-32 scale-100 hover:scale-125 z-10 transition-[scale] duration-300 ease-out">
               <CoverImage
-                src={getRandomImage(item.cover, covers)}
+                src={getStableImage(item.cover, covers, String(item.id))}
                 alt={item.title}
                 sizes="(max-width: 700px) 50vw, (max-width: 1024px) 33vw, 25vw"
               />

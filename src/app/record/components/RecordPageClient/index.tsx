@@ -15,11 +15,13 @@ import 'react-toastify/dist/ReactToastify.css';
 interface RecordPageClientProps {
   user: User | null;
   initialRecords: Record[];
+  initialTotal: number;
   totalPages: number;
 }
 
-export default function RecordPageClient({ user, initialRecords, totalPages: initialTotalPages }: RecordPageClientProps) {
+export default function RecordPageClient({ user, initialRecords, initialTotal, totalPages: initialTotalPages }: RecordPageClientProps) {
   const [records, setRecords] = useState<Record[]>(initialRecords);
+  const [total, setTotal] = useState(initialTotal);
   const [totalPages, setTotalPages] = useState(initialTotalPages);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(initialTotalPages > 1);
@@ -33,6 +35,7 @@ export default function RecordPageClient({ user, initialRecords, totalPages: ini
 
       if (recordData?.result?.length) {
         setRecords((prev) => (append ? [...prev, ...recordData.result] : recordData.result));
+        setTotal(recordData.total ?? 0);
         setTotalPages(recordData.pages ?? 1);
         setHasMore(page < (recordData.pages ?? 1));
         currentPageRef.current = page;
@@ -135,7 +138,7 @@ export default function RecordPageClient({ user, initialRecords, totalPages: ini
               )}
             </section>
 
-            <RecordSidebar records={records} user={user} />
+            <RecordSidebar records={records} total={total} user={user} />
           </div>
         </div>
       </div>

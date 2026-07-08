@@ -39,19 +39,21 @@ const BTN_SIZE = {
   sm: 'w-5 h-5 p-0',
   md: 'w-11 h-11',
   lg: 'w-[3.75rem] h-[3.75rem]',
+  inline: 'w-6 h-6 p-0',
 } as const;
 
 const ICON_SIZE = {
   sm: 'w-[0.65rem] h-[0.65rem]',
   md: 'w-5 h-5',
   lg: 'w-7 h-7',
+  inline: 'w-3 h-3',
 } as const;
 
 interface Props {
   count: number;
   onLike: () => void;
   size?: 'md' | 'lg';
-  variant?: 'default' | 'hero';
+  variant?: 'default' | 'hero' | 'inline';
   showHint?: boolean;
   minimal?: boolean;
   className?: string;
@@ -81,8 +83,9 @@ export default function LikeButtonCore({
   const comboTimerRef = useRef<number>(null);
 
   const isHero = variant === 'hero';
-  const btnSize = isHero ? 'sm' : minimal ? 'md' : size;
-  const isLarge = size === 'lg' && !minimal;
+  const isInline = variant === 'inline';
+  const btnSize = isInline ? 'inline' : isHero ? 'sm' : minimal ? 'md' : size;
+  const isLarge = size === 'lg' && !minimal && !isInline;
 
   const spawnParticles = (intensity: number) => {
     const particleCount = Math.min(intensity >= 5 ? 4 : intensity >= 3 ? 3 : 2, 4);
@@ -155,10 +158,14 @@ export default function LikeButtonCore({
     minimal && 'bg-none bg-rose-500 shadow-md shadow-rose-500/30 group-hover:shadow-lg group-hover:shadow-rose-500/40',
     popping && 'like-btn--popping',
     comboShaking && !isHero && 'like-btn--combo-shake',
+    isInline && 'like-btn--inline',
     isHero && 'like-btn--hero bg-[#e11e63]',
   );
 
-  const iconClass = cn('text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.15)]', ICON_SIZE[isHero ? 'sm' : size]);
+  const iconClass = cn(
+    'text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.15)]',
+    ICON_SIZE[isInline ? 'inline' : isHero ? 'sm' : size],
+  );
 
   const countClass = cn(
     'tabular-nums font-black leading-none text-rose-500 transition-colors dark:text-rose-400',
@@ -222,6 +229,36 @@ export default function LikeButtonCore({
       <div className={cn('relative mb-2 inline-flex select-none flex-row items-center gap-1', className)}>
         {likeButton}
         <span className="text-inherit">{count}</span>
+      </div>
+    );
+  }
+
+  if (isInline) {
+    return (
+      <div className={cn('relative inline-flex select-none flex-row items-center gap-1.5', className)}>
+        {combo >= 2 && (
+          <span
+            key={combo}
+            className="like-combo-badge pointer-events-none absolute -top-6 left-0 z-30 whitespace-nowrap rounded-full bg-linear-to-r from-orange-500 to-red-500 px-2 py-0.5 text-[10px] font-bold text-white"
+          >
+            ×{combo} {comboMsg}
+          </span>
+        )}
+        <div className={cn(actionIconWrapClass, 'p-0')}>
+          {likeEffects}
+          <button type="button" onClick={handleLike} className={btnClass} aria-label={ariaLabel}>
+            <RiHeartFill className={iconClass} />
+          </button>
+        </div>
+        <span
+          className={cn(
+            'text-sm tabular-nums text-[#343b48] dark:text-slate-300',
+            (countBump || combo >= 1) && 'text-[#ef5166] dark:text-rose-400',
+            countBump && 'like-count--bump',
+          )}
+        >
+          {count}
+        </span>
       </div>
     );
   }

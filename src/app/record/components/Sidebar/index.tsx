@@ -8,6 +8,7 @@ import { computeRecordStats } from '../../utils';
 
 interface Props {
   records: Record[];
+  total: number;
   user: Pick<User, 'avatar' | 'name'> | null;
 }
 
@@ -47,7 +48,7 @@ function buildChartData(moodPoints: { emoji: string; score: number }[]) {
   return { points, linePath, areaPath, highlightIndex: points.length - 1 };
 }
 
-export default function RecordSidebar({ records, user }: Props) {
+export default function RecordSidebar({ records, total, user }: Props) {
   const stats = computeRecordStats(records);
 
   const moodByDate = new Map<string, { mood: string; time: number }>();
@@ -100,7 +101,13 @@ export default function RecordSidebar({ records, user }: Props) {
         <section className={`${panelClass} relative`}>
           <div className="pointer-events-none absolute right-[-38px] top-[-38px] h-28 w-28 rounded-full bg-primary/12 blur-2xl" />
           <div className="relative flex items-center gap-3">
-            <img src={user.avatar} alt={user.name} className="h-12 w-12 rounded-full object-cover ring-4 ring-primary/15" />
+            <div className="group shrink-0 cursor-pointer">
+              <img
+                src={user.avatar}
+                alt={user.name}
+                className="h-12 w-12 rounded-full object-cover transition-[scale] duration-300 group-hover:scale-105 group-hover:ring-primary/35"
+              />
+            </div>
             <div className="min-w-0">
               <p className="m-0 truncate text-base font-semibold text-[#161a22] dark:text-slate-100">{user.name}</p>
               <p className="mt-1 text-xs text-[#8a94a3] dark:text-slate-500">记录生活的每一刻</p>
@@ -108,7 +115,7 @@ export default function RecordSidebar({ records, user }: Props) {
           </div>
           <div className="relative mt-4 grid grid-cols-3 gap-2 text-center">
             <div className="rounded-2xl bg-[#f7f8fa] px-2 py-3 dark:bg-white/5">
-              <p className="m-0 text-xl font-semibold text-[#161a22] dark:text-white">{stats.total}</p>
+              <p className="m-0 text-xl font-semibold text-[#161a22] dark:text-white">{total}</p>
               <p className="mt-0.5 text-[11px] text-[#8a94a3]">条闪念</p>
             </div>
             <div className="rounded-2xl bg-[#f7f8fa] px-2 py-3 dark:bg-white/5">

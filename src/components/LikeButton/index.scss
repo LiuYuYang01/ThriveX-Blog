@@ -131,6 +131,20 @@
       inset 0 1px 0 rgba(255, 255, 255, 0.4);
   }
 
+  &--inline {
+    box-shadow:
+      0 3px 10px rgba(244, 63, 94, 0.28),
+      0 0 0 2px rgba(244, 63, 94, 0.08),
+      inset 0 1px 0 rgba(255, 255, 255, 0.35);
+
+    &:hover {
+      box-shadow:
+        0 4px 14px rgba(244, 63, 94, 0.36),
+        0 0 0 3px rgba(244, 63, 94, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    }
+  }
+
   &--hero {
     background: #e11e63;
     box-shadow: 0 2px 8px rgba(233, 30, 99, 0.4);

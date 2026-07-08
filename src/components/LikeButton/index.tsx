@@ -10,7 +10,7 @@ interface Props {
   initialCount?: number;
   likeAPI: LikeAPI;
   size?: 'md' | 'lg';
-  variant?: 'default' | 'hero';
+  variant?: 'default' | 'hero' | 'inline';
   minimal?: boolean;
   className?: string;
 }

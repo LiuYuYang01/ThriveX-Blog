@@ -18,6 +18,7 @@ export default async () => {
     <RecordPageClient
       user={userRes?.data ?? null}
       initialRecords={recordRes?.data?.result ?? []}
+      initialTotal={recordRes?.data?.total ?? 0}
       totalPages={recordRes?.data?.pages ?? 1}
     />
   );

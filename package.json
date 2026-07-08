@@ -22,8 +22,6 @@
     "@dicebear/collection": "^9.2.1",
     "@dicebear/core": "^9.2.1",
     "@hcaptcha/react-hcaptcha": "^1.12.1",
-    "@wangeditor-next/editor": "^5.6.34",
-    "@wangeditor-next/editor-for-react": "^1.0.9",
     "aos": "^3.0.0-beta.6",
     "canvas-confetti": "^1.9.3",
     "clsx": "^2.1.1",

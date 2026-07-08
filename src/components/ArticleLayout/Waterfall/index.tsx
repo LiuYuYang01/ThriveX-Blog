@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { Article } from '@/types/app/article';
 import { getRandomImage } from '@/utils';
+import CoverImage from '@/components/CoverImage';
 import Masonry from 'react-masonry-css';
 
 interface WaterfallProps {
@@ -22,10 +23,11 @@ export default ({ data, covers }: WaterfallProps) => {
       {data.result.map((item) => (
         <div key={item.id} className="group overflow-hidden mt-2.5 rounded-xl bg-white dark:bg-black-b border dark:border-black-b hover:shadow-[0_10px_20px_1px_rgb(83,157,253,.1)]   cursor-pointer">
           <Link href={`/article/${item.id}`}>
-            <div className="overflow-hidden h-32">
-              <div
-                className="relative h-full bg-cover bg-no-repeat bg-center scale-100 hover:scale-125 z-10 transition-[scale] duration-300 ease-out"
-                style={{ backgroundImage: `url(${getRandomImage(item.cover, covers)})` }}
+            <div className="overflow-hidden relative h-32 scale-100 hover:scale-125 z-10 transition-[scale] duration-300 ease-out">
+              <CoverImage
+                src={getRandomImage(item.cover, covers)}
+                alt={item.title}
+                sizes="(max-width: 700px) 50vw, (max-width: 1024px) 33vw, 25vw"
               />
             </div>
             <div className="py-2 px-4">

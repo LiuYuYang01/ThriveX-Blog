@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import { getPageConfigCacheAPI } from '@/lib/config';
+import OptimizedImage from '@/components/OptimizedImage';
 import { FiTag, FiArrowUpRight, FiLayers } from 'react-icons/fi';
 
 export const metadata: Metadata = {
@@ -82,10 +83,17 @@ export default async () => {
                   >
                     <div className="relative h-56 flex items-center justify-center p-6 overflow-hidden" style={{ backgroundColor: item.color }}>
                       <div className="absolute inset-0 bg-linear-to-t from-black/20 to-white/10 mix-blend-overlay" />
-                      {/* 修复了一点小细节：给 bg-white 加上 /20，不然在浅色模式下可能会太白挡住原产品图 */}
                       <div className="absolute inset-0 bg-white/20 dark:bg-black/20 backdrop-blur-[2px]" />
 
-                      <img src={item.image} alt={item.name} className="relative z-10 h-full w-full object-contain transition-[scale] duration-700 ease-out group-hover:scale-110" />
+                      {item.image ? (
+                        <OptimizedImage
+                          src={item.image}
+                          alt={item.name}
+                          fill
+                          className="relative z-10 object-contain p-6 transition-[scale] duration-700 ease-out group-hover:scale-110"
+                          sizes="(max-width: 768px) 50vw, 280px"
+                        />
+                      ) : null}
                     </div>
 
                     <div className="p-6 flex flex-col flex-1 bg-white dark:bg-zinc-900">

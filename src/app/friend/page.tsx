@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 
+import { getAppConfigCacheAPI } from '@/lib/config';
 import { getWebListCacheAPI, getWebTypeListCacheAPI } from '@/lib/web';
 import { Web as WebLink } from '@/types/app/web';
 
@@ -11,8 +12,11 @@ export const metadata: Metadata = {
 };
 
 export default async () => {
-  const linkRes = await getWebListCacheAPI();
-  const typeRes = await getWebTypeListCacheAPI();
+  const [linkRes, typeRes, { web, author }] = await Promise.all([
+    getWebListCacheAPI(),
+    getWebTypeListCacheAPI(),
+    getAppConfigCacheAPI(),
+  ]);
   const linkList = linkRes?.data ?? [];
   const typeList = typeRes?.data ?? [];
 
@@ -37,5 +41,5 @@ export default async () => {
   dataTemp.sort((a, b) => a[1].order - b[1].order);
   data = Object.fromEntries(dataTemp);
 
-  return <Friend data={data} />;
+  return <Friend data={data} web={web} author={author} />;
 };

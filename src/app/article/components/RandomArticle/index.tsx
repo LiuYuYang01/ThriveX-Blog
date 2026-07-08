@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { getRandomArticleListAPI } from '@/api/article';
 import { useAppConfig } from '@/components/AppConfigProvider';
+import CoverImage from '@/components/CoverImage';
 import { Article } from '@/types/app/article';
 import { getRandomImage } from '@/utils';
 import RandomArticleSvg from '@/assets/svg/other/article.svg';
@@ -49,11 +50,12 @@ const RandomArticle = () => {
                   target="_blank"
                   className="group block w-[260px] shrink-0 overflow-hidden rounded-xl no-underline text-inherit shadow-[0_4px_20px_-4px_rgba(0,0,0,0.1)] transition duration-300 ease-out hover:-translate-y-1 hover:shadow-[0_12px_28px_-6px_rgba(83,157,253,0.22)] dark:shadow-none dark:hover:shadow-[0_12px_28px_-6px_rgba(0,0,0,0.45)]"
                 >
-                  <div
-                    className="relative w-full h-40 bg-cover bg-center bg-no-repeat"
-                    style={coverUrl ? { backgroundImage: `url(${coverUrl})` } : undefined}
-                  >
-                    {!coverUrl && <div className="absolute inset-0 bg-slate-400/50 dark:bg-slate-600/50" />}
+                  <div className="relative w-full h-40 overflow-hidden">
+                    {coverUrl ? (
+                      <CoverImage src={coverUrl} alt={item.title} sizes="260px" />
+                    ) : (
+                      <div className="absolute inset-0 bg-slate-400/50 dark:bg-slate-600/50" />
+                    )}
                     <div
                       className="absolute inset-0 bg-linear-to-t from-black/70 via-transparent to-transparent pointer-events-none"
                       aria-hidden

@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { getAuthorDataCacheAPI, getWebConfigCacheAPI } from '@/lib/config';
+import OptimizedImage from '@/components/OptimizedImage';
 import Tooltip from './components/Tooltip';
 import ICPBeian from './components/ICPBeian';
 
@@ -19,7 +20,9 @@ export default async () => {
 
       <div className="bg-white dark:bg-black-b border-t border-[#eee] dark:border-[#3d4654] px-10">
         <div className="flex justify-center items-center py-4">
-          <img src={user?.avatar} alt="作者头像" className="w-20 h-20 rounded-full mr-8 avatar-animation shadow-[5px_11px_30px_20px_rgba(255,255,255,0.1)]" />
+          {user?.avatar ? (
+            <OptimizedImage src={user.avatar} alt="作者头像" width={80} height={80} className="w-20 h-20 rounded-full mr-8 avatar-animation shadow-[5px_11px_30px_20px_rgba(255,255,255,0.1)] object-cover" />
+          ) : null}
           <h2 className="w-[90%] xl:w-3/6 text-sm sm:text-base dark:text-[#8c9ab1] line-clamp-4">{web?.footer}</h2>
         </div>
 

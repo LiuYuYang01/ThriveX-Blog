@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { Project } from '@/types/app/my';
 import { Tabs, Tab, Card, CardBody } from '@/ThriveUI';
+import OptimizedImage from '@/components/OptimizedImage';
 import { PhotoProvider, PhotoView } from 'react-photo-view';
 import 'react-photo-view/dist/react-photo-view.css';
 
@@ -32,7 +33,7 @@ export default ({ data }: { data: Project[] }) => {
                           <PhotoProvider>
                             {item.images?.map((img, index) => (
                               <PhotoView key={index} src={img || ''}>
-                                <img src={img} alt="作品图片" className="border dark:border-[#444e5d] dark hover:scale-[1.2] rounded-lg cursor-pointer transition-[scale]" />
+                                <OptimizedImage src={img} alt="作品图片" width={200} height={200} className="border dark:border-[#444e5d] dark hover:scale-[1.2] rounded-lg cursor-pointer transition-[scale] object-cover w-full h-auto" />
                               </PhotoView>
                             ))}
                           </PhotoProvider>

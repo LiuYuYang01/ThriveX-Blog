@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import Image from 'next/image';
 import bg from '@/assets/image/bg.png';
 
 import Goals from './components/Goals';
@@ -58,7 +59,10 @@ export default async () => {
 
   return (
     <>
-      <div className="bg-white dark:bg-black-a pt-20 bg-cover bg-center bg-fixed" style={{ backgroundImage: `url(${bg.src})` }}>
+      <div className="relative bg-white dark:bg-black-a pt-20">
+        <div className="fixed inset-0 -z-10">
+          <Image src={bg} alt="" fill className="object-cover object-center" sizes="100vw" priority />
+        </div>
         <div className="w-[90%] lg:w-[950px] mx-auto">{info_style === 'info_one' ? <InfoOne data={info_one} /> : <InfoTwo data={info_two} />}</div>
 
         <div className="flex justify-center mt-24">

@@ -1,3 +1,5 @@
+'use client';
+
 import Image from 'next/image';
 import { useEffect, useRef } from 'react';
 import cate from './svg/cate.svg';
@@ -8,9 +10,11 @@ import { PieChart } from 'echarts/charts';
 import { LabelLayout } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
 import { Cate } from '@/types/app/cate';
+import { flattenCateForStatis } from '@/app/cate/utils';
 
 echarts.use([TooltipComponent, LegendComponent, PieChart, CanvasRenderer, LabelLayout]);
 
+// 分类占比饼图，基于展开后的最末级分类统计
 export default ({ list }: { list: Cate[] }) => {
   const chartRef = useRef<HTMLDivElement | null>(null);
 
@@ -18,7 +22,9 @@ export default ({ list }: { list: Cate[] }) => {
     if (!chartRef.current) return;
 
     const myChart = echarts.init(chartRef.current);
-    const chartData = list.map(({ count, name }) => ({ value: count, name }));
+    const chartData = flattenCateForStatis(list)
+      .filter(({ count }) => count > 0)
+      .map(({ count, name }) => ({ value: count, name }));
 
     const option = {
       tooltip: {

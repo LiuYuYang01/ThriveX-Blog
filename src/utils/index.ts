@@ -6,3 +6,4 @@ export * from './url';
 export * from './request';
 export * from './cateNav';
 export * from './cover';
+export * from './image';

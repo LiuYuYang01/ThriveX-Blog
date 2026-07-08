@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import OptimizedImage from '@/components/OptimizedImage';
 
 import AOS from 'aos';
 import 'aos/dist/aos.css';
@@ -23,8 +24,10 @@ export default ({ data }: { data: InfoOne }) => {
             <div className="text-sm text-[#666] dark:text-[#8c9ab1] leading-6 lg:leading-8">{data?.introduction}</div>
           </div>
 
-          <div className="overflow-hidden w-[40%] h-[40%] rounded-full shadow-lg">
-            <img src={data?.avatar} alt={data?.name} className="w-full h-full" />
+          <div className="overflow-hidden relative w-[40%] h-[40%] rounded-full shadow-lg aspect-square">
+            {data?.avatar ? (
+              <OptimizedImage src={data.avatar} alt={data?.name} fill className="object-cover" sizes="(max-width: 640px) 40vw, 380px" />
+            ) : null}
           </div>
         </div>
       </div>

@@ -10,6 +10,7 @@ import QQ from '@/assets/svg/socializing/QQ.svg';
 import Weixin from '@/assets/svg/socializing/Weixin.svg';
 
 import { getAuthorDataCacheAPI } from '@/lib/config';
+import OptimizedImage from '@/components/OptimizedImage';
 import { Social } from '@/types/app/config';
 
 const Author = async ({ social = [] }: { social?: Social[] }) => {
@@ -31,26 +32,26 @@ const Author = async ({ social = [] }: { social?: Social[] }) => {
   const getIcon = (name: string) => images[name];
 
   return (
-    <div
-      className="panel flex flex-col items-center pt-16 bg-no-repeat bg-white dark:bg-black-b w-full h-[350px] mb-3"
-      style={{
-        backgroundSize: `100% 35%`,
-        backgroundImage: `url(${avatarBg.src})`,
-      }}
-    >
+    <div className="panel relative flex flex-col items-center pt-16 bg-white dark:bg-black-b w-full h-[350px] mb-3 overflow-hidden">
+      <div className="absolute top-0 left-0 w-full h-[35%]">
+        <Image src={avatarBg} alt="" fill className="object-cover" sizes="300px" />
+      </div>
+
       {/* 作者头像 */}
-      <div className="avatar flex justify-center items-center w-[90px] h-[90px] rounded-full bg-white shadow-md overflow-hidden">
-        <img src={user?.avatar} alt="" className="w-[90%] h-[90%] rounded-full transition-[scale] hover:scale-110" />
+      <div className="avatar relative z-10 flex justify-center items-center w-[90px] h-[90px] rounded-full bg-white shadow-md overflow-hidden">
+        {user?.avatar ? (
+          <OptimizedImage src={user.avatar} alt="" width={81} height={81} className="w-[90%] h-[90%] rounded-full transition-[scale] hover:scale-110 object-cover" />
+        ) : null}
       </div>
 
       {/* 作者介绍 */}
-      <div className="info text-center mt-4">
+      <div className="info relative z-10 text-center mt-4">
         <h3 className="text-lg text-[#333] dark:text-white">{user?.name}</h3>
         <p className="w-[90%] mx-auto mt-2 text-sm text-[#686868] dark:text-[#cecece]">{user?.info}</p>
       </div>
 
       {/* 社交账号 */}
-      <div className="socializing w-full pt-8">
+      <div className="socializing relative z-10 w-full pt-8">
         <div className="title relative w-full h-px bg-[#eee] dark:bg-black-a">
           <span className="absolute top-[-10px] left-1/2 transform -translate-x-1/2 w-[110px] bg-white dark:bg-black-b text-center text-sm text-[#666] dark:text-[#979797]  ">社交账号</span>
         </div>

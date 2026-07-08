@@ -1,6 +1,6 @@
 import { cacheLife, cacheTag } from 'next/cache';
 
-import { getArticleDataAPI, getArticlePagingAPI } from '@/api/article';
+import { getArticleDataAPI, getArticlePagingAPI, getRandomArticleListAPI } from '@/api/article';
 import { CACHE_TAGS } from '@/lib/cache-tags';
 
 type ArticlePagingParams = {
@@ -39,4 +39,12 @@ export async function getArticlePagingCacheAPI(params: ArticlePagingParams = {})
     pageSize,
     ...(key ? { key } : {}),
   });
+}
+
+export async function getRandomArticleListCacheAPI() {
+  'use cache';
+  cacheLife('blog');
+  cacheTag(CACHE_TAGS.articles);
+
+  return getRandomArticleListAPI();
 }

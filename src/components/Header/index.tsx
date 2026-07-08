@@ -6,6 +6,7 @@ import React, { useState, useEffect } from 'react';
 
 import { Switch } from '@/ThriveUI';
 import Show from '@/components/Show';
+import OptimizedImage from '@/components/OptimizedImage';
 import SidebarNav from './components/SidebarNav';
 
 import { IoIosArrowDown } from 'react-icons/io';
@@ -98,7 +99,17 @@ export default ({ theme }: { theme: Theme }) => {
           <div className="flex h-[60px] items-center justify-center md:justify-start min-w-0 md:flex-1 overflow-visible">
             {/* logo */}
             <Link href="/" className="flex items-center h-[60px] text-[15px]">
-              {isDark ? <img src={theme?.dark_logo} alt="Logo" className="h-10 w-auto object-contain pr-0 md:pr-5 hover:scale-90 transition-[scale]" /> : <img src={isPathSty || isScrolled ? theme?.light_logo : theme?.dark_logo} alt="Logo" className="h-10 w-auto object-contain pr-0 md:pr-5 hover:scale-90 transition-[scale]" />}
+              {isDark ? (
+                <OptimizedImage src={theme?.dark_logo} alt="Logo" width={160} height={40} className="h-10 w-auto object-contain pr-0 md:pr-5 hover:scale-90 transition-[scale]" />
+              ) : (
+                <OptimizedImage
+                  src={isPathSty || isScrolled ? theme?.light_logo : theme?.dark_logo}
+                  alt="Logo"
+                  width={160}
+                  height={40}
+                  className="h-10 w-auto object-contain pr-0 md:pr-5 hover:scale-90 transition-[scale]"
+                />
+              )}
             </Link>
 
             <ul className="hidden md:flex items-center h-[60px] overflow-visible">

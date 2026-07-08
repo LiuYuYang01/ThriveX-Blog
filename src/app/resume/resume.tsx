@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FaGithub, FaPhone, FaEnvelope, FaGlobe, FaBriefcase, FaGraduationCap, FaCode, FaUser, FaProjectDiagram } from 'react-icons/fa';
+import OptimizedImage from '@/components/OptimizedImage';
 import { Resume } from '@/types/app/resume';
 
 export default ({ data }: { data: Resume }) => {
@@ -123,8 +124,14 @@ export default ({ data }: { data: Resume }) => {
             <div className="mt-8 px-8 pb-8 relative">
               <div className="flex flex-col md:flex-row items-center gap-6">
                 <motion.div initial={{ scale: 0.8 }} animate={{ scale: 1 }} transition={{ duration: 0.5 }} className="relative flex justify-center items-center w-32 h-32 rounded-full overflow-hidden bg-white shadow-xl border-transparent border-4 dark:border-gray-700">
-                  <div className="flex justify-center items-center w-[98%] h-[98%] rounded-full overflow-hidden">
-                    <img src={safePersonalInfo.avatar || defaultPersonalInfo.avatar} alt={safePersonalInfo.name || '匿名用户'} className="object-cover w-full h-full" />
+                  <div className="relative flex justify-center items-center w-[98%] h-[98%] rounded-full overflow-hidden">
+                    <OptimizedImage
+                      src={safePersonalInfo.avatar || defaultPersonalInfo.avatar}
+                      alt={safePersonalInfo.name || '匿名用户'}
+                      fill
+                      className="object-cover"
+                      sizes="128px"
+                    />
                   </div>
                 </motion.div>
 

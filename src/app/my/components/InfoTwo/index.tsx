@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import Link from 'next/link';
+import OptimizedImage from '@/components/OptimizedImage';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import { InfoTwo } from '@/types/app/my';
@@ -23,8 +24,10 @@ export default ({ data }: { data: InfoTwo }) => {
           ))}
         </div>
 
-        <div className="avatar">
-          <img src={data.avatar_url} alt={data.author} className="avatar-img dark:border-[rgba(56,64,76)]!" />
+        <div className="avatar relative">
+          {data.avatar_url ? (
+            <OptimizedImage src={data.avatar_url} alt={data.author} width={120} height={120} className="avatar-img dark:border-[rgba(56,64,76)]!" />
+          ) : null}
         </div>
 
         <div className="info-right">

@@ -1,13 +1,11 @@
-'use client';
-
 import Link from 'next/link';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
-import { getRandomArticleListAPI } from '@/api/article';
-import { useAppConfig } from '@/components/AppConfigProvider';
-import { Article } from '@/types/app/article';
+
+import { getRandomArticleListCacheAPI } from '@/lib/article';
+import { getThemeCoversCacheAPI } from '@/lib/theme';
 import { getRandomImage } from '@/utils';
 import RandomArticleSvg from '@/assets/svg/other/article.svg';
+import CoverImage from '@/components/CoverImage';
 import SidebarCard from '@/components/Sidebar/SidebarCard';
 
 const RANKING_COLORS = [
@@ -18,19 +16,11 @@ const RANKING_COLORS = [
   'bg-[#6756c3] after:border-l-[#6756c3]',
 ] as const;
 
-const HotArticle = () => {
-  const { theme } = useAppConfig();
-
-  const [list, setList] = useState<Article[]>([]);
-
-  const getRandomArticleList = async () => {
-    const { data } = await getRandomArticleListAPI();
-    setList(data ?? []);
-  };
-
-  useEffect(() => {
-    getRandomArticleList();
-  }, []);
+const RandomArticle = async () => {
+  const [{ data: list }, covers] = await Promise.all([
+    getRandomArticleListCacheAPI(),
+    getThemeCoversCacheAPI(),
+  ]);
 
   return (
     <SidebarCard
@@ -42,9 +32,11 @@ const HotArticle = () => {
       {list?.map((item, index) => (
         <div key={index} className="group relative h-32 rounded-md cursor-pointer">
           <div className="absolute inset-0 overflow-hidden rounded-md">
-            <div
-              className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-[scale] duration-300 ease-out group-hover:scale-105"
-              style={{ backgroundImage: `url(${getRandomImage(item.cover, theme.covers)})` }}
+            <CoverImage
+              src={getRandomImage(item.cover, covers)}
+              alt={item.title}
+              containerClassName="absolute inset-0 transition-[scale] duration-300 ease-out group-hover:scale-105"
+              sizes="300px"
             />
             <div className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-[linear-gradient(transparent,#000)]" />
           </div>
@@ -63,4 +55,4 @@ const HotArticle = () => {
   );
 };
 
-export default HotArticle;
+export default RandomArticle;

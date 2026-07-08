@@ -1,27 +1,16 @@
-'use client';
-
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
-import { getCommentListAPI } from '@/api/comment';
-import NewCommentSvg from '@/assets/svg/other/comments.svg';
-import RandomAvatar from '@/components/RandomAvatar';
-import SidebarCard from '@/components/Sidebar/SidebarCard';
-import { Comment } from '@/types/app/comment';
 import dayjs from 'dayjs';
 import { RiTimeLine } from 'react-icons/ri';
 
-const NewComments = () => {
-  const [list, setList] = useState<Comment[]>([]);
+import { getCommentListCacheAPI } from '@/lib/comment';
+import NewCommentSvg from '@/assets/svg/other/comments.svg';
+import RandomAvatar from '@/components/RandomAvatar';
+import SidebarCard from '@/components/Sidebar/SidebarCard';
 
-  const getCommentList = async () => {
-    const { data } = await getCommentListAPI({ pageNum: 1, pageSize: 5 });
-    setList(data?.result ?? []);
-  };
-
-  useEffect(() => {
-    getCommentList();
-  }, []);
+const NewComments = async () => {
+  const { data } = await getCommentListCacheAPI({ pageNum: 1, pageSize: 5 });
+  const list = data?.result ?? [];
 
   return (
     <SidebarCard title={<><Image src={NewCommentSvg} alt="最新评论" width={33} height={23} /> 最新评论</>} contentClassName="flex flex-col gap-1 mt-3 w-full">

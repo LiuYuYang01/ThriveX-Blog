@@ -140,14 +140,14 @@ export function OwnerCard() {
     <ScrollReveal delay={150}>
       <Link href="https://liuyuyang.net" target="_blank" className="group block h-full">
         <MagneticCard className="h-full">
-          <div className="h-full relative overflow-hidden rounded-2xl bg-primary/5 dark:bg-primary/10 border border-primary/20 dark:border-primary/30 group-hover:shadow-xl group-hover:shadow-primary/10">
-            <div className="absolute inset-0 bg-linear-to-r from-primary/0 via-primary/5 to-primary/0 opacity-0 group-hover:opacity-100 transition-opacity" />
+          <div className="h-full relative overflow-hidden rounded-2xl bg-primary/5 dark:bg-primary/10 border border-primary/20 dark:border-primary/30 transition-[transform,shadow] duration-300 ease-out group-hover:-translate-y-1 group-hover:shadow-xl group-hover:shadow-primary/10">
+            <div className="absolute inset-0 bg-linear-to-r from-primary/0 via-primary/5 to-primary/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 ease-out" />
             <div className="absolute top-3 right-3 px-2.5 py-1 bg-primary text-[10px] font-bold text-white rounded-full shadow-lg shadow-primary/30">
               OWNER
             </div>
             <div className="relative p-5 flex items-center gap-4">
               <div className="relative shrink-0">
-                <div className="absolute inset-0 rounded-full bg-primary opacity-0 group-hover:opacity-30 blur-md" />
+                <div className="absolute inset-0 rounded-full bg-primary opacity-0 group-hover:opacity-30 blur-md transition-opacity duration-500 ease-out" />
                 <img
                   src="https://q1.qlogo.cn/g?b=qq&nk=3311118881&s=640"
                   alt="项目作者"

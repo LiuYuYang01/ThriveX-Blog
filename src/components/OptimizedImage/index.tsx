@@ -35,27 +35,29 @@ export default function OptimizedImage({
   style,
   onError,
 }: OptimizedImageProps) {
-  if (!src || (typeof src === 'string' && !src.trim())) return null;
+  const normalizedSrc = typeof src === 'string' ? src.trim() : src;
 
-  if (typeof src === 'string' && isNativeOnlySrc(src)) {
+  if (!normalizedSrc) return null;
+
+  if (typeof normalizedSrc === 'string' && isNativeOnlySrc(normalizedSrc)) {
     if (fill) {
       return (
-        <img src={src} alt={alt} className={className} style={{ objectFit: 'cover', width: '100%', height: '100%', ...style }} onError={onError} />
+        <img src={normalizedSrc} alt={alt} className={className} style={{ objectFit: 'cover', width: '100%', height: '100%', ...style }} onError={onError} />
       );
     }
 
     return (
-      <img src={src} alt={alt} className={className} width={width} height={height} style={style} onError={onError} />
+      <img src={normalizedSrc} alt={alt} className={className} width={width} height={height} style={style} onError={onError} />
     );
   }
 
   if (fill) {
-    return <Image src={src} alt={alt} fill className={className} priority={priority} sizes={sizes} style={style} onError={onError} />;
+    return <Image src={normalizedSrc} alt={alt} fill className={className} priority={priority} sizes={sizes} style={style} onError={onError} />;
   }
 
   return (
     <Image
-      src={src}
+      src={normalizedSrc}
       alt={alt}
       width={width ?? 100}
       height={height ?? 100}

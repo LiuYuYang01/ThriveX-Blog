@@ -17,13 +17,13 @@ export default function FriendCard({ item, type, index }: { item: Web; type: str
       <Link href={item.url} target="_blank" className="group block h-full">
         <MagneticCard className="h-full">
           <div
-            className={`h-full relative overflow-hidden rounded-2xl border group-hover:shadow-xl group-hover:shadow-primary/10 ${
+            className={`h-full relative overflow-hidden rounded-2xl border transition-[transform,shadow] duration-300 ease-out group-hover:-translate-y-1 group-hover:shadow-xl group-hover:shadow-primary/10 ${
               isPinned
                 ? 'bg-primary/5 dark:bg-primary/10 border-primary/20 dark:border-primary/30'
                 : 'bg-white/80 dark:bg-gray-800/50 border-gray-200/50 dark:border-gray-700/30'
             }`}
           >
-            <div className="absolute inset-0 bg-linear-to-r from-primary/0 via-primary/5 to-primary/0 opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="absolute inset-0 bg-linear-to-r from-primary/0 via-primary/5 to-primary/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 ease-out" />
 
             {isPinned && (
               <div className="absolute top-3 right-3 px-2.5 py-1 bg-primary text-[10px] font-bold text-white rounded-full shadow-lg shadow-primary/30">
@@ -33,7 +33,7 @@ export default function FriendCard({ item, type, index }: { item: Web; type: str
 
             <div className="relative p-5 flex items-center gap-4">
               <div className="relative shrink-0">
-                <div className="absolute inset-0 rounded-full bg-primary opacity-0 group-hover:opacity-30 blur-md" />
+                <div className="absolute inset-0 rounded-full bg-primary opacity-0 group-hover:opacity-30 blur-md transition-opacity duration-500 ease-out" />
                 <OptimizedImage
                   src={item.image}
                   alt={item.title}

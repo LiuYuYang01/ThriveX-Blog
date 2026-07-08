@@ -4,6 +4,10 @@ import Starry from '@/components/Starry';
 import Statis from './components/Statis';
 import Archiving from './components/Archiving';
 import { getArticlePagingCacheAPI } from '@/lib/article';
+import { getCateListCacheAPI } from '@/lib/cate';
+import { getCommentListCacheAPI } from '@/lib/comment';
+import { getTagListCacheAPI } from '@/lib/tag';
+import { getWebListCacheAPI } from '@/lib/web';
 
 export const metadata: Metadata = {
   title: '📊 数据统计',
@@ -11,7 +15,14 @@ export const metadata: Metadata = {
 };
 
 export default async () => {
-  const { data } = await getArticlePagingCacheAPI();
+  const [articleRes, cateRes, tagRes, commentRes, webRes] = await Promise.all([
+    getArticlePagingCacheAPI(),
+    getCateListCacheAPI(),
+    getTagListCacheAPI(),
+    getCommentListCacheAPI(),
+    getWebListCacheAPI(),
+  ]);
+  const data = articleRes?.data;
 
   return (
     <>
@@ -38,7 +49,13 @@ export default async () => {
       <div className="w-[92%] max-w-6xl mx-auto -mt-8 sm:-mt-12 relative z-10 mb-16">
         <div className="rounded-2xl shadow-xl overflow-hidden bg-white dark:bg-black-b/95 backdrop-blur-xs border border-slate-200/80 dark:border-slate-700/50">
           <div className="p-6 sm:p-10 lg:p-12 space-y-12">
-            <Statis aTotal={data?.total ?? 0} />
+            <Statis
+              aTotal={data?.total ?? 0}
+              cateList={cateRes?.data?.result ?? []}
+              tagList={tagRes?.data?.result ?? []}
+              commentList={commentRes?.data?.result ?? []}
+              linkList={webRes?.data?.result ?? []}
+            />
             <Archiving list={data?.result ?? []} />
           </div>
         </div>

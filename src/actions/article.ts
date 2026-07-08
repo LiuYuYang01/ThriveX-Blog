@@ -24,9 +24,8 @@ export async function addArticleCommentAction(data: Comment) {
   if (data.articleId && result.code === 200) {
     // 更新文章详情缓存
     updateTag(`${CACHE_TAGS.article}-${data.articleId}`);
-    // 更新文章列表缓存
     updateTag(CACHE_TAGS.articles);
-    // 更新文章评论列表缓存
+    updateTag(CACHE_TAGS.comments);
     updateTag(`${CACHE_TAGS.comments}-${data.articleId}`);
     // 触发页面重新渲染
     refresh();

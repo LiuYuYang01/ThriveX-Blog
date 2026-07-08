@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { getPageConfigDataByNameAPI } from '@/api/config';
+import { getPageConfigCacheAPI } from '@/lib/config';
 import { FiTag, FiArrowUpRight, FiLayers } from 'react-icons/fi';
 
 export const metadata: Metadata = {
@@ -14,7 +14,7 @@ interface Equipment {
 }
 
 export default async () => {
-  const { data } = await getPageConfigDataByNameAPI('equipment');
+  const { data } = await getPageConfigCacheAPI('equipment');
   const value = data?.value as { list: Equipment[] };
 
   const defaultItem = {

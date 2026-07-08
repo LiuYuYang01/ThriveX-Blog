@@ -9,7 +9,7 @@ import Project from './components/Project';
 import Calendar from './components/Calendar';
 import InfoTwo from './components/InfoTwo';
 import InfoOne from './components/InfoOne';
-import { getPageConfigDataByNameAPI } from '@/api/config';
+import { getPageConfigCacheAPI } from '@/lib/config';
 import { MyData } from '@/types/app/my';
 
 export const metadata: Metadata = {
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 };
 
 export default async () => {
-  const { data } = await getPageConfigDataByNameAPI('my');
+  const { data } = await getPageConfigCacheAPI('my');
   const value = data?.value as MyData;
 
   const defaultInfoOne = {

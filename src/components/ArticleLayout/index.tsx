@@ -7,10 +7,10 @@ import Pagination from '../Pagination';
 
 import { getArticlePagingCacheAPI } from '@/lib/article';
 import { getThemeConfigCacheAPI, getThemeCoversCacheAPI } from '@/lib/theme';
-import { getSwiperListAPI } from '@/api/swiper';
+import { getSwiperListCacheAPI } from '@/lib/swiper';
 
 export default async ({ page }: { page: number }) => {
-  const { data: swiper } = await getSwiperListAPI();
+  const { data: swiper } = await getSwiperListCacheAPI();
   const theme = await getThemeConfigCacheAPI();
   const covers = await getThemeCoversCacheAPI();
   const sidebar = theme?.right_sidebar ?? [];

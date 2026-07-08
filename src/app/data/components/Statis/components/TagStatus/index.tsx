@@ -1,22 +1,10 @@
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
-import { getTagListAPI } from '@/api/tag';
 import { Tag } from '@/types/app/tag';
 import { getRandom } from '@/utils';
 import { Tooltip } from '@/ThriveUI';
 import tag from './svg/tag.svg';
 
-export default () => {
-  const [list, setList] = useState<Tag[]>([]);
-  const getTagData = async () => {
-    const { data } = await getTagListAPI();
-    setList(data?.result ?? []);
-  };
-
-  useEffect(() => {
-    getTagData();
-  }, []);
-
+export default ({ list }: { list: Tag[] }) => {
   const tagStyles = [
     'bg-sky-100 text-sky-700 dark:bg-sky-500/20 dark:text-sky-300',
     'bg-violet-100 text-violet-700 dark:bg-violet-500/20 dark:text-violet-300',

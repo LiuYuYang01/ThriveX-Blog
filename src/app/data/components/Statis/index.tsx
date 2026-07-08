@@ -1,7 +1,6 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
 
 import statis from './svg/statis.svg';
 import article from './svg/article.svg';
@@ -11,37 +10,21 @@ import friend from './svg/friend.svg';
 
 import { Cate } from '@/types/app/cate';
 import { Comment } from '@/types/app/comment';
+import { Tag } from '@/types/app/tag';
 import { Web } from '@/types/app/web';
-
-import { getCateListAPI } from '@/api/cate';
-import { getCommentListAPI } from '@/api/comment';
-import { getWebListAPI } from '@/api/web';
 
 import CateStatis from './components/CateStatis';
 import TagStatis from './components/TagStatus';
 
 interface Props {
   aTotal: number;
+  cateList: Cate[];
+  tagList: Tag[];
+  commentList: Comment[];
+  linkList: Web[];
 }
 
-export default ({ aTotal }: Props) => {
-  const [cateList, setCateList] = useState<Cate[]>([]);
-  const [commentList, setCommentList] = useState<Comment[]>([]);
-  const [linkList, setLinkList] = useState<Web[]>([]);
-
-  // 优化：移除这三个获取列表接口，使用一个接口来获取相关数据
-  const getData = async () => {
-    await Promise.all([getCateListAPI(), getCommentListAPI(), getWebListAPI()]).then(([cateList, commentList, linkList]) => {
-      setCateList(cateList?.data.result ?? []);
-      setCommentList(commentList?.data.result ?? []);
-      setLinkList(linkList?.data.result ?? []);
-    });
-  };
-
-  useEffect(() => {
-    getData();
-  }, []);
-
+export default ({ aTotal, cateList, tagList, commentList, linkList }: Props) => {
   const statCards = [
     {
       title: '文章总计',
@@ -113,8 +96,8 @@ export default ({ aTotal }: Props) => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 pt-4">
-        <CateStatis />
-        <TagStatis />
+        <CateStatis list={cateList} />
+        <TagStatis list={tagList} />
       </div>
     </section>
   );

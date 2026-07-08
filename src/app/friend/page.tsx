@@ -1,7 +1,6 @@
 import { Metadata } from 'next';
 
-import { getWebListCacheAPI } from '@/lib/web';
-import { getWebTypeListAPI } from '@/api/web';
+import { getWebListCacheAPI, getWebTypeListCacheAPI } from '@/lib/web';
 import { Web as WebLink } from '@/types/app/web';
 
 import Friend from './index';
@@ -13,7 +12,7 @@ export const metadata: Metadata = {
 
 export default async () => {
   const linkRes = await getWebListCacheAPI();
-  const typeRes = await getWebTypeListAPI();
+  const typeRes = await getWebTypeListCacheAPI();
   const linkList = linkRes?.data ?? [];
   const typeList = typeRes?.data ?? [];
 

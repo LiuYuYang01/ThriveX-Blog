@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import { getRecordListCacheAPI } from '@/lib/record';
-import { getAuthorDataAPI } from '@/api/user';
+import { getAuthorDataCacheAPI } from '@/lib/config';
 import RecordPageClient from './components/RecordPageClient';
 
 export const metadata: Metadata = {
@@ -9,14 +9,14 @@ export const metadata: Metadata = {
 };
 
 export default async () => {
-  const [userRes, recordRes] = await Promise.all([
-    getAuthorDataAPI(),
+  const [user, recordRes] = await Promise.all([
+    getAuthorDataCacheAPI(),
     getRecordListCacheAPI({ pageNum: 1, pageSize: 8 }),
   ]);
 
   return (
     <RecordPageClient
-      user={userRes?.data ?? null}
+      user={user ?? null}
       initialRecords={recordRes?.data?.result ?? []}
       initialTotal={recordRes?.data?.total ?? 0}
       totalPages={recordRes?.data?.pages ?? 1}

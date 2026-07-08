@@ -3,7 +3,7 @@ import Starry from '@/components/Starry';
 import Slide from '@/components/Slide';
 import Classics from '@/components/ArticleLayout/Classics';
 import Pagination from '@/components/Pagination';
-import { getTagArticleListAPI } from '@/api/tag';
+import { getTagArticleListCacheAPI } from '@/lib/tag';
 import { getThemeCoversCacheAPI } from '@/lib/theme';
 
 interface Props {
@@ -29,7 +29,7 @@ export default async (props: Props) => {
   const name = searchParams.name;
 
   const [{ data }, covers] = await Promise.all([
-    getTagArticleListAPI(id, { pageNum: page, pageSize: 8 }),
+    getTagArticleListCacheAPI(id, { pageNum: page, pageSize: 8 }),
     getThemeCoversCacheAPI(),
   ]);
 

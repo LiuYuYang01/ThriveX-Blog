@@ -9,7 +9,7 @@ export { getThemeConfigCacheAPI } from '@/lib/config';
 export async function getThemeCoversCacheAPI() {
   'use cache';
   cacheLife('config');
-  cacheTag(CACHE_TAGS.config, CACHE_TAGS.configTheme);
+  cacheTag(CACHE_TAGS.config);
 
   return parseThemeCovers((await getThemeConfigCacheAPI())?.covers);
 }

@@ -11,13 +11,7 @@ export async function addWallAction(data: Wall) {
 
   // 如果请求成功则更新缓存
   if (result.code === 200) {
-    // 更新留言列表缓存
     updateTag(CACHE_TAGS.walls);
-    // 更新留言分类缓存
-    if (data.cateId) {
-      updateTag(`${CACHE_TAGS.wall}-${data.cateId}`);
-    }
-    // 触发页面重新渲染
     refresh();
   }
 

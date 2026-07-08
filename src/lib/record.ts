@@ -11,5 +11,5 @@ export async function getRecordListCacheAPI(params: Page = {}) {
   cacheLife('blog');
   cacheTag(CACHE_TAGS.records);
 
-  return getRecordListAPI(params);
+  return getRecordListAPI({ pageNum, pageSize });
 }

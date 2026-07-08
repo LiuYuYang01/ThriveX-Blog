@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { getCateArticleListAPI, getCateListAPI } from '@/api/cate';
+import { getCateArticleListCacheAPI, getCateListCacheAPI } from '@/lib/cate';
 import Classics from '@/components/ArticleLayout/Classics';
 import Pagination from '@/components/Pagination';
 import CateHero from '../components/CateHero';
@@ -13,7 +13,7 @@ interface Props {
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
   const [params, searchParams] = await Promise.all([props.params, props.searchParams]);
-  const { data: cateListData } = await getCateListAPI();
+  const { data: cateListData } = await getCateListCacheAPI();
   const cateInfo = findCateById(cateListData?.result ?? [], params.id);
   const name = cateInfo?.name ?? searchParams.name ?? '分类';
 
@@ -31,8 +31,8 @@ export default async (props: Props) => {
   const name = searchParams.name;
 
   const [{ data }, { data: cateListData }] = await Promise.all([
-    getCateArticleListAPI(id, { pageNum: page, pageSize: 8 }),
-    getCateListAPI(),
+    getCateArticleListCacheAPI(id, { pageNum: page, pageSize: 8 }),
+    getCateListCacheAPI(),
   ]);
 
   const cateInfo = findCateById(cateListData?.result ?? [], id);

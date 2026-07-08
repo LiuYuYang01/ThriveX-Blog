@@ -1,17 +1,13 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { getWebConfigDataAPI } from '@/api/config';
-import { getAuthorDataAPI } from '@/api/user';
-import { Web } from '@/types/app/config';
+import { getAuthorDataCacheAPI, getWebConfigCacheAPI } from '@/lib/config';
 import Tooltip from './components/Tooltip';
 import ICPBeian from './components/ICPBeian';
 
 import animals from './images/animals.webp';
 
 export default async () => {
-  const { data: user } = await getAuthorDataAPI();
-  const webResponse = await getWebConfigDataAPI<{ value: Web }>('web');
-  const web = webResponse?.data?.value as Web;
+  const [user, web] = await Promise.all([getAuthorDataCacheAPI(), getWebConfigCacheAPI()]);
 
   return (
     <>

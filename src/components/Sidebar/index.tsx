@@ -4,12 +4,10 @@ import RandomArticle from './RandomArticle';
 import Comment from './Comment';
 import RunTime from './RunTime';
 import Study from './Study';
-import { getWebConfigDataAPI } from '@/api/config';
-import { Theme } from '@/types/app/config';
+import { getThemeConfigCacheAPI } from '@/lib/theme';
 
 export default async () => {
-  const themeResponse = await getWebConfigDataAPI<{ value: Theme }>('theme');
-  const theme = themeResponse?.data?.value as Theme;
+  const theme = await getThemeConfigCacheAPI();
   const sidebar = theme?.right_sidebar ?? [];
 
   return (

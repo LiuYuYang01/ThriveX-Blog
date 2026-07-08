@@ -3,13 +3,13 @@ import { NextResponse } from 'next/server';
 
 import { getArticlePagingCacheAPI } from '@/lib/article';
 import { getAuthorDataCacheAPI, getWebConfigCacheAPI } from '@/lib/config';
-import { getRecordListAPI } from '@/api/record';
+import { getRecordListCacheAPI } from '@/lib/record';
 
 export async function GET() {
   const web = await getWebConfigCacheAPI();
   const user = await getAuthorDataCacheAPI();
   const { data: article } = await getArticlePagingCacheAPI({ pageNum: 1, pageSize: 8 });
-  const { data: record } = await getRecordListAPI({ pageNum: 1, pageSize: 8 });
+  const { data: record } = await getRecordListCacheAPI({ pageNum: 1, pageSize: 8 });
 
   const articleList = article?.result ?? [];
   const recordList = record?.result ?? [];

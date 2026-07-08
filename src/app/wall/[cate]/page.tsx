@@ -1,6 +1,5 @@
 import { Metadata } from 'next';
-import { getCateListAPI } from '@/api/wall';
-import { getCateWallListCacheAPI } from '@/lib/wall';
+import { getWallCateListCacheAPI, getCateWallListCacheAPI } from '@/lib/wall';
 import WallPageClient from '../components/WallPageClient';
 export const metadata: Metadata = {
   title: '💌 留言墙',
@@ -13,7 +12,7 @@ interface Props {
 
 export default async (props: Props) => {
   const { cate } = await props.params;
-  const { data: cateList } = await getCateListAPI();
+  const { data: cateList } = await getWallCateListCacheAPI();
   const sorted = [...(cateList ?? [])].sort((a, b) => a.order - b.order);
   const activeCate = cate || sorted[0]?.mark || '';
   const cateId = sorted.find((item) => item.mark === activeCate)?.id ?? sorted[0]?.id ?? 0;

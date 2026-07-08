@@ -1,6 +1,6 @@
 import { cacheLife, cacheTag } from 'next/cache';
 
-import { getWebConfigDataAPI } from '@/api/config';
+import { getPageConfigDataByNameAPI, getWebConfigDataAPI } from '@/api/config';
 import { getAuthorDataAPI } from '@/api/user';
 import { CACHE_TAGS } from '@/lib/cache-tags';
 import { Other, Theme, Web } from '@/types/app/config';
@@ -9,7 +9,7 @@ import { User } from '@/types/app/user';
 export async function getWebConfigCacheAPI() {
   'use cache';
   cacheLife('config');
-  cacheTag(CACHE_TAGS.config, CACHE_TAGS.configWeb);
+  cacheTag(CACHE_TAGS.config);
 
   const { data } = await getWebConfigDataAPI<{ value: Web }>('web');
   return data?.value as Web;
@@ -18,7 +18,7 @@ export async function getWebConfigCacheAPI() {
 export async function getThemeConfigCacheAPI() {
   'use cache';
   cacheLife('config');
-  cacheTag(CACHE_TAGS.config, CACHE_TAGS.configTheme);
+  cacheTag(CACHE_TAGS.config);
 
   const { data } = await getWebConfigDataAPI<{ value: Theme }>('theme');
   return data?.value as Theme;
@@ -27,7 +27,7 @@ export async function getThemeConfigCacheAPI() {
 export async function getOtherConfigCacheAPI() {
   'use cache';
   cacheLife('config');
-  cacheTag(CACHE_TAGS.config, CACHE_TAGS.configOther);
+  cacheTag(CACHE_TAGS.config);
 
   const { data } = await getWebConfigDataAPI<{ value: Other }>('other');
   return data?.value as Other;
@@ -36,10 +36,18 @@ export async function getOtherConfigCacheAPI() {
 export async function getAuthorDataCacheAPI() {
   'use cache';
   cacheLife('config');
-  cacheTag(CACHE_TAGS.config, CACHE_TAGS.configAuthor);
+  cacheTag(CACHE_TAGS.config);
 
   const { data } = await getAuthorDataAPI();
   return data as User;
+}
+
+export async function getPageConfigCacheAPI(name: string) {
+  'use cache';
+  cacheLife('config');
+  cacheTag(CACHE_TAGS.config);
+
+  return getPageConfigDataByNameAPI(name);
 }
 
 export async function getAppConfigCacheAPI() {

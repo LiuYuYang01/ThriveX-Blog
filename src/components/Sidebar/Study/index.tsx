@@ -2,11 +2,11 @@ import Image from 'next/image';
 import IconCloud from '@/app/my/components/IconCloud';
 import StudySvg from '@/assets/svg/other/study.svg';
 import SidebarCard from '@/components/Sidebar/SidebarCard';
-import { getPageConfigDataByNameAPI } from '@/api/config';
+import { getPageConfigCacheAPI } from '@/lib/config';
 import { MyData } from '@/types/app/my';
 
 export default async () => {
-  const { data } = await getPageConfigDataByNameAPI('my');
+  const { data } = await getPageConfigCacheAPI('my');
   const { technology_stack } = data?.value as MyData;
   
   return (

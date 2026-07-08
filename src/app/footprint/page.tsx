@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { getFootprintListAPI } from '@/api/footprint';
+import { getFootprintListCacheAPI } from '@/lib/footprint';
 import FootprintPageClient from './components/FootprintPageClient';
 
 export const metadata: Metadata = {
@@ -8,6 +8,6 @@ export const metadata: Metadata = {
 };
 
 export default async () => {
-  const { data } = await getFootprintListAPI();
+  const { data } = await getFootprintListCacheAPI();
   return <FootprintPageClient list={data?.result ?? []} />;
 };

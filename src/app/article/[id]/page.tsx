@@ -104,8 +104,12 @@ export default async (props: Props) => {
   }
 
   // 记录文章访问量
-  after(() => {
-    void recordViewAPI(id);
+  after(async () => {
+    try {
+      await recordViewAPI(id);
+    } catch (error) {
+      if (error instanceof Error && error.name === 'AbortError') return;
+    }
   });
 
   const headings = extractArticleHeadings(data?.content);

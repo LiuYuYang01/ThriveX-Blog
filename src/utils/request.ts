@@ -16,6 +16,9 @@ export const Request = async <T>(method: string, api: string, data?: any) => {
 
         return res?.json() as Promise<ResponseData<T>>;
     } catch (error) {
+        if (error instanceof Error && error.name === 'AbortError') {
+            throw error;
+        }
         console.log('捕获到异常：', error);
         return { code: 500, message: 'Request failed', data: {} as T };
     }

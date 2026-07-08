@@ -1,11 +1,9 @@
-'use client';
-
-import { usePathname } from 'next/navigation';
 import Pagination from '@/ThriveUI/Pagination';
 
 interface Props {
   total: number;
   page: number;
+  basePath: string;
   path?: string;
   className?: string;
 }
@@ -16,16 +14,12 @@ function parseQuery(path?: string): Record<string, string> {
   return Object.fromEntries(new URLSearchParams(qs));
 }
 
-export default ({ total, page, path, className }: Props) => {
-  const pathname = usePathname();
-
-  return (
-    <Pagination
-      current={+page}
-      totalPages={total}
-      basePath={pathname}
-      query={parseQuery(path)}
-      className={className}
-    />
-  );
-};
+export default ({ total, page, basePath, path, className }: Props) => (
+  <Pagination
+    current={+page}
+    totalPages={total}
+    basePath={basePath}
+    query={parseQuery(path)}
+    className={className}
+  />
+);

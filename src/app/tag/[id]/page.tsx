@@ -1,14 +1,13 @@
+import { Suspense } from 'react';
 import { Metadata } from 'next';
-import Starry from '@/components/Starry';
-import Slide from '@/components/Slide';
-import Classics from '@/components/ArticleLayout/Classics';
-import Pagination from '@/components/Pagination';
-import { getTagArticleListCacheAPI } from '@/lib/tag';
-import { getThemeCoversCacheAPI } from '@/lib/theme';
+
+import ArticlesFallback from '@/components/ArticlesFallback';
+import TagHero from './components/TagHero';
+import TagArticles from './components/TagArticles';
 
 interface Props {
   params: Promise<{ id: number }>;
-  searchParams: Promise<{ page: number; name: string }>;
+  searchParams: Promise<{ page?: number; name?: string }>;
 }
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
@@ -22,37 +21,17 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 }
 
 export default async (props: Props) => {
-  const searchParams = await props.searchParams;
   const params = await props.params;
   const id = params.id;
-  const page = searchParams.page ?? 1;
-  const name = searchParams.name;
-
-  const [{ data }, covers] = await Promise.all([
-    getTagArticleListCacheAPI(id, { pageNum: page, pageSize: 8 }),
-    getThemeCoversCacheAPI(),
-  ]);
 
   return (
     <>
-      <div>
-        <Slide isRipple={false} covers={covers}>
-          {/* 星空背景组件 */}
-          <Starry />
+      <TagHero id={id} searchParams={props.searchParams} />
 
-          {/* 标签信息 */}
-          <div className="absolute top-[40%] left-[50%] transform -translate-x-1/2 w-[80%] text-center text-white text-[20px] xs:text-[25px] sm:text-[30px] custom_text_shadow">
-            <span>
-              该标签：{name} ~ 共计{data?.total}篇文章
-            </span>
-          </div>
-        </Slide>
-
-        <div className="md:w-full lg:w-[900px] lg:mx-auto px-4 lg:p-0 my-5">
-          <Classics data={data} />
-
-          {data?.total > 0 && <Pagination total={data?.pages} page={page} path={`?name=${name}`} className="flex justify-center mt-5" />}
-        </div>
+      <div className="md:w-full lg:w-[900px] lg:mx-auto px-4 lg:p-0 my-5">
+        <Suspense fallback={<ArticlesFallback count={3} />}>
+          <TagArticles id={id} searchParams={props.searchParams} />
+        </Suspense>
       </div>
     </>
   );

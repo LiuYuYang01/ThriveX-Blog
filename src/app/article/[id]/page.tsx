@@ -1,6 +1,6 @@
 import { getArticleDataAPI, recordViewAPI } from '@/api/article';
 import { getWebConfigCacheAPI } from '@/lib/config';
-import { getArticleCacheAPI } from '@/lib/article';
+import { getArticleCacheAPI, getArticlePagingCacheAPI } from '@/lib/article';
 import { getThemeConfigCacheAPI } from '@/lib/theme';
 import { getStableImage } from '@/utils';
 import { Metadata } from 'next';
@@ -33,6 +33,18 @@ import NotFound from '@/app/not-found';
 interface Props {
   params: Promise<{ id: number }>;
   searchParams: Promise<{ password: string }>;
+}
+
+// 提前下载好前80篇文章，提高页面加载速度
+export async function generateStaticParams() {
+  try {
+    const { data } = await getArticlePagingCacheAPI({ pageNum: 1, pageSize: 80 });
+    return (data?.result ?? [])
+      .filter((article) => article.id != null)
+      .map((article) => ({ id: String(article.id) }));
+  } catch {
+    return [];
+  }
 }
 
 // 生成文章页面的 metadata

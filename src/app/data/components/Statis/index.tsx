@@ -1,5 +1,3 @@
-'use client';
-
 import Image from 'next/image';
 
 import statis from './svg/statis.svg';
@@ -13,6 +11,7 @@ import { Comment } from '@/types/app/comment';
 import { Tag } from '@/types/app/tag';
 import { Web } from '@/types/app/web';
 
+import { flattenCateForStatis } from '@/app/cate/utils';
 import CateStatis from './components/CateStatis';
 import TagStatis from './components/TagStatus';
 
@@ -25,6 +24,8 @@ interface Props {
 }
 
 export default ({ aTotal, cateList, tagList, commentList, linkList }: Props) => {
+  const flatCateList = flattenCateForStatis(cateList);
+
   const statCards = [
     {
       title: '文章总计',
@@ -46,7 +47,7 @@ export default ({ aTotal, cateList, tagList, commentList, linkList }: Props) => 
     },
     {
       title: '分类总计',
-      value: cateList.length,
+      value: flatCateList.length,
       icon: cate,
       gradient: 'from-emerald-500 to-teal-500',
       bgLight: 'bg-emerald-50 dark:bg-emerald-500/10',

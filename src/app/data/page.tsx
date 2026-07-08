@@ -1,65 +1,39 @@
+import { Suspense } from 'react';
 import { Metadata } from 'next';
 import Slide from '@/components/Slide';
 import Starry from '@/components/Starry';
-import Statis from './components/Statis';
-import Archiving from './components/Archiving';
-import { getArticlePagingCacheAPI } from '@/lib/article';
-import { getCateListCacheAPI } from '@/lib/cate';
-import { getCommentListCacheAPI } from '@/lib/comment';
-import { getTagListCacheAPI } from '@/lib/tag';
-import { getWebListCacheAPI } from '@/lib/web';
+import DataContent from './components/DataContent';
+import DataContentFallback from './components/DataContentFallback';
 
 export const metadata: Metadata = {
   title: '📊 数据统计',
   description: '📊 数据统计',
 };
 
-export default async () => {
-  const [articleRes, cateRes, tagRes, commentRes, webRes] = await Promise.all([
-    getArticlePagingCacheAPI(),
-    getCateListCacheAPI(),
-    getTagListCacheAPI(),
-    getCommentListCacheAPI(),
-    getWebListCacheAPI(),
-  ]);
-  const data = articleRes?.data;
+export default () => (
+  <>
+    <div className="fixed inset-0 overflow-hidden pointer-events-none">
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(148,163,184,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,0.06)_1px,transparent_1px)] bg-size-[64px_64px]" />
+      <div className="absolute -top-1/2 left-1/2 -translate-x-1/2 w-[800px] h-[800px] rounded-full bg-primary/6 blur-[120px]" />
+      <div className="absolute top-1/4 right-0 w-96 h-96 rounded-full bg-violet-400/8 blur-[80px]" />
+      <div className="absolute bottom-1/4 left-0 w-80 h-80 rounded-full bg-cyan-400/8 blur-[80px]" />
+    </div>
 
-  return (
-    <>
-      {/* 背景装饰 */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(148,163,184,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,0.06)_1px,transparent_1px)] bg-size-[64px_64px]" />
-        <div className="absolute -top-1/2 left-1/2 -translate-x-1/2 w-[800px] h-[800px] rounded-full bg-primary/6 blur-[120px]" />
-        <div className="absolute top-1/4 right-0 w-96 h-96 rounded-full bg-violet-400/8 blur-[80px]" />
-        <div className="absolute bottom-1/4 left-0 w-80 h-80 rounded-full bg-cyan-400/8 blur-[80px]" />
+    <Slide isRipple={false} src="https://bu.dusays.com/2025/12/04/6930fd6cda541.jpg">
+      <Starry />
+
+      <div className="absolute top-[45%] left-1/2 -translate-x-1/2 flex flex-col items-center">
+        <h1 className="text-white text-2xl xs:text-3xl sm:text-4xl font-bold tracking-wide whitespace-nowrap custom_text_shadow drop-shadow-lg">
+          数据统计
+        </h1>
+        <p className="mt-2 text-white/90 text-sm sm:text-base custom_text_shadow">博客运营数据一览</p>
       </div>
+    </Slide>
 
-      <Slide isRipple={false} src="https://bu.dusays.com/2025/12/04/6930fd6cda541.jpg">
-        {/* 星空背景组件 */}
-        <Starry />
-
-        <div className="absolute top-[45%] left-1/2 -translate-x-1/2 flex flex-col items-center">
-          <h1 className="text-white text-2xl xs:text-3xl sm:text-4xl font-bold tracking-wide whitespace-nowrap custom_text_shadow drop-shadow-lg">
-            数据统计
-          </h1>
-          <p className="mt-2 text-white/90 text-sm sm:text-base custom_text_shadow">博客运营数据一览</p>
-        </div>
-      </Slide>
-
-      <div className="w-[92%] max-w-6xl mx-auto -mt-8 sm:-mt-12 relative z-10 mb-16">
-        <div className="rounded-2xl shadow-xl overflow-hidden bg-white dark:bg-black-b/95 backdrop-blur-xs border border-slate-200/80 dark:border-slate-700/50">
-          <div className="p-6 sm:p-10 lg:p-12 space-y-12">
-            <Statis
-              aTotal={data?.total ?? 0}
-              cateList={cateRes?.data?.result ?? []}
-              tagList={tagRes?.data?.result ?? []}
-              commentList={commentRes?.data?.result ?? []}
-              linkList={webRes?.data?.result ?? []}
-            />
-            <Archiving list={data?.result ?? []} />
-          </div>
-        </div>
-      </div>
-    </>
-  );
-};
+    <div className="w-[92%] max-w-6xl mx-auto -mt-8 sm:-mt-12 relative z-10 mb-16">
+      <Suspense fallback={<DataContentFallback />}>
+        <DataContent />
+      </Suspense>
+    </div>
+  </>
+);

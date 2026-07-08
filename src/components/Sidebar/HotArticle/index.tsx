@@ -1,16 +1,14 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { getArticlePagingCacheAPI } from '@/lib/article';
-import { getThemeConfigCacheAPI } from '@/lib/theme';
 import { IoIosArrowForward } from 'react-icons/io';
 import FireSvg from '@/assets/svg/other/fire.svg';
 import SidebarCard from '@/components/Sidebar/SidebarCard';
 import { Article } from '@/types/app/article';
 
-const RandomArticle = async () => {
-  const theme = await getThemeConfigCacheAPI();
+const HotArticle = async ({ recoArticleIds = [] }: { recoArticleIds?: number[] }) => {
   const { data: article } = await getArticlePagingCacheAPI();
-  const ids = theme.reco_article.map((item) => Number(item)) ?? [];
+  const ids = recoArticleIds.map((item) => Number(item));
   const list = article?.result.filter((item: Article) => ids.includes(item.id as number)) ?? [];
 
   return (
@@ -38,4 +36,4 @@ const RandomArticle = async () => {
   );
 };
 
-export default RandomArticle;
+export default HotArticle;

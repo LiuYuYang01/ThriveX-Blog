@@ -8,10 +8,11 @@ import Show from '@/components/Show';
 
 interface ClassicsProps {
   data: Paginate<Article[]>;
+  covers?: string[];
 }
 
-const Classics = async ({ data }: ClassicsProps) => {
-  const covers = await getThemeCoversCacheAPI();
+const Classics = async ({ data, covers: coversProp }: ClassicsProps) => {
+  const covers = coversProp ?? (await getThemeCoversCacheAPI());
 
   const genArticleInfo = (data: Article) => {
     if (data.description?.trim()?.length) {

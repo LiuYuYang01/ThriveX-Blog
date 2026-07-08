@@ -8,10 +8,11 @@ import Show from '@/components/Show';
 
 interface CardProps {
   data: Paginate<Article[]>;
+  covers?: string[];
 }
 
-const Card = async ({ data }: CardProps) => {
-  const covers = await getThemeCoversCacheAPI();
+const Card = async ({ data, covers: coversProp }: CardProps) => {
+  const covers = coversProp ?? (await getThemeCoversCacheAPI());
 
   const genArticleInfo = (data: Article) => {
     if (data.description?.trim()?.length) {

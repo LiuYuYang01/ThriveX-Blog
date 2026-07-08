@@ -5,34 +5,28 @@ import Waterfall from './Waterfall';
 import Card from './Card';
 import Pagination from '../Pagination';
 
-import { getArticlePagingCacheAPI } from '@/lib/article';
-import { getThemeConfigCacheAPI, getThemeCoversCacheAPI } from '@/lib/theme';
-import { getSwiperListCacheAPI } from '@/lib/swiper';
+import { Theme } from '@/types/app/config';
+import { Swiper as SwiperItem } from '@/types/app/swiper';
+import { Article } from '@/types/app/article';
 
-export default async ({ page }: { page: number }) => {
-  const { data: swiper } = await getSwiperListCacheAPI();
-  const theme = await getThemeConfigCacheAPI();
-  const covers = await getThemeCoversCacheAPI();
+interface Props {
+  page: number;
+  theme: Theme;
+  covers: string[];
+  swiper: { result?: SwiperItem[] };
+  data: Paginate<Article[]>;
+}
+
+export default ({ page, theme, covers, swiper, data }: Props) => {
   const sidebar = theme?.right_sidebar ?? [];
-
-  // 按order排序轮播图（顺序越小越靠前）
-  swiper.result = swiper.result?.sort((a, b) => (a.order || 0) - (b.order || 0)) ?? [];
-  
-  // 如果是瀑布流布局就显示28条数据，否则显示8条
-  const { data } = await getArticlePagingCacheAPI({
-    pageNum: page || 1,
-    pageSize: theme.is_article_layout === 'waterfall' ? 28 : 8
-  });
-  // 过滤掉不显示在首页的文章
-  data.result = data?.result?.filter((item) => item.config.status !== 'no_home') ?? [];
 
   return (
     <div className={`w-full md:w-[90%] ${sidebar?.length ? 'lg:w-[68%] xl:w-[73%]' : 'w-full'} mx-auto transition-width`}>
       {!!swiper.result?.length && <Swiper data={swiper.result} />}
       <Dynamic className="my-2" />
 
-      {theme.is_article_layout === 'classics' && <Classics data={data} />}
-      {theme.is_article_layout === 'card' && <Card data={data} />}
+      {theme.is_article_layout === 'classics' && <Classics data={data} covers={covers} />}
+      {theme.is_article_layout === 'card' && <Card data={data} covers={covers} />}
       {theme.is_article_layout === 'waterfall' && <Waterfall data={data} covers={covers} />}
 
       {!!data.total && <Pagination total={data?.pages} page={page} className="flex justify-center mt-5" />}

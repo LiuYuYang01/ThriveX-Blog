@@ -10,13 +10,12 @@ import QQ from '@/assets/svg/socializing/QQ.svg';
 import Weixin from '@/assets/svg/socializing/Weixin.svg';
 
 import { getAuthorDataCacheAPI } from '@/lib/config';
-import { getThemeConfigCacheAPI } from '@/lib/theme';
 import { Social } from '@/types/app/config';
 
-const Author = async () => {
-  const [user, theme] = await Promise.all([getAuthorDataCacheAPI(), getThemeConfigCacheAPI()]);
+const Author = async ({ social = [] }: { social?: Social[] }) => {
+  const user = await getAuthorDataCacheAPI();
 
-  const socialList = theme?.social ?? [];
+  const socialList = social;
 
   // 图标列表
   const images: { [string: string]: string } = {

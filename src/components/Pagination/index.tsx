@@ -1,31 +1,31 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-import { ClientPagination } from '@/ThriveUI';
+import { usePathname } from 'next/navigation';
+import Pagination from '@/ThriveUI/Pagination';
 
 interface Props {
   total: number;
   page: number;
-  size?: number;
   path?: string;
   className?: string;
 }
 
+function parseQuery(path?: string): Record<string, string> {
+  if (!path) return {};
+  const qs = path.startsWith('?') ? path.slice(1) : path;
+  return Object.fromEntries(new URLSearchParams(qs));
+}
+
 export default ({ total, page, path, className }: Props) => {
-  const router = useRouter();
-
-  const onChange = (page: number) => {
-    router.push(path ? `${path}&page=${page}` : `?page=${page}`);
-
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    });
-  };
+  const pathname = usePathname();
 
   return (
-    <div className={className}>
-      <ClientPagination showControls total={total} page={+page} onChange={onChange} />
-    </div>
+    <Pagination
+      current={+page}
+      totalPages={total}
+      basePath={pathname}
+      query={parseQuery(path)}
+      className={className}
+    />
   );
 };

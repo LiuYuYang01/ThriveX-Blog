@@ -1,15 +1,16 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { getArticlePagingCacheAPI } from '@/lib/article';
+import { getArticleCacheAPI } from '@/lib/article';
 import { IoIosArrowForward } from 'react-icons/io';
 import FireSvg from '@/assets/svg/other/fire.svg';
 import SidebarCard from '@/components/Sidebar/SidebarCard';
 import { Article } from '@/types/app/article';
 
+/** 根据后台配置的推荐文章 ID 拉取并展示作者推荐列表 */
 const HotArticle = async ({ recoArticleIds = [] }: { recoArticleIds?: number[] }) => {
-  const { data: article } = await getArticlePagingCacheAPI();
-  const ids = recoArticleIds.map((item) => Number(item));
-  const list = article?.result.filter((item: Article) => ids.includes(item.id as number)) ?? [];
+  const ids = recoArticleIds.map((item) => Number(item)).filter(Boolean);
+  const articles = await Promise.all(ids.map((id) => getArticleCacheAPI(id)));
+  const list = articles.map((res) => res.data).filter((item): item is Article => !!item);
 
   return (
     <div className="hotArticleComponent">

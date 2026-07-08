@@ -1,12 +1,12 @@
 import { MetadataRoute } from 'next';
-import { getArticlePagingCacheAPI } from '@/lib/article';
+import { getAllArticleListCacheAPI } from '@/lib/article';
 import { getWebConfigCacheAPI } from '@/lib/config';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // 获取网站配置
   const webConfig = await getWebConfigCacheAPI();
   const baseUrl = webConfig?.url ?? 'https://liuyuyang.net';
-  const res = await getArticlePagingCacheAPI();
+  const res = await getAllArticleListCacheAPI();
   const articles = res?.data.result ?? [];
 
   // 静态页面

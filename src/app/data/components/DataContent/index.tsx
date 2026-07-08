@@ -1,6 +1,6 @@
 import Statis from '../Statis';
 import Archiving from '../Archiving';
-import { getArticlePagingCacheAPI } from '@/lib/article';
+import { getAllArticleListCacheAPI } from '@/lib/article';
 import { getCateListCacheAPI } from '@/lib/cate';
 import { getCommentListCacheAPI } from '@/lib/comment';
 import { getTagListCacheAPI } from '@/lib/tag';
@@ -8,7 +8,7 @@ import { getWebListCacheAPI } from '@/lib/web';
 
 export default async () => {
   const [articleRes, cateRes, tagRes, commentRes, webRes] = await Promise.all([
-    getArticlePagingCacheAPI(),
+    getAllArticleListCacheAPI(),
     getCateListCacheAPI(),
     getTagListCacheAPI(),
     getCommentListCacheAPI(),

@@ -48,3 +48,12 @@ export async function getRandomArticleListCacheAPI() {
 
   return getRandomArticleListAPI();
 }
+
+/** 获取全部文章列表，用于归档、sitemap 等需要完整数据的场景 */
+export async function getAllArticleListCacheAPI() {
+  'use cache';
+  cacheLife('blog');
+  cacheTag(CACHE_TAGS.articles, `${CACHE_TAGS.articlesList}-all`);
+
+  return getArticlePagingAPI();
+}

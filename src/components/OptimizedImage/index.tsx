@@ -1,7 +1,5 @@
 import Image, { StaticImageData } from 'next/image';
 
-import { isLocalImage } from '@/utils/image';
-
 type OptimizedImageSrc = string | StaticImageData;
 
 interface OptimizedImageProps {
@@ -18,7 +16,12 @@ interface OptimizedImageProps {
 }
 
 /**
- * 智能图片组件：本地资源使用 next/image，远程 URL 保持原生 img
+ * 判断是否为 next/image 无法处理的特殊协议地址
+ */
+const isNativeOnlySrc = (src: string) => src.startsWith('data:') || src.startsWith('blob:');
+
+/**
+ * 智能图片组件：本地/远程统一走 next/image，data/blob 协议回退原生 img
  */
 export default function OptimizedImage({
   src,
@@ -32,36 +35,35 @@ export default function OptimizedImage({
   style,
   onError,
 }: OptimizedImageProps) {
-  const useNextImage = typeof src !== 'string' || isLocalImage(src);
+  if (!src || (typeof src === 'string' && !src.trim())) return null;
 
-  if (useNextImage) {
+  if (typeof src === 'string' && isNativeOnlySrc(src)) {
     if (fill) {
-      return <Image src={src} alt={alt} fill className={className} priority={priority} sizes={sizes} style={style} />;
+      return (
+        <img src={src} alt={alt} className={className} style={{ objectFit: 'cover', width: '100%', height: '100%', ...style }} onError={onError} />
+      );
     }
 
     return (
-      <Image
-        src={src}
-        alt={alt}
-        width={width ?? 100}
-        height={height ?? 100}
-        className={className}
-        priority={priority}
-        sizes={sizes}
-        style={style}
-      />
+      <img src={src} alt={alt} className={className} width={width} height={height} style={style} onError={onError} />
     );
   }
 
-  const remoteSrc = src as string;
-
   if (fill) {
-    return (
-      <img src={remoteSrc} alt={alt} className={className} style={{ objectFit: 'cover', width: '100%', height: '100%', ...style }} onError={onError} />
-    );
+    return <Image src={src} alt={alt} fill className={className} priority={priority} sizes={sizes} style={style} onError={onError} />;
   }
 
   return (
-    <img src={remoteSrc} alt={alt} className={className} width={width} height={height} style={style} onError={onError} />
+    <Image
+      src={src}
+      alt={alt}
+      width={width ?? 100}
+      height={height ?? 100}
+      className={className}
+      priority={priority}
+      sizes={sizes}
+      style={style}
+      onError={onError}
+    />
   );
 }

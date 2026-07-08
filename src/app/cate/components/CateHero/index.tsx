@@ -10,7 +10,7 @@ interface Props {
 }
 
 /**
- * 分类页 Hero，本地背景图使用 next/image 并开启 priority
+ * 分类页 Hero，背景图统一使用 next/image fill 并开启 priority
  */
 export default function CateHero({ children, image }: Props) {
   const [opacity, setOpacity] = useState(1);

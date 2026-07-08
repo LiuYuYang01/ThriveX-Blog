@@ -2,7 +2,7 @@ import { getArticleDataAPI, recordViewAPI } from '@/api/article';
 import { getWebConfigCacheAPI } from '@/lib/config';
 import { getArticleCacheAPI, getArticlePagingCacheAPI } from '@/lib/article';
 import { getThemeConfigCacheAPI } from '@/lib/theme';
-import { getStableImage, isLocalImage } from '@/utils';
+import { getStableImage } from '@/utils';
 import { Metadata } from 'next';
 import { after } from 'next/server';
 
@@ -136,7 +136,7 @@ export default async (props: Props) => {
         <ArticleShareProvider articleId={id} initialCount={data?.shareCount ?? 0}>
         <div className="ArticlePage">
           <div id="article-hero">
-            <Slide src={heroSrc} priority={isLocalImage(heroSrc)}>
+            <Slide src={heroSrc} priority={!!heroSrc}>
             {/* 星空背景组件 */}
             <Starry />
 

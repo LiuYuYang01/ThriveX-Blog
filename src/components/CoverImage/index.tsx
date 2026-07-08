@@ -1,7 +1,5 @@
 import Image, { StaticImageData } from 'next/image';
 
-import { isLocalImage } from '@/utils/image';
-
 type CoverImageSrc = string | StaticImageData;
 
 interface CoverImageProps {
@@ -15,7 +13,7 @@ interface CoverImageProps {
 }
 
 /**
- * 封面图组件：本地图片走 next/image fill 优化，远程图片保持 background-image
+ * 封面图组件：本地/远程统一使用 next/image fill，依赖外层固定尺寸容器
  */
 export default function CoverImage({
   src,
@@ -28,19 +26,9 @@ export default function CoverImage({
 }: CoverImageProps) {
   if (!src || (typeof src === 'string' && !src.trim())) return null;
 
-  if (typeof src !== 'string' || isLocalImage(src)) {
-    return (
-      <div className={`${containerClassName} overflow-hidden`} style={containerStyle}>
-        <Image src={src} alt={alt} fill className={className} priority={priority} sizes={sizes} />
-      </div>
-    );
-  }
-
   return (
-    <div
-      aria-hidden={!alt}
-      className={`${containerClassName} bg-cover bg-center bg-no-repeat`}
-      style={{ ...containerStyle, backgroundImage: `url(${src})` }}
-    />
+    <div className={`${containerClassName} overflow-hidden`} style={containerStyle}>
+      <Image src={src} alt={alt} fill className={className} priority={priority} sizes={sizes} />
+    </div>
   );
 }

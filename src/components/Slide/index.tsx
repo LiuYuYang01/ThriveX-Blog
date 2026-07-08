@@ -15,7 +15,7 @@ interface Props {
 }
 
 /**
- * 首页 / 文章 Hero 背景幻灯片，本地封面图启用 next/image 优化
+ * 首页 / 文章 Hero 背景幻灯片，本地/远程封面图统一走 next/image fill 优化
  */
 export default ({ src, covers = [], isRipple = true, fullImage = false, priority = false, children }: Props) => {
   const fallbackImage = getRandomImage(undefined, covers);
@@ -31,8 +31,8 @@ export default ({ src, covers = [], isRipple = true, fullImage = false, priority
         className={`${containerClass} after:content-[''] after:w-full after:h-[20%] after:absolute after:bottom-0 after:left-0 after:bg-[linear-gradient(to_top,#f9f9f9,transparent)] dark:after:bg-[linear-gradient(to_top,#2c333e,transparent)] after:z-[3]`}
       >
         {bgImage && <CoverImage src={bgImage} priority={priority} sizes="100vw" />}
-        <div className="absolute top-0 left-0 bg-[rgba(0,0,0,0.2)] w-full h-full z-[1]" />
-        <div className="relative z-[2]">{children}</div>
+        <div className="absolute top-0 left-0 bg-[rgba(0,0,0,0.2)] w-full h-full z-1" />
+        <div className="relative z-2">{children}</div>
       </div>
 
       {isRipple && <Ripple />}

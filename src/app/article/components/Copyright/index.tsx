@@ -10,11 +10,7 @@ const Copyright = () => {
   const authorName = author?.name || '匿名作者';
 
   return (
-    <div
-      className="relative w-full p-4 sm:p-5 mt-8 overflow-hidden rounded-xl 
-      bg-[#ecf7fe]/60 border border-[#ecf7fe] 
-      dark:bg-[#28323f] dark:border-gray-800/60"
-    >
+    <div className="relative w-full p-4 sm:p-5 mt-8 overflow-hidden rounded-xl bg-[#ecf7fe]/60 border border-[#ecf7fe] dark:bg-[#28323f] dark:border-gray-800/60">
       <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-primary dark:bg-blue-500/80 rounded-l-xl" />
 
       <FiShield className="absolute right-2.5 top-5 text-7xl text-blue-500/4 dark:text-gray-700 pointer-events-none rotate-12" />

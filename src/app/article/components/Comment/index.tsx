@@ -162,9 +162,9 @@ const CommentForm = ({ articleId }: Props) => {
   return (
     <div id="article-comment" className="CommentComponent">
       <div className="mt-[70px]">
-        <div className="title relative top-0 left-0 w-full h-px mb-10 bg-[#f7f7f7] dark:bg-black-b  "></div>
+        <div className="title relative top-0 left-0 w-full h-px mb-10 bg-[#f7f7f7] dark:bg-[#4e5969]/40"></div>
 
-        <form className="mt-4 space-y-2 text-xs xs:text-sm" onSubmit={handleSubmit(onSubmit)}>
+        <form className="mt-4 space-y-3 text-xs xs:text-sm" onSubmit={handleSubmit(onSubmit)}>
           <div className="w-full">
             <div className="relative w-full">
               <textarea
@@ -182,7 +182,7 @@ const CommentForm = ({ articleId }: Props) => {
                   <PopoverTrigger>
                     <button
                       type="button"
-                      className="cursor-pointer rounded-md border border-transparent px-2 py-1 text-2xl hover:border-gray-200 hover:bg-gray-50 dark:hover:bg-black-b"
+                      className="cursor-pointer rounded-md border border-transparent px-2 py-1 text-2xl hover:border-gray-200 hover:bg-gray-50 dark:hover:border-[#4e5969] dark:hover:bg-white/5"
                     >
                       😀
                     </button>
@@ -231,7 +231,7 @@ const CommentForm = ({ articleId }: Props) => {
               <Spinner />
             </div>
           ) : (
-            <button className="w-full h-10 text-white rounded-md bg-primary hover:bg-primary/80 active:bg-primary/90 active:scale-95 transition-[scale] text-center cursor-pointer" type="submit">
+            <button className="w-full h-10 mt-2 text-white rounded-md bg-primary hover:bg-primary/80 active:bg-primary/90 active:scale-95 transition-[scale] text-center cursor-pointer" type="submit">
               发表评论
             </button>
           )}

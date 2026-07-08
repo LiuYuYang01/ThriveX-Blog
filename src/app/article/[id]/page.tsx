@@ -136,7 +136,7 @@ export default async (props: Props) => {
         <ArticleShareProvider articleId={id} initialCount={data?.shareCount ?? 0}>
         <div className="ArticlePage">
           <div id="article-hero">
-            <Slide src={heroSrc} priority={!!heroSrc}>
+            <Slide src={heroSrc} covers={theme?.covers} priority={!!heroSrc}>
             {/* 星空背景组件 */}
             <Starry />
 

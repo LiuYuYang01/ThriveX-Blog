@@ -100,7 +100,7 @@ export default ({ theme }: { theme: Theme }) => {
             {/* logo */}
             <Link href="/" className="flex items-center h-[60px] text-[15px]">
               {isDark ? (
-                <OptimizedImage src={theme?.dark_logo} alt="Logo" width={160} height={40} className="h-10 w-auto object-contain pr-0 md:pr-5 hover:scale-90 transition-[scale]" />
+                <OptimizedImage src={theme?.dark_logo} alt="Logo" width={160} height={40} className="h-10 w-auto object-contain pr-0 md:pr-5 hover:scale-90 transition-[scale]" style={{ width: 'auto' }} />
               ) : (
                 <OptimizedImage
                   src={isPathSty || isScrolled ? theme?.light_logo : theme?.dark_logo}
@@ -108,6 +108,7 @@ export default ({ theme }: { theme: Theme }) => {
                   width={160}
                   height={40}
                   className="h-10 w-auto object-contain pr-0 md:pr-5 hover:scale-90 transition-[scale]"
+                  style={{ width: 'auto' }}
                 />
               )}
             </Link>

@@ -197,7 +197,7 @@ export default function ArticleTOC({ headings, children }: Props) {
     <div ref={containerRef} className="relative flex min-w-0 flex-col gap-4">
       {canShow ? (
         <div
-          className={`z-40 hidden xl:block ${isPinned ? 'fixed' : 'absolute top-0'}`}
+          className={`mt-10 z-40 hidden xl:block ${isPinned ? 'fixed' : 'absolute top-0'}`}
           style={
             isPinned
               ? { top: HEADER_OFFSET, left: fixedLeft, width: TOC_WIDTH }

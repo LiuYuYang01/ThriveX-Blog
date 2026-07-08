@@ -15,16 +15,19 @@ export interface ArticleNavigationProps {
 
 const cardBaseClass = cn(
   'group relative flex w-full flex-col justify-center rounded-2xl border p-5 sm:p-6',
-  'transition duration-300 ease-out',
   'focus:outline-hidden focus:ring-2 focus:ring-primary/50',
+);
+
+const cardMotionClass = cn(
+  'transition-[translate,box-shadow] duration-500 ease-out',
 );
 
 const cardActiveClass = cn(
   'cursor-pointer bg-white shadow-[0_4px_20px_-4px_rgba(0,0,0,0.08)]',
-  'border-gray-200 hover:-translate-y-1 hover:border-primary/30',
+  'border-gray-200 hover:-translate-y-1',
   'hover:shadow-[0_12px_28px_-6px_rgba(83,157,253,0.2)]',
   'dark:border-gray-800 dark:bg-black-b dark:shadow-none',
-  'dark:hover:border-primary/25 dark:hover:shadow-[0_12px_28px_-6px_rgba(0,0,0,0.45)]',
+  'dark:hover:shadow-[0_12px_28px_-6px_rgba(0,0,0,0.45)]',
 );
 
 const cardDisabledClass = cn(
@@ -33,17 +36,17 @@ const cardDisabledClass = cn(
 );
 
 const labelClass = cn(
-  'mb-2 flex items-center space-x-2 text-sm text-gray-500',
+  'mb-2 flex items-center space-x-2 text-sm text-gray-500 transition-none',
   'group-hover:text-primary dark:text-gray-400 dark:group-hover:text-primary',
 );
 
 const arrowClass = cn(
-  'text-lg transition duration-300 ease-out',
+  'text-lg transition-[translate,scale] duration-500 ease-out',
   'group-hover:-translate-x-1 group-hover:scale-110',
 );
 
 const arrowRightClass = cn(
-  'text-lg transition duration-300 ease-out',
+  'text-lg transition-[translate,scale] duration-300 ease-out',
   'group-hover:translate-x-1 group-hover:scale-110',
 );
 
@@ -52,7 +55,7 @@ export default function ArticleNavigation({ prev, next }: ArticleNavigationProps
     <nav className="mb-8 mt-12 w-full">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6">
         {prev ? (
-          <Link href={`/article/${prev.id}`} className={cn(cardBaseClass, cardActiveClass, 'items-start')}>
+          <Link href={`/article/${prev.id}`} className={cn(cardBaseClass, cardMotionClass, cardActiveClass, 'items-start')}>
             <div className={labelClass}>
               <FiArrowLeft className={arrowClass} />
               <span>上一篇</span>
@@ -72,7 +75,7 @@ export default function ArticleNavigation({ prev, next }: ArticleNavigationProps
         )}
 
         {next ? (
-          <Link href={`/article/${next.id}`} className={cn(cardBaseClass, cardActiveClass, 'items-end text-right')}>
+          <Link href={`/article/${next.id}`} className={cn(cardBaseClass, cardMotionClass, cardActiveClass, 'items-end text-right')}>
             <div className={cn(labelClass, 'flex-row-reverse space-x-reverse')}>
               <FiArrowRight className={arrowRightClass} />
               <span>下一篇</span>

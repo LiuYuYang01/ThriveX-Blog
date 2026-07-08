@@ -1,8 +1,8 @@
 'use client';
 
+import Image from 'next/image';
 import { ReactNode } from 'react';
 import Ripple from '@/components/Ripple';
-import CoverImage from '@/components/CoverImage';
 import { getRandomImage } from '@/utils';
 
 interface Props {
@@ -22,17 +22,31 @@ export default ({ src, covers = [], isRipple = true, fullImage = false, priority
   const bgImage = src?.trim() || fallbackImage;
 
   const containerClass = fullImage
-    ? 'overflow-hidden w-full aspect-video relative'
-    : 'overflow-hidden h-[300px] sm:h-[500px] md:h-[650px] relative';
+    ? 'overflow-hidden w-full aspect-video relative isolate'
+    : 'overflow-hidden h-[300px] sm:h-[500px] md:h-[650px] relative isolate';
 
   return (
     <>
-      <div
-        className={`${containerClass} after:content-[''] after:w-full after:h-[20%] after:absolute after:bottom-0 after:left-0 after:bg-[linear-gradient(to_top,#f9f9f9,transparent)] dark:after:bg-[linear-gradient(to_top,#2c333e,transparent)] after:z-[3]`}
-      >
-        {bgImage && <CoverImage src={bgImage} priority={priority} sizes="100vw" />}
-        <div className="absolute top-0 left-0 bg-[rgba(0,0,0,0.2)] w-full h-full z-1" />
-        <div className="relative z-2">{children}</div>
+      <div className={containerClass}>
+        {bgImage && (
+          <Image
+            src={bgImage}
+            alt=""
+            fill
+            priority={priority}
+            sizes="100vw"
+            className="object-cover object-center"
+          />
+        )}
+
+        <div aria-hidden className="pointer-events-none absolute inset-0 z-[1] bg-[rgba(0,0,0,0.2)]" />
+
+        <div className="absolute inset-0 z-[2]">{children}</div>
+
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 bottom-0 z-[3] h-[20%] bg-[linear-gradient(to_top,#f9f9f9,transparent)] dark:bg-[linear-gradient(to_top,#2c333e,transparent)]"
+        />
       </div>
 
       {isRipple && <Ripple />}

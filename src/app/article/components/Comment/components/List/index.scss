@@ -82,7 +82,7 @@
 
                     /* 评论时间 */
                     .time {
-                        color: #8599ab;
+                        @apply text-[#8599ab] dark:text-[#8c9ab1];
                         font-size: 14px;
                     }
                 }
@@ -117,7 +117,7 @@
                     }
 
                     .time {
-                        color: #8599ab;
+                        @apply text-[#8599ab] dark:text-[#8c9ab1];
                         font-size: 12px;
                     }
                 }
@@ -126,7 +126,7 @@
                     margin: 10px 0 10px 0px;
 
                     a {
-                        color: #007bff;
+                        @apply text-primary dark:text-primary;
                     }
                 }
             }
@@ -152,7 +152,7 @@
                     }
 
                     .time {
-                        color: #8599ab;
+                        @apply text-[#8599ab] dark:text-[#8c9ab1];
                         font-size: 12px;
                     }
                 }
@@ -161,7 +161,7 @@
                     margin: 10px 0 10px 0px;
 
                     a {
-                        color: #007bff;
+                        @apply text-primary dark:text-primary;
                     }
                 }
             }

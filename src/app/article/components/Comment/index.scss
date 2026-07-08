@@ -1,8 +1,40 @@
 @reference '../../../../styles/tailwind.css';
 
 .CommentComponent {
-    // 评论标题
     .title::after {
-        @apply content-['一针见血_🎉'] absolute -top-5 left-1/2 -translate-x-1/2 w-[180px] bg-white dark:bg-black-a text-center text-2xl;
+        content: '一针见血 🎉';
+        @apply absolute -top-5 left-1/2 -translate-x-1/2 px-4 text-center text-2xl font-medium;
+        color: #374151;
+        background-color: #f7f7f7;
+    }
+
+    .form-control {
+        color: #333;
+
+        &::placeholder {
+            color: #9ca3af;
+        }
+    }
+
+    .dark & {
+        .title::after {
+            color: #e5e7eb;
+            background-color: var(--color-background);
+        }
+
+        .form-control {
+            color: #e5e7eb;
+            border-color: #4e5969;
+            background-color: #2c333e;
+
+            &::placeholder {
+                color: #8c9ab1;
+            }
+
+            &:focus {
+                border-color: #539dfd;
+                box-shadow: 0 10px 20px 1px rgb(83 157 253 / 15%);
+            }
+        }
     }
 }

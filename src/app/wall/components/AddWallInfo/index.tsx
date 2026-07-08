@@ -16,7 +16,8 @@ import {
 } from '@/ThriveUI';
 import { type SubmitHandler } from 'react-hook-form';
 import { Cate, Wall } from '@/types/app/wall';
-import { addWallDataAPI, getCateListAPI } from '@/api/wall';
+import { addWallAction } from '@/actions/wall';
+import { getCateListAPI } from '@/api/wall';
 import { Bounce, toast, ToastContainer, ToastOptions } from 'react-toastify';
 import HCaptchaType from '@hcaptcha/react-hcaptcha';
 import HCaptcha from '@/components/HCaptcha';
@@ -52,12 +53,6 @@ export default () => {
   };
 
   useEffect(() => {
-    const message = localStorage.getItem('toastMessage');
-    if (message) {
-      toast.success(message, toastConfig);
-      localStorage.removeItem('toastMessage');
-    }
-
     getCateList();
   }, []);
 
@@ -69,7 +64,7 @@ export default () => {
 
     if (hasHCaptcha && !captchaToken) return setCaptchaError('请完成人机验证');
 
-    const { code, message } = await addWallDataAPI({
+    const { code, message } = await addWallAction({
       ...data,
       createTime: Date.now().toString(),
       h_captcha_response: captchaToken!,
@@ -83,9 +78,9 @@ export default () => {
     setCaptchaError('');
     setCaptchaToken(null);
     captchaRef.current?.resetCaptcha();
+    methods.reset({ color: '#ffe3944d' } as Wall);
 
-    localStorage.setItem('toastMessage', '🎉 提交成功, 请等待审核!');
-    window.location.reload();
+    toast.success('🎉 提交成功, 请等待审核!', toastConfig);
     onClose();
   };
 

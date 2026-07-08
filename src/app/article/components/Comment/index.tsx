@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
-import { addCommentDataAPI } from '@/api/comment';
+import { addArticleCommentAction } from '@/actions/article';
 import { Bounce, ToastOptions, toast } from 'react-toastify';
 import { Spinner, Popover, PopoverTrigger, PopoverContent } from '@/ThriveUI';
 import HCaptchaType from '@hcaptcha/react-hcaptcha';
@@ -89,7 +89,7 @@ const CommentForm = ({ articleId }: Props) => {
       if (!isNaN(+qq)) data.avatar = `https://q1.qlogo.cn/g?b=qq&nk=${qq}&s=640`;
     }
 
-    const { code, message } = await addCommentDataAPI({
+    const { code, message } = await addArticleCommentAction({
       ...data,
       articleId,
       commentId: commentId === articleId ? 0 : commentId,

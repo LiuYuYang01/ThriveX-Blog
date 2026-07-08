@@ -6,9 +6,7 @@
 import { revalidateTag } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
 
-import { CACHE_TAGS } from '@/lib/cache-tags';
-
-const ALLOWED_TAGS = new Set(Object.values(CACHE_TAGS));
+import { CACHE_TAGS, isAllowedCacheTag } from '@/lib/cache-tags';
 
 export async function POST(req: NextRequest) {
   const secret = req.headers.get('x-revalidate-secret');
@@ -33,8 +31,8 @@ export async function POST(req: NextRequest) {
     // 无 body 时使用默认 tags
   }
 
-  // 过滤掉无效的标签
-  const invalidTags = tags.filter((tag) => !ALLOWED_TAGS.has(tag as (typeof CACHE_TAGS)[keyof typeof CACHE_TAGS]) && !tag.startsWith(`${CACHE_TAGS.article}-`) && !tag.startsWith(`${CACHE_TAGS.articlesList}-`));
+  // 过滤掉无效的标签 使用 isAllowedCacheTag 判断是否是允许的缓存标签
+  const invalidTags = tags.filter((tag) => !isAllowedCacheTag(tag));
   // 如果无效的标签，则返回 400 错误
   if (invalidTags.length) {
     return NextResponse.json({ message: 'Invalid tags', invalidTags }, { status: 400 });

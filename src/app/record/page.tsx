@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { getRecordListAPI } from '@/api/record';
+import { getRecordListCacheAPI } from '@/lib/record';
 import { getAuthorDataAPI } from '@/api/user';
 import RecordPageClient from './components/RecordPageClient';
 
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export default async () => {
   const [userRes, recordRes] = await Promise.all([
     getAuthorDataAPI(),
-    getRecordListAPI({ pageNum: 1, pageSize: 8 }),
+    getRecordListCacheAPI({ pageNum: 1, pageSize: 8 }),
   ]);
 
   return (

@@ -2,7 +2,7 @@
 
 import { createContext, useContext, type ReactNode } from 'react';
 import useDebouncedLike from '@/hooks/useDebouncedLike';
-import { likeArticleAPI } from '@/api/article';
+import { likeArticleAction } from '@/actions/article';
 import LikeButtonCore from '@/components/LikeButton/LikeButtonCore';
 
 interface ArticleLikeContextValue {
@@ -27,7 +27,7 @@ export function ArticleLikeProvider({
   initialCount?: number;
   children: ReactNode;
 }) {
-  const value = useDebouncedLike(articleId, initialCount, likeArticleAPI);
+  const value = useDebouncedLike(articleId, initialCount, likeArticleAction);
   return <ArticleLikeContext.Provider value={value}>{children}</ArticleLikeContext.Provider>;
 }
 

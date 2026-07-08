@@ -10,7 +10,8 @@ import { RiMessage3Line } from 'react-icons/ri';
 import RandomAvatar from '@/components/RandomAvatar';
 import HCaptcha from '@/components/HCaptcha';
 import Show from '@/components/Show';
-import { addRecordCommentDataAPI, getRecordCommentListAPI } from '@/api/recordComment';
+import { addRecordCommentAction } from '@/actions/record';
+import { getRecordCommentListAPI } from '@/api/recordComment';
 import { RecordComment } from '@/types/app/recordComment';
 import { useAppConfig } from '@/components/AppConfigProvider';
 
@@ -122,7 +123,7 @@ export default function RecordCommentPanel({ recordId, onCountChange }: Props) {
       }
     }
 
-    const { code, message } = await addRecordCommentDataAPI({
+    const { code, message } = await addRecordCommentAction({
       ...data,
       recordId,
       commentId,

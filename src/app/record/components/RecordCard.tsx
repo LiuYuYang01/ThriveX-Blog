@@ -5,7 +5,7 @@ import { RiChat3Line } from 'react-icons/ri';
 import ImageList from './ImageList';
 import RecordCommentPanel from './Comment';
 import LikeButton from '@/components/LikeButton';
-import { likeRecordAPI } from '@/api/record';
+import { likeRecordAction } from '@/actions/record';
 import { getRecordCommentListAPI } from '@/api/recordComment';
 import { getRelativeTimeLabel } from '@/utils';
 import { User } from '@/types/app/user';
@@ -73,7 +73,7 @@ export default function RecordCard({ id, content, images, likeCount, mood, locat
         </div>
 
         <div className="flex shrink-0 items-center gap-3 rounded-lg bg-[#f4f6f9] px-2 py-0.5 dark:bg-white/5">
-          <LikeButton entityId={Number(id)} initialCount={likeCount ?? 0} likeAPI={likeRecordAPI} variant="inline" className="gap-1" />
+          <LikeButton entityId={Number(id)} initialCount={likeCount ?? 0} likeAPI={likeRecordAction} variant="inline" className="gap-1" />
           <span className="h-3.5 w-px bg-slate-200 dark:bg-white/10" aria-hidden />
           <button
             type="button"

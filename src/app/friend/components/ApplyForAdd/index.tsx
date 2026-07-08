@@ -13,7 +13,8 @@ import {
 } from '@/ThriveUI';
 import { type SubmitHandler } from 'react-hook-form';
 import { Web, WebType } from '@/types/app/web';
-import { addWebDataAPI, getWebTypeListAPI } from '@/api/web';
+import { addWebAction } from '@/actions/web';
+import { getWebTypeListAPI } from '@/api/web';
 import { Bounce, toast, ToastOptions } from 'react-toastify';
 import HCaptchaType from '@hcaptcha/react-hcaptcha';
 import HCaptcha from '@/components/HCaptcha';
@@ -50,12 +51,6 @@ export default () => {
   };
 
   useEffect(() => {
-    const message = localStorage.getItem('toastMessage');
-    if (message) {
-      toast.success(message, toastConfig);
-      localStorage.removeItem('toastMessage');
-    }
-
     getWebTypeList();
   }, []);
 
@@ -68,7 +63,7 @@ export default () => {
     if (hasHCaptcha && !captchaToken) return setCaptchaError('请完成人机验证');
 
     setLoading(true);
-    const { code, message } = await addWebDataAPI({
+    const { code, message } = await addWebAction({
       ...data,
       createTime: Date.now().toString(),
       h_captcha_response: captchaToken!,
@@ -83,9 +78,9 @@ export default () => {
     setCaptchaError('');
     setCaptchaToken(null);
     captchaRef.current?.resetCaptcha();
+    methods.reset({} as Web);
 
-    localStorage.setItem('toastMessage', '🎉 提交成功, 请等待审核!');
-    window.location.reload();
+    toast.success('🎉 提交成功, 请等待审核!', toastConfig);
     onClose();
   };
 

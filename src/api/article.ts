@@ -30,8 +30,8 @@ export const recordViewAPI = async (id: number) => {
 
 // 递增文章点赞数（count 为本次累计增量，由前端防抖合并后提交）
 export const likeArticleAPI = (id: number, count: number) =>
-    Request<number>('POST', `/article/${id}/like`, { count }, false)
+    Request<number>('POST', `/article/${id}/like`, { count })
 
 // 递增文章分享数
 export const shareArticleAPI = (id: number, count: number) =>
-    Request<number>('POST', `/article/${id}/share`, { count }, false)
+    Request<number>('POST', `/article/${id}/share`, { count })

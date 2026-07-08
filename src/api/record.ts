@@ -6,4 +6,4 @@ export const getRecordListAPI = (params?: Page) => Request<Paginate<Record[]>>('
 
 // 递增说说点赞数（count 为本次累计增量，由前端防抖合并后提交）
 export const likeRecordAPI = (id: number, count: number) =>
-  Request<number>('POST', `/record/${id}/like`, { count }, false)
+  Request<number>('POST', `/record/${id}/like`, { count })

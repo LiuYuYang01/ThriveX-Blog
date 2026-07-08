@@ -1,3 +1,8 @@
+/**
+ * 按需刷新 ISR 缓存的 Webhook 接口。
+ * 后台在内容变更后携带 REVALIDATE_SECRET 调用 POST，即可使指定 cache tag 失效并触发重新生成。
+ */
+
 import { revalidateTag } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
 

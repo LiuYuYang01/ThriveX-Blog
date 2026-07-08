@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils';
 
 export const actionBarClass =
-  'inline-flex items-center gap-0.5 rounded-full p-1';
+  'inline-flex items-center gap-3 rounded-full p-1';
 
 export const actionPillClass =
   'inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium text-slate-600 transition-colors dark:text-slate-300';
@@ -11,7 +11,7 @@ export const actionMinimalItemClass =
   'group/action relative inline-flex select-none flex-col items-center cursor-pointer';
 
 export const actionMinimalButtonClass =
-  'px-2 py-2 transition-colors duration-200 hover:bg-white dark:hover:bg-white/5';
+  'cursor-pointer px-2 py-2 transition-colors duration-200 hover:bg-white dark:hover:bg-white/5';
 
 export const actionMinimalIconClass =
   'transition-[translate,scale] duration-200 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover/action:-translate-y-0.5 group-hover/action:scale-110 group-active/action:translate-y-0 group-active/action:scale-95';

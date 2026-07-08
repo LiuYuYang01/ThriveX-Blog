@@ -1,10 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Modal, Button, useDisclosure } from '@/ThriveUI';
+import PhotoPreview, { type PhotoItem } from '@/ThriveUI/PhotoPreview';
 import { Footprint } from '@/types/app/footprint';
-import { PhotoProvider, PhotoView } from 'react-photo-view';
-import 'react-photo-view/dist/react-photo-view.css';
 import dayjs from 'dayjs';
 import Masonry from 'react-masonry-css';
 import { getGaodeMapConfigDataAPI } from '@/api/config';
@@ -24,6 +23,13 @@ export default function FootprintPageClient({ list }: FootprintPageClientProps) 
   const [isDismissable, setIsDismissable] = useState(true);
   const [data, setData] = useState<Footprint>({} as Footprint);
   const [mapLoadError, setMapLoadError] = useState<string | null>(null);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewIndex, setPreviewIndex] = useState(0);
+
+  const photos = useMemo<PhotoItem[]>(
+    () => data?.images?.map((url, i) => ({ id: `${i}`, url })) ?? [],
+    [data?.images],
+  );
   let map: any = null;
   let infoWindow: any = null;
 
@@ -227,24 +233,36 @@ export default function FootprintPageClient({ list }: FootprintPageClientProps) 
           </div>
 
           <div className={`flex w-full justify-center overflow-auto ${data?.images?.length !== 1 ? 'max-h-96' : ''} mb-5 hide_sliding`}>
-            <PhotoProvider
-              speed={() => 800}
-              easing={(type) => (type === 2 ? 'cubic-bezier(0.36, 0, 0.66, -0.56)' : 'cubic-bezier(0.34, 1.56, 0.64, 1)')}
-              onVisibleChange={(visible) => {
-                setIsDismissable(!visible);
-              }}
-            >
-              <Masonry breakpointCols={breakpointColumnsObj} className="masonry-grid mb-12" columnClassName="masonry-grid_column">
-                {data?.images?.map((item, index) => (
-                  <PhotoView src={item} key={index}>
-                    <img src={item} alt="" className="mb-3 w-full cursor-pointer rounded-2xl" />
-                  </PhotoView>
-                ))}
-              </Masonry>
-            </PhotoProvider>
+            <Masonry breakpointCols={breakpointColumnsObj} className="masonry-grid mb-12" columnClassName="masonry-grid_column">
+              {data?.images?.map((item, index) => (
+                <button
+                  key={index}
+                  type="button"
+                  onClick={() => {
+                    setPreviewIndex(index);
+                    setPreviewOpen(true);
+                    setIsDismissable(false);
+                  }}
+                  className="mb-3 w-full cursor-pointer rounded-2xl"
+                >
+                  <img src={item} alt="" className="w-full rounded-2xl" />
+                </button>
+              ))}
+            </Masonry>
           </div>
         </div>
       </Modal>
+
+      <PhotoPreview
+        open={previewOpen}
+        photos={photos}
+        index={previewIndex}
+        onClose={() => {
+          setPreviewOpen(false);
+          setIsDismissable(true);
+        }}
+        onIndexChange={setPreviewIndex}
+      />
     </>
   );
 }

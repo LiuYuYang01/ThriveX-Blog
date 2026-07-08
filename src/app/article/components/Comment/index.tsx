@@ -11,7 +11,6 @@ import HCaptcha from '@/components/HCaptcha';
 import EmojiBag from '@/components/EmojiBag';
 import { useAppConfig } from '@/components/AppConfigProvider';
 import 'react-toastify/dist/ReactToastify.css';
-import './index.scss';
 
 interface Props {
   articleId: number;
@@ -37,6 +36,9 @@ const toastConfig: ToastOptions = {
   theme: 'colored',
   transition: Bounce,
 };
+
+const fieldCls =
+  'box-border rounded-md border border-border text-foreground outline-none placeholder:text-gray-400 hover:border-primary! focus:border-2 focus:border-primary focus:shadow-[0_10px_20px_1px_rgb(83_157_253/0.1)] dark:border-black-b dark:bg-black-b dark:text-[#e5e7eb] dark:placeholder:text-[#8c9ab1] dark:focus:border-primary dark:focus:shadow-[0_10px_20px_1px_rgb(83_157_253/0.15)]';
 
 const CommentForm = ({ articleId }: Props) => {
   const contentRef = useRef<HTMLTextAreaElement>(null);
@@ -160,9 +162,14 @@ const CommentForm = ({ articleId }: Props) => {
   };
 
   return (
-    <div id="article-comment" className="CommentComponent">
+    <div id="article-comment">
       <div className="mt-[70px]">
-        <div className="title relative top-0 left-0 w-full h-px mb-10 bg-[#f7f7f7] dark:bg-[#4e5969]/40"></div>
+        <div className="relative mb-10">
+          <div className="h-px w-full bg-[#f7f7f7] dark:bg-[#4e5969]/40" />
+          <span className="absolute -top-5 left-1/2 -translate-x-1/2 bg-white dark:bg-black-a px-4 text-center text-2xl font-medium text-[#374151] dark:text-[#e5e7eb]">
+            一针见血 🎉
+          </span>
+        </div>
 
         <form className="mt-4 space-y-3 text-xs xs:text-sm" onSubmit={handleSubmit(onSubmit)}>
           <div className="w-full">
@@ -170,7 +177,7 @@ const CommentForm = ({ articleId }: Props) => {
               <textarea
                 {...register('content', { required: '请输入内容' })}
                 placeholder={placeholder}
-                className="form-control w-full p-4 pb-12 min-h-36"
+                className={`${fieldCls} w-full min-h-36 p-4 pb-12`}
                 ref={(e) => {
                   register('content').ref(e);
                   contentRef.current = e;
@@ -194,29 +201,31 @@ const CommentForm = ({ articleId }: Props) => {
                 </Popover>
               </div>
             </div>
-            <span className="text-red-400 text-sm pl-3">{errors.content?.message}</span>
+            {errors.content?.message ? (
+              <span className="text-red-400 text-sm pl-3">{errors.content.message}</span>
+            ) : null}
           </div>
 
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
           <div className="flex flex-col">
-            <input type="text" className="form-control w-full h-9 pl-4" placeholder="你的名称" {...register('name', { required: '请输入名称' })} />
-            <span className="text-red-400 text-sm pl-3 mt-1">{errors.name?.message}</span>
+            <input type="text" className={`${fieldCls} h-9 w-full pl-4`} placeholder="你的名称" {...register('name', { required: '请输入名称' })} />
+            {errors.name?.message ? <span className="text-red-400 text-sm pl-3 mt-1">{errors.name.message}</span> : null}
           </div>
 
           <div className="flex flex-col">
-            <input type="text" className="form-control w-full h-9 pl-4" placeholder="你的邮箱（选填）" {...register('email', { pattern: { value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, message: '请输入正确的邮箱' } })} />
-            <span className="text-red-400 text-sm pl-3 mt-1">{errors.email?.message}</span>
+            <input type="text" className={`${fieldCls} h-9 w-full pl-4`} placeholder="你的邮箱（选填）" {...register('email', { pattern: { value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, message: '请输入正确的邮箱' } })} />
+            {errors.email?.message ? <span className="text-red-400 text-sm pl-3 mt-1">{errors.email.message}</span> : null}
           </div>
 
           <div className="flex flex-col">
-            <input type="text" className="form-control w-full h-9 pl-4" placeholder="头像（选填）" {...register('avatar', { pattern: { value: /^https?:\/\//, message: '请输入正确的头像链接' } })} />
-            <span className="text-red-400 text-sm pl-3 mt-1">{errors.avatar?.message}</span>
+            <input type="text" className={`${fieldCls} h-9 w-full pl-4`} placeholder="头像（选填）" {...register('avatar', { pattern: { value: /^https?:\/\//, message: '请输入正确的头像链接' } })} />
+            {errors.avatar?.message ? <span className="text-red-400 text-sm pl-3 mt-1">{errors.avatar.message}</span> : null}
           </div>
           </div>
 
           <div className="w-full flex flex-col">
-            <input type="text" className="form-control w-full h-9 pl-4" placeholder="你的站点（选填）" {...register('url', { pattern: { value: /^https?:\/\//, message: '请输入正确的网站链接' } })} />
-            <span className="text-red-400 text-sm pl-3 mt-1">{errors.url?.message}</span>
+            <input type="text" className={`${fieldCls} h-9 w-full pl-4`} placeholder="你的站点（选填）" {...register('url', { pattern: { value: /^https?:\/\//, message: '请输入正确的网站链接' } })} />
+            {errors.url?.message ? <span className="text-red-400 text-sm pl-3 mt-1">{errors.url.message}</span> : null}
           </div>
 
           {hasHCaptcha && (

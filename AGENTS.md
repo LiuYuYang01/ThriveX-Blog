@@ -9,7 +9,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 ## 核心技术栈
 
-React 19、TypeScript、TailwindCSS 4.1、ThriveUI
+React 19、NextJS 16、TypeScript、TailwindCSS 4.1、ThriveUI
 
 参考当前目录中的 `package.json` 文件，要求生成的代码与项目已有的技术栈保持一致。
 

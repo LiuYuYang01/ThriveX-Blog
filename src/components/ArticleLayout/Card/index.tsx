@@ -38,7 +38,7 @@ const Card = async ({ data, covers: coversProp }: CardProps) => {
             </div>
 
             <div className="absolute w-full h-60 overflow-hidden" style={{ filter: 'blur(1.8rem) brightness(0.9)' }}>
-              <CoverImage src={cover} alt={item.title} sizes="100vw" />
+              <CoverImage src={cover} alt={item.title} sizes="(max-width: 768px) 100vw, 600px" />
             </div>
           </div>
         );

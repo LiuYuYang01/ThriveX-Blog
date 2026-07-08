@@ -150,7 +150,7 @@ export default function ArticleSharePoster({ data, minimal = false, className, s
         open={open}
         onClose={() => setOpen(false)}
         title="分享海报"
-        className="max-w-md"
+        className="max-w-xl px-4 sm:px-5"
         footer={
           <>
             <Button variant="light" onPress={() => setOpen(false)}>
@@ -171,9 +171,9 @@ export default function ArticleSharePoster({ data, minimal = false, className, s
             <p className="text-sm text-slate-400">正在生成海报…</p>
           </div>
         ) : posterUrl ? (
-          <div className="flex flex-col items-center gap-4">
-            <div className="overflow-hidden rounded-xl border border-slate-200/80 shadow-lg dark:border-white/10">
-              <img src={posterUrl} alt="文章分享海报" className="max-h-[420px] w-auto object-contain" />
+          <div className="flex flex-col items-center gap-3">
+            <div className="w-full overflow-hidden rounded-xl border border-slate-200/80 shadow-lg dark:border-white/10">
+              <img src={posterUrl} alt="文章分享海报" className="w-full object-contain" />
             </div>
             <p className="text-center text-xs text-slate-400">长按或下载保存，分享给好友吧</p>
           </div>

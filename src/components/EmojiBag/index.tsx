@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import { IoSearchOutline } from 'react-icons/io5';
+import { TextField } from '@/ThriveUI';
 
 // 表情数据 - 包含表情符号和中文名称
 const emojiData = {
@@ -269,16 +271,15 @@ export default ({ onEmojiSelect, className = '' }: Props) => {
   return (
     <div className={`w-80 ${className}`}>
       {/* 搜索栏 */}
-      <div className="p-4 border-b border-gray-100">
-        <div className="relative">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-          </div>
-
-          <input type="text" placeholder="搜索表情名称..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent outline-hidden" />
-        </div>
+      <div className="border-b border-neutral-200/80 p-4 dark:border-neutral-700/60">
+        <TextField
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          type="text"
+          inputMode="search"
+          placeholder="搜索表情名称..."
+          endContent={<IoSearchOutline className="h-4 w-4 text-neutral-400 dark:text-neutral-500" />}
+        />
       </div>
 
       {/* 表情网格 */}
@@ -290,16 +291,26 @@ export default ({ onEmojiSelect, className = '' }: Props) => {
             const horizontalClass = colIndex === 0 ? 'left-0 translate-x-0' : colIndex === 5 ? 'right-0 translate-x-0' : 'left-1/2 -translate-x-1/2';
 
             return (
-              <button key={`${emojiItem.emoji}-${index}`} onClick={() => handleEmojiClick(emojiItem)} className="w-10 h-10 flex items-center justify-center text-2xl hover:bg-gray-100 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-blue-400 cursor-pointer group relative" aria-label={emojiItem.name}>
+              <button
+                key={`${emojiItem.emoji}-${index}`}
+                onClick={() => handleEmojiClick(emojiItem)}
+                className="group relative flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg text-2xl hover:bg-neutral-100 focus:outline-hidden focus:ring-2 focus:ring-primary/40 dark:hover:bg-neutral-700/60"
+                aria-label={emojiItem.name}
+              >
                 {emojiItem.emoji}
-                {/* 悬停时显示名称：第一排向下，其余向上，并做左右边界处理 */}
-                <div className={`absolute ${isFirstRow ? 'top-full mt-2' : 'bottom-full mb-2'} ${horizontalClass} transform px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-10 pointer-events-none`}>{emojiItem.name}</div>
+                <div
+                  className={`pointer-events-none absolute z-10 transform rounded bg-neutral-800 px-2 py-1 text-xs whitespace-nowrap text-white opacity-0 group-hover:opacity-100 dark:bg-neutral-700 ${isFirstRow ? 'top-full mt-2' : 'bottom-full mb-2'} ${horizontalClass}`}
+                >
+                  {emojiItem.name}
+                </div>
               </button>
             );
           })}
         </div>
 
-        {filteredEmojis.length === 0 && <div className="text-center py-8 text-gray-500">{searchTerm ? '未找到匹配的表情' : '暂无表情'}</div>}
+        {filteredEmojis.length === 0 && (
+          <div className="py-8 text-center text-neutral-500 dark:text-neutral-400">{searchTerm ? '未找到匹配的表情' : '暂无表情'}</div>
+        )}
       </div>
     </div>
   );

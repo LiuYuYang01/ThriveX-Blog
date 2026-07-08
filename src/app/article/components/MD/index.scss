@@ -118,10 +118,14 @@
         }
       }
     }
-  }
 
-  img {
-    @apply blur-[20px] rounded-xl hover:scale-105 cursor-pointer transition-[scale] duration-300 ease-out;
+    img {
+      @apply rounded-xl hover:scale-105 cursor-pointer transition-[scale,filter] duration-300 ease-out;
+
+      &.markdown-img--loading {
+        @apply blur-[20px];
+      }
+    }
   }
 
   h1,

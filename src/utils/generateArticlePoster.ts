@@ -14,11 +14,11 @@ export interface ArticlePosterOptions {
 
 const POSTER_W = 600;
 const COVER_H = 360;
-const CARD_X = 20;
-const CARD_W = POSTER_W - 40;
+const CARD_X = 12;
+const CARD_W = POSTER_W - 24;
 const CARD_TOP = 300;
-const CONTENT_X = 48;
-const CONTENT_W = POSTER_W - 96;
+const CONTENT_X = 32;
+const CONTENT_W = POSTER_W - 64;
 const CARD_PAD_TOP = 48;
 const CARD_PAD_BOTTOM = 32;
 const QR_SIZE = 88;
@@ -58,6 +58,28 @@ function drawCoverImage(ctx: CanvasRenderingContext2D, img: HTMLImageElement, x:
   ctx.drawImage(img, sx, sy, sw, sh);
 }
 
+function wrapText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string[] {
+  const lines: string[] = [];
+  let line = '';
+
+  for (const char of text) {
+    const testLine = line + char;
+    if (ctx.measureText(testLine).width > maxWidth && line) {
+      lines.push(line);
+      line = char;
+    } else {
+      line = testLine;
+    }
+  }
+
+  if (line) lines.push(line);
+  return lines;
+}
+
+function normalizeText(text: string): string {
+  return text.replace(/\s+/g, ' ').trim();
+}
+
 /** 测量或绘制换行文本，返回占用高度 */
 function textBlock(
   ctx: CanvasRenderingContext2D,
@@ -69,39 +91,24 @@ function textBlock(
   maxLines: number,
   draw: boolean,
 ): number {
-  const chars = text.split('');
-  let line = '';
-  let lineCount = 0;
-  let currentY = y;
-  const startY = y;
+  let lines = wrapText(ctx, text, maxWidth);
 
-  for (let i = 0; i < chars.length; i++) {
-    const testLine = line + chars[i];
-    if (ctx.measureText(testLine).width > maxWidth && line) {
-      if (draw) ctx.fillText(line, x, currentY);
-      line = chars[i];
-      lineCount += 1;
-      currentY += lineHeight;
-      if (lineCount >= maxLines - 1) {
-        line = testLine;
-        while (line.length > 1 && ctx.measureText(line + '…').width > maxWidth) {
-          line = line.slice(0, -1);
-        }
-        if (draw) ctx.fillText(line + '…', x, currentY);
-        currentY += lineHeight;
-        break;
-      }
-    } else {
-      line = testLine;
+  if (lines.length > maxLines) {
+    lines = lines.slice(0, maxLines);
+    let last = lines[maxLines - 1];
+    while (last.length > 1 && ctx.measureText(`${last}…`).width > maxWidth) {
+      last = last.slice(0, -1);
     }
+    lines[maxLines - 1] = `${last}…`;
   }
 
-  if (line && lineCount < maxLines) {
-    if (draw) ctx.fillText(line, x, currentY);
+  let currentY = y;
+  for (const ln of lines) {
+    if (draw) ctx.fillText(ln, x, currentY);
     currentY += lineHeight;
   }
 
-  return currentY - startY;
+  return currentY - y;
 }
 
 interface ContentLayout {
@@ -111,7 +118,7 @@ interface ContentLayout {
 
 function measureLayout(ctx: CanvasRenderingContext2D, options: ArticlePosterOptions): ContentLayout {
   const { title, description } = options;
-  const desc = (description || title).slice(0, 120);
+  const desc = normalizeText(description || title).slice(0, 120);
 
   let inner = CARD_PAD_TOP;
 
@@ -203,7 +210,7 @@ export async function generateArticlePoster(options: ArticlePosterOptions): Prom
   cursorY += textBlock(ctx, title, CONTENT_X, cursorY, CONTENT_W, 34, 3, true);
   cursorY += 8;
 
-  const desc = (description || title).slice(0, 120);
+  const desc = normalizeText(description || title).slice(0, 120);
   ctx.fillStyle = '#64748b';
   ctx.font = '400 14px system-ui, -apple-system, "PingFang SC", sans-serif';
   cursorY += textBlock(ctx, desc, CONTENT_X, cursorY, CONTENT_W, 22, 3, true);

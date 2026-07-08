@@ -130,7 +130,7 @@ export function Modal({
           </div>
         )}
         {children}
-        {footer ? <div className="mt-5 flex flex-wrap items-center justify-end gap-2 border-t border-neutral-200/80 pt-4 dark:border-neutral-700/60">{footer}</div> : null}
+        {footer ? <div className="mt-3 flex flex-wrap items-center justify-end gap-2 border-t border-neutral-200/80 pt-4 pb-3 dark:border-neutral-700/60">{footer}</div> : null}
       </motion.div>
     </div>
   );

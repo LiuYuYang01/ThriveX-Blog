@@ -17,13 +17,13 @@ export default ({ list, open, onClose }: Props) => {
     <>
       <AnimatePresence>
         {open && (
-          <div className="flex fixed top-0 left-0 w-full h-full z-6">
-            <motion.div initial={{ width: 0, opacity: 0 }} animate={{ width: '100%', opacity: 1 }} exit={{ width: 0, opacity: 0 }} transition={{ type: 'spring', stiffness: 200, damping: 30, opacity: { duration: 0.2 } }} className="overflow-auto p-5 dark:border-[#2b333e] bg-[rgba(255,255,255,0.9)] dark:bg-[rgba(44,51,62,0.9)] backdrop-blur-[5px] hide_sliding">
+          <div className="flex fixed top-0 left-0 w-full h-full z-[1000]">
+            <motion.div initial={{ width: 0, opacity: 0 }} animate={{ width: '66.666667%', opacity: 1 }} exit={{ width: 0, opacity: 0 }} transition={{ type: 'spring', stiffness: 200, damping: 30, opacity: { duration: 0.2 } }} className="shrink-0 overflow-auto p-5 dark:border-[#2b333e] bg-[rgba(255,255,255,0.9)] dark:bg-[rgba(44,51,62,0.9)] backdrop-blur-[5px] hide_sliding">
               <ul className="flex flex-col space-y-2">
                 {list?.map((one) => (
                   <Fragment key={one.id}>
                     {one.type === 'cate' && (
-                      <li className="group/one relative hover:bg-[#e0e6ec] dark:hover:bg-[#495362] rounded-md  ">
+                      <li className="group/one relative rounded-md">
                         {one.children.length ? (
                           <span className="flex justify-between items-center p-3 px-5 text-[15px] group-hover/one:text-primary! text-[#333] dark:text-white whitespace-nowrap cursor-default">
                             {one.icon} {one.name}
@@ -50,7 +50,7 @@ export default ({ list, open, onClose }: Props) => {
                     )}
 
                     {one.type === 'page' && (
-                      <li className="group/one relative hover:bg-[#e0e6ec] dark:hover:bg-[#495362] rounded-md  ">
+                      <li className="group/one relative rounded-md">
                         {one.children.length ? (
                           <span className="flex justify-between items-center p-3 px-5 text-[15px] group-hover/one:text-primary! text-[#333] dark:text-white whitespace-nowrap cursor-default">
                             {one.icon} {one.name}
@@ -77,7 +77,7 @@ export default ({ list, open, onClose }: Props) => {
                     )}
 
                     {one.type === 'nav' && (
-                      <li className="group/one relative hover:bg-[#e0e6ec] dark:hover:bg-[#495362] rounded-md  ">
+                      <li className="group/one relative rounded-md">
                         {one.children.length ? (
                           <span className="flex justify-between items-center p-3 px-5 text-[15px] group-hover/one:text-primary! text-[#333] dark:text-white whitespace-nowrap cursor-default">
                             {one.icon} {one.name}
@@ -107,7 +107,7 @@ export default ({ list, open, onClose }: Props) => {
               </ul>
             </motion.div>
 
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className="overflow-hidden h-full bg-[rgba(0,0,0,0.6)] w-full" onClick={onClose} />
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className="flex-1 min-w-0 overflow-hidden h-full bg-[rgba(0,0,0,0.6)]" onClick={onClose} />
           </div>
         )}
       </AnimatePresence>

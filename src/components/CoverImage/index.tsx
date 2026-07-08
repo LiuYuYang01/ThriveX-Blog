@@ -22,7 +22,7 @@ export default function CoverImage({
   containerClassName = 'absolute inset-0',
   containerStyle,
   priority = false,
-  sizes = '100vw',
+  sizes = '(max-width: 768px) 100vw, 800px',
 }: CoverImageProps) {
   if (!src || (typeof src === 'string' && !src.trim())) return null;
 

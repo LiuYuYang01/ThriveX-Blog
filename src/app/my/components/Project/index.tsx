@@ -1,16 +1,25 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Project } from '@/types/app/my';
 import { Tabs, Tab, Card, CardBody } from '@/ThriveUI';
+import PhotoPreview, { type PhotoItem } from '@/ThriveUI/PhotoPreview';
 import OptimizedImage from '@/components/OptimizedImage';
-import { PhotoProvider, PhotoView } from 'react-photo-view';
-import 'react-photo-view/dist/react-photo-view.css';
 
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 
 export default ({ data }: { data: Project[] }) => {
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewIndex, setPreviewIndex] = useState(0);
+  const [previewPhotos, setPreviewPhotos] = useState<PhotoItem[]>([]);
+
+  const openPreview = (images: string[], index: number) => {
+    setPreviewPhotos(images.map((url, i) => ({ id: `${i}`, url, alt: '作品图片' })));
+    setPreviewIndex(index);
+    setPreviewOpen(true);
+  };
+
   useEffect(() => {
     AOS.init();
   }, []);
@@ -30,13 +39,16 @@ export default ({ data }: { data: Project[] }) => {
                       <div className="sticky top-0 w-full md:w-2/6 px-4">
                         <h3 className="text-[18px] mb-4">作品预览：</h3>
                         <div className="grid grid-cols-2 gap-2 p-2.5 border dark:border-[#444e5d] rounded-xl  ">
-                          <PhotoProvider>
-                            {item.images?.map((img, index) => (
-                              <PhotoView key={index} src={img || ''}>
-                                <OptimizedImage src={img} alt="作品图片" width={200} height={200} className="border dark:border-[#444e5d] dark hover:scale-[1.2] rounded-lg cursor-pointer transition-[scale] object-cover w-full h-auto" />
-                              </PhotoView>
-                            ))}
-                          </PhotoProvider>
+                          {item.images?.map((img, imgIndex) => (
+                            <button
+                              key={imgIndex}
+                              type="button"
+                              onClick={() => openPreview(item.images, imgIndex)}
+                              className="cursor-pointer"
+                            >
+                              <OptimizedImage src={img} alt="作品图片" width={200} height={200} className="border dark:border-[#444e5d] dark hover:scale-[1.2] rounded-lg transition-[scale] object-cover w-full h-auto" />
+                            </button>
+                          ))}
                         </div>
                       </div>
 
@@ -89,6 +101,14 @@ export default ({ data }: { data: Project[] }) => {
           </div>
         </div>
       </div>
+
+      <PhotoPreview
+        open={previewOpen}
+        photos={previewPhotos}
+        index={previewIndex}
+        onClose={() => setPreviewOpen(false)}
+        onIndexChange={setPreviewIndex}
+      />
     </>
   );
 };

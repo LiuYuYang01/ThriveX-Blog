@@ -25,7 +25,7 @@ const submenuPanelClass =
   'invisible opacity-0 scale-[0.98] pointer-events-none group-hover/one:visible group-hover/one:opacity-100 group-hover/one:scale-100 group-hover/one:pointer-events-auto transition-[opacity,scale,visibility] duration-200 ease-out absolute left-0 top-[calc(100%-4px)] z-10 pt-0.5 min-w-full w-max max-w-[220px] overflow-hidden rounded-md before:absolute before:inset-x-0 before:-top-1 before:h-1 before:content-[""]';
 
 const submenuItemClass =
-  'group/item relative flex w-full items-center min-w-0 px-5 py-2.5 text-[15px] text-[#666] dark:text-white transition-colors duration-150 hover:text-primary! hover:bg-[#f2f2f2] dark:hover:bg-[#323e50] before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:h-0 before:w-[3px] before:rounded-r-full before:bg-primary before:transition-[height] before:duration-150 hover:before:h-[50%]';
+  'group/item relative flex w-full items-center min-w-0 px-5 py-2.5 text-[15px] text-[#666] dark:text-white transition-colors duration-150 hover:text-primary! before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:h-0 before:w-[3px] before:rounded-r-full before:bg-primary before:transition-[height] before:duration-150 hover:before:h-[50%]';
 
 export default ({ theme }: { theme: Theme }) => {
   const patchName = usePathname();
@@ -85,10 +85,12 @@ export default ({ theme }: { theme: Theme }) => {
   // 是否打开侧边栏导航
   const [isOpenSidebarNav, setIsOpenSidebarNav] = useState(false);
 
+  const logoSrc = isDark ? theme?.dark_logo : isPathSty || isScrolled ? theme?.light_logo : theme?.dark_logo;
+
   return (
     <>
       <div className={`header fixed inset-x-0 top-0 w-full h-[60px] z-50 overflow-visible after:content-[''] after:block after:w-full after:h-0 after:bg-[linear-gradient(#fff,transparent_70%)] dark:after:bg-[linear-gradient(#2b333e,transparent_70%)] ${isPathSty || isScrolled ? 'bg-[rgba(255,255,255,0.5)] dark:bg-[rgba(44,51,62,0.7)] backdrop-blur-md border-b dark:border-[#2b333e] after:h-5! after:transition-height]' : 'border-transparent'}`}>
-        <div className="grid grid-cols-[auto_1fr_auto] grid-rows-[60px] h-[60px] md:flex md:justify-between items-center w-full max-w-[1200px] mx-auto px-4 md:px-6 lg:px-0!">
+        <div className="grid grid-cols-[1fr_auto_1fr] grid-rows-[60px] h-[60px] md:flex md:justify-between items-center w-full max-w-[1200px] mx-auto px-4 md:px-6 lg:px-0!">
           <div
             className="md:hidden group flex items-center justify-center size-9 shrink-0 rounded-full transition-colors cursor-pointer hover:bg-[#e9edf4] dark:hover:bg-[#455162]"
             onClick={() => setIsOpenSidebarNav(true)}
@@ -99,18 +101,9 @@ export default ({ theme }: { theme: Theme }) => {
           <div className="flex h-[60px] items-center justify-center md:justify-start min-w-0 md:flex-1 overflow-visible">
             {/* logo */}
             <Link href="/" className="flex items-center h-[60px] text-[15px]">
-              {isDark ? (
-                <OptimizedImage src={theme?.dark_logo} alt="Logo" width={160} height={40} className="h-10 w-auto object-contain pr-0 md:pr-5 hover:scale-90 transition-[scale]" style={{ width: 'auto' }} />
-              ) : (
-                <OptimizedImage
-                  src={isPathSty || isScrolled ? theme?.light_logo : theme?.dark_logo}
-                  alt="Logo"
-                  width={160}
-                  height={40}
-                  className="h-10 w-auto object-contain pr-0 md:pr-5 hover:scale-90 transition-[scale]"
-                  style={{ width: 'auto' }}
-                />
-              )}
+              <div className="relative h-10 w-40 pr-0 md:pr-5 hover:scale-90 transition-[scale]">
+                <OptimizedImage src={logoSrc} alt="Logo" fill sizes="160px" className="object-contain object-center md:object-left" />
+              </div>
             </Link>
 
             <ul className="hidden md:flex items-center h-[60px] overflow-visible">
@@ -219,7 +212,7 @@ export default ({ theme }: { theme: Theme }) => {
             isSelected={isDark}
             onValueChange={toTheme}
             thumbIcon={({ isSelected }) => (isSelected ? <BsFillMoonStarsFill className="text-gray-500" /> : <FaRegSun className="text-gray-500" />)}
-            className={`shrink-0 ${isDark ? '' : 'bg-[#e1e1e1]!'}`}
+            className={`shrink-0 justify-self-end ${isDark ? '' : 'bg-[#e1e1e1]!'}`}
           />
         </div>
       </div>

@@ -50,7 +50,7 @@ const Classics = async ({ data, covers: coversProp }: ClassicsProps) => {
             </div>
 
             <div className="absolute w-full h-60 overflow-hidden" style={{ filter: 'blur(2.5rem) brightness(0.6)' }}>
-              <CoverImage src={cover} alt="" sizes="100vw" />
+              <CoverImage src={cover} alt="" sizes="(max-width: 768px) 100vw, 600px" />
             </div>
 
             {index % 2 !== 0 && (

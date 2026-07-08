@@ -13,6 +13,7 @@ const TOC_WIDTH = 220;
 const TOC_OFFSET = 48;
 const TOC_VIEWPORT_MIN = 12;
 const HEADER_OFFSET = 62;
+const SCROLL_SPY_OFFSET = 100;
 const LEVEL_INDENT: Record<number, string> = {
   1: 'pl-2',
   2: 'pl-4',
@@ -109,42 +110,41 @@ export default function ArticleTOC({ headings, children }: Props) {
   }, [headings]);
 
   useEffect(() => {
-    let observer: IntersectionObserver | null = null;
     let retryTimer: ReturnType<typeof setTimeout>;
 
-    const setup = () => {
-      const elements = headings
-        .map((heading) => document.getElementById(heading.id))
-        .filter((element): element is HTMLElement => Boolean(element));
+    const updateActiveHeading = () => {
+      if (isManualScrollingRef.current) return;
 
-      if (!elements.length) {
+      let nextActiveId = '';
+      for (const heading of headings) {
+        const element = document.getElementById(heading.id);
+        if (!element) continue;
+        if (element.getBoundingClientRect().top <= SCROLL_SPY_OFFSET) {
+          nextActiveId = heading.id;
+        }
+      }
+
+      if (nextActiveId) {
+        setActiveId(nextActiveId);
+      }
+    };
+
+    const setup = () => {
+      const hasHeadings = headings.some((heading) => document.getElementById(heading.id));
+      if (!hasHeadings) {
         retryTimer = setTimeout(setup, 150);
         return;
       }
 
-      observer = new IntersectionObserver(
-        (entries) => {
-          if (isManualScrollingRef.current) return;
-
-          const visible = entries
-            .filter((entry) => entry.isIntersecting)
-            .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
-
-          if (visible.length > 0) {
-            setActiveId(visible[0].target.id);
-          }
-        },
-        { rootMargin: '-96px 0px -55% 0px', threshold: 0 },
-      );
-
-      elements.forEach((element) => observer!.observe(element));
+      updateActiveHeading();
+      window.addEventListener('scroll', updateActiveHeading, { passive: true });
     };
 
     setup();
 
     return () => {
       clearTimeout(retryTimer);
-      observer?.disconnect();
+      window.removeEventListener('scroll', updateActiveHeading);
     };
   }, [headings]);
 
@@ -162,6 +162,22 @@ export default function ArticleTOC({ headings, children }: Props) {
   const releaseManualScroll = () => {
     isManualScrollingRef.current = false;
   };
+
+  useEffect(() => {
+    const cancelManualScroll = () => {
+      if (!isManualScrollingRef.current) return;
+      releaseManualScroll();
+      clearTimeout(manualScrollTimerRef.current);
+    };
+
+    window.addEventListener('wheel', cancelManualScroll, { passive: true });
+    window.addEventListener('touchmove', cancelManualScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener('wheel', cancelManualScroll);
+      window.removeEventListener('touchmove', cancelManualScroll);
+    };
+  }, []);
 
   const handleSelect = (id: string) => {
     const element = document.getElementById(id);

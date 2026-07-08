@@ -10,7 +10,6 @@ import { RiMessage3Line } from 'react-icons/ri';
 import dayjs from 'dayjs';
 import { getArticleCommentListAPI } from '@/api/comment';
 import { ClientPagination } from '@/ThriveUI';
-import './index.scss';
 
 interface Props {
   id: number;
@@ -34,7 +33,6 @@ const CommentList = forwardRef(({ id, reply }: Props, ref) => {
     getCommentList(page);
   };
 
-  // 回复评论
   const replyComment = (id: number, name: string) => {
     reply(id, name);
   };
@@ -43,80 +41,91 @@ const CommentList = forwardRef(({ id, reply }: Props, ref) => {
     getCommentList,
   }));
 
-  // 这里的逻辑有点乱，暂时先这样，有空再优化！！！
   return (
-    <div className="CommentListComponent">
+    <div className="py-[30px]">
       <Show is={!!data.result?.length}>
-        <ul className="list">
+        <ul className="mt-5 flex flex-col overflow-hidden">
           {data.result?.map((one) => (
-            <li className="item" key={one.id}>
-              <div className="comment_user_one">
-                {one.avatar ? <img src={one.avatar} alt="" className="avatar" /> : <RandomAvatar className="avatar" />}
-                <div className="comment_user_one_info">
+            <li
+              className="group/item relative flex min-h-[105px] flex-col justify-center border-b border-dashed border-[#eee] px-2.5 py-5 last:border-none hover:rounded-[5px] hover:bg-[#f3f8fe] dark:border-[#4e5969] dark:hover:bg-[#2e3745]"
+              key={one.id}
+            >
+              <div className="flex items-center">
+                {one.avatar ? <img src={one.avatar} alt="" className="mr-2.5 size-[35px] rounded-full" /> : <RandomAvatar className="mr-2.5 size-[35px] rounded-full" />}
+                <div className="flex flex-col">
                   {one.url ? (
-                    <a href={one.url} className="name active" target="_blank" rel="noopener noreferrer">
+                    <a href={one.url} className="text-base text-primary" target="_blank" rel="noopener noreferrer">
                       {one.name}
                     </a>
                   ) : (
-                    <span className="name">{one.name}</span>
+                    <span className="text-base text-[#444] dark:text-white">{one.name}</span>
                   )}
-                  <span className="time">{dayjs(+one.createTime).format('YYYY-MM-DD HH:mm')}</span>
+                  <span className="text-sm text-[#8599ab] dark:text-[#8c9ab1]">{dayjs(+one.createTime).format('YYYY-MM-DD HH:mm')}</span>
                 </div>
 
-                <div className="reply" onClick={() => replyComment(one.id!, one.name)}>
+                <div
+                  className="absolute -right-[15%] cursor-pointer rounded-[30px] bg-primary px-2.5 py-1 text-xl text-white transition-[right] duration-300 group-hover/item:right-[2%]"
+                  onClick={() => replyComment(one.id!, one.name)}
+                >
                   <RiMessage3Line />
                 </div>
               </div>
 
-              <div className="comment_main">{one.content}</div>
+              <div className="my-2.5 break-words text-[15px] text-[#666] dark:text-[#cdcdcd]">{one.content}</div>
 
               {one?.children?.length
                 ? one.children?.map((two) => (
-                    <div className="comment_user_two ml-5! sm:ml-12!" key={two.id}>
-                      <div className="comment_user_two_info">
-                        {two.avatar ? <img src={two.avatar} alt="" className="avatar" /> : <RandomAvatar className="avatar" />}
+                    <div className="ml-5 mt-5 sm:ml-12" key={two.id}>
+                      <div className="flex items-center">
+                        {two.avatar ? <img src={two.avatar} alt="" className="mr-2.5 size-[35px] rounded-full" /> : <RandomAvatar className="mr-2.5 size-[35px] rounded-full" />}
 
                         {two.url ? (
-                          <a href={two.url} className="name active text-primary!" target="_blank" rel="noopener noreferrer">
+                          <a href={two.url} className="mr-4 text-[15px] text-primary" target="_blank" rel="noopener noreferrer">
                             {two.name}
                           </a>
                         ) : (
-                          <span className="name">{two.name}</span>
+                          <span className="mr-4 text-[15px] text-[#444] dark:text-white">{two.name}</span>
                         )}
 
-                        <span className="time">{dayjs(+two.createTime).format('YYYY-MM-DD HH:mm')}</span>
-                        <div className="reply" onClick={() => replyComment(two.id!, two.name)}>
+                        <span className="text-xs text-[#8599ab] dark:text-[#8c9ab1]">{dayjs(+two.createTime).format('YYYY-MM-DD HH:mm')}</span>
+                        <div
+                          className="absolute -right-[15%] cursor-pointer rounded-[30px] bg-primary px-2.5 py-1 text-xl text-white transition-[right] duration-300 group-hover/item:right-[2%]"
+                          onClick={() => replyComment(two.id!, two.name)}
+                        >
                           <RiMessage3Line />
                         </div>
                       </div>
 
-                      <div className="comment_main">
+                      <div className="my-2.5 break-words text-[15px] text-[#666] dark:text-[#cdcdcd] [&_a]:text-primary">
                         <Link href="#">@{one.name}：</Link>
                         <span>{two.content}</span>
                       </div>
 
                       {two.children?.map((three) => (
                         <div key={three.id}>
-                          <div className="comment_user_three ml-5! sm:ml-12!">
-                            <div className="comment_user_three_info">
-                              {three.avatar ? <img src={three.avatar} alt="" className="avatar" /> : <RandomAvatar className="avatar" />}
+                          <div className="ml-5 mt-5 sm:ml-12">
+                            <div className="flex items-center">
+                              {three.avatar ? <img src={three.avatar} alt="" className="mr-2.5 size-[35px] rounded-full" /> : <RandomAvatar className="mr-2.5 size-[35px] rounded-full" />}
 
                               {three.url ? (
-                                <a href={three.url} className="name active text-primary!" target="_blank" rel="noopener noreferrer">
+                                <a href={three.url} className="mr-4 text-[15px] text-primary" target="_blank" rel="noopener noreferrer">
                                   {three.name}
                                 </a>
                               ) : (
-                                <span className="name">{three.name}</span>
+                                <span className="mr-4 text-[15px] text-[#444] dark:text-white">{three.name}</span>
                               )}
 
-                              <span className="time">{dayjs(+three.createTime).format('YYYY-MM-DD HH:mm')}</span>
+                              <span className="text-xs text-[#8599ab] dark:text-[#8c9ab1]">{dayjs(+three.createTime).format('YYYY-MM-DD HH:mm')}</span>
 
-                              <div className="reply" onClick={() => replyComment(three.id!, three.name)}>
+                              <div
+                                className="absolute -right-[15%] cursor-pointer rounded-[30px] bg-primary px-2.5 py-1 text-xl text-white transition-[right] duration-300 group-hover/item:right-[2%]"
+                                onClick={() => replyComment(three.id!, three.name)}
+                              >
                                 <RiMessage3Line />
                               </div>
                             </div>
 
-                            <div className="comment_main">
+                            <div className="my-2.5 break-words text-[15px] text-[#666] dark:text-[#cdcdcd] [&_a]:text-primary">
                               <Link href="#">@{two.name}：</Link>
                               <span>{three.content}</span>
                             </div>
@@ -124,52 +133,58 @@ const CommentList = forwardRef(({ id, reply }: Props, ref) => {
 
                           {three.children?.map((four) => (
                             <div key={four.id}>
-                              <div className="comment_user_three ml-5! sm:ml-12!">
-                                <div className="comment_user_three_info">
-                                  {four.avatar ? <img src={four.avatar} alt="" className="avatar" /> : <RandomAvatar className="avatar" />}
+                              <div className="ml-5 mt-5 sm:ml-12">
+                                <div className="flex items-center">
+                                  {four.avatar ? <img src={four.avatar} alt="" className="mr-2.5 size-[35px] rounded-full" /> : <RandomAvatar className="mr-2.5 size-[35px] rounded-full" />}
 
                                   {four.url ? (
-                                    <a href={four.url} className="name active text-primary!" target="_blank" rel="noopener noreferrer">
+                                    <a href={four.url} className="mr-4 text-[15px] text-primary" target="_blank" rel="noopener noreferrer">
                                       {four.name}
                                     </a>
                                   ) : (
-                                    <span className="name">{four.name}</span>
+                                    <span className="mr-4 text-[15px] text-[#444] dark:text-white">{four.name}</span>
                                   )}
 
-                                  <span className="time">{dayjs(+four.createTime).format('YYYY-MM-DD HH:mm')}</span>
+                                  <span className="text-xs text-[#8599ab] dark:text-[#8c9ab1]">{dayjs(+four.createTime).format('YYYY-MM-DD HH:mm')}</span>
 
-                                  <div className="reply" onClick={() => replyComment(four.id!, four.name)}>
+                                  <div
+                                    className="absolute -right-[15%] cursor-pointer rounded-[30px] bg-primary px-2.5 py-1 text-xl text-white transition-[right] duration-300 group-hover/item:right-[2%]"
+                                    onClick={() => replyComment(four.id!, four.name)}
+                                  >
                                     <RiMessage3Line />
                                   </div>
                                 </div>
 
-                                <div className="comment_main">
+                                <div className="my-2.5 break-words text-[15px] text-[#666] dark:text-[#cdcdcd] [&_a]:text-primary">
                                   <Link href="#">@{three.name}：</Link>
                                   <span>{four.content}</span>
                                 </div>
                               </div>
 
                               {four.children?.map((five) => (
-                                <div key={five.id} className="comment_user_three ml-5! sm:ml-12!">
-                                  <div className="comment_user_three_info">
-                                    {five.avatar ? <img src={five.avatar} alt="" className="avatar" /> : <RandomAvatar className="avatar" />}
+                                <div key={five.id} className="ml-5 mt-5 sm:ml-12">
+                                  <div className="flex items-center">
+                                    {five.avatar ? <img src={five.avatar} alt="" className="mr-2.5 size-[35px] rounded-full" /> : <RandomAvatar className="mr-2.5 size-[35px] rounded-full" />}
 
                                     {five.url ? (
-                                      <a href={five.url} className="name active text-primary!" target="_blank" rel="noopener noreferrer">
+                                      <a href={five.url} className="mr-4 text-[15px] text-primary" target="_blank" rel="noopener noreferrer">
                                         {five.name}
                                       </a>
                                     ) : (
-                                      <span className="name">{five.name}</span>
+                                      <span className="mr-4 text-[15px] text-[#444] dark:text-white">{five.name}</span>
                                     )}
 
-                                    <span className="time">{dayjs(+five.createTime).format('YYYY-MM-DD HH:mm')}</span>
+                                    <span className="text-xs text-[#8599ab] dark:text-[#8c9ab1]">{dayjs(+five.createTime).format('YYYY-MM-DD HH:mm')}</span>
 
-                                    <div className="reply" onClick={() => replyComment(five.id!, five.name)}>
+                                    <div
+                                      className="absolute -right-[15%] cursor-pointer rounded-[30px] bg-primary px-2.5 py-1 text-xl text-white transition-[right] duration-300 group-hover/item:right-[2%]"
+                                      onClick={() => replyComment(five.id!, five.name)}
+                                    >
                                       <RiMessage3Line />
                                     </div>
                                   </div>
 
-                                  <div className="comment_main">
+                                  <div className="my-2.5 break-words text-[15px] text-[#666] dark:text-[#cdcdcd] [&_a]:text-primary">
                                     <Link href="#">@{four.name}：</Link>
                                     <span>{five.content}</span>
                                   </div>
@@ -187,7 +202,11 @@ const CommentList = forwardRef(({ id, reply }: Props, ref) => {
         </ul>
       </Show>
 
-      {!data.result?.length ? <Empty info="评论列表为空~"></Empty> : <ClientPagination showControls total={data.pages} page={page} onChange={onPaginateChange} className="mt-2 flex justify-center" />}
+      {!data.result?.length ? (
+        <Empty info="评论列表为空~"></Empty>
+      ) : (
+        <ClientPagination showControls total={data.pages} page={page} onChange={onPaginateChange} className="mt-2 flex justify-center" />
+      )}
     </div>
   );
 });

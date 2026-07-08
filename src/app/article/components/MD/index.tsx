@@ -1,12 +1,11 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import ReactMarkdown, { type Components } from 'react-markdown';
 import type { TocHeading } from '@/utils/article';
 import { useConfigStore } from '@/stores';
-import { PhotoProvider, PhotoView } from 'react-photo-view';
+import PhotoPreview, { type PhotoItem } from '@/ThriveUI/PhotoPreview';
 import { ToastContainer, toast } from 'react-toastify';
-import 'react-photo-view/dist/react-photo-view.css';
 import 'react-toastify/dist/ReactToastify.css';
 import 'katex/dist/katex.min.css';
 import remarkGfm from 'remark-gfm';
@@ -41,53 +40,89 @@ function createHeadingComponents(headings: TocHeading[], indexRef: React.Mutable
   };
 }
 
-function MarkdownImage({ alt, src, className, ...props }: React.ImgHTMLAttributes<HTMLImageElement>) {
+function extractMarkdownImages(content: string): string[] {
+  const urls: string[] = [];
+  const markdownPattern = /!\[[^\]]*]\(([^)]+)\)/g;
+  let match: RegExpExecArray | null;
+  while ((match = markdownPattern.exec(content)) !== null) {
+    urls.push(match[1]);
+  }
+  const htmlPattern = /<img[^>]+src=["']([^"']+)["']/gi;
+  while ((match = htmlPattern.exec(content)) !== null) {
+    if (!urls.includes(match[1])) urls.push(match[1]);
+  }
+  return urls;
+}
+
+function MarkdownImage({
+  alt,
+  src,
+  className,
+  onPreview,
+}: React.ImgHTMLAttributes<HTMLImageElement> & { onPreview?: (src: string) => void }) {
   const imgRef = useRef<HTMLImageElement>(null);
+  const [loaded, setLoaded] = useState(false);
   const imageSrc = typeof src === 'string' ? src : undefined;
 
   useEffect(() => {
-    const img = imgRef.current;
-    if (!img) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setTimeout(() => {
-              img.style.filter = 'blur(0px)';
-            }, 400);
-            observer.unobserve(img);
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
-
-    observer.observe(img);
-
-    return () => {
-      observer.unobserve(img);
-    };
-  }, []);
+    if (imgRef.current?.complete) setLoaded(true);
+  }, [imageSrc]);
 
   return (
-    <PhotoView src={imageSrc || ''}>
-      <span className="flex justify-center my-4 dark:brightness-90">
-        <img ref={imgRef} alt={alt} src={imageSrc} className={className ?? 'max-h-[500px]'} {...props} />
-      </span>
-    </PhotoView>
+    <span className="flex justify-center my-4 dark:brightness-90">
+      <img
+        ref={imgRef}
+        alt={alt}
+        src={imageSrc}
+        className={`${className ?? 'max-h-[500px]'} ${loaded ? '' : 'markdown-img--loading'}`}
+        onLoad={() => setLoaded(true)}
+        onClick={() => imageSrc && onPreview?.(imageSrc)}
+      />
+    </span>
   );
 }
 
 const ContentMD = ({ data, headings = [] }: Props) => {
   const { isDark } = useConfigStore();
   const [isClient, setIsClient] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewIndex, setPreviewIndex] = useState(0);
   const headingIndexRef = useRef(0);
+
+  const photos = useMemo<PhotoItem[]>(
+    () => extractMarkdownImages(data).map((url, i) => ({ id: `${i}`, url, alt: `图片-${i + 1}` })),
+    [data],
+  );
+
+  const openPreview = (src: string) => {
+    const index = photos.findIndex((photo) => photo.url === src);
+    setPreviewIndex(index >= 0 ? index : 0);
+    setPreviewOpen(true);
+  };
 
   const headingComponents = createHeadingComponents(headings, headingIndexRef);
 
   useEffect(() => {
     setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isClient) return;
+
+    const imgs = document.querySelectorAll<HTMLImageElement>('.ContentMdComponent .markdown-body img:not([data-blur-ready])');
+    imgs.forEach((img) => {
+      img.dataset.blurReady = 'true';
+      const reveal = () => img.classList.remove('markdown-img--loading');
+      if (img.complete) reveal();
+      else {
+        img.classList.add('markdown-img--loading');
+        img.addEventListener('load', reveal, { once: true });
+      }
+    });
+  }, [data, isClient]);
+
+  useEffect(() => {
+    if (!isClient) return;
 
     document.body.style.backgroundColor = isDark ? '#0f0f0f' : '#fff';
 
@@ -110,7 +145,7 @@ const ContentMD = ({ data, headings = [] }: Props) => {
         waves[3].style.fill = 'rgba(249, 249, 249)';
       }
     };
-  }, [isDark]);
+  }, [isDark, isClient]);
 
   if (!isClient) {
     return (
@@ -212,7 +247,7 @@ const ContentMD = ({ data, headings = [] }: Props) => {
 
   // 图片渲染支持懒加载和点击大图预览
   const renderers: Partial<Components> = {
-    img: MarkdownImage,
+    img: (props) => <MarkdownImage {...props} onPreview={openPreview} />,
     a: ({ href, children }: { href?: string; children?: React.ReactNode }) => {
       if (children === 'douyin-video' && href) {
         const videoId = href.split('/').pop();
@@ -245,17 +280,25 @@ const ContentMD = ({ data, headings = [] }: Props) => {
   headingIndexRef.current = 0;
 
   return (
-    <div className="ContentMdComponent">
-      <ToastContainer autoClose={1000} hideProgressBar />
+    <>
+      <div className="ContentMdComponent">
+        <ToastContainer autoClose={1000} hideProgressBar />
 
-      <PhotoProvider>
         <div className="content markdown-body">
           <ReactMarkdown components={{ ...renderers, ...headingComponents }} remarkPlugins={[[remarkGfm, { singleTilde: false }], remarkMath, remarkMark]} rehypePlugins={[rehypeRaw, rehypeKatex, rehypeCallouts, rehypeSemanticBlockquotes]}>
             {data}
           </ReactMarkdown>
         </div>
-      </PhotoProvider>
-    </div>
+      </div>
+
+      <PhotoPreview
+        open={previewOpen}
+        photos={photos}
+        index={previewIndex}
+        onClose={() => setPreviewOpen(false)}
+        onIndexChange={setPreviewIndex}
+      />
+    </>
   );
 };
 

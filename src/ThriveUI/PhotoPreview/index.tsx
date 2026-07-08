@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   FiChevronLeft,
   FiChevronRight,
@@ -26,6 +26,11 @@ type PhotoPreviewProps = {
   onIndexChange?: (index: number) => void;
 };
 
+function preloadImage(url: string) {
+  const img = new Image();
+  img.src = url;
+}
+
 export default function PhotoPreview({
   open,
   photos,
@@ -35,37 +40,47 @@ export default function PhotoPreview({
 }: PhotoPreviewProps) {
   const [rotation, setRotation] = useState(0);
   const [scale, setScale] = useState(1);
-  const [switching, setSwitching] = useState(false);
 
   const activeIndex = Math.min(Math.max(index, 0), Math.max(photos.length - 1, 0));
   const activePhoto = photos[activeIndex];
   const hasMultiple = photos.length > 1;
 
-  const setIndex = (next: number) => {
-    onIndexChange?.((next + photos.length) % photos.length);
-  };
+  const setIndex = useCallback(
+    (next: number) => {
+      onIndexChange?.((next + photos.length) % photos.length);
+    },
+    [onIndexChange, photos.length],
+  );
 
-  const goPrev = () => {
+  const goPrev = useCallback(() => {
     if (!hasMultiple) return;
-    setSwitching(true);
-    window.setTimeout(() => {
-      setIndex(activeIndex - 1);
-      setRotation(0);
-      setScale(1);
-      setSwitching(false);
-    }, 180);
-  };
+    setRotation(0);
+    setScale(1);
+    setIndex(activeIndex - 1);
+  }, [activeIndex, hasMultiple, setIndex]);
 
-  const goNext = () => {
+  const goNext = useCallback(() => {
     if (!hasMultiple) return;
-    setSwitching(true);
-    window.setTimeout(() => {
-      setIndex(activeIndex + 1);
-      setRotation(0);
-      setScale(1);
-      setSwitching(false);
-    }, 180);
-  };
+    setRotation(0);
+    setScale(1);
+    setIndex(activeIndex + 1);
+  }, [activeIndex, hasMultiple, setIndex]);
+
+  useEffect(() => {
+    if (!open) return;
+    photos.forEach((photo) => preloadImage(photo.url));
+  }, [open, photos]);
+
+  useEffect(() => {
+    if (!open || !hasMultiple) return;
+    preloadImage(photos[(activeIndex + 1) % photos.length].url);
+    preloadImage(photos[(activeIndex - 1 + photos.length) % photos.length].url);
+  }, [open, activeIndex, hasMultiple, photos]);
+
+  useEffect(() => {
+    setRotation(0);
+    setScale(1);
+  }, [activeIndex, open]);
 
   useEffect(() => {
     if (!open) return;
@@ -143,16 +158,12 @@ export default function PhotoPreview({
       <div
         onWheel={onImageWheel}
         onClick={(e) => e.stopPropagation()}
-        className="relative z-2 flex h-[min(640px,calc(100vh-180px))] w-[min(760px,calc(100vw-130px))] items-center justify-center transition-[opacity,transform] duration-180 ease-out"
-        style={{
-          opacity: switching ? 0 : 1,
-          transform: switching ? 'scale(0.96)' : 'scale(1)',
-        }}
+        className="relative z-2 flex h-[min(640px,calc(100vh-180px))] w-[min(760px,calc(100vw-130px))] items-center justify-center"
       >
         <img
           src={activePhoto.url}
           alt={activePhoto.alt || ''}
-          className="h-full w-full select-none object-contain transition-transform duration-200 ease-out"
+          className="h-full w-full select-none object-contain"
           style={{ transform: `rotate(${rotation}deg) scale(${scale})` }}
           draggable={false}
         />

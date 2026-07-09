@@ -1,0 +1,508 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Mono:wght@300;400;500&family=Noto+Serif+SC:wght@200;300;400;600;700&display=swap');
+
+.milestone-page {
+  font-family: 'Noto Serif SC', serif;
+  background: #06060f;
+  color: #e8e4dc;
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+}
+
+.milestone-page ::selection {
+  background: rgba(232, 160, 48, 0.3);
+  color: #fff;
+}
+
+.milestone-page .bg-mesh {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 600px 500px at 10% 25%, rgba(88, 40, 160, 0.3) 0%, transparent 70%),
+    radial-gradient(ellipse 500px 600px at 90% 75%, rgba(20, 60, 140, 0.2) 0%, transparent 70%),
+    radial-gradient(ellipse 400px 400px at 55% 45%, rgba(160, 90, 30, 0.08) 0%, transparent 70%),
+    linear-gradient(180deg, #06060f 0%, #0a0a1a 50%, #06060f 100%);
+}
+
+.milestone-page .orb {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.2;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.milestone-page .orb-1 {
+  width: 350px;
+  height: 350px;
+  background: rgba(100, 50, 200, 0.5);
+  top: -80px;
+  left: -100px;
+  animation: milestone-drift1 30s infinite ease-in-out;
+}
+
+.milestone-page .orb-2 {
+  width: 280px;
+  height: 280px;
+  background: rgba(30, 70, 180, 0.4);
+  bottom: -60px;
+  right: -40px;
+  animation: milestone-drift2 25s infinite ease-in-out;
+}
+
+.milestone-page .orb-3 {
+  width: 200px;
+  height: 200px;
+  background: rgba(200, 120, 40, 0.25);
+  top: 35%;
+  left: 55%;
+  animation: milestone-drift3 35s infinite ease-in-out;
+}
+
+@keyframes milestone-drift1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(80px, 50px) scale(1.1); }
+  66% { transform: translate(-40px, 80px) scale(0.9); }
+}
+
+@keyframes milestone-drift2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(-60px, -30px) scale(1.1); }
+  66% { transform: translate(50px, -60px) scale(0.95); }
+}
+
+@keyframes milestone-drift3 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-100px, 50px) scale(1.15); }
+}
+
+.milestone-page .vignette {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 50% 50%, transparent 35%, rgba(0, 0, 0, 0.45) 100%);
+}
+
+.milestone-page .grain {
+  position: fixed;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 200px;
+}
+
+.milestone-page .stars {
+  position: fixed;
+  width: 1px;
+  height: 1px;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 1;
+  animation: milestone-twinkle 5s infinite alternate ease-in-out;
+}
+
+@keyframes milestone-twinkle {
+  0% { opacity: 0.35; }
+  100% { opacity: 1; }
+}
+
+.milestone-page .scroll-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow-x: auto;
+  overflow-y: hidden;
+  cursor: grab;
+  z-index: 10;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.milestone-page .scroll-container::-webkit-scrollbar {
+  display: none;
+}
+
+.milestone-page .scroll-container.is-dragging {
+  cursor: grabbing;
+}
+
+.milestone-page .timeline-track {
+  position: relative;
+  height: 100vh;
+  min-height: 600px;
+}
+
+.milestone-page .wave-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.milestone-page .wave-glow {
+  fill: none;
+  stroke: rgba(232, 160, 48, 0.04);
+  stroke-width: 50;
+  stroke-linecap: round;
+}
+
+.milestone-page .wave-main {
+  fill: none;
+  stroke: url(#waveGrad);
+  stroke-width: 2;
+  stroke-linecap: round;
+  filter: url(#glow);
+  stroke-dasharray: 6000;
+  stroke-dashoffset: 6000;
+  animation: milestone-draw-wave 3s cubic-bezier(0.4, 0, 0.2, 1) forwards 0.5s;
+}
+
+.milestone-page .wave-echo {
+  fill: none;
+  stroke: rgba(232, 160, 48, 0.06);
+  stroke-width: 1;
+  stroke-linecap: round;
+  stroke-dasharray: 6000;
+  stroke-dashoffset: 6000;
+  animation: milestone-draw-wave 3s cubic-bezier(0.4, 0, 0.2, 1) forwards 0.7s;
+}
+
+@keyframes milestone-draw-wave {
+  to { stroke-dashoffset: 0; }
+}
+
+.milestone-page .timeline-dot {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  z-index: 20;
+  opacity: 0;
+  animation: milestone-dot-pop 0.5s ease forwards;
+}
+
+.milestone-page .dot-core {
+  width: 12px;
+  height: 12px;
+  background: linear-gradient(135deg, #f0c060, #d89828);
+  border-radius: 50%;
+  box-shadow: 0 0 15px rgba(232, 160, 48, 0.5), 0 0 30px rgba(232, 160, 48, 0.15);
+}
+
+.milestone-page .dot-ring {
+  position: absolute;
+  inset: -8px;
+  border: 1.5px solid rgba(232, 160, 48, 0.2);
+  border-radius: 50%;
+  animation: milestone-ring-pulse 3s infinite ease-out;
+}
+
+.milestone-page .dot-ring-outer {
+  position: absolute;
+  inset: -16px;
+  border: 1px solid rgba(232, 160, 48, 0.08);
+  border-radius: 50%;
+  animation: milestone-ring-pulse 3s infinite ease-out 1.2s;
+}
+
+@keyframes milestone-dot-pop {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(0); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+@keyframes milestone-ring-pulse {
+  0% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(2.8); opacity: 0; }
+}
+
+.milestone-page .year-label {
+  position: absolute;
+  font-family: 'Playfair Display', serif;
+  font-size: 64px;
+  font-style: italic;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.025);
+  pointer-events: none;
+  user-select: none;
+  z-index: 5;
+  transform: translate(-50%, -50%);
+}
+
+.milestone-page .connector {
+  position: absolute;
+  width: 1px;
+  z-index: 15;
+  opacity: 0;
+  animation: milestone-conn-in 0.6s ease forwards;
+  transform-origin: top;
+}
+
+.milestone-page .connector.from-above {
+  background: linear-gradient(to top, rgba(232, 160, 48, 0.4), rgba(232, 160, 48, 0.02));
+}
+
+.milestone-page .connector.from-below {
+  background: linear-gradient(to bottom, rgba(232, 160, 48, 0.4), rgba(232, 160, 48, 0.02));
+}
+
+@keyframes milestone-conn-in {
+  from { opacity: 0; transform: scaleY(0); }
+  to { opacity: 1; transform: scaleY(1); }
+}
+
+.milestone-page .glass-card {
+  position: absolute;
+  width: 300px;
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(24px) saturate(1.2);
+  -webkit-backdrop-filter: blur(24px) saturate(1.2);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 16px;
+  overflow: hidden;
+  opacity: 0;
+  z-index: 25;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.4s ease, box-shadow 0.4s ease;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.milestone-page .glass-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 15%;
+  right: 15%;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.15), transparent);
+  z-index: 50;
+}
+
+.milestone-page .glass-card.visible {
+  opacity: 1;
+}
+
+.milestone-page .glass-card:hover {
+  transform: translateY(-8px) scale(1.02) !important;
+  border-color: rgba(255, 255, 255, 0.14);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4), 0 0 40px rgba(232, 160, 48, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.milestone-page .card-image-wrap {
+  position: relative;
+  overflow: hidden;
+}
+
+.milestone-page .card-image-wrap::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(to top, rgba(6, 6, 15, 0.7), transparent);
+  pointer-events: none;
+}
+
+.milestone-page .card-image {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  display: block;
+  background: linear-gradient(135deg, rgba(50, 30, 80, 0.4), rgba(30, 40, 70, 0.4));
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.milestone-page .card-image-count {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  z-index: 2;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  padding: 2px 8px;
+  background: rgba(6, 6, 15, 0.55);
+  color: rgba(255, 255, 255, 0.86);
+  font-size: 11px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.milestone-page .glass-card:hover .card-image {
+  transform: scale(1.06);
+}
+
+.milestone-page .card-body {
+  padding: 14px 16px 12px;
+}
+
+.milestone-page .card-date {
+  font-family: 'DM Mono', monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  color: rgba(232, 160, 48, 0.65);
+  margin-bottom: 5px;
+}
+
+.milestone-page .card-title {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.35;
+  margin-bottom: 6px;
+  color: #f0ece4;
+}
+
+.milestone-page .card-desc {
+  font-size: 12px;
+  line-height: 1.75;
+  color: rgba(228, 224, 216, 0.5);
+  margin-bottom: 10px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.milestone-page .card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.milestone-page .card-tags {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.milestone-page .tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 9.5px;
+  padding: 2px 7px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.4);
+  letter-spacing: 0.05em;
+}
+
+.milestone-page .glass-card.slide-down {
+  animation: milestone-slide-down 0.7s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.milestone-page .glass-card.slide-up {
+  animation: milestone-slide-up 0.7s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes milestone-slide-down {
+  from { opacity: 0; transform: translateY(-30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes milestone-slide-up {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.milestone-page .page-header {
+  position: fixed;
+  top: 28px;
+  left: 36px;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  animation: milestone-fade-in 1s ease forwards 0.3s;
+}
+
+.milestone-page .page-header h1 {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 26px;
+  font-weight: 700;
+  color: #f0ece4;
+  letter-spacing: 0.06em;
+}
+
+.milestone-page .page-header .sub {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: rgba(232, 160, 48, 0.4);
+  letter-spacing: 0.15em;
+  margin-top: 6px;
+}
+
+.milestone-page .page-header .line {
+  width: 36px;
+  height: 1px;
+  background: linear-gradient(to right, rgba(232, 160, 48, 0.4), transparent);
+  margin-top: 10px;
+}
+
+.milestone-page .scroll-hint {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'DM Mono', monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.15em;
+  color: rgba(255, 255, 255, 0.2);
+  transition: opacity 1s ease;
+}
+
+.milestone-page .scroll-hint .arr {
+  animation: milestone-hint-slide 2s infinite ease-in-out;
+}
+
+.milestone-page .scroll-hint.hidden {
+  opacity: 0;
+}
+
+@keyframes milestone-hint-slide {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(5px); }
+}
+
+@keyframes milestone-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.milestone-page .empty-state {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.35);
+  letter-spacing: 0.1em;
+}
+
+@media (max-height: 780px) {
+  .milestone-page .card-image {
+    height: 115px;
+  }
+
+  .milestone-page .card-body {
+    padding: 10px 14px;
+  }
+
+  .milestone-page .card-title {
+    font-size: 14px;
+  }
+}

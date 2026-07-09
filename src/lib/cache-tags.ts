@@ -11,6 +11,7 @@ export const CACHE_TAGS = {
   webs: 'webs',
   comments: 'comments',
   footprints: 'footprints',
+  milestones: 'milestones',
   rss: 'rss',
 } as const;
 

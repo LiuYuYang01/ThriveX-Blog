@@ -1,10 +1,9 @@
 import Image from 'next/image';
-import IconCloud from '@/app/my/components/IconCloud';
 import StudySvg from '@/assets/svg/other/study.svg';
 import SidebarCard from '@/components/Sidebar/SidebarCard';
+import IconCloudClient from '@/components/Sidebar/Study/components/IconCloudClient';
 import { getPageConfigCacheAPI } from '@/lib/config';
 import { MyData } from '@/types/app/my';
-
 export default async () => {
   const { data } = await getPageConfigCacheAPI('my');
   const { technology_stack } = data?.value as MyData;
@@ -14,7 +13,7 @@ export default async () => {
       title={<><Image src={StudySvg} alt="学无止境" width={33} height={23} className="mr-2" /> 学无止境</>}
       contentClassName="mt-4 flex justify-center"
     >
-      <IconCloud iconSlugs={technology_stack ?? []} />
+      <IconCloudClient iconSlugs={technology_stack ?? []} />
     </SidebarCard>
   );
 };

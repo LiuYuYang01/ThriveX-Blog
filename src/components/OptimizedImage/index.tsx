@@ -52,7 +52,7 @@ export default function OptimizedImage({
   }
 
   if (fill) {
-    return <Image src={normalizedSrc} alt={alt} fill className={className} priority={priority} sizes={sizes} style={style} onError={onError} />;
+    return <Image src={normalizedSrc} alt={alt} fill className={className} priority={priority} sizes={sizes} style={style} onError={onError} suppressHydrationWarning />;
   }
 
   return (
@@ -66,6 +66,7 @@ export default function OptimizedImage({
       sizes={sizes}
       style={style}
       onError={onError}
+      suppressHydrationWarning
     />
   );
 }

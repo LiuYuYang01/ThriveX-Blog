@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { useAppConfig } from '@/components/AppConfigProvider';
 import { motion, useMotionValue, useTransform, animate, useInView } from 'framer-motion';
 import TimerSvg from '@/assets/svg/other/timer.svg';
+import useMounted from '@/hooks/useMounted';
 import SidebarCard from '@/components/Sidebar/SidebarCard';
 
 const AnimatedNumber = ({
@@ -40,6 +41,16 @@ const AnimatedNumber = ({
 };
 
 const AnimatedAlarmClock = () => {
+  const mounted = useMounted();
+
+  if (!mounted) {
+    return <div className="relative shrink-0 w-[72px] h-[78px]" aria-hidden />;
+  }
+
+  return <AnimatedAlarmClockInner />;
+};
+
+const AnimatedAlarmClockInner = () => {
   const [now, setNow] = useState(() => new Date());
 
   useEffect(() => {

@@ -7,7 +7,7 @@ import { getRandomArticleListAPI } from '@/api/article';
 import { useAppConfig } from '@/components/AppConfigProvider';
 import CoverImage from '@/components/CoverImage';
 import { Article } from '@/types/app/article';
-import { getRandomImage } from '@/utils';
+import { getStableImage } from '@/utils';
 import RandomArticleSvg from '@/assets/svg/other/article.svg';
 
 const RandomArticle = () => {
@@ -42,7 +42,7 @@ const RandomArticle = () => {
         >
           <div className="flex gap-4 pb-1 min-w-min">
             {list.map((item) => {
-              const coverUrl = getRandomImage(item.cover, theme.covers);
+              const coverUrl = getStableImage(item.cover, theme.covers, String(item.id));
               return (
                 <Link
                   key={item.id}

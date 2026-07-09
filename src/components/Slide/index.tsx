@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import { ReactNode } from 'react';
 import Ripple from '@/components/Ripple';
-import { getRandomImage } from '@/utils';
+import { getStableImage } from '@/utils';
 
 interface Props {
   src?: string;
@@ -18,7 +18,7 @@ interface Props {
  * 首页 / 文章 Hero 背景幻灯片，本地/远程封面图统一走 next/image fill 优化
  */
 export default ({ src, covers = [], isRipple = true, fullImage = false, priority = false, children }: Props) => {
-  const fallbackImage = getRandomImage(undefined, covers);
+  const fallbackImage = getStableImage(undefined, covers, 'home-hero');
   const bgImage = src?.trim() || fallbackImage;
 
   const containerClass = fullImage
@@ -36,6 +36,7 @@ export default ({ src, covers = [], isRipple = true, fullImage = false, priority
             priority={priority}
             sizes="100vw"
             className="object-cover object-center"
+            suppressHydrationWarning
           />
         )}
 

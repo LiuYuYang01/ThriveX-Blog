@@ -28,7 +28,7 @@ export default function CoverImage({
 
   return (
     <div className={`${containerClassName} overflow-hidden`} style={containerStyle}>
-      <Image src={src} alt={alt} fill className={className} priority={priority} sizes={sizes} />
+      <Image src={src} alt={alt} fill className={className} priority={priority} sizes={sizes} suppressHydrationWarning />
     </div>
   );
 }

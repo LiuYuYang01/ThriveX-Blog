@@ -33,9 +33,11 @@ const Author = async ({ social = [] }: { social?: Social[] }) => {
 
   return (
     <div className="panel relative flex flex-col items-center pt-16 bg-white dark:bg-black-b w-full h-[350px] mb-3 overflow-hidden">
-      <div className="absolute top-0 left-0 w-full h-[35%]">
-        <Image src={avatarBg} alt="" fill className="object-cover" sizes="300px" />
-      </div>
+      <div
+        className="absolute top-0 left-0 w-full h-[35%] bg-cover bg-center"
+        style={{ backgroundImage: `url(${avatarBg.src})` }}
+        aria-hidden
+      />
 
       {/* 作者头像 */}
       <div className="avatar relative z-10 flex justify-center items-center w-[90px] h-[90px] rounded-full bg-white shadow-md overflow-hidden">

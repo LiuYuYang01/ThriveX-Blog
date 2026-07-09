@@ -47,7 +47,7 @@ export default ({ data, className }: { data: SwiperType[]; className?: string })
         </div>
 
         {data?.map((item, index) => (
-          <div key={index} className={`absolute top-0 left-0 w-full h-full ${index === current ? 'opacity-100' : 'opacity-0'} transition-opacity`}>
+          <div key={item.id ?? `${item.url}-${index}`} className={`absolute top-0 left-0 w-full h-full ${index === current ? 'opacity-100' : 'opacity-0'} transition-opacity`}>
             <OptimizedImage src={item.image} alt={item.title} fill className="object-cover" sizes="(max-width: 768px) 100vw, 1200px" />
 
             <div className="flex flex-col absolute bottom-6 left-5 sm:bottom-8 sm:left-8 z-10 gap-3 animation_bottom max-w-[calc(100%-2.5rem)]">

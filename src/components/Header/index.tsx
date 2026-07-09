@@ -20,6 +20,7 @@ import { getCateListAPI } from '@/api/cate';
 import { getCateNavHref, getCateNavRel, getCateNavTarget } from '@/utils/cateNav';
 
 import { useConfigStore } from '@/stores';
+import useMounted from '@/hooks/useMounted';
 
 const submenuPanelClass =
   'invisible opacity-0 scale-[0.98] pointer-events-none group-hover/one:visible group-hover/one:opacity-100 group-hover/one:scale-100 group-hover/one:pointer-events-auto transition-[opacity,scale,visibility] duration-200 ease-out absolute left-0 top-[calc(100%-4px)] z-10 pt-0.5 min-w-full w-max max-w-[220px] overflow-hidden rounded-md before:absolute before:inset-x-0 before:-top-1 before:h-1 before:content-[""]';
@@ -31,6 +32,7 @@ export default ({ theme }: { theme: Theme }) => {
   const patchName = usePathname();
 
   const { isDark, setIsDark } = useConfigStore();
+  const mounted = useMounted();
 
   // 这些路径段不需要改变导航样式
   const isPathSty = ['/my', '/wall', '/record', '/equipment', '/tags', '/resume', '/album', '/fishpond', '/friend'].some((path) => patchName.includes(path));
@@ -85,7 +87,13 @@ export default ({ theme }: { theme: Theme }) => {
   // 是否打开侧边栏导航
   const [isOpenSidebarNav, setIsOpenSidebarNav] = useState(false);
 
-  const logoSrc = isDark ? theme?.dark_logo : isPathSty || isScrolled ? theme?.light_logo : theme?.dark_logo;
+  const logoSrc = !mounted
+    ? theme?.dark_logo || theme?.light_logo || ''
+    : isDark
+      ? theme?.dark_logo
+      : isPathSty || isScrolled
+        ? theme?.light_logo
+        : theme?.dark_logo;
 
   return (
     <>

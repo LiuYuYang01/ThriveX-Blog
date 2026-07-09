@@ -21,11 +21,7 @@
   position: fixed;
   inset: 0;
   z-index: 0;
-  background:
-    radial-gradient(ellipse 600px 500px at 10% 25%, rgba(88, 40, 160, 0.3) 0%, transparent 70%),
-    radial-gradient(ellipse 500px 600px at 90% 75%, rgba(20, 60, 140, 0.2) 0%, transparent 70%),
-    radial-gradient(ellipse 400px 400px at 55% 45%, rgba(160, 90, 30, 0.08) 0%, transparent 70%),
-    linear-gradient(180deg, #06060f 0%, #0a0a1a 50%, #06060f 100%);
+  background: radial-gradient(ellipse 600px 500px at 10% 25%, rgba(88, 40, 160, 0.3) 0%, transparent 70%), radial-gradient(ellipse 500px 600px at 90% 75%, rgba(20, 60, 140, 0.2) 0%, transparent 70%), radial-gradient(ellipse 400px 400px at 55% 45%, rgba(160, 90, 30, 0.08) 0%, transparent 70%), linear-gradient(180deg, #06060f 0%, #0a0a1a 50%, #06060f 100%);
 }
 
 .milestone-page .orb {
@@ -65,20 +61,39 @@
 }
 
 @keyframes milestone-drift1 {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  33% { transform: translate(80px, 50px) scale(1.1); }
-  66% { transform: translate(-40px, 80px) scale(0.9); }
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(80px, 50px) scale(1.1);
+  }
+  66% {
+    transform: translate(-40px, 80px) scale(0.9);
+  }
 }
 
 @keyframes milestone-drift2 {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  33% { transform: translate(-60px, -30px) scale(1.1); }
-  66% { transform: translate(50px, -60px) scale(0.95); }
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(-60px, -30px) scale(1.1);
+  }
+  66% {
+    transform: translate(50px, -60px) scale(0.95);
+  }
 }
 
 @keyframes milestone-drift3 {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(-100px, 50px) scale(1.15); }
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(-100px, 50px) scale(1.15);
+  }
 }
 
 .milestone-page .vignette {
@@ -109,11 +124,51 @@
   pointer-events: none;
   z-index: 1;
   animation: milestone-twinkle 5s infinite alternate ease-in-out;
+  will-change: transform;
+}
+
+.milestone-page .stars-near {
+  z-index: 4;
+  opacity: 0.7;
+  filter: drop-shadow(0 0 6px rgba(232, 160, 48, 0.45));
+  animation-duration: 3.5s;
+}
+
+.milestone-page .aurora-ribbon {
+  position: fixed;
+  top: 18%;
+  left: -12vw;
+  width: 135vw;
+  height: 42vh;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0.28;
+  filter: blur(24px);
+  background: linear-gradient(105deg, transparent 6%, rgba(232, 160, 48, 0.12) 28%, transparent 48%), linear-gradient(78deg, transparent 18%, rgba(92, 118, 255, 0.14) 45%, transparent 70%);
+  transform: rotate(-8deg);
+  animation: milestone-aurora-flow 12s infinite ease-in-out;
+  will-change: transform;
 }
 
 @keyframes milestone-twinkle {
-  0% { opacity: 0.35; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 0.35;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes milestone-aurora-flow {
+  0%,
+  100% {
+    opacity: 0.18;
+    filter: blur(28px);
+  }
+  50% {
+    opacity: 0.34;
+    filter: blur(20px);
+  }
 }
 
 .milestone-page .scroll-container {
@@ -178,8 +233,39 @@
   animation: milestone-draw-wave 3s cubic-bezier(0.4, 0, 0.2, 1) forwards 0.7s;
 }
 
+.milestone-page .wave-comet {
+  fill: none;
+  stroke: rgba(255, 236, 170, 0.88);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 90 6200;
+  stroke-dashoffset: 0;
+  filter: url(#glow);
+  opacity: 0;
+  animation:
+    milestone-draw-wave 3s cubic-bezier(0.4, 0, 0.2, 1) forwards 0.9s,
+    milestone-comet-run 7s linear infinite 3.2s;
+}
+
 @keyframes milestone-draw-wave {
-  to { stroke-dashoffset: 0; }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes milestone-comet-run {
+  0% {
+    opacity: 0;
+    stroke-dashoffset: 0;
+  }
+  8%,
+  72% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    stroke-dashoffset: -6200;
+  }
 }
 
 .milestone-page .timeline-dot {
@@ -190,12 +276,35 @@
   animation: milestone-dot-pop 0.5s ease forwards;
 }
 
+.milestone-page .node-index {
+  position: absolute;
+  left: 18px;
+  top: -28px;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: rgba(255, 236, 170, 0.5);
+  text-shadow: 0 0 20px rgba(232, 160, 48, 0.55);
+}
+
+.milestone-page .dot-orbit {
+  position: absolute;
+  inset: -22px;
+  border-radius: 50%;
+  border: 1px solid rgba(232, 160, 48, 0.18);
+  border-left-color: rgba(255, 236, 170, 0.75);
+  border-bottom-color: transparent;
+  animation: milestone-orbit-spin 6s linear infinite;
+}
+
 .milestone-page .dot-core {
   width: 12px;
   height: 12px;
   background: linear-gradient(135deg, #f0c060, #d89828);
   border-radius: 50%;
-  box-shadow: 0 0 15px rgba(232, 160, 48, 0.5), 0 0 30px rgba(232, 160, 48, 0.15);
+  box-shadow:
+    0 0 15px rgba(232, 160, 48, 0.5),
+    0 0 30px rgba(232, 160, 48, 0.15);
 }
 
 .milestone-page .dot-ring {
@@ -215,13 +324,31 @@
 }
 
 @keyframes milestone-dot-pop {
-  from { opacity: 0; transform: translate(-50%, -50%) scale(0); }
-  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
 }
 
 @keyframes milestone-ring-pulse {
-  0% { transform: scale(1); opacity: 1; }
-  100% { transform: scale(2.8); opacity: 0; }
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2.8);
+    opacity: 0;
+  }
+}
+
+@keyframes milestone-orbit-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .milestone-page .year-label {
@@ -255,23 +382,33 @@
 }
 
 @keyframes milestone-conn-in {
-  from { opacity: 0; transform: scaleY(0); }
-  to { opacity: 1; transform: scaleY(1); }
+  from {
+    opacity: 0;
+    transform: scaleY(0);
+  }
+  to {
+    opacity: 1;
+    transform: scaleY(1);
+  }
 }
 
 .milestone-page .glass-card {
   position: absolute;
   width: 300px;
-  background: rgba(255, 255, 255, 0.04);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.026));
   backdrop-filter: blur(24px) saturate(1.2);
   -webkit-backdrop-filter: blur(24px) saturate(1.2);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 18px;
   overflow: hidden;
   opacity: 0;
   z-index: 25;
-  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.4s ease, box-shadow 0.4s ease;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  transition:
+    transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.4s ease;
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 .milestone-page .glass-card::before {
@@ -285,18 +422,46 @@
   z-index: 50;
 }
 
+.milestone-page .glass-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 45;
+  pointer-events: none;
+  background: linear-gradient(115deg, transparent 24%, rgba(255, 255, 255, 0.16) 45%, transparent 58%);
+  transform: translateX(-130%);
+  transition: transform 0.75s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 .milestone-page .glass-card.visible {
   opacity: 1;
 }
 
 .milestone-page .glass-card:hover {
-  transform: translateY(-8px) scale(1.02) !important;
-  border-color: rgba(255, 255, 255, 0.14);
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4), 0 0 40px rgba(232, 160, 48, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  transform: translateY(-10px) scale(1.025) !important;
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.45),
+    0 0 48px rgba(232, 160, 48, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.milestone-page .glass-card:hover::after {
+  transform: translateX(130%);
 }
 
 .milestone-page .card-image-wrap {
   position: relative;
+  overflow: hidden;
+}
+
+.milestone-page .card-image-btn {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
   overflow: hidden;
 }
 
@@ -309,6 +474,28 @@
   height: 50%;
   background: linear-gradient(to top, rgba(6, 6, 15, 0.7), transparent);
   pointer-events: none;
+}
+
+.milestone-page .preview-mask {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  color: rgba(255, 255, 255, 0.86);
+  background: rgba(6, 6, 15, 0.36);
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 0.35s ease,
+    transform 0.35s ease;
+}
+
+.milestone-page .card-image-btn:hover .preview-mask {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .milestone-page .card-image {
@@ -388,31 +575,69 @@
 }
 
 @keyframes milestone-slide-down {
-  from { opacity: 0; transform: translateY(-30px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes milestone-slide-up {
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .milestone-page .page-header {
   position: fixed;
-  top: 28px;
-  left: 36px;
+  top: 34px;
+  left: 42px;
   z-index: 100;
   pointer-events: none;
   opacity: 0;
   animation: milestone-fade-in 1s ease forwards 0.3s;
+  transition:
+    transform 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.5s ease;
+}
+
+.milestone-page .page-header.compact {
+  opacity: 0.42;
+  transform: translateY(-10px) scale(0.92);
+}
+
+.milestone-page .page-header .eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: rgba(232, 160, 48, 0.58);
+  letter-spacing: 0.32em;
+  margin-bottom: 8px;
 }
 
 .milestone-page .page-header h1 {
   font-family: 'Noto Serif SC', serif;
-  font-size: 26px;
+  font-size: clamp(34px, 5vw, 68px);
   font-weight: 700;
-  color: #f0ece4;
-  letter-spacing: 0.06em;
+  color: #f6efe3;
+  letter-spacing: 0.08em;
+  text-shadow: 0 0 28px rgba(232, 160, 48, 0.22);
+}
+
+.milestone-page .page-header p {
+  max-width: 340px;
+  margin-top: 10px;
+  font-size: 13px;
+  line-height: 1.8;
+  color: rgba(232, 224, 210, 0.46);
+  letter-spacing: 0.08em;
 }
 
 .milestone-page .page-header .sub {
@@ -456,13 +681,22 @@
 }
 
 @keyframes milestone-hint-slide {
-  0%, 100% { transform: translateX(0); }
-  50% { transform: translateX(5px); }
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(5px);
+  }
 }
 
 @keyframes milestone-fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .milestone-page .empty-state {

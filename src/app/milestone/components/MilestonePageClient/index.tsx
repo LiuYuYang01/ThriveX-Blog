@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import PhotoPreview, { type PhotoItem } from '@/ThriveUI/PhotoPreview';
 import type { Milestone } from '@/types/app/milestone';
 
 const SIDE_PAD = 400;
@@ -16,9 +17,7 @@ const WK = (2 * Math.PI) / WAVE_PERIOD;
 const WPHI = Math.PI / 2 - WK * SIDE_PAD;
 
 function formatEventDate(value: number) {
-  return new Date(value)
-    .toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' })
-    .replace(/\//g, '.');
+  return new Date(value).toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/\//g, '.');
 }
 
 function extractYear(value: number) {
@@ -52,30 +51,45 @@ function buildWavePath(totalW: number, centerY: number, offsetY = 0) {
   return d;
 }
 
-function buildStarsShadow() {
+function buildStarsShadow(count = 100, opacity = 0.25) {
   const w = typeof window !== 'undefined' ? window.innerWidth : 1200;
   const h = typeof window !== 'undefined' ? window.innerHeight : 800;
   const shadows: string[] = [];
-  for (let i = 0; i < 100; i++) {
+
+  for (let i = 0; i < count; i++) {
     const ox = Math.round(Math.random() * w);
     const oy = Math.round(Math.random() * h);
-    const op = (Math.random() * 0.25 + 0.05).toFixed(2);
-    shadows.push(`${ox}px ${oy}px 0 1px rgba(255,255,255,${op})`);
+    const op = (Math.random() * opacity + 0.05).toFixed(2);
+    shadows.push(`${ox}px ${oy}px 1px rgba(255,255,255,${op})`);
   }
+
   return shadows.join(',');
 }
 
 export default function MilestonePageClient({ list }: MilestonePageClientProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const starsRef = useRef<HTMLDivElement>(null);
+  const starsNearRef = useRef<HTMLDivElement>(null);
+  const auroraRef = useRef<HTMLDivElement>(null);
   const [viewportH, setViewportH] = useState(800);
   const [hintHidden, setHintHidden] = useState(false);
   const [starsShadow, setStarsShadow] = useState('');
+  const [starsNearShadow, setStarsNearShadow] = useState('');
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewIndex, setPreviewIndex] = useState(0);
   const dragState = useRef({ isDown: false, startX: 0, scrollLeft: 0 });
 
-  const events = useMemo(
-    () => [...list].sort((a, b) => a.eventDate - b.eventDate || a.id - b.id),
-    [list],
+  const events = useMemo(() => [...list].sort((a, b) => a.eventDate - b.eventDate || a.id - b.id), [list]);
+  const previewPhotos = useMemo<PhotoItem[]>(() => events.filter((event) => event.image).map((event) => ({ id: `${event.id}`, url: event.image!, alt: event.title })), [events]);
+
+  const openPreview = useCallback(
+    (id: number) => {
+      const index = previewPhotos.findIndex((photo) => photo.id === `${id}`);
+      if (index < 0) return;
+      setPreviewIndex(index);
+      setPreviewOpen(true);
+    },
+    [previewPhotos],
   );
 
   const centerY = Math.max(viewportH, 600) / 2;
@@ -112,6 +126,7 @@ export default function MilestonePageClient({ list }: MilestonePageClientProps) 
 
   useEffect(() => {
     setStarsShadow(buildStarsShadow());
+    setStarsNearShadow(buildStarsShadow(45, 0.45));
     const onResize = () => setViewportH(Math.max(window.innerHeight, 600));
     onResize();
     window.addEventListener('resize', onResize);
@@ -123,7 +138,7 @@ export default function MilestonePageClient({ list }: MilestonePageClientProps) 
     return () => {
       document.body.style.overflow = '';
     };
-  }, []);
+  }, [previewOpen]);
 
   const onScroll = useCallback(() => {
     const sc = scrollRef.current;
@@ -131,6 +146,12 @@ export default function MilestonePageClient({ list }: MilestonePageClientProps) 
     const sl = sc.scrollLeft;
     if (starsRef.current) {
       starsRef.current.style.transform = `translateX(${-sl * 0.05}px)`;
+    }
+    if (starsNearRef.current) {
+      starsNearRef.current.style.transform = `translateX(${-sl * 0.16}px)`;
+    }
+    if (auroraRef.current) {
+      auroraRef.current.style.transform = `translate3d(${-sl * 0.08}px,0,0) rotate(-8deg)`;
     }
     if (!hintHidden && sl > 60) {
       setHintHidden(true);
@@ -159,6 +180,7 @@ export default function MilestonePageClient({ list }: MilestonePageClientProps) 
       sc.scrollLeft += (e.deltaY || e.deltaX) * 1.5;
     };
     const onKeyDown = (e: KeyboardEvent) => {
+      if (previewOpen) return;
       if (e.key === 'ArrowRight') {
         e.preventDefault();
         sc.scrollLeft += 300;
@@ -184,7 +206,7 @@ export default function MilestonePageClient({ list }: MilestonePageClientProps) 
       sc.removeEventListener('scroll', onScroll);
       document.removeEventListener('keydown', onKeyDown);
     };
-  }, [onScroll]);
+  }, [onScroll, previewOpen]);
 
   return (
     <div className="milestone-page">
@@ -193,11 +215,16 @@ export default function MilestonePageClient({ list }: MilestonePageClientProps) 
       <div className="orb orb-2" />
       <div className="orb orb-3" />
       <div ref={starsRef} className="stars" style={{ boxShadow: starsShadow }} />
+      <div ref={starsNearRef} className="stars stars-near" style={{ boxShadow: starsNearShadow }} />
+      <div ref={auroraRef} className="aurora-ribbon" />
       <div className="vignette" />
       <div className="grain" />
 
-      <header className="page-header">
+      <header className={`page-header${hintHidden ? ' compact' : ''}`}>
+        <div className="eyebrow">LIFE MILESTONES</div>
         <h1>人生里程碑</h1>
+        <p>沿着时间的轨迹，回看每一个闪光瞬间</p>
+        <div className="line" />
       </header>
 
       {events.length === 0 ? (
@@ -205,12 +232,7 @@ export default function MilestonePageClient({ list }: MilestonePageClientProps) 
       ) : (
         <div ref={scrollRef} className="scroll-container">
           <div className="timeline-track" style={{ width: totalW }}>
-            <svg
-              className="wave-svg"
-              width={totalW}
-              height={viewportH}
-              style={{ width: totalW, height: '100%' }}
-            >
+            <svg className="wave-svg" width={totalW} height={viewportH} style={{ width: totalW, height: '100%' }}>
               <defs>
                 <linearGradient id="waveGrad" x1="0%" y1="0%" x2="100%" y2="0%">
                   <stop offset="0%" stopColor="rgba(232,160,48,.06)" />
@@ -230,6 +252,7 @@ export default function MilestonePageClient({ list }: MilestonePageClientProps) 
               <path d={wavePath} className="wave-glow" />
               <path d={wavePath} className="wave-main" />
               <path d={waveEchoPath} className="wave-echo" />
+              <path d={wavePath} className="wave-comet" />
             </svg>
 
             {layoutItems.map((item) => (
@@ -244,10 +267,9 @@ export default function MilestonePageClient({ list }: MilestonePageClientProps) 
                   {extractYear(item.event.eventDate)}
                 </div>
 
-                <div
-                  className="timeline-dot"
-                  style={{ left: item.x, top: item.waveY, animationDelay: `${item.delay}s` }}
-                >
+                <div className="timeline-dot" style={{ left: item.x, top: item.waveY, animationDelay: `${item.delay}s` }}>
+                  <div className="node-index">{String(item.index + 1).padStart(2, '0')}</div>
+                  <div className="dot-orbit" />
                   <div className="dot-core" />
                   <div className="dot-ring" />
                   <div className="dot-ring-outer" />
@@ -274,12 +296,10 @@ export default function MilestonePageClient({ list }: MilestonePageClientProps) 
                 >
                   <div className="card-image-wrap">
                     {item.event.image ? (
-                      <img
-                        className="card-image"
-                        src={item.event.image}
-                        alt={item.event.title}
-                        loading="lazy"
-                      />
+                      <button type="button" className="card-image-btn" onClick={() => openPreview(item.event.id)} aria-label={`预览${item.event.title}`}>
+                        <img className="card-image" src={item.event.image} alt={item.event.title} loading="lazy" />
+                        <span className="preview-mask">点击预览</span>
+                      </button>
                     ) : (
                       <div className="card-image" />
                     )}
@@ -310,6 +330,8 @@ export default function MilestonePageClient({ list }: MilestonePageClientProps) 
         <span>拖拽探索</span>
         <span className="arr">→</span>
       </div>
+
+      <PhotoPreview open={previewOpen} photos={previewPhotos} index={previewIndex} onClose={() => setPreviewOpen(false)} onIndexChange={setPreviewIndex} />
     </div>
   );
 }

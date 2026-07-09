@@ -15,8 +15,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: 'Invalid secret' }, { status: 401 });
   }
 
-  // 默认缓存标签
-  let tags: string[] = [CACHE_TAGS.articles, CACHE_TAGS.config];
+  // 默认清空全部缓存标签
+  let tags: string[] = Object.values(CACHE_TAGS);
 
   try {
     // 解析请求体

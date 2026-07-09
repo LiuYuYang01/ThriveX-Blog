@@ -273,18 +273,13 @@ export default function MilestonePageClient({ list }: MilestonePageClientProps) 
                   }}
                 >
                   <div className="card-image-wrap">
-                    {item.event.images?.length ? (
-                      <>
-                        <img
-                          className="card-image"
-                          src={item.event.images[0]}
-                          alt={item.event.title}
-                          loading="lazy"
-                        />
-                        {item.event.images.length > 1 ? (
-                          <div className="card-image-count">+{item.event.images.length - 1}</div>
-                        ) : null}
-                      </>
+                    {item.event.image ? (
+                      <img
+                        className="card-image"
+                        src={item.event.image}
+                        alt={item.event.title}
+                        loading="lazy"
+                      />
                     ) : (
                       <div className="card-image" />
                     )}

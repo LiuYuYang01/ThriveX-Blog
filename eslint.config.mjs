@@ -13,12 +13,16 @@ export default defineConfig([
   },
   {
     files: ['**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
-    plugins: { js },
-    extends: ['js/recommended'],
+    languageOptions: { globals: globals.browser },
+  },
+  {
+    files: ['next.config.mjs', '*.config.{js,mjs,cjs}'],
+    languageOptions: { globals: globals.node },
   },
   {
     files: ['**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
-    languageOptions: { globals: globals.browser },
+    plugins: { js },
+    extends: ['js/recommended'],
   },
   {
     plugins: {

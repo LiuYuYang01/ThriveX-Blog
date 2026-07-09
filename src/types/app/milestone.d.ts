@@ -3,6 +3,6 @@ export interface Milestone {
   eventDate: number;
   title: string;
   description: string;
-  images: string[];
+  image?: string;
   tags: string[];
 }

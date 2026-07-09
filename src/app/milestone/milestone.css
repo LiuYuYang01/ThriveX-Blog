@@ -320,21 +320,6 @@
   transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.milestone-page .card-image-count {
-  position: absolute;
-  right: 10px;
-  top: 10px;
-  z-index: 2;
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  border-radius: 999px;
-  padding: 2px 8px;
-  background: rgba(6, 6, 15, 0.55);
-  color: rgba(255, 255, 255, 0.86);
-  font-size: 11px;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-}
-
 .milestone-page .glass-card:hover .card-image {
   transform: scale(1.06);
 }

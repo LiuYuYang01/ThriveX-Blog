@@ -7,7 +7,7 @@ const Copyright = () => {
   return (
     <div className="my-10 w-full select-none">
       <div className="relative flex flex-col gap-4 pt-8 border-t border-gray-200 dark:border-white/10">
-        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-white dark:bg-black-b px-3 text-primary dark:text-blue-400">
+        <div className="absolute -top-2 left-1/2 -translate-x-1/2 bg-white dark:bg-black-a px-3 text-primary dark:text-blue-400">
           <FiPenTool className="text-sm -rotate-45" />
         </div>
 

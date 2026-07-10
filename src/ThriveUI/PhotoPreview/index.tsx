@@ -163,7 +163,7 @@ export default function PhotoPreview({
       <div
         onWheel={onImageWheel}
         onClick={(e) => e.stopPropagation()}
-        className="relative z-2 flex h-[min(640px,calc(100vh-180px))] w-[min(760px,calc(100vw-130px))] items-center justify-center"
+        className="relative z-2 flex h-[min(760px,calc(100vh-130px))] w-[min(1040px,calc(100vw-96px))] items-center justify-center"
       >
         <img
           src={activePhoto.url}

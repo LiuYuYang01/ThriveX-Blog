@@ -4,7 +4,7 @@ import { getMilestoneListCacheAPI } from '@/lib/milestone';
 
 import MilestonePageClient from './components/MilestonePageClient';
 
-import './milestone.css';
+import './milestone.scss';
 
 export const metadata: Metadata = {
   title: '🌟 人生里程碑',

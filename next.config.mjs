@@ -1,5 +1,9 @@
 /** @type {import('next').NextConfig} */
+
+// 开发环境标志
 const isDev = process.env.NODE_ENV === 'development';
+// 如果是开发环境则无缓存，生产环境可通过 CACHE_CLIENT_STALE 配置，默认300秒（5分钟）
+const clientStale = isDev ? 1 : Number(process.env.CACHE_CLIENT_STALE ?? 300);
 
 const nextConfig = {
     // 关闭严格模式
@@ -8,16 +12,15 @@ const nextConfig = {
     cacheComponents: true,
     cacheLife: {
         config: {
-            // 客户端缓存时间：每300秒后缓存失效，重新请求服务端
-            // 开发环境极短缓存，生产环境正常缓存
-            stale: isDev ? 1 : 300,
+            // 客户端缓存时间：缓存期间内不会请求服务端
+            stale: clientStale,
             // 服务端缓存时间：每3600秒后缓存失效，获取最新数据，如果没有过期情况下直接返回缓存的数据
             revalidate: isDev ? 1 : 3600,
             // 兜底删除：24小时后缓存强制清除
             expire: isDev ? 1 : 86400,
         },
         blog: {
-            stale: isDev ? 1 : 300,
+            stale: clientStale,
             revalidate: isDev ? 1 : 3600,
             expire: isDev ? 1 : 86400,
         },

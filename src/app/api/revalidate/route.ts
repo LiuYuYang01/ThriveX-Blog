@@ -1,6 +1,6 @@
 /**
  * 按需刷新 ISR 缓存的 Webhook 接口。
- * 后台在内容变更后携带 REVALIDATE_SECRET 调用 POST，即可使指定 cache tag 失效并触发重新生成。
+ * 后台在内容变更后直接 POST 调用，即可使指定 cache tag 失效并触发重新生成。
  */
 
 import { revalidateTag } from 'next/cache';
@@ -9,12 +9,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { CACHE_TAGS, isAllowedCacheTag } from '@/lib/cache-tags';
 
 export async function POST(req: NextRequest) {
-  const secret = req.headers.get('x-revalidate-secret');
-  // 验证 secret 密钥
-  if (!process.env.REVALIDATE_SECRET || secret !== process.env.REVALIDATE_SECRET) {
-    return NextResponse.json({ message: 'Invalid secret' }, { status: 401 });
-  }
-
   // 默认清空全部缓存标签
   let tags: string[] = Object.values(CACHE_TAGS);
 

@@ -2,25 +2,18 @@ import localFont from 'next/font/local';
 import { Metadata } from 'next';
 import { Suspense } from 'react';
 
-import NProgress from '@/components/NProgress';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import Tools from '@/components/Tools';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import Confetti from '@/components/Confetti';
-import RouteChangeHandler from '@/components/RouteChangeHandler';
+import RootLayoutContent from '@/components/RootLayoutContent';
 
-import { getAppConfigCacheAPI, getWebConfigCacheAPI } from '@/lib/config';
+import { getWebConfigCacheAPI } from '@/lib/config';
 
 // 加载样式文件
 import '@/styles/tailwind.css';
 import '@/styles/global.scss';
 import '@/styles/index.scss';
-import BaiduStatis from '@/components/BaiduStatis';
-import FloatingBlock from '@/components/FloatingBlock';
-import AppConfigProvider from '@/components/AppConfigProvider';
-
 // 加载本地字体
 const LXGWWenKai = localFont({
   src: '../assets/font/LXGWWenKai-Regular.ttf',
@@ -84,59 +77,20 @@ export async function generateMetadata(): Promise<Metadata> {
       },
     },
     icons: {
-      icon: '/favicon.ico',
-      shortcut: '/favicon.ico',
-      apple: '/favicon.ico',
+      icon: data?.favicon ?? '/favicon.ico',
+      shortcut: data?.favicon ?? '/favicon.ico',
+      apple: data?.favicon ?? '/favicon.ico',
     },
   };
 }
 
-export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  const { web: data, theme, other, author } = await getAppConfigCacheAPI();
-
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="zh-CN" className={LXGWWenKai.className}>
-      <head>
-        {/* 动态favicon */}
-        {data?.favicon && (
-          <>
-            <link rel="icon" type="image/x-icon" href={data.favicon} />
-            <link rel="shortcut icon" type="image/x-icon" href={data.favicon} />
-            <link rel="apple-touch-icon" href={data.favicon} />
-          </>
-        )}
-        {/* 百度统计 */}
-        <BaiduStatis other={other} />
-      </head>
-
-      {/* 监听路由变化 */}
-      <Suspense fallback={null}>
-        <RouteChangeHandler />
-      </Suspense>
-
       <body id="root" className={`dark:bg-black-a!`}>
-        <AppConfigProvider web={data} theme={theme} other={other} author={author}>
-          {/* 🎉 礼花效果 */}
-          {/* <Confetti /> */}
-
-          {/* 进度条组件 */}
-          <NProgress />
-          {/* 顶部导航组件 */}
-          <Suspense fallback={null}>
-            <Header theme={theme} />
-          </Suspense>
-
-          {/* 主体内容 */}
-          <div className="min-h-[calc(100vh-300px)]">{children}</div>
-
-          {/* 底部组件 */}
-          <Footer />
-          {/* 右侧工具栏组件 */}
-          {/* <Tools /> */}
-
-          {/* 悬浮块 */}
-          <FloatingBlock />
-        </AppConfigProvider>
+        <Suspense fallback={null}>
+          <RootLayoutContent>{children}</RootLayoutContent>
+        </Suspense>
       </body>
     </html>
   );

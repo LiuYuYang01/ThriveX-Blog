@@ -18,12 +18,12 @@ export default ({ sidebar, social, recoArticleIds }: Props) => {
       <div className={`hidden lg:block ${sidebar.length ? 'lg:w-[29%] xl:w-[24%]' : 'w-0'} rounded-md transition-width sticky top-[70px]`}>
         {/* 作者介绍 */}
         {sidebar.includes('author') && <Author social={social} />}
-       {/* 站点已运行 */}
+        {/* 站点已运行 */}
         {sidebar.includes('runTime') && <RunTime />}
-       {/* 随机推荐 */}
-        {sidebar.includes('randomArticle') && <RandomArticle />}
-        {/* 热门文章 */}
+        {/* 作者推荐 */}
         {sidebar.includes('hotArticle') && <HotArticle recoArticleIds={recoArticleIds} />}
+        {/* 随机推荐 */}
+        {sidebar.includes('randomArticle') && <RandomArticle />}
         {/* 最新评论 */}
         {sidebar.includes('newComments') && <Comment />}
         {/* 装饰组件 */}

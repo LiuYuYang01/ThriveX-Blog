@@ -21,7 +21,7 @@ export default async ({ searchParams }: Props) => {
 
   const { data } = await getArticlePagingCacheAPI({
     pageNum: page,
-    pageSize: theme.is_article_layout === 'waterfall' ? 28 : 8,
+    pageSize: theme.is_article_layout === 'waterfall' ? 28 : 10,
   });
   data.result = data?.result?.filter((item) => item.config.status !== 'no_home') ?? [];
 

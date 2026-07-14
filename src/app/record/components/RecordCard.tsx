@@ -57,7 +57,6 @@ export default function RecordCard({ id, content, images, likeCount, mood, locat
 
       <div className="mt-4 flex items-center justify-between gap-4 border-t border-[#edf0f4] pt-3.5 dark:border-white/10">
         <div className="flex min-w-0 items-center gap-2 text-xs text-slate-400 dark:text-slate-500">
-          <span className="shrink-0">{getRelativeTimeLabel(createTime)}</span>
           {location && (
             <>
               <span className="shrink-0 text-slate-300 dark:text-slate-600">·</span>
@@ -70,6 +69,7 @@ export default function RecordCard({ id, content, images, likeCount, mood, locat
               </span>
             </>
           )}
+          <span className="shrink-0">{getRelativeTimeLabel(createTime)}</span>
         </div>
 
         <div className="flex shrink-0 items-center gap-3 rounded-lg bg-[#f4f6f9] px-2 py-0.5 dark:bg-white/5">

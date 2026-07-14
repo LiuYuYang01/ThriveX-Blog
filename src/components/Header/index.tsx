@@ -221,7 +221,7 @@ export default ({ theme }: { theme: Theme }) => {
             isSelected={isDark}
             onValueChange={toTheme}
             thumbIcon={({ isSelected }) => (isSelected ? <BsFillMoonStarsFill className="text-gray-500" /> : <FaRegSun className="text-gray-500" />)}
-            className={`shrink-0 justify-self-end ${isDark ? '' : 'bg-[#e1e1e1]!'}`}
+            className="shrink-0 justify-self-end"
           />
         </div>
       </div>

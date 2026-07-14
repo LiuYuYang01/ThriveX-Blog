@@ -22,11 +22,38 @@ import { getCateNavHref, getCateNavRel, getCateNavTarget } from '@/utils/cateNav
 import { useConfigStore } from '@/stores';
 import useMounted from '@/hooks/useMounted';
 
+const getSubmenuGridClass = (count: number) => {
+  if (count <= 3) return 'grid-cols-1 w-max min-w-[160px]';
+  if (count <= 6) return 'grid-cols-2 w-[300px]';
+  return 'grid-cols-3 w-[420px]';
+};
+
+const getSubmenuPositionClass = (count: number) => (count <= 3 ? 'left-0' : 'left-1/2 -translate-x-1/2');
+
 const submenuPanelClass =
-  'invisible opacity-0 scale-[0.98] pointer-events-none group-hover/one:visible group-hover/one:opacity-100 group-hover/one:scale-100 group-hover/one:pointer-events-auto transition-[opacity,scale,visibility] duration-200 ease-out absolute left-0 top-[calc(100%-4px)] z-10 pt-0.5 min-w-full w-max max-w-[220px] overflow-hidden rounded-md before:absolute before:inset-x-0 before:-top-1 before:h-1 before:content-[""]';
+  'invisible opacity-0 scale-[0.98] pointer-events-none group-hover/one:visible group-hover/one:opacity-100 group-hover/one:scale-100 group-hover/one:pointer-events-auto transition-[opacity,scale,visibility] duration-200 ease-out absolute top-[calc(100%-4px)] z-10 pt-1.5 overflow-hidden rounded-xl before:absolute before:inset-x-0 before:-top-1.5 before:h-1.5 before:content-[""]';
 
 const submenuItemClass =
-  'group/item relative flex w-full items-center min-w-0 px-5 py-2.5 text-[15px] text-[#666] dark:text-white transition-colors duration-150 hover:text-primary! before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:h-0 before:w-[3px] before:rounded-r-full before:bg-primary before:transition-[height] before:duration-150 hover:before:h-[50%]';
+  'group/item flex w-full min-w-0 items-center gap-2 rounded-lg px-3 py-2.5 text-[14px] text-[#666] dark:text-white cursor-pointer hover:text-primary! hover:bg-[#f0f7ff] dark:hover:bg-[#3a4556]';
+
+const Submenu = ({ items, showIcon }: { items: Cate[]; showIcon?: boolean }) => {
+  const count = items.length;
+  return (
+    <ul
+      className={`${submenuPanelClass} ${getSubmenuPositionClass(count)} grid ${getSubmenuGridClass(count)} gap-1 p-1.5 border border-black/5 dark:border-white/10 bg-[rgba(255,255,255,0.95)] dark:bg-[rgba(44,51,62,0.95)] backdrop-blur-md`}
+      style={{ boxShadow: '0 12px 32px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(0, 0, 0, 0.08)' }}
+    >
+      {items.map((two) => (
+        <li key={two.id}>
+          <Link href={getCateNavHref(two)} target={getCateNavTarget(two.type)} rel={getCateNavRel(two.type)} title={two.name} className={submenuItemClass}>
+            {showIcon && two.icon ? <span className="shrink-0 text-base leading-none">{two.icon}</span> : null}
+            <span className="truncate">{two.name}</span>
+          </Link>
+        </li>
+      ))}
+    </ul>
+  );
+};
 
 export default ({ theme }: { theme: Theme }) => {
   const patchName = usePathname();
@@ -35,7 +62,7 @@ export default ({ theme }: { theme: Theme }) => {
   const mounted = useMounted();
 
   // 这些路径段不需要改变导航样式
-  const isPathSty = ['/my', '/wall', '/record', '/equipment', '/tags', '/resume', '/album', '/fishpond', '/friend'].some((path) => patchName.includes(path));
+  const isPathSty = ['/my', '/wall', '/record', '/equipment', '/tags', '/resume', '/album', '/fishpond', '/friend', '/echoes'].some((path) => patchName.includes(path));
   // 是否改变导航样式
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -139,15 +166,7 @@ export default ({ theme }: { theme: Theme }) => {
                       )}
 
                       <Show is={!!one.children.length}>
-                        <ul className={`${submenuPanelClass} backdrop-blur-[5px] bg-[rgba(255,255,255,0.95)] dark:bg-[rgba(44,51,62,0.95)]`} style={{ boxShadow: '0 12px 32px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(0, 0, 0, 0.08)' }}>
-                          {one.children?.map((two) => (
-                            <li key={two.id}>
-                              <Link href={getCateNavHref(two)} target={getCateNavTarget(two.type)} rel={getCateNavRel(two.type)} title={two.name} className={`${submenuItemClass} truncate`}>
-                                {two.name}
-                              </Link>
-                            </li>
-                          ))}
-                        </ul>
+                        <Submenu items={one.children} />
                       </Show>
                     </li>
                   )}
@@ -167,16 +186,7 @@ export default ({ theme }: { theme: Theme }) => {
                       )}
 
                       <Show is={!!one.children?.length}>
-                        <ul className={`${submenuPanelClass} bg-[rgba(255,255,255,0.95)] dark:bg-[rgba(44,51,62,0.95)]`} style={{ boxShadow: '0 12px 32px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(0, 0, 0, 0.08)' }}>
-                          {one.children?.map((two) => (
-                            <li key={two.id}>
-                              <Link href={getCateNavHref(two)} target={getCateNavTarget(two.type)} rel={getCateNavRel(two.type)} title={two.name} className={`${submenuItemClass} gap-1.5`}>
-                                <span className="shrink-0">{two.icon}</span>
-                                <span className="truncate">{two.name}</span>
-                              </Link>
-                            </li>
-                          ))}
-                        </ul>
+                        <Submenu items={one.children} showIcon />
                       </Show>
                     </li>
                   )}
@@ -196,16 +206,7 @@ export default ({ theme }: { theme: Theme }) => {
                       )}
 
                       <Show is={!!one.children?.length}>
-                        <ul className={`${submenuPanelClass} bg-[rgba(255,255,255,0.95)] dark:bg-[rgba(44,51,62,0.95)]`} style={{ boxShadow: '0 12px 32px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(0, 0, 0, 0.08)' }}>
-                          {one.children?.map((two) => (
-                            <li key={two.id}>
-                              <Link href={getCateNavHref(two)} target={getCateNavTarget(two.type)} rel={getCateNavRel(two.type)} title={two.name} className={`${submenuItemClass} gap-1.5`}>
-                                <span className="shrink-0">{two.icon}</span>
-                                <span className="truncate">{two.name}</span>
-                              </Link>
-                            </li>
-                          ))}
-                        </ul>
+                        <Submenu items={one.children} showIcon />
                       </Show>
                     </li>
                   )}
@@ -220,7 +221,7 @@ export default ({ theme }: { theme: Theme }) => {
             isSelected={isDark}
             onValueChange={toTheme}
             thumbIcon={({ isSelected }) => (isSelected ? <BsFillMoonStarsFill className="text-gray-500" /> : <FaRegSun className="text-gray-500" />)}
-            className={`shrink-0 justify-self-end ${isDark ? '' : 'bg-[#e1e1e1]!'}`}
+            className="shrink-0 justify-self-end"
           />
         </div>
       </div>

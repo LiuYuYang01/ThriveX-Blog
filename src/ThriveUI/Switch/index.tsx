@@ -32,13 +32,11 @@ export function Switch({
       aria-label="主题切换"
       disabled={disabled}
       onClick={() => onValueChange?.(!isSelected)}
-      className={`relative inline-flex shrink-0 cursor-pointer items-center rounded-full transition-colors ${isSelected ? 'bg-primary' : 'bg-neutral-200 dark:bg-neutral-600'
-        } ${trackSize[size]} ${disabled ? 'cursor-not-allowed opacity-50' : ''} ${className}`}
+      className={`relative inline-flex shrink-0 cursor-pointer items-center rounded-full ${isSelected ? 'bg-primary' : 'bg-neutral-200 dark:bg-neutral-600'} ${trackSize[size]} ${disabled ? 'cursor-not-allowed opacity-50' : ''} ${className}`}
     >
       <span
         aria-hidden="true"
-        className={`pointer-events-none inline-flex items-center justify-center rounded-full bg-white shadow-sm transition-[translate,scale] ${thumbSize[size]
-          } ${isSelected ? thumbOn[size] : 'translate-x-0.5'}`}
+        className={`pointer-events-none inline-flex items-center justify-center rounded-full bg-white shadow-sm transition-transform duration-150 ease-out ${thumbSize[size]} ${isSelected ? thumbOn[size] : 'translate-x-0.5'}`}
       >
         {thumbIcon?.({ isSelected })}
       </span>

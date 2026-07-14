@@ -16,6 +16,7 @@ export default (props: Props) => (
     <Suspense fallback={<SlideFallback />}>
       <HomeShell />
     </Suspense>
+    
     <Container>
       <Suspense fallback={<ArticlesFallback />}>
         <HomeArticles searchParams={props.searchParams} />

@@ -62,7 +62,7 @@ export default ({ theme }: { theme: Theme }) => {
   const mounted = useMounted();
 
   // 这些路径段不需要改变导航样式
-  const isPathSty = ['/my', '/wall', '/record', '/equipment', '/tags', '/resume', '/album', '/fishpond', '/friend'].some((path) => patchName.includes(path));
+  const isPathSty = ['/my', '/wall', '/record', '/equipment', '/tags', '/resume', '/album', '/fishpond', '/friend', '/echoes'].some((path) => patchName.includes(path));
   // 是否改变导航样式
   const [isScrolled, setIsScrolled] = useState(false);
 

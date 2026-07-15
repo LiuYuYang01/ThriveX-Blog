@@ -1,13 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import { ZCOOL_KuaiLe } from 'next/font/google';
+import zcoolKuaiLe from '@/assets/font/zcoolKuaiLe';
 import AddWallInfo from '../AddWallInfo';
 import WallMasonry from '../WallMasonry';
 import { Cate, Wall } from '@/types/app/wall';
 import '../../wall.css';
-
-const zcoolKuaiLe = ZCOOL_KuaiLe({ weight: '400', subsets: ['latin'] });
 
 const floatDots = [
   { size: 'w-2 h-2', color: 'bg-rose-400/70', delay: '0s' },

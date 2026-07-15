@@ -1,9 +1,7 @@
 'use client';
 
-import { ZCOOL_KuaiLe } from 'next/font/google';
+import zcoolKuaiLe from '@/assets/font/zcoolKuaiLe';
 import './hero.css';
-
-const zcoolKuaiLe = ZCOOL_KuaiLe({ weight: '400', subsets: ['latin'] });
 
 const floatDots = [
   { size: 'w-2 h-2', color: 'bg-rose-400/70', delay: '0s' },

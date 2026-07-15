@@ -18,10 +18,11 @@ export default async ({ searchParams }: Props) => {
   ]);
 
   swiper.result = swiper.result?.sort((a, b) => (a.order || 0) - (b.order || 0)) ?? [];
+  const articleLayout = theme?.is_article_layout ?? 'classics';
 
   const { data } = await getArticlePagingCacheAPI({
     pageNum: page,
-    pageSize: theme.is_article_layout === 'waterfall' ? 28 : 10,
+    pageSize: articleLayout === 'waterfall' ? 28 : 10,
   });
   data.result = data?.result?.filter((item) => item.config.status !== 'no_home') ?? [];
 

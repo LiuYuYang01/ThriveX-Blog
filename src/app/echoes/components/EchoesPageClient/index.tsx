@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import Link from 'next/link';
 import Masonry from 'react-masonry-css';
 import { HiOutlineArrowTopRightOnSquare, HiOutlineClock } from 'react-icons/hi2';
@@ -45,8 +45,6 @@ export default function EchoesPageClient({
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(initialPages > 1);
   const pageRef = useRef(1);
-
-  const articleCommentCount = useMemo(() => list.filter((item) => Boolean(item.articleId)).length, [list]);
 
   const loadMore = async () => {
     if (loading || !hasMore) return;

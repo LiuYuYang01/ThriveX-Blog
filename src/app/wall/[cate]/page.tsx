@@ -13,7 +13,7 @@ interface Props {
 export default async (props: Props) => {
   const { cate } = await props.params;
   const { data: cateList } = await getWallCateListCacheAPI();
-  const sorted = [...(cateList ?? [])].sort((a, b) => a.order - b.order);
+  const sorted = [...(Array.isArray(cateList) ? cateList : [])].sort((a, b) => a.order - b.order);
   const activeCate = cate || sorted[0]?.mark || '';
   const cateId = sorted.find((item) => item.mark === activeCate)?.id ?? sorted[0]?.id ?? 0;
   const { data: wallsData } = await getCateWallListCacheAPI(cateId);

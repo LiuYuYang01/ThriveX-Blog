@@ -17,15 +17,15 @@ export default async () => {
     getWebTypeListCacheAPI(),
     getAppConfigCacheAPI(),
   ]);
-  const linkList = linkRes?.data ?? [];
+  const linkList = linkRes?.data ?? { result: [] };
   const typeList = typeRes?.data ?? [];
 
   let data: { [string: string]: { order: number; list: WebLink[] } } = {};
 
-  linkList.result.sort((a: WebLink, b: WebLink) => a.order - b.order);
+  (linkList.result ?? []).sort((a: WebLink, b: WebLink) => a.order - b.order);
 
   // 给每个数据进行分组处理
-  linkList?.result?.forEach((item: WebLink) => {
+  (linkList.result ?? []).forEach((item: WebLink) => {
     if (data[item.type.name]) {
       data[item.type.name].list.push(item);
     } else {

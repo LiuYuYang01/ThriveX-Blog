@@ -39,11 +39,12 @@ interface Props {
 export async function generateStaticParams() {
   try {
     const { data } = await getArticlePagingCacheAPI({ pageNum: 1, pageSize: 80 });
-    return (data?.result ?? [])
+    const params = (data?.result ?? [])
       .filter((article) => article.id != null)
       .map((article) => ({ id: String(article.id) }));
+    return params.length ? params : [{ id: '0' }];
   } catch {
-    return [];
+    return [{ id: '0' }];
   }
 }
 
@@ -112,7 +113,7 @@ export default async (props: Props) => {
 
   const errorCodes = [400, 404, 611];
 
-  if (errorCodes.includes(code ?? 200)) {
+  if (errorCodes.includes(code ?? 200) || !data?.title) {
     return <NotFound />;
   }
 
@@ -146,7 +147,7 @@ export default async (props: Props) => {
 
                   <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs sm:gap-x-10 sm:text-sm">
                     <div className="flex items-center">
-                      <span>{data?.cateList[0]?.name}</span>
+                      <span>{data?.cateList?.[0]?.name}</span>
                     </div>
 
                     <div className="flex items-center">

@@ -45,14 +45,14 @@ export default async () => {
   const defaultHometown = [0, 0] as MyData['hometown'];
 
   const safeData: MyData = {
-    info_style: value.info_style || 'info_one',
-    info_one: { ...defaultInfoOne, ...(value.info_one || {}) },
-    info_two: { ...defaultInfoTwo, ...(value.info_two || {}) },
-    character: value.character ?? defaultCharacter,
-    goals: value.goals ?? defaultGoals,
-    project: value.project ?? defaultProject,
-    technology_stack: value.technology_stack ?? defaultTechStack,
-    hometown: value.hometown ?? defaultHometown,
+    info_style: value?.info_style || 'info_one',
+    info_one: { ...defaultInfoOne, ...(value?.info_one || {}) },
+    info_two: { ...defaultInfoTwo, ...(value?.info_two || {}) },
+    character: value?.character ?? defaultCharacter,
+    goals: value?.goals ?? defaultGoals,
+    project: value?.project ?? defaultProject,
+    technology_stack: value?.technology_stack ?? defaultTechStack,
+    hometown: value?.hometown ?? defaultHometown,
   };
 
   const { info_style, info_one, info_two, character, goals, project, technology_stack, hometown } = safeData;

@@ -1,4 +1,26 @@
+# 忽略依赖目录
 node_modules
-npm-debug.log
+# 忽略 Next.js 构建产物
+.next
+# 忽略本地输出目录
+out
+# 忽略日志文件
+*.log
+# 忽略环境变量文件
+.env*
+# 保留示例环境文件
+!.env.example
+# 忽略 Git 仓库数据
+.git
+# 忽略 Git 配置文件
+.gitignore
+# 忽略 Dockerfile 本身
 Dockerfile
+# 忽略 dockerignore 本身
 .dockerignore
+# 忽略编辑器配置
+.vscode
+# 忽略系统缓存文件
+.DS_Store
+# 忽略 npm 缓存日志
+npm-debug.log*

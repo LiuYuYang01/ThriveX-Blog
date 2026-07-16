@@ -1,9 +1,6 @@
 import { params } from './url';
 
-const getApiUrl = () => {
-    const publicApi = process.env.NEXT_PUBLIC_PROJECT_API || '';
-    return typeof window === 'undefined' ? process.env.PROJECT_API_INTERNAL || publicApi : publicApi;
-};
+const getApiUrl = () => process.env.NEXT_PUBLIC_PROJECT_API || '';
 
 export const Request = async <T>(method: string, api: string, data?: any) => {
     const url = getApiUrl();

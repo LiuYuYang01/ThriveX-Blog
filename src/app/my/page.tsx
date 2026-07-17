@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { connection } from 'next/server';
 import Image from 'next/image';
 import bg from '@/assets/image/bg.png';
 
@@ -19,6 +20,7 @@ export const metadata: Metadata = {
 };
 
 export default async () => {
+  await connection();
   const { data } = await getPageConfigCacheAPI('my');
   const value = data?.value as MyData;
 

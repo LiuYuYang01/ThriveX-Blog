@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { connection } from 'next/server';
 import { getRecordListCacheAPI } from '@/lib/record';
 import { getAuthorDataCacheAPI } from '@/lib/config';
 import RecordPageClient from './components/RecordPageClient';
@@ -9,6 +10,7 @@ export const metadata: Metadata = {
 };
 
 export default async () => {
+  await connection();
   const [user, recordRes] = await Promise.all([
     getAuthorDataCacheAPI(),
     getRecordListCacheAPI({ pageNum: 1, pageSize: 8 }),

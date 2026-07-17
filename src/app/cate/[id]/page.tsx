@@ -1,5 +1,6 @@
 import { Suspense } from 'react';
 import { Metadata } from 'next';
+import { connection } from 'next/server';
 
 import ArticlesFallback from '@/components/ArticlesFallback';
 import { getCateListCacheAPI } from '@/lib/cate';
@@ -13,6 +14,7 @@ interface Props {
 }
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
+  await connection();
   const [params, searchParams] = await Promise.all([props.params, props.searchParams]);
   const { data: cateListData } = await getCateListCacheAPI();
   const cateInfo = findCateById(cateListData?.result ?? [], params.id);
@@ -25,6 +27,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 }
 
 export default async (props: Props) => {
+  await connection();
   const params = await props.params;
   const id = params.id;
 

@@ -1,3 +1,5 @@
+import { connection } from 'next/server';
+
 import ArticleLayout from '@/components/ArticleLayout';
 import { getArticlePagingCacheAPI } from '@/lib/article';
 import { getThemeConfigCacheAPI, getThemeCoversCacheAPI } from '@/lib/theme';
@@ -8,6 +10,7 @@ interface Props {
 }
 
 export default async ({ searchParams }: Props) => {
+  await connection();
   const { page: pageParam } = await searchParams;
   const page = Number(pageParam) || 1;
 

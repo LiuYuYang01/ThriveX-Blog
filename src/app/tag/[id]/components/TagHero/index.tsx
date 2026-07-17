@@ -1,3 +1,5 @@
+import { connection } from 'next/server';
+
 import Starry from '@/components/Starry';
 import Slide from '@/components/Slide';
 import { getTagArticleListCacheAPI } from '@/lib/tag';
@@ -9,6 +11,7 @@ interface Props {
 }
 
 export default async ({ id, searchParams }: Props) => {
+  await connection();
   const name = (await searchParams).name ?? '标签';
 
   const [{ data }, covers] = await Promise.all([

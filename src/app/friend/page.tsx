@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { connection } from 'next/server';
 
 import { getAppConfigCacheAPI } from '@/lib/config';
 import { getWebListCacheAPI, getWebTypeListCacheAPI } from '@/lib/web';
@@ -12,6 +13,7 @@ export const metadata: Metadata = {
 };
 
 export default async () => {
+  await connection();
   const [linkRes, typeRes, { web, author }] = await Promise.all([
     getWebListCacheAPI(),
     getWebTypeListCacheAPI(),

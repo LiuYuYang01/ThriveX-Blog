@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { connection } from 'next/server';
 import { getPageConfigCacheAPI } from '@/lib/config';
 import OptimizedImage from '@/components/OptimizedImage';
 import { FiTag, FiArrowUpRight, FiLayers } from 'react-icons/fi';
@@ -15,6 +16,7 @@ interface Equipment {
 }
 
 export default async () => {
+  await connection();
   const { data } = await getPageConfigCacheAPI('equipment');
   const value = data?.value as { list: Equipment[] };
 

@@ -1,3 +1,5 @@
+import { connection } from 'next/server';
+
 import Statis from '../Statis';
 import Archiving from '../Archiving';
 import { getAllArticleListCacheAPI } from '@/lib/article';
@@ -7,6 +9,7 @@ import { getTagListCacheAPI } from '@/lib/tag';
 import { getWebListCacheAPI } from '@/lib/web';
 
 export default async () => {
+  await connection();
   const [articleRes, cateRes, tagRes, commentRes, webRes] = await Promise.all([
     getAllArticleListCacheAPI(),
     getCateListCacheAPI(),

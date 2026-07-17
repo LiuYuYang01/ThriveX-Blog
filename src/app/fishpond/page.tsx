@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { connection } from 'next/server';
 import { getRssListCacheAPI } from '@/lib/rss';
 import FishpondPageClient from './components/FishpondPageClient';
 
@@ -8,6 +9,7 @@ export const metadata: Metadata = {
 };
 
 export default async () => {
+  await connection();
   const { data } = await getRssListCacheAPI();
   return <FishpondPageClient rssData={data?.result ?? []} />;
 };

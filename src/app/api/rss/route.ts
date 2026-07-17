@@ -1,11 +1,12 @@
 import { Feed } from 'feed';
-import { NextResponse } from 'next/server';
+import { connection, NextResponse } from 'next/server';
 
 import { getArticlePagingCacheAPI } from '@/lib/article';
 import { getAuthorDataCacheAPI, getWebConfigCacheAPI } from '@/lib/config';
 import { getRecordListCacheAPI } from '@/lib/record';
 
 export async function GET() {
+  await connection();
   const web = await getWebConfigCacheAPI();
   const user = await getAuthorDataCacheAPI();
   const { data: article } = await getArticlePagingCacheAPI({ pageNum: 1, pageSize: 8 });

@@ -1,9 +1,12 @@
+import { connection } from 'next/server';
+
 import Slide from '@/components/Slide';
 import Typed from '@/components/Typed';
 import Starry from '@/components/Starry';
 import { getThemeConfigCacheAPI, getThemeCoversCacheAPI } from '@/lib/theme';
 
 export default async () => {
+  await connection();
   const [theme, covers] = await Promise.all([
     getThemeConfigCacheAPI(),
     getThemeCoversCacheAPI(),

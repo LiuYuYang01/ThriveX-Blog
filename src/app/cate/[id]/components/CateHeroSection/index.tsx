@@ -1,3 +1,5 @@
+import { connection } from 'next/server';
+
 import { getCateArticleListCacheAPI, getCateListCacheAPI } from '@/lib/cate';
 import CateHero from '../../../components/CateHero';
 import CateHeroContent from '../../../components/CateHeroContent';
@@ -9,6 +11,7 @@ interface Props {
 }
 
 export default async ({ params, searchParams }: Props) => {
+  await connection();
   const [{ id }, { name }] = await Promise.all([params, searchParams]);
 
   const [{ data }, { data: cateListData }] = await Promise.all([

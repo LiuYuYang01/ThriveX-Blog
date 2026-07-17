@@ -1,3 +1,4 @@
+import { connection } from 'next/server';
 import { Suspense } from 'react';
 
 import NProgress from '@/components/NProgress';
@@ -14,6 +15,7 @@ interface Props {
 }
 
 export default async function RootLayoutContent({ children }: Props) {
+  await connection();
   const { web: data, theme, other, author } = await getAppConfigCacheAPI();
 
   return (

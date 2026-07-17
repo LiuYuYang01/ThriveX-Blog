@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { connection } from 'next/server';
 import { getCommentListCacheAPI } from '@/lib/comment';
 import EchoesPageClient from './components/EchoesPageClient';
 
@@ -10,6 +11,7 @@ export const metadata: Metadata = {
 const PAGE_SIZE = 16;
 
 export default async () => {
+  await connection();
   const { data } = await getCommentListCacheAPI({ pageNum: 1, pageSize: PAGE_SIZE });
 
   return (

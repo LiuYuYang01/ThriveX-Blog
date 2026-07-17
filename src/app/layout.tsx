@@ -1,5 +1,6 @@
 import localFont from 'next/font/local';
 import { Metadata } from 'next';
+import { connection } from 'next/server';
 import { Suspense } from 'react';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -22,6 +23,7 @@ const LXGWWenKai = localFont({
 
 // 生成动态metadata
 export async function generateMetadata(): Promise<Metadata> {
+  await connection();
   const data = await getWebConfigCacheAPI();
 
   return {

@@ -1,7 +1,10 @@
+import { connection } from 'next/server';
+
 import Sidebar from '@/components/Sidebar';
 import { getThemeConfigCacheAPI } from '@/lib/theme';
 
 export default async () => {
+  await connection();
   const theme = await getThemeConfigCacheAPI();
 
   return (

@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { connection } from 'next/server';
 
 import { getMilestoneListCacheAPI } from '@/lib/milestone';
 
@@ -12,6 +13,7 @@ export const metadata: Metadata = {
 };
 
 export default async () => {
+  await connection();
   const { data: listData } = await getMilestoneListCacheAPI();
 
   return <MilestonePageClient list={listData?.result ?? []} />;

@@ -1,3 +1,5 @@
+import { connection } from 'next/server';
+
 import Classics from '@/components/ArticleLayout/Classics';
 import Pagination from '@/components/Pagination';
 import { getTagArticleListCacheAPI } from '@/lib/tag';
@@ -8,6 +10,7 @@ interface Props {
 }
 
 export default async ({ id, searchParams }: Props) => {
+  await connection();
   const { page: pageParam, name } = await searchParams;
   const page = Number(pageParam) || 1;
 

@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { connection } from 'next/server';
 import { getWallCateListCacheAPI, getCateWallListCacheAPI } from '@/lib/wall';
 import WallPageClient from '../components/WallPageClient';
 export const metadata: Metadata = {
@@ -11,6 +12,7 @@ interface Props {
 }
 
 export default async (props: Props) => {
+  await connection();
   const { cate } = await props.params;
   const { data: cateList } = await getWallCateListCacheAPI();
   const sorted = [...(Array.isArray(cateList) ? cateList : [])].sort((a, b) => a.order - b.order);

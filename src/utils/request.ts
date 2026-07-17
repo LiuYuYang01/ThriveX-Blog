@@ -1,6 +1,9 @@
 import { params } from './url';
 
-const getApiUrl = () => process.env.NEXT_PUBLIC_PROJECT_API || '';
+const getApiUrl = () =>
+    typeof window === 'undefined'
+        ? process.env.PROJECT_API_INTERNAL || process.env.NEXT_PUBLIC_PROJECT_API || ''
+        : process.env.NEXT_PUBLIC_PROJECT_API || '';
 
 export const Request = async <T>(method: string, api: string, data?: any) => {
     const url = getApiUrl();
@@ -22,6 +25,6 @@ export const Request = async <T>(method: string, api: string, data?: any) => {
             throw error;
         }
         console.log('捕获到异常：', error);
-        return { code: 500, message: 'Request failed', data: {} as T };
+        throw error;
     }
 };

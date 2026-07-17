@@ -1,6 +1,8 @@
+import { connection } from 'next/server';
+
 import { getArticleDataAPI, recordViewAPI } from '@/api/article';
 import { getWebConfigCacheAPI } from '@/lib/config';
-import { getArticleCacheAPI, getArticlePagingCacheAPI } from '@/lib/article';
+import { getArticleCacheAPI } from '@/lib/article';
 import { getThemeConfigCacheAPI, getThemeCoversCacheAPI } from '@/lib/theme';
 import { getStableImage } from '@/utils';
 import { Metadata } from 'next';
@@ -33,19 +35,6 @@ import NotFound from '@/app/not-found';
 interface Props {
   params: Promise<{ id: number }>;
   searchParams: Promise<{ password: string }>;
-}
-
-// 提前下载好前80篇文章，提高页面加载速度
-export async function generateStaticParams() {
-  try {
-    const { data } = await getArticlePagingCacheAPI({ pageNum: 1, pageSize: 80 });
-    const params = (data?.result ?? [])
-      .filter((article) => article.id != null)
-      .map((article) => ({ id: String(article.id) }));
-    return params.length ? params : [{ id: '0' }];
-  } catch {
-    return [{ id: '0' }];
-  }
 }
 
 // 生成文章页面的 metadata
@@ -99,6 +88,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 }
 
 export default async (props: Props) => {
+  await connection();
   const searchParams = await props.searchParams;
   const params = await props.params;
   const id = params.id;

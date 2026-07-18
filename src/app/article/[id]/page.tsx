@@ -22,6 +22,7 @@ import { ArticleActionBar } from '../components/ActionBar';
 import MD from '../components/MD';
 import Summary from '../components/Summary';
 import ArticleTOC from '../components/ArticleTOC';
+import ReadingProgress from '../components/ReadingProgress';
 import { extractArticleHeadings } from '@/utils/article';
 
 import { FaHotjar } from 'react-icons/fa';
@@ -127,6 +128,7 @@ export default async (props: Props) => {
       <ArticleLikeProvider articleId={id} initialCount={data?.likeCount ?? 0}>
         <ArticleShareProvider articleId={id} initialCount={data?.shareCount ?? 0}>
           <div className="ArticlePage">
+            <ReadingProgress />
             <div id="article-hero">
               <Slide src={heroSrc} covers={covers} priority={!!heroSrc}>
                 {/* 星空背景组件 */}

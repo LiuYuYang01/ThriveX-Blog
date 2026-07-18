@@ -50,6 +50,7 @@ export default function RecordCommentPanel({ recordId, onCountChange }: Props) {
   const captchaRef = useRef<HCaptchaType>(null);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [captchaError, setCaptchaError] = useState('');
+  const [showCaptcha, setShowCaptcha] = useState(false);
 
   const { publicConfig } = useAppConfig();
   const hasHCaptcha = !!publicConfig?.hcaptcha_key?.key;
@@ -89,6 +90,7 @@ export default function RecordCommentPanel({ recordId, onCountChange }: Props) {
     setValue('content', '');
     setCaptchaToken(null);
     setCaptchaError('');
+    setShowCaptcha(false);
     captchaRef.current?.resetCaptcha();
   };
 
@@ -109,6 +111,7 @@ export default function RecordCommentPanel({ recordId, onCountChange }: Props) {
   const onSubmit: SubmitHandler<CommentForm> = async (data) => {
     setCaptchaError('');
     if (hasHCaptcha && !captchaToken) {
+      setShowCaptcha(true);
       setCaptchaError('请完成人机验证');
       return;
     }
@@ -144,6 +147,7 @@ export default function RecordCommentPanel({ recordId, onCountChange }: Props) {
     setPlaceholder('写评论…');
     setCaptchaToken(null);
     setCaptchaError('');
+    setShowCaptcha(false);
     captchaRef.current?.resetCaptcha();
     localStorage.setItem('comment_data', JSON.stringify(data));
     setSubmitting(false);
@@ -277,7 +281,7 @@ export default function RecordCommentPanel({ recordId, onCountChange }: Props) {
                 />
               </div>
 
-              {hasHCaptcha && (
+              {hasHCaptcha && showCaptcha && (
                 <div>
                   <HCaptcha ref={captchaRef} setToken={(token) => { setCaptchaToken(token); setCaptchaError(''); }} />
                   {captchaError && <span className="text-xs text-red-400">{captchaError}</span>}

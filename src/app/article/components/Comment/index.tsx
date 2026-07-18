@@ -53,6 +53,7 @@ const CommentForm = ({ articleId }: Props) => {
   const captchaRef = useRef<HCaptchaType>(null);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [captchaError, setCaptchaError] = useState<string>('');
+  const [showCaptcha, setShowCaptcha] = useState(false);
 
   const { publicConfig } = useAppConfig();
   const hasHCaptcha = !!publicConfig?.hcaptcha_key?.key;
@@ -74,11 +75,12 @@ const CommentForm = ({ articleId }: Props) => {
   }, [setValue]);
 
   const onSubmit = async (data: CommentForm) => {
-    // 清除之前的人机验证错误
     setCaptchaError('');
 
-    // 只有配置了HCaptcha时才需要验证
-    if (hasHCaptcha && !captchaToken) return setCaptchaError('请完成人机验证');
+    if (hasHCaptcha && !captchaToken) {
+      setShowCaptcha(true);
+      return setCaptchaError('请完成人机验证');
+    }
 
     setLoading(true);
 
@@ -113,9 +115,9 @@ const CommentForm = ({ articleId }: Props) => {
     commentRef.current?.getCommentList();
     setLoading(false);
 
-    // 清除验证相关状态
     setCaptchaError('');
     setCaptchaToken(null);
+    setShowCaptcha(false);
     captchaRef.current?.resetCaptcha();
 
     // 提交成功后把评论的数据持久化到本地
@@ -228,7 +230,7 @@ const CommentForm = ({ articleId }: Props) => {
             {errors.url?.message ? <span className="text-red-400 text-sm pl-3 mt-1">{errors.url.message}</span> : null}
           </div>
 
-          {hasHCaptcha && (
+          {hasHCaptcha && showCaptcha && (
             <div className="flex flex-col">
               <HCaptcha ref={captchaRef} setToken={handleCaptchaSuccess} />
               {captchaError && <span className="text-red-400 text-sm pl-3 mt-1">{captchaError}</span>}

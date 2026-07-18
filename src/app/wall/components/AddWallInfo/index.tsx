@@ -42,6 +42,7 @@ export default () => {
   const captchaRef = useRef<HCaptchaType>(null);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [captchaError, setCaptchaError] = useState<string>('');
+  const [showCaptcha, setShowCaptcha] = useState(false);
 
   const { publicConfig } = useAppConfig();
   const hasHCaptcha = !!publicConfig?.hcaptcha_key?.key;
@@ -62,7 +63,10 @@ export default () => {
     event?.preventDefault();
     setCaptchaError('');
 
-    if (hasHCaptcha && !captchaToken) return setCaptchaError('请完成人机验证');
+    if (hasHCaptcha && !captchaToken) {
+      setShowCaptcha(true);
+      return setCaptchaError('请完成人机验证');
+    }
 
     const { code, message } = await addWallAction({
       ...data,
@@ -77,6 +81,7 @@ export default () => {
 
     setCaptchaError('');
     setCaptchaToken(null);
+    setShowCaptcha(false);
     captchaRef.current?.resetCaptcha();
     methods.reset({ color: '#ffe3944d' } as Wall);
 
@@ -163,7 +168,7 @@ export default () => {
               )}
             />
 
-            {hasHCaptcha && (
+            {hasHCaptcha && showCaptcha && (
               <div className="flex flex-col">
                 <HCaptcha ref={captchaRef} setToken={handleCaptchaSuccess} />
                 {captchaError && <span className="mt-1 pl-3 text-sm text-red-400">{captchaError}</span>}

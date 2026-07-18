@@ -1,14 +1,16 @@
 'use client';
 
 import { useEffect } from 'react';
-import { Other } from '@/types/app/config';
+import { PublicConfig } from '@/types/app/config';
 
-export default function BaiduAnalytics({ other }: { other: Other }) {
+export default function BaiduStatis({ publicConfig }: { publicConfig: PublicConfig }) {
+  const baiduKey = publicConfig?.baidu_statis_key?.key;
+
   useEffect(() => {
-    if (other?.baidu_token) {
+    if (baiduKey) {
       window._hmt = window._hmt || [];
       const baiduScript = document.createElement('script');
-      baiduScript.src = `https://hm.baidu.com/hm.js?${other.baidu_token}`;
+      baiduScript.src = `https://hm.baidu.com/hm.js?${baiduKey}`;
       baiduScript.async = true;
       document.head.appendChild(baiduScript);
 
@@ -16,7 +18,7 @@ export default function BaiduAnalytics({ other }: { other: Other }) {
         document.head.removeChild(baiduScript);
       };
     }
-  }, [other]);
+  }, [baiduKey]);
 
   return null;
 }

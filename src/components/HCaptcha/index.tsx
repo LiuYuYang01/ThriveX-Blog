@@ -4,9 +4,9 @@ import { useAppConfig } from '@/components/AppConfigProvider';
 import { useConfigStore } from '@/stores';
 
 export default forwardRef(({ setToken }: { setToken: (token: string) => void }, ref: Ref<HCaptcha>) => {
-  const { other } = useAppConfig();
+  const { publicConfig } = useAppConfig();
   const isDark = useConfigStore((state) => state.isDark);
-  const sitekey = other?.hcaptcha_key;
+  const sitekey = publicConfig?.hcaptcha_key?.key;
 
   if (!sitekey) {
     return null;

@@ -43,8 +43,8 @@ export default () => {
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [captchaError, setCaptchaError] = useState<string>('');
 
-  const { other } = useAppConfig();
-  const hasHCaptcha = !!other?.hcaptcha_key;
+  const { publicConfig } = useAppConfig();
+  const hasHCaptcha = !!publicConfig?.hcaptcha_key?.key;
 
   const [cateList, setCateList] = useState<Cate[]>([]);
   const getCateList = async () => {

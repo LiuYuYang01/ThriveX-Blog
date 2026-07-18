@@ -1,9 +1,9 @@
 import { cacheLife, cacheTag } from 'next/cache';
 
-import { getPageConfigDataByNameAPI, getWebConfigDataAPI } from '@/api/config';
+import { getPageConfigDataByNameAPI, getPublicConfigDataAPI, getWebConfigDataAPI } from '@/api/config';
 import { getAuthorDataAPI } from '@/api/user';
 import { CACHE_TAGS } from '@/lib/cache-tags';
-import { Other, Theme, Web } from '@/types/app/config';
+import { Other, PublicConfig, Theme, Web } from '@/types/app/config';
 import { User } from '@/types/app/user';
 
 export async function getWebConfigCacheAPI() {
@@ -33,6 +33,15 @@ export async function getOtherConfigCacheAPI() {
   return data?.value as Other;
 }
 
+export async function getPublicConfigCacheAPI() {
+  'use cache';
+  cacheLife('config');
+  cacheTag(CACHE_TAGS.config);
+
+  const { data } = await getPublicConfigDataAPI();
+  return data as PublicConfig;
+}
+
 export async function getAuthorDataCacheAPI() {
   'use cache';
   cacheLife('config');
@@ -55,11 +64,12 @@ export async function getAppConfigCacheAPI() {
   cacheLife('config');
   cacheTag(CACHE_TAGS.config);
 
-  const [web, theme, other, author] = await Promise.all([
+  const [web, theme, other, publicConfig, author] = await Promise.all([
     getWebConfigCacheAPI(),
     getThemeConfigCacheAPI(),
     getOtherConfigCacheAPI(),
+    getPublicConfigCacheAPI(),
     getAuthorDataCacheAPI(),
   ]);
-  return { web, theme, other, author };
+  return { web, theme, other, publicConfig, author };
 }

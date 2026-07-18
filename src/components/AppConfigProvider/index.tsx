@@ -2,13 +2,14 @@
 
 import { createContext, useContext, type ReactNode } from 'react';
 
-import { Other, Theme, Web } from '@/types/app/config';
+import { Other, PublicConfig, Theme, Web } from '@/types/app/config';
 import { User } from '@/types/app/user';
 
 interface AppConfigValue {
   web: Web;
   theme: Theme;
   other: Other;
+  publicConfig: PublicConfig;
   author: User;
 }
 
@@ -19,8 +20,10 @@ interface Props extends AppConfigValue {
 }
 
 // 传递数据给子组件
-export default function AppConfigProvider({ web, theme, other, author, children }: Props) {
-  return <AppConfigContext.Provider value={{ web, theme, other, author }}>{children}</AppConfigContext.Provider>;
+export default function AppConfigProvider({ web, theme, other, publicConfig, author, children }: Props) {
+  return (
+    <AppConfigContext.Provider value={{ web, theme, other, publicConfig, author }}>{children}</AppConfigContext.Provider>
+  );
 }
 
 // 获取数据

@@ -16,17 +16,17 @@ interface Props {
 
 export default async function RootLayoutContent({ children }: Props) {
   await connection();
-  const { web: data, theme, other, author } = await getAppConfigCacheAPI();
+  const { web: data, theme, other, publicConfig, author } = await getAppConfigCacheAPI();
 
   return (
     <>
-      <BaiduStatis other={other} />
+      <BaiduStatis publicConfig={publicConfig} />
 
       <Suspense fallback={null}>
         <RouteChangeHandler />
       </Suspense>
 
-      <AppConfigProvider web={data} theme={theme} other={other} author={author}>
+      <AppConfigProvider web={data} theme={theme} other={other} publicConfig={publicConfig} author={author}>
         <NProgress />
         <Suspense fallback={null}>
           <Header theme={theme} />

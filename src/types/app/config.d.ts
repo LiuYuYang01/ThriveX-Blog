@@ -52,6 +52,17 @@ export interface Other {
 
 export type EnvConfigName = 'baidu_statis' | 'email' | 'gaode_map' | 'gaode_coordinate'
 
+export interface EnvConfigKey {
+    key: string
+}
+
+// 公开环境配置
+export interface PublicConfig {
+    baidu_statis_key: EnvConfigKey | null
+    hcaptcha_key: EnvConfigKey | null
+    gaode_map_kay: EnvConfigKey | null
+}
+
 export interface Config {
     id: string,
     name: string,

@@ -51,8 +51,8 @@ export default function RecordCommentPanel({ recordId, onCountChange }: Props) {
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [captchaError, setCaptchaError] = useState('');
 
-  const { other } = useAppConfig();
-  const hasHCaptcha = !!other?.hcaptcha_key;
+  const { publicConfig } = useAppConfig();
+  const hasHCaptcha = !!publicConfig?.hcaptcha_key?.key;
 
   const methods = useForm<CommentForm>({});
   const { setValue, setFocus, reset, handleSubmit } = methods;

@@ -178,6 +178,10 @@
     @apply my-2.5 ml-6;
   }
 
+  .tx-widget li {
+    margin: 0 !important;
+  }
+
   ul:not(.contains-task-list) {
     @apply list-disc;
   }
@@ -197,6 +201,11 @@
       @apply absolute left-7 border-0 text-base mt-0 leading-normal;
       content: counter(counter) ".";
     }
+  }
+
+  .tx-widget ol > li::before {
+    content: none !important;
+    display: none !important;
   }
 
   blockquote {

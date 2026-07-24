@@ -11,6 +11,7 @@ import Search from '../Search';
 import Rss from '../Tools/components/Rss';
 import { LuMoonStar } from 'react-icons/lu';
 import { FaRegSun } from 'react-icons/fa';
+import { requestThemeTransition } from '@/utils/themeTransition';
 
 const floatingBtnClass =
   'transition-none! active:scale-100! hover:scale-105 hover:text-primary';
@@ -22,7 +23,7 @@ const FloatingBlock = () => {
   const [isDragging, setIsDragging] = useState(false); // 拖拽状态
   const constraintsRef = useRef(null); // 拖拽约束参考
   const { web } = useAppConfig();
-  const { isDark, setIsDark } = useConfigStore();
+  const { isDark } = useConfigStore();
   const { isOpen: isSearchOpen, onOpen: onSearchOpen, onClose: onSearchClose } = useDisclosure();
   const { isOpen: isRssOpen, onOpen: onRssOpen, onClose: onRssClose } = useDisclosure();
 
@@ -54,7 +55,7 @@ const FloatingBlock = () => {
 
   // 主题切换功能
   const onToggleTheme = () => {
-    setIsDark(!isDark);
+    requestThemeTransition(!isDark);
   };
 
   const actionItems = [

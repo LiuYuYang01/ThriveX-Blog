@@ -7,6 +7,7 @@ import Footer from '@/components/Footer';
 import RouteChangeHandler from '@/components/RouteChangeHandler';
 import BaiduStatis from '@/components/BaiduStatis';
 import FloatingBlock from '@/components/FloatingBlock';
+import ThemeTransition from '@/components/ThemeTransition';
 import AppConfigProvider from '@/components/AppConfigProvider';
 import { getAppConfigCacheAPI } from '@/lib/config';
 
@@ -36,6 +37,7 @@ export default async function RootLayoutContent({ children }: Props) {
 
         <Footer />
         <FloatingBlock />
+        <ThemeTransition />
       </AppConfigProvider>
     </>
   );

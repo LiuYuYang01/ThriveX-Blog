@@ -21,6 +21,7 @@ import { getCateNavHref, getCateNavRel, getCateNavTarget } from '@/utils/cateNav
 
 import { useConfigStore } from '@/stores';
 import useMounted from '@/hooks/useMounted';
+import { requestThemeTransition } from '@/utils/themeTransition';
 
 const getSubmenuGridClass = (count: number) => {
   if (count <= 3) return 'grid-cols-1 w-max min-w-[160px]';
@@ -58,7 +59,7 @@ const Submenu = ({ items, showIcon }: { items: Cate[]; showIcon?: boolean }) => 
 export default ({ theme }: { theme: Theme }) => {
   const patchName = usePathname();
 
-  const { isDark, setIsDark } = useConfigStore();
+  const { isDark } = useConfigStore();
   const mounted = useMounted();
 
   // 这些路径段不需要改变导航样式
@@ -85,7 +86,7 @@ export default ({ theme }: { theme: Theme }) => {
     // 监听系统主题变化
     const mediaQuery = matchMedia('(prefers-color-scheme: dark)');
     mediaQuery.addEventListener('change', (e: MediaQueryListEvent) => {
-      setIsDark(e.matches);
+      requestThemeTransition(e.matches);
     });
 
     getCateList();
@@ -101,15 +102,8 @@ export default ({ theme }: { theme: Theme }) => {
 
   // 手动切换主题
   const toTheme = () => {
-    setIsDark(!isDark);
+    requestThemeTransition(!isDark);
   };
-  // 判断当前主题
-  useEffect(() => {
-    const html = document.querySelector('html');
-    if (html && html.classList) {
-      html?.classList?.toggle('dark', isDark);
-    }
-  }, [isDark]);
 
   // 是否打开侧边栏导航
   const [isOpenSidebarNav, setIsOpenSidebarNav] = useState(false);

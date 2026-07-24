@@ -104,7 +104,7 @@ export default () => {
         open={isOpen}
         onClose={onClose}
         title="申请友链"
-        className="max-w-2xl"
+        className="max-w-3xl"
         footer={
           <Button color="primary" isLoading={loading} onPress={() => methods.handleSubmit(onSubmit)()} className="w-full">
             加入
@@ -118,9 +118,18 @@ export default () => {
         </div>
 
         <FormProvider {...methods}>
-          <form className="space-y-4" onSubmit={methods.handleSubmit(onSubmit)}>
+          <form className="grid grid-cols-1 gap-4 sm:grid-cols-2" onSubmit={methods.handleSubmit(onSubmit)}>
             <Input name="title" label="网站名称" placeholder="示例：宇阳" rules={{ required: '请输入网站名称' }} />
-            <Textarea name="description" label="网站介绍" placeholder="示例：逐渐强大的全栈开发工程师" rules={{ required: '请输入网站介绍' }} />
+            <Select
+              name="typeId"
+              label="网站类型"
+              placeholder="示例：技术类"
+              rules={{ required: '请选择网站类型' }}
+              options={typeList.map((item) => ({ value: item.id, label: item.name }))}
+            />
+            <div className="sm:col-span-2">
+              <Textarea name="description" label="网站介绍" placeholder="示例：逐渐强大的全栈开发工程师" rules={{ required: '请输入网站介绍' }} />
+            </div>
             <Input
               name="image"
               label="图片地址"
@@ -156,16 +165,9 @@ export default () => {
               placeholder="示例：https://liuyuyang.net/index.php/feed/"
               rules={{ pattern: { value: /^https?:\/\//, message: '请输入正确的订阅地址' } }}
             />
-            <Select
-              name="typeId"
-              label="网站类型"
-              placeholder="示例：技术类"
-              rules={{ required: '请选择网站类型' }}
-              options={typeList.map((item) => ({ value: item.id, label: item.name }))}
-            />
 
             {hasHCaptcha && showCaptcha && (
-              <div className="flex flex-col">
+              <div className="flex flex-col sm:col-span-2">
                 <HCaptcha ref={captchaRef} setToken={handleCaptchaSuccess} />
                 {captchaError && <span className="mt-1 pl-3 text-sm text-red-400">{captchaError}</span>}
               </div>

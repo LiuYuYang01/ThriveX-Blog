@@ -6,7 +6,7 @@ import { CACHE_TAGS } from '@/lib/cache-tags';
 type ArticlePagingParams = {
   pageNum?: number;
   pageSize?: number;
-  key?: string;
+  title?: string;
 };
 
 export async function getArticleCacheAPI(id: number) {
@@ -25,19 +25,19 @@ export async function getArticlePagingCacheAPI(params: ArticlePagingParams = {})
   'use cache';
   const pageNum = params.pageNum ?? 1;
   const pageSize = params.pageSize ?? 8;
-  const key = params.key ?? '';
+  const title = params.title ?? '';
 
   cacheLife('blog');
   cacheTag(
     CACHE_TAGS.articles,
     `${CACHE_TAGS.articlesList}-${pageNum}-${pageSize}`,
-    ...(key ? [`${CACHE_TAGS.articlesList}-search-${key}`] : []),
+    ...(title ? [`${CACHE_TAGS.articlesList}-search-${title}`] : []),
   );
 
   return getArticlePagingAPI({
     pageNum,
     pageSize,
-    ...(key ? { key } : {}),
+    ...(title ? { title } : {}),
   });
 }
 

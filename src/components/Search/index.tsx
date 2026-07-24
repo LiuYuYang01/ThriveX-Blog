@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { Modal, TextField, type DisclosureProps } from '@/ThriveUI';
 import { getArticlePagingAPI } from '@/api/article';
 import { Article } from '@/types/app/article';
-import useDebounce from '@/hooks/useDebounce';
 import Empty from '../Empty';
 
 interface Props {
@@ -18,29 +17,6 @@ export default ({ disclosure }: Props) => {
   const [data, setData] = useState<Paginate<Article[]>>();
   const [searchKey, setSearchKey] = useState('');
 
-  const getArticleList = async (key: string) => {
-    if (key.trim().length === 0) {
-      setData(undefined);
-      return;
-    }
-
-    const { data } = await getArticlePagingAPI({
-      key,
-      pageNum: 1,
-      pageSize: 10,
-    });
-
-    setData(data);
-  };
-
-  const debouncedFetchArticles = useDebounce(getArticleList, 300);
-
-  const onSearchArticle = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const key = e.target.value;
-    setSearchKey(key);
-    debouncedFetchArticles(key);
-  };
-
   useEffect(() => {
     if (!isOpen) {
       setData(undefined);
@@ -48,14 +24,49 @@ export default ({ disclosure }: Props) => {
     }
   }, [isOpen]);
 
+  // 关键词变化时防抖请求；清理函数取消过期请求，避免清空后再搜被旧响应覆盖
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const key = searchKey.trim();
+    if (!key) {
+      setData(undefined);
+      return;
+    }
+
+    let cancelled = false;
+    const timer = window.setTimeout(async () => {
+      try {
+        const { data: result } = await getArticlePagingAPI({
+          title: key,
+          pageNum: 1,
+          pageSize: 10,
+        });
+        if (!cancelled) setData(result);
+      } catch {
+        if (!cancelled) setData(undefined);
+      }
+    }, 300);
+
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [searchKey, isOpen]);
+
   return (
     <Modal open={isOpen} onClose={onClose} title="搜索文章" className="max-w-2xl">
       <div className="mb-7">
-        <TextField type="text" placeholder="请输入文章关键词" value={searchKey} onChange={onSearchArticle} />
+        <TextField
+          type="text"
+          placeholder="请输入文章关键词"
+          value={searchKey}
+          onChange={(e) => setSearchKey(e.target.value)}
+        />
 
         <div className="mt-4">
-          {data?.result
-            ? data?.result?.map((item) => (
+          {data?.result?.length
+            ? data.result.map((item) => (
                 <Link
                   key={item.id}
                   href={`/article/${item.id}`}

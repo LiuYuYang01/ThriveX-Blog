@@ -6,8 +6,8 @@ export const getArticleDataAPI = async (id: number, password?: string) => {
     return await Request<Article>('GET', `/article${!password ? `/${id}` : `/${id}?password=${password}`}`);
 }
 
-//  获取文章列表
-export const getArticlePagingAPI = async (params?: Page & { key?: string }) => {
+// 获取文章列表（title 按标题模糊搜索）
+export const getArticlePagingAPI = async (params?: Page & { title?: string }) => {
     return await Request<Paginate<Article[]>>('GET', `/article`, {
         params: params ?? {}
     });

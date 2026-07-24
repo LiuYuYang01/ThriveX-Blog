@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  useCallback,
   useEffect,
   useId,
   useLayoutEffect,
@@ -119,16 +120,21 @@ export default function SelectControl<T extends string | number = string | numbe
   const panelRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
   const openRef = useRef(open);
+  const onBlurRef = useRef(onBlur);
 
   useEffect(() => {
     openRef.current = open;
   }, [open]);
 
+  useEffect(() => {
+    onBlurRef.current = onBlur;
+  }, [onBlur]);
+
   const enabledIndices = getEnabledIndices(options);
   const selectedIndex = findOptionIndex(options, value);
   const selectedOption = selectedIndex >= 0 ? options[selectedIndex] : null;
 
-  const updateCoords = () => {
+  const updateCoords = useCallback(() => {
     const trigger = triggerRef.current;
     const panel = panelRef.current;
     if (!trigger) return;
@@ -141,20 +147,33 @@ export default function SelectControl<T extends string | number = string | numbe
     const placement =
       spaceBelow < panelHeight && spaceAbove > spaceBelow ? 'top' : 'bottom';
 
-    setCoords({
+    const next: PanelCoords = {
       left: rect.left,
       width: rect.width,
       top: placement === 'bottom' ? rect.bottom + gap : rect.top - gap,
       placement,
-    });
-  };
+    };
 
-  const close = () => {
-    if (openRef.current) onBlur?.();
+    setCoords((prev) => {
+      if (
+        prev &&
+        prev.left === next.left &&
+        prev.width === next.width &&
+        prev.top === next.top &&
+        prev.placement === next.placement
+      ) {
+        return prev;
+      }
+      return next;
+    });
+  }, [maxHeight]);
+
+  const close = useCallback(() => {
+    if (openRef.current) onBlurRef.current?.();
     setOpen(false);
     setActiveIndex(-1);
     setCoords(null);
-  };
+  }, []);
 
   const selectIndex = (index: number) => {
       const option = options[index];

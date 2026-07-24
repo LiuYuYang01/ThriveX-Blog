@@ -16,7 +16,7 @@ export default defineConfig([
     languageOptions: { globals: globals.browser },
   },
   {
-    files: ['next.config.mjs', '*.config.{js,mjs,cjs}'],
+    files: ['next.config.mjs', '*.config.{js,mjs,cjs}', 'scripts/**/*.{js,mjs,cjs}'],
     languageOptions: { globals: globals.node },
   },
   {

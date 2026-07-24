@@ -17,13 +17,9 @@ export default function Encrypt({ id }: Props) {
 
   const [password, setPassword] = useState('');
 
-  const { isOpen, onOpen } = useDisclosure();
+  const { isOpen } = useDisclosure(true);
 
   const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    onOpen();
-  }, [onOpen]);
 
   useEffect(() => {
     if (isOpen && inputRef.current) {

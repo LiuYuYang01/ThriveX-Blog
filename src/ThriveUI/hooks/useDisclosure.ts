@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 export interface DisclosureReturn {
   isOpen: boolean;
@@ -14,12 +14,12 @@ export type DisclosureProps = Pick<DisclosureReturn, 'isOpen' | 'onClose'>;
 export function useDisclosure(defaultOpen = false): DisclosureReturn {
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
-  const onOpen = () => setIsOpen(true);
-  const onClose = () => setIsOpen(false);
-  const onOpenChange = (open?: boolean) => {
+  const onOpen = useCallback(() => setIsOpen(true), []);
+  const onClose = useCallback(() => setIsOpen(false), []);
+  const onOpenChange = useCallback((open?: boolean) => {
     if (typeof open === 'boolean') setIsOpen(open);
     else setIsOpen((prev) => !prev);
-  };
+  }, []);
 
   return { isOpen, onOpen, onClose, onOpenChange };
 }

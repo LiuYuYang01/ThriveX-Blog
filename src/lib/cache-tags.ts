@@ -13,6 +13,7 @@ export const CACHE_TAGS = {
   footprints: 'footprints',
   milestones: 'milestones',
   rss: 'rss',
+  albums: 'albums',
 } as const;
 
 const DYNAMIC_PREFIXES = [

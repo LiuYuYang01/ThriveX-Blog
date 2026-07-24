@@ -6,7 +6,7 @@ const getApiUrl = () =>
         : process.env.NEXT_PUBLIC_PROJECT_API || '';
 
 export const Request = async <T>(method: string, api: string, data?: any) => {
-    const url = getApiUrl();
+    const url = /^https?:\/\//.test(api) ? '' : getApiUrl();
     const query = params(data?.params ?? {});
 
     try {

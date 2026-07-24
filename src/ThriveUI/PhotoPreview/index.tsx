@@ -84,8 +84,11 @@ export default function PhotoPreview({
 
   useEffect(() => {
     if (!open) return;
-    photos.forEach((photo) => preloadImage(photo.url));
-  }, [open, photos]);
+    const nearbyIndexes = hasMultiple
+      ? [activeIndex, (activeIndex - 1 + photos.length) % photos.length, (activeIndex + 1) % photos.length]
+      : [activeIndex];
+    nearbyIndexes.forEach((photoIndex) => preloadImage(photos[photoIndex]?.url));
+  }, [activeIndex, hasMultiple, open, photos]);
 
   useEffect(() => {
     if (!open) return;
@@ -126,7 +129,7 @@ export default function PhotoPreview({
       <button
         type="button"
         onClick={onClose}
-        className="absolute right-5 top-5 z-10 inline-flex size-10 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white/80 transition-colors hover:text-white"
+        className="absolute right-5 top-5 z-10 inline-flex size-11 cursor-pointer items-center justify-center rounded-full border border-white/20 bg-white/10 text-white/80 transition-colors hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
         aria-label="关闭预览"
       >
         <FiX className="size-5" />
@@ -182,7 +185,7 @@ export default function PhotoPreview({
           <button
             type="button"
             onClick={goPrev}
-            className="inline-flex size-[34px] items-center justify-center rounded-full text-lg text-neutral-100 transition-colors hover:bg-white/10 cursor-pointer"
+            className="inline-flex size-11 cursor-pointer items-center justify-center rounded-full text-lg text-neutral-100 transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
             aria-label="上一张"
           >
             <FiChevronLeft />
@@ -192,7 +195,7 @@ export default function PhotoPreview({
         <button
           type="button"
           onClick={() => setRotation((prev) => prev - 90)}
-          className="inline-flex size-[34px] items-center justify-center rounded-full text-lg text-neutral-100 transition-colors hover:bg-white/10 cursor-pointer"
+          className="inline-flex size-11 cursor-pointer items-center justify-center rounded-full text-lg text-neutral-100 transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
           aria-label="向左旋转"
         >
           <FiRotateCcw />
@@ -201,7 +204,7 @@ export default function PhotoPreview({
         <button
           type="button"
           onClick={() => setRotation((prev) => prev + 90)}
-          className="inline-flex size-[34px] items-center justify-center rounded-full text-lg text-neutral-100 transition-colors hover:bg-white/10 cursor-pointer"
+          className="inline-flex size-11 cursor-pointer items-center justify-center rounded-full text-lg text-neutral-100 transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
           aria-label="向右旋转"
         >
           <FiRotateCw />
@@ -210,7 +213,7 @@ export default function PhotoPreview({
         <button
           type="button"
           onClick={() => setScale((prev) => Math.max(prev - 0.2, 0.4))}
-          className="inline-flex size-[34px] items-center justify-center rounded-full text-lg text-neutral-100 transition-colors hover:bg-white/10 cursor-pointer"
+          className="inline-flex size-11 cursor-pointer items-center justify-center rounded-full text-lg text-neutral-100 transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
           aria-label="缩小"
         >
           <FiZoomOut />
@@ -219,7 +222,7 @@ export default function PhotoPreview({
         <button
           type="button"
           onClick={() => setScale((prev) => Math.min(prev + 0.2, 3))}
-          className="inline-flex size-[34px] items-center justify-center rounded-full text-lg text-neutral-100 transition-colors hover:bg-white/10 cursor-pointer"
+          className="inline-flex size-11 cursor-pointer items-center justify-center rounded-full text-lg text-neutral-100 transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
           aria-label="放大"
         >
           <FiZoomIn />
@@ -229,7 +232,7 @@ export default function PhotoPreview({
           <button
             type="button"
             onClick={goNext}
-            className="inline-flex size-[34px] items-center justify-center rounded-full text-lg text-neutral-100 transition-colors hover:bg-white/10 cursor-pointer"
+            className="inline-flex size-11 cursor-pointer items-center justify-center rounded-full text-lg text-neutral-100 transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
             aria-label="下一张"
           >
             <FiChevronRight />

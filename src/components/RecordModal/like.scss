@@ -1,0 +1,61 @@
+@keyframes record-like-heart-pop {
+  0% {
+    transform: scale(1);
+  }
+
+  30% {
+    transform: scale(1.35);
+  }
+
+  55% {
+    transform: scale(0.9);
+  }
+
+  80% {
+    transform: scale(1.12);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes record-like-particle {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0.5);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--tx, 0px)), calc(-50% + var(--ty, -24px))) scale(1.1) rotate(var(--rot, 12deg));
+  }
+}
+
+@keyframes record-like-count-bump {
+  0% {
+    transform: scale(1);
+  }
+
+  40% {
+    transform: scale(1.35);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.record-like-heart.is-popping {
+  animation: record-like-heart-pop 0.42s cubic-bezier(0.34, 1.56, 0.64, 1);
+  color: #fa5151;
+}
+
+.record-like-particle {
+  animation: record-like-particle 0.65s ease-out forwards;
+}
+
+.record-like-count-bump {
+  display: inline-block;
+  animation: record-like-count-bump 0.32s ease-out;
+}

@@ -30,7 +30,7 @@ function getGridLayout(count: number): GridLayout {
   return { gridClass: 'grid-cols-3 w-full max-w-[390px]', gapClass: 'gap-1.5' };
 }
 
-/** 单图展示尺寸：按原图比例缩放，容器与图片完全一致 */
+/** 单图展示尺寸：按原图比例缩放，尽量铺满内容区 */
 function calcSingleDisplaySize(naturalW: number, naturalH: number): ImageSize {
   const ratio = naturalW / naturalH;
 
@@ -38,14 +38,14 @@ function calcSingleDisplaySize(naturalW: number, naturalH: number): ImageSize {
   let maxH: number;
 
   if (ratio > 1.25) {
-    maxW = 320;
-    maxH = 220;
-  } else if (ratio < 0.8) {
-    maxW = 220;
-    maxH = 380;
-  } else {
-    maxW = 260;
+    maxW = 360;
     maxH = 260;
+  } else if (ratio < 0.8) {
+    maxW = 260;
+    maxH = 420;
+  } else {
+    maxW = 320;
+    maxH = 320;
   }
 
   let width = naturalW;
@@ -87,8 +87,12 @@ function SingleImage({ src, onClick }: { src: string; onClick: () => void }) {
     <button
       type="button"
       onClick={onClick}
-      style={size ? { width: size.width, height: size.height } : undefined}
-      className="group relative block shrink-0 cursor-pointer overflow-hidden rounded"
+      style={
+        size
+          ? { aspectRatio: `${size.width} / ${size.height}`, maxWidth: size.width }
+          : { aspectRatio: '4 / 3' }
+      }
+      className="group relative block w-full max-w-full cursor-pointer overflow-hidden rounded"
     >
       <img
         src={src}

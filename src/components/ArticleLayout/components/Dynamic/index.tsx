@@ -1,20 +1,20 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import Link from 'next/link';
 import { HiOutlineSpeakerphone } from 'react-icons/hi';
 import { FiChevronRight } from 'react-icons/fi';
 import { getRecordListAPI } from '@/api/record';
 import { Record } from '@/types/app/record';
 import { extractText } from '@/utils';
+import { useRecordModalStore } from '@/stores';
 
 export default function Dynamic({ className = '' }: { className?: string }) {
   const [list, setList] = useState<Record[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFading, setIsFading] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const openRecordModal = useRecordModalStore((s) => s.openModal);
 
-  // 使用 useRef 管理定时器，防止组件卸载时内存泄漏
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const fadeTimerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -77,7 +77,7 @@ export default function Dynamic({ className = '' }: { className?: string }) {
       <div className="flex items-center shrink-0 mr-3 lg:mr-5">
         <span className="relative flex h-2 w-2 mr-2.5">
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-          <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+          <span className="relative inline-flex h-2 w-2 rounded-full bg-blue-500"></span>
         </span>
 
         <HiOutlineSpeakerphone className="text-blue-500 dark:text-blue-400 text-lg mr-1.5" />
@@ -86,8 +86,13 @@ export default function Dynamic({ className = '' }: { className?: string }) {
         <div className="hidden sm:block w-px h-3.5 bg-slate-300 dark:bg-zinc-700 mx-3"></div>
       </div>
 
-      <Link href="/record" className="flex-1 flex items-center justify-between overflow-hidden cursor-pointer" title={currentContent}>
-        <div className="relative flex-1 h-[20px] overflow-hidden">
+      <button
+        type="button"
+        onClick={openRecordModal}
+        className="flex-1 flex items-center justify-between overflow-hidden cursor-pointer border-0 bg-transparent p-0 text-left"
+        title={currentContent}
+      >
+        <div className="relative flex-1 h-5 overflow-hidden">
           <span
             className={`
               absolute left-0 top-0 w-full line-clamp-1 text-sm text-slate-600 dark:text-slate-400
@@ -101,7 +106,7 @@ export default function Dynamic({ className = '' }: { className?: string }) {
         </div>
 
         <FiChevronRight className="shrink-0 text-slate-400 group-hover:text-blue-500 ml-2 group-hover:translate-x-0.5 duration-200" />
-      </Link>
+      </button>
     </div>
   );
 }

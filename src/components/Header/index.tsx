@@ -17,9 +17,9 @@ import { BsFillMoonStarsFill } from 'react-icons/bs';
 import { Cate } from '@/types/app/cate';
 import { Theme } from '@/types/app/config';
 import { getCateListAPI } from '@/api/cate';
-import { getCateNavHref, getCateNavRel, getCateNavTarget } from '@/utils/cateNav';
+import { getCateNavHref, getCateNavRel, getCateNavTarget, isRecordNavHref } from '@/utils/cateNav';
 
-import { useConfigStore } from '@/stores';
+import { useConfigStore, useRecordModalStore } from '@/stores';
 import useMounted from '@/hooks/useMounted';
 import { requestThemeTransition } from '@/utils/themeTransition';
 
@@ -37,21 +37,39 @@ const submenuPanelClass =
 const submenuItemClass =
   'group/item flex w-full min-w-0 items-center gap-2 rounded-lg px-3 py-2.5 text-[14px] text-[#666] dark:text-white cursor-pointer hover:text-primary! hover:bg-[#f0f7ff] dark:hover:bg-[#3a4556]';
 
-const Submenu = ({ items, showIcon }: { items: Cate[]; showIcon?: boolean }) => {
+const Submenu = ({
+  items,
+  showIcon,
+  onNavClick,
+}: {
+  items: Cate[];
+  showIcon?: boolean;
+  onNavClick: (e: React.MouseEvent, href: string) => void;
+}) => {
   const count = items.length;
   return (
     <ul
       className={`${submenuPanelClass} ${getSubmenuPositionClass(count)} grid ${getSubmenuGridClass(count)} gap-1 p-1.5 border border-black/5 dark:border-white/10 bg-[rgba(255,255,255,0.95)] dark:bg-[rgba(44,51,62,0.95)] backdrop-blur-md`}
       style={{ boxShadow: '0 12px 32px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(0, 0, 0, 0.08)' }}
     >
-      {items.map((two) => (
-        <li key={two.id}>
-          <Link href={getCateNavHref(two)} target={getCateNavTarget(two.type)} rel={getCateNavRel(two.type)} title={two.name} className={submenuItemClass}>
-            {showIcon && two.icon ? <span className="shrink-0 text-base leading-none">{two.icon}</span> : null}
-            <span className="truncate">{two.name}</span>
-          </Link>
-        </li>
-      ))}
+      {items.map((two) => {
+        const href = getCateNavHref(two);
+        return (
+          <li key={two.id}>
+            <Link
+              href={href}
+              target={getCateNavTarget(two.type)}
+              rel={getCateNavRel(two.type)}
+              title={two.name}
+              className={submenuItemClass}
+              onClick={(e) => onNavClick(e, href)}
+            >
+              {showIcon && two.icon ? <span className="shrink-0 text-base leading-none">{two.icon}</span> : null}
+              <span className="truncate">{two.name}</span>
+            </Link>
+          </li>
+        );
+      })}
     </ul>
   );
 };
@@ -60,7 +78,14 @@ export default ({ theme }: { theme: Theme }) => {
   const patchName = usePathname();
 
   const { isDark } = useConfigStore();
+  const openRecordModal = useRecordModalStore((s) => s.openModal);
   const mounted = useMounted();
+
+  const handleNavClick = (e: React.MouseEvent, href: string) => {
+    if (!isRecordNavHref(href)) return;
+    e.preventDefault();
+    openRecordModal();
+  };
 
   // 这些路径段不需要改变导航样式
   const isPathSty = ['/my', '/wall', '/record', '/equipment', '/tags', '/resume', '/album', '/fishpond', '/friend', '/echoes', '/sponsors'].some((path) => patchName.includes(path));
@@ -143,69 +168,67 @@ export default ({ theme }: { theme: Theme }) => {
               </li>
 
               {/* 文章分类 */}
-              {cateList?.map((one) => (
-                <React.Fragment key={one.id}>
-                  {/* 渲染分类 */}
-                  {one.type === 'cate' && (
-                    <li className="group/one relative">
-                      {one.children.length ? (
-                        <span className={`flex items-center h-[60px] px-5 text-[15px] whitespace-nowrap group-hover/one:text-primary! cursor-default ${isPathSty || isScrolled ? 'text-[#333] dark:text-white' : 'text-white'}`}>
-                          {one.icon} {one.name}
-                          <IoIosArrowDown className="ml-2 transition-[rotate] duration-200 group-hover/one:rotate-180" />
-                        </span>
-                      ) : (
-                        <Link href={getCateNavHref(one)} target={getCateNavTarget(one.type)} rel={getCateNavRel(one.type)} className={`flex items-center h-[60px] px-5 text-[15px] whitespace-nowrap group-hover/one:text-primary! ${isPathSty || isScrolled ? 'text-[#333] dark:text-white' : 'text-white'}`}>
-                          {one.icon} {one.name}
-                        </Link>
-                      )}
+              {cateList?.map((one) => {
+                const href = getCateNavHref(one);
+                const linkClass = `flex items-center h-[60px] text-[15px] whitespace-nowrap group-hover/one:text-primary! ${isPathSty || isScrolled ? 'text-[#333] dark:text-white' : 'text-white'}`;
+                return (
+                  <React.Fragment key={one.id}>
+                    {one.type === 'cate' && (
+                      <li className="group/one relative">
+                        {one.children.length ? (
+                          <span className={`${linkClass} px-5 cursor-default`}>
+                            {one.icon} {one.name}
+                            <IoIosArrowDown className="ml-2 transition-[rotate] duration-200 group-hover/one:rotate-180" />
+                          </span>
+                        ) : (
+                          <Link href={href} target={getCateNavTarget(one.type)} rel={getCateNavRel(one.type)} className={`${linkClass} px-5`} onClick={(e) => handleNavClick(e, href)}>
+                            {one.icon} {one.name}
+                          </Link>
+                        )}
+                        <Show is={!!one.children.length}>
+                          <Submenu items={one.children} onNavClick={handleNavClick} />
+                        </Show>
+                      </li>
+                    )}
 
-                      <Show is={!!one.children.length}>
-                        <Submenu items={one.children} />
-                      </Show>
-                    </li>
-                  )}
+                    {one.type === 'page' && (
+                      <li className="group/one relative">
+                        {one.children?.length ? (
+                          <span className={`${linkClass} px-10 cursor-default`}>
+                            {one.icon} {one.name}
+                            <IoIosArrowDown className="ml-2 transition-[rotate] duration-200 group-hover/one:rotate-180" />
+                          </span>
+                        ) : (
+                          <Link href={href} target={getCateNavTarget(one.type)} rel={getCateNavRel(one.type)} className={`${linkClass} px-10`} onClick={(e) => handleNavClick(e, href)}>
+                            {one.icon} {one.name}
+                          </Link>
+                        )}
+                        <Show is={!!one.children?.length}>
+                          <Submenu items={one.children} showIcon onNavClick={handleNavClick} />
+                        </Show>
+                      </li>
+                    )}
 
-                  {/* 渲染页面 */}
-                  {one.type === 'page' && (
-                    <li className="group/one relative">
-                      {one.children?.length ? (
-                        <span className={`flex items-center h-[60px] px-10 text-[15px] whitespace-nowrap group-hover/one:text-primary! cursor-default ${isPathSty || isScrolled ? 'text-[#333] dark:text-white' : 'text-white'}`}>
-                          {one.icon} {one.name}
-                          <IoIosArrowDown className="ml-2 transition-[rotate] duration-200 group-hover/one:rotate-180" />
-                        </span>
-                      ) : (
-                        <Link href={getCateNavHref(one)} target={getCateNavTarget(one.type)} rel={getCateNavRel(one.type)} className={`flex items-center h-[60px] px-10 text-[15px] whitespace-nowrap group-hover/one:text-primary! ${isPathSty || isScrolled ? 'text-[#333] dark:text-white' : 'text-white'}`}>
-                          {one.icon} {one.name}
-                        </Link>
-                      )}
-
-                      <Show is={!!one.children?.length}>
-                        <Submenu items={one.children} showIcon />
-                      </Show>
-                    </li>
-                  )}
-
-                  {/* 渲染导航 */}
-                  {one.type === 'nav' && (
-                    <li className="group/one relative">
-                      {one.children?.length ? (
-                        <span className={`flex items-center h-[60px] px-10 text-[15px] whitespace-nowrap group-hover/one:text-primary! cursor-default ${isPathSty || isScrolled ? 'text-[#333] dark:text-white' : 'text-white'}`}>
-                          {one.icon} {one.name}
-                          <IoIosArrowDown className="ml-2 transition-[rotate] duration-200 group-hover/one:rotate-180" />
-                        </span>
-                      ) : (
-                        <Link href={getCateNavHref(one)} target={getCateNavTarget(one.type)} rel={getCateNavRel(one.type)} className={`flex items-center h-[60px] px-10 text-[15px] whitespace-nowrap group-hover/one:text-primary! ${isPathSty || isScrolled ? 'text-[#333] dark:text-white' : 'text-white'}`}>
-                          {one.icon} {one.name}
-                        </Link>
-                      )}
-
-                      <Show is={!!one.children?.length}>
-                        <Submenu items={one.children} showIcon />
-                      </Show>
-                    </li>
-                  )}
-                </React.Fragment>
-              ))}
+                    {one.type === 'nav' && (
+                      <li className="group/one relative">
+                        {one.children?.length ? (
+                          <span className={`${linkClass} px-10 cursor-default`}>
+                            {one.icon} {one.name}
+                            <IoIosArrowDown className="ml-2 transition-[rotate] duration-200 group-hover/one:rotate-180" />
+                          </span>
+                        ) : (
+                          <Link href={href} target={getCateNavTarget(one.type)} rel={getCateNavRel(one.type)} className={`${linkClass} px-10`} onClick={(e) => handleNavClick(e, href)}>
+                            {one.icon} {one.name}
+                          </Link>
+                        )}
+                        <Show is={!!one.children?.length}>
+                          <Submenu items={one.children} showIcon onNavClick={handleNavClick} />
+                        </Show>
+                      </li>
+                    )}
+                  </React.Fragment>
+                );
+              })}
             </ul>
           </div>
 

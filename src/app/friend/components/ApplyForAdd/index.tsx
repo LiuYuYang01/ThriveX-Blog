@@ -131,21 +131,21 @@ export default () => {
               <Textarea name="description" label="网站介绍" placeholder="示例：逐渐强大的全栈开发工程师" rules={{ required: '请输入网站介绍' }} />
             </div>
             <Input
-              name="image"
-              label="图片地址"
-              placeholder="示例：https://liuyuyang.net/avatar.jpg"
-              rules={{
-                required: '请输入图片地址',
-                pattern: { value: /^https?:\/\//, message: '请输入正确的图片地址' },
-              }}
-            />
-            <Input
               name="url"
               label="网站地址"
               placeholder="示例：https://liuyuyang.net/"
               rules={{
                 required: '请输入网站地址',
                 pattern: { value: /^https?:\/\//, message: '请输入正确的网站地址' },
+              }}
+            />
+            <Input
+              name="image"
+              label="图片地址"
+              placeholder="示例：https://liuyuyang.net/avatar.jpg"
+              rules={{
+                required: '请输入图片地址',
+                pattern: { value: /^https?:\/\//, message: '请输入正确的图片地址' },
               }}
             />
             <Input

@@ -102,7 +102,7 @@ export default function RecordModal() {
       <Modal
         open={open}
         onClose={closeModal}
-        className="flex! h-[min(780px,92dvh)] max-h-[92dvh]! w-full max-w-97.5! flex-col overflow-hidden! rounded-2xl! border-0! bg-white! p-0! shadow-[0_20px_60px_rgba(0,0,0,0.28)] sm:mx-4 dark:bg-[#151a22]!"
+        className="flex! h-[min(780px,92dvh)] max-h-[92dvh]! w-full max-w-97.5! flex-col overflow-hidden! rounded-2xl! border-0! bg-white! p-0! shadow-[0_20px_60px_rgba(0,0,0,0.28)] sm:mx-4"
       >
         <div className="flex h-full min-h-0 flex-col">
           <div className="flex shrink-0 items-center justify-between bg-white px-3 py-2.5 dark:bg-[#1e2430]">

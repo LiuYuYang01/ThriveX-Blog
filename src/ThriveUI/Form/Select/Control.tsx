@@ -347,7 +347,7 @@ export default function SelectControl<T extends string | number = string | numbe
               top: coords.top,
               left: coords.left,
               width: coords.width,
-              zIndex: 60,
+              zIndex: 1200,
               transform: coords.placement === 'top' ? 'translateY(-100%)' : undefined,
             }}
             onKeyDown={onPanelKeyDown}

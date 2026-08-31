@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useRef, useState, type MouseEvent } from 'react';
-import { FiChevronRight } from 'react-icons/fi';
 import CoverImage from '@/components/CoverImage';
 import { useRecordModalStore } from '@/stores';
 
@@ -76,7 +75,7 @@ export default function RecordCarouselClient({ list }: Props) {
       <div className="group relative h-[172px] overflow-hidden rounded-xl shadow-[0_8px_24px_-12px_rgba(15,23,42,0.35)] ring-1 ring-black/5 dark:ring-white/10">
         <button
           type="button"
-          onClick={openRecordModal}
+          onClick={() => openRecordModal(current.id)}
           className="absolute inset-0 z-0 cursor-pointer border-0 bg-transparent p-0"
           aria-label="打开闪念"
           title={current.text}

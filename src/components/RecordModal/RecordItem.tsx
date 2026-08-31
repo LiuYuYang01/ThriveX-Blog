@@ -20,6 +20,7 @@ interface Props {
   location?: string;
   createTime?: string | number | Date;
   user: Pick<User, 'avatar' | 'name'> | null;
+  highlighted?: boolean;
 }
 
 interface Particle {
@@ -29,20 +30,32 @@ interface Particle {
   rot: number;
 }
 
-export default function RecordItem({ id, content, images, likeCount, mood, location, createTime, user }: Props) {
+export default function RecordItem({
+  id,
+  content,
+  images,
+  likeCount,
+  mood,
+  location,
+  createTime,
+  user,
+  highlighted,
+}: Props) {
   const imageList: string[] = Array.isArray(images) ? images : JSON.parse((images as string) ?? '[]');
   const { count, like } = useDebouncedLike(Number(id), likeCount ?? 0, likeRecordAction);
   const [showComments, setShowComments] = useState(false);
   const [commentCount, setCommentCount] = useState(0);
   const [popping, setPopping] = useState(false);
   const [countBump, setCountBump] = useState(false);
+  const [burst, setBurst] = useState(false);
   const [particles, setParticles] = useState<Particle[]>([]);
   const particleIdRef = useRef(0);
+  const lastTapRef = useRef(0);
 
   useEffect(() => {
     getRecordCommentListAPI(Number(id), { pageNum: 1, pageSize: 1 })
       .then(({ data }) => setCommentCount(data.total ?? 0))
-      .catch(() => { });
+      .catch(() => {});
   }, [id]);
 
   const handleLike = () => {
@@ -69,29 +82,61 @@ export default function RecordItem({ id, content, images, likeCount, mood, locat
     }, 650);
   };
 
+  const handleContentTap = () => {
+    const now = Date.now();
+    if (now - lastTapRef.current < 320) {
+      handleLike();
+      setBurst(true);
+      window.setTimeout(() => setBurst(false), 560);
+      lastTapRef.current = 0;
+      return;
+    }
+    lastTapRef.current = now;
+  };
+
   return (
-    <article className="flex gap-3 border-b border-gray-50 bg-white px-4 py-3.5 dark:border-white/10 dark:bg-[#1e2430]">
-      <img
-        src={user?.avatar}
-        alt={user?.name ?? '作者'}
-        width={40}
-        height={40}
-        className="mt-0.5 h-10 w-10 shrink-0 rounded-md object-cover"
-      />
-      <div className="min-w-0 flex-1">
-        <p className="m-0 text-[15px] font-medium text-[#576b95] dark:text-[#7b93c4]">
+    <article
+      data-record-id={id}
+      className={`relative flex gap-2.5 border-b border-[#f0f0f0] bg-white px-4 py-3 dark:border-white/8 dark:bg-[#1e2430] ${
+        highlighted ? 'record-item-flash' : ''
+      }`}
+    >
+      {user?.avatar ? (
+        <img
+          src={user.avatar}
+          alt={user.name ?? '作者'}
+          width={40}
+          height={40}
+          className="mt-0.5 h-10 w-10 shrink-0 rounded-md object-cover"
+        />
+      ) : (
+        <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-[#eee] text-sm text-[#999] dark:bg-[#323e50] dark:text-slate-400">
+          {(user?.name ?? '我').slice(0, 1)}
+        </div>
+      )}
+      <div className="relative min-w-0 flex-1">
+        <p className="m-0 text-[15px] font-medium leading-snug text-[#576b95] dark:text-[#7b93c4]">
           {user?.name}
-          {mood ? <span className="ml-1.5 font-normal">{mood}</span> : null}
+          {mood ? <span className="ml-1 font-normal opacity-80">{mood}</span> : null}
         </p>
-        <p className="mt-1 whitespace-pre-wrap wrap-break-word text-[15px] leading-[1.55] text-[#191919] dark:text-slate-200">
+        <button
+          type="button"
+          onClick={handleContentTap}
+          className="mt-0.5 w-full cursor-pointer border-0 bg-transparent p-0 text-left whitespace-pre-wrap wrap-break-word text-[15px] leading-[1.5] text-[#191919] dark:text-slate-200"
+        >
           {content}
-        </p>
+        </button>
+        {burst && (
+          <span className="record-double-tap-heart pointer-events-none absolute left-1/2 top-1/3 z-10 -translate-x-1/2 text-[#fa5151]">
+            <RiHeartFill className="h-10 w-10 drop-shadow" />
+          </span>
+        )}
         {imageList.length > 0 && (
-          <div className="mt-2.5">
+          <div className="mt-2">
             <ImageList list={imageList} />
           </div>
         )}
-        <div className="mt-2 flex items-end justify-between gap-2">
+        <div className="mt-1.5 flex items-end justify-between gap-2">
           <div className="min-w-0 text-xs">
             {location ? (
               <p className="m-0 flex min-w-0 items-center gap-0.5 truncate text-[#576b95] dark:text-[#7b93c4]">
@@ -99,9 +144,11 @@ export default function RecordItem({ id, content, images, likeCount, mood, locat
                 <span className="truncate">{location}</span>
               </p>
             ) : null}
-            <p className={`m-0 text-[#b2b2b2] dark:text-slate-500 ${location ? 'mt-1' : ''}`}>{getRelativeTimeLabel(createTime)}</p>
+            <p className={`m-0 text-[#b2b2b2] dark:text-slate-500 ${location ? 'mt-0.5' : ''}`}>
+              {getRelativeTimeLabel(createTime)}
+            </p>
           </div>
-          <div className="flex shrink-0 items-center gap-3">
+          <div className="flex shrink-0 items-center gap-3.5">
             <button
               type="button"
               onClick={handleLike}
@@ -123,7 +170,9 @@ export default function RecordItem({ id, content, images, likeCount, mood, locat
                   <RiHeartFill className="h-2.5 w-2.5" />
                 </span>
               ))}
-              <RiHeartFill className={`record-like-heart h-3.5 w-3.5 ${count > 0 ? 'text-[#fa5151]' : ''} ${popping ? 'is-popping' : ''}`} />
+              <RiHeartFill
+                className={`record-like-heart h-3.5 w-3.5 ${count > 0 ? 'text-[#fa5151]' : ''} ${popping ? 'is-popping' : ''}`}
+              />
               {count > 0 && (
                 <span className={`text-xs tabular-nums ${countBump ? 'record-like-count-bump' : ''}`}>{count}</span>
               )}
@@ -135,12 +184,12 @@ export default function RecordItem({ id, content, images, likeCount, mood, locat
               aria-label="评论"
             >
               <RiChat3Line className="h-3.5 w-3.5" />
-              <span className="text-xs tabular-nums">{commentCount}</span>
+              {commentCount > 0 && <span className="text-xs tabular-nums">{commentCount}</span>}
             </button>
           </div>
         </div>
         {showComments && (
-          <div className="mt-2 rounded-sm bg-[#f7f7f7] px-2.5 py-2 dark:bg-white/5">
+          <div className="mt-2 rounded-md bg-[#f7f7f7] px-2.5 py-2 dark:bg-white/5">
             <RecordCommentPanel recordId={Number(id)} onCountChange={setCommentCount} />
           </div>
         )}

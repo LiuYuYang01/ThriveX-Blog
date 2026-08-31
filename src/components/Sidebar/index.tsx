@@ -4,6 +4,7 @@ import RandomArticle from './RandomArticle';
 import Comment from './Comment';
 import RunTime from './RunTime';
 import Study from './Study';
+import RecordCarousel from './RecordCarousel';
 import { RightSidebar, Social } from '@/types/app/config';
 
 interface Props {
@@ -20,6 +21,8 @@ export default ({ sidebar, social, recoArticleIds }: Props) => {
         {sidebar.includes('author') && <Author social={social} />}
         {/* 站点已运行 */}
         {sidebar.includes('runTime') && <RunTime />}
+        {/* 闪念轮播 */}
+        <RecordCarousel />
         {/* 作者推荐 */}
         {sidebar.includes('hotArticle') && <HotArticle recoArticleIds={recoArticleIds} />}
         {/* 随机推荐 */}

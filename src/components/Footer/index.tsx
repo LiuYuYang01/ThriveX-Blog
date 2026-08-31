@@ -37,7 +37,7 @@ export default async () => {
           <Tooltip content="一款免费、开源、年轻、高颜值的现代化博客管理系统">
             <div className="flex justify-center items-center space-x-3">
               <img src="https://bu.dusays.com/2025/12/04/6930fdfbda057.png" width={30} height={30} alt="ThriveX 博客管理系统" />
-              <Link href="https://github.com/LiuYuYang01/ThriveX-Admin" target="_blank" className="dark:text-white hover:text-primary">
+              <Link href="https://thrivex.liuyuyang.net/" target="_blank" className="dark:text-white hover:text-primary">
                 {' '}
                 基于开源项目 ThriveX 构建
               </Link>

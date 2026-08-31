@@ -27,9 +27,13 @@ export default function RecordModal() {
   const listRef = useRef<HTMLDivElement>(null);
   const fetchedRef = useRef(false);
 
-  const coverSrc = getStableImage(undefined, theme?.covers, 'record-cover');
+  const coverSrc = theme?.record_cover?.trim() || getStableImage(undefined, theme?.covers, 'record-cover');
   const covers = parseThemeCovers(theme?.covers);
   const bgCover = coverSrc || covers[0] || '';
+  const recordName = theme?.record_name?.trim() || author?.name || '我';
+  // 如果 record_avatar 为空，则使用 author.avatar
+  const recordAvatar = theme?.record_avatar?.trim() || author?.avatar || '';
+  const recordUser = { name: recordName, avatar: recordAvatar };
   const showSkeleton = loading && records.length === 0;
 
   const fetchRecords = useCallback(async (page: number, append = false) => {
@@ -126,14 +130,14 @@ export default function RecordModal() {
                 style={bgCover ? { backgroundImage: `url(${bgCover})` } : undefined}
               >
                 <span className="absolute right-22 bottom-1 z-10 text-[17px] font-medium text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.65)]">
-                  {author?.name || '我'}
+                  {recordName}
                 </span>
               </div>
               <div className="absolute right-3 bottom-0 z-10 translate-y-1/2">
-                {author?.avatar ? (
+                {recordAvatar ? (
                   <img
-                    src={author.avatar}
-                    alt={author.name ?? '作者'}
+                    src={recordAvatar}
+                    alt={recordName}
                     width={64}
                     height={64}
                     className="h-16 w-16 rounded-md border-2 border-white object-cover shadow-sm dark:border-[#1e2430]"
@@ -159,7 +163,7 @@ export default function RecordModal() {
                       mood={item.mood}
                       location={item.location}
                       createTime={item.createTime as string | number | undefined}
-                      user={author}
+                      user={recordUser}
                     />
                   ))}
                   <Show is={!loading && records.length === 0}>

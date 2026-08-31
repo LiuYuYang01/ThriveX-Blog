@@ -1,0 +1,25 @@
+# GIT COMMIT MESSAGE RULES
+# IMPORTANT: These rules apply to the "Generate with AI" (Sparkle icon) in the Git panel.
+
+You MUST always generate git commit messages in Simplified Chinese (简体中文).
+DO NOT use English for the description.
+
+Format: Conventional Commits
+ - feat(页面、组件、模块等): 新功能
+ - fix(页面、组件、模块等): 修补错误
+ - docs(页面、组件、模块等): 文档改变
+ - style(页面、组件、模块等): 代码格式改变
+ - refactor(页面、组件、模块等): 某个已有功能重构
+ - perf(页面、组件、模块等): 性能优化
+ - test(页面、组件、模块等): 增加测试
+ - build(页面、组件、模块等): 改变构建流程
+ - ci(页面、组件、模块等): 改变持续集成配置
+ - chore(页面、组件、模块等): 辅助工具的变动
+
+Examples:
+- refactor(operation_log): 移除操作类型徽章相关代码并简化渲染
+
+    - 删除了ActionBadge组件及其关联的操作类型和样式配置
+    - 取消了对多种操作图标和样式的支持，改为统一简洁的标签样式显示操作文本
+    - 更新操作日志及操作日志结束页中的操作列渲染逻辑，提升代码简洁性
+    - 减少了对多余图标包的依赖，优化导入结构

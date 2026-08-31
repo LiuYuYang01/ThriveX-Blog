@@ -40,7 +40,9 @@ export interface Theme {
     social: Social[],
     covers: string,
     record_name: string,
-    record_info: string
+    record_avatar?: string,
+    record_cover?: string,
+    record_info?: string
 }
 
 // 其他配置

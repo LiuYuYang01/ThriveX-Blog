@@ -1,4 +1,3 @@
-import Dynamic from './components/Dynamic';
 import SwiperClient from './components/SwiperClient';
 import Classics from './Classics';import Waterfall from './Waterfall';
 import Card from './Card';
@@ -22,7 +21,7 @@ export default ({ page, basePath, theme, covers, swiper, data }: Props) => {
 
   return (
     <div className={`w-full md:w-[90%] ${sidebar?.length ? 'lg:w-[68%] xl:w-[73%]' : 'w-full'} mx-auto transition-width`}>
-      {!!swiper.result?.length && <SwiperClient data={swiper.result} />}      <Dynamic className="my-2" />
+      {!!swiper.result?.length && <SwiperClient data={swiper.result} />}
 
       {articleLayout === 'classics' && <Classics data={data} covers={covers} />}
       {articleLayout === 'card' && <Card data={data} covers={covers} />}

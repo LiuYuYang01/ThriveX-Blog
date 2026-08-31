@@ -50,7 +50,7 @@ export default () => {
   const [cateList, setCateList] = useState<Cate[]>([]);
   const getCateList = async () => {
     const { data } = await getCateListAPI();
-    setCateList(data?.filter((item) => item.id !== 1) ?? []);
+    setCateList(data?.filter((item) => !['all', 'choice'].includes(item.mark)) ?? []);
   };
 
   useEffect(() => {

@@ -12,7 +12,7 @@ export default function RecordEntry() {
   return (
     <button
       type="button"
-      onClick={openModal}
+      onClick={() => openModal()}
       aria-label="打开闪念"
       title="闪念"
       className="group fixed right-5 bottom-6 z-40 inline-flex cursor-pointer items-center gap-2 rounded-full border-0 bg-primary px-4 py-2.5 text-sm font-medium text-white shadow-[0_10px_28px_rgba(83,157,253,0.45)] hover:brightness-105 active:scale-95 sm:right-10 sm:bottom-8"

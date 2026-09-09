@@ -1,18 +1,19 @@
 'use client';
 
+import { usePathname, useRouter } from 'next/navigation';
 import { IoSparkles } from 'react-icons/io5';
-import { useRecordModalStore } from '@/stores';
 
 export default function RecordEntry() {
-  const open = useRecordModalStore((s) => s.open);
-  const openModal = useRecordModalStore((s) => s.openModal);
+  const router = useRouter();
+  const pathname = usePathname();
 
-  if (open) return null;
+  // 已经在闪念页时不展示入口
+  if (pathname === '/record') return null;
 
   return (
     <button
       type="button"
-      onClick={() => openModal()}
+      onClick={() => router.push('/record')}
       aria-label="打开闪念"
       title="闪念"
       className="group fixed right-5 bottom-6 z-40 inline-flex cursor-pointer items-center gap-2 rounded-full border-0 bg-primary px-4 py-2.5 text-sm font-medium text-white shadow-[0_10px_28px_rgba(83,157,253,0.45)] hover:brightness-105 active:scale-95 sm:right-10 sm:bottom-8"

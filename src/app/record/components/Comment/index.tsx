@@ -52,7 +52,7 @@ export default function RecordCommentPanel({ recordId, onCountChange }: Props) {
   const { publicConfig } = useAppConfig();
   const hasHCaptcha = !!publicConfig?.hcaptcha_key?.key;
 
-  const methods = useForm<CommentForm>({});
+  const methods = useForm<CommentForm>({ defaultValues: { content: '', name: '', email: '', url: '', avatar: '' } });
   const { setValue, setFocus, reset, handleSubmit } = methods;
 
   const fetchComments = async () => {
@@ -146,11 +146,11 @@ export default function RecordCommentPanel({ recordId, onCountChange }: Props) {
 
   const renderName = (item: Pick<RecordComment, 'name' | 'url'>) =>
     item.url ? (
-      <a href={item.url} target="_blank" rel="noopener noreferrer" className="font-medium text-[#576b95] dark:text-[#7b93c4]">
+      <a href={item.url} target="_blank" rel="noopener noreferrer" className="font-medium text-primary">
         {item.name}
       </a>
     ) : (
-      <span className="font-medium text-[#576b95] dark:text-[#7b93c4]">{item.name}</span>
+      <span className="font-medium text-primary">{item.name}</span>
     );
 
   return (
@@ -171,7 +171,7 @@ export default function RecordCommentPanel({ recordId, onCountChange }: Props) {
                     <span>{item.content}</span>
                     <button
                       type="button"
-                      className="ml-1.5 inline cursor-pointer border-0 bg-transparent p-0 text-[12px] text-[#b2b2b2] hover:text-[#576b95]"
+                      className="ml-1.5 inline cursor-pointer border-0 bg-transparent p-0 text-[12px] text-[#b2b2b2] hover:text-primary"
                       onClick={() => replyComment(item.id!, item.name)}
                     >
                       回复
@@ -184,11 +184,11 @@ export default function RecordCommentPanel({ recordId, onCountChange }: Props) {
                         <p key={reply.id} className="m-0 wrap-break-word text-[#191919] dark:text-slate-200">
                           {renderName(reply)}
                           <span>：</span>
-                          {reply.replyName ? <span className="text-[#576b95] dark:text-[#7b93c4]">@{reply.replyName} </span> : null}
+                          {reply.replyName ? <span className="text-primary">@{reply.replyName} </span> : null}
                           <span>{reply.content}</span>
                           <button
                             type="button"
-                            className="ml-1.5 inline cursor-pointer border-0 bg-transparent p-0 text-[12px] text-[#b2b2b2] hover:text-[#576b95]"
+                            className="ml-1.5 inline cursor-pointer border-0 bg-transparent p-0 text-[12px] text-[#b2b2b2] hover:text-primary"
                             onClick={() => replyComment(reply.id!, reply.name)}
                           >
                             回复
@@ -253,14 +253,14 @@ export default function RecordCommentPanel({ recordId, onCountChange }: Props) {
               <button
                 type="button"
                 onClick={closeForm}
-                className="cursor-pointer border-0 bg-transparent p-0 text-[13px] text-[#888] hover:text-[#576b95]"
+                className="cursor-pointer border-0 bg-transparent p-0 text-[13px] text-[#888] hover:text-primary"
               >
                 取消
               </button>
               <button
                 type="submit"
                 disabled={submitting}
-                className="cursor-pointer rounded-sm border-0 bg-[#576b95] px-3 py-1 text-[13px] text-white hover:bg-[#4a5d82] disabled:opacity-60"
+                className="cursor-pointer rounded-sm border-0 bg-primary px-3 py-1 text-[13px] text-white hover:opacity-90 disabled:opacity-60"
               >
                 {submitting ? '发送中…' : '发送'}
               </button>
@@ -276,7 +276,7 @@ export default function RecordCommentPanel({ recordId, onCountChange }: Props) {
             setShowForm(true);
             requestAnimationFrame(() => setFocus('content'));
           }}
-          className="mt-1.5 w-full cursor-pointer border-0 bg-transparent py-1 text-left text-[13px] text-[#b2b2b2] hover:text-[#576b95]"
+          className="mt-1.5 w-full cursor-pointer border-0 bg-transparent py-1 text-left text-[13px] text-[#b2b2b2] hover:text-primary"
         >
           写评论…
         </button>

@@ -9,7 +9,6 @@ import BaiduStatis from '@/components/BaiduStatis';
 import FloatingBlock from '@/components/FloatingBlock';
 import ThemeTransition from '@/components/ThemeTransition';
 import AppConfigProvider from '@/components/AppConfigProvider';
-import RecordModal from '@/components/RecordModal';
 import RecordEntry from '@/components/RecordEntry';
 import { getAppConfigCacheAPI } from '@/lib/config';
 
@@ -40,7 +39,6 @@ export default async function RootLayoutContent({ children }: Props) {
         <Footer />
         <FloatingBlock />
         <RecordEntry />
-        <RecordModal />
         <ThemeTransition />
       </AppConfigProvider>
     </>

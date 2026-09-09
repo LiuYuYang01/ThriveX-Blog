@@ -1,0 +1,32 @@
+// 闪念入口入场动效
+@keyframes record-entry-enter {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+// 高亮点闪光，制造灵感「点亮」的感觉
+@keyframes record-dot-glow {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 0.6;
+  }
+}
+
+.record-entry {
+  animation: record-entry-enter 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+
+  .record-sparkle-dot {
+    animation: record-dot-glow 2.4s ease-in-out infinite;
+  }
+}

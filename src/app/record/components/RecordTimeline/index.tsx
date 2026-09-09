@@ -5,15 +5,15 @@ import dayjs, { type Dayjs } from 'dayjs';
 
 import { getRecordListAPI } from '@/api/record';
 import Empty from '@/components/Empty';
-import PageHeroHeader, { PageHeroGrid } from '@/components/PageHeroHeader';
+import { PageHeroGrid } from '@/components/PageHeroHeader';
 import RandomAvatar from '@/components/RandomAvatar';
 import { useAppConfig } from '@/components/AppConfigProvider';
+import { getStableImage, parseThemeCovers } from '@/utils/cover';
 import { Record } from '@/types/app/record';
 import RecordCard from '../RecordCard';
 
 interface Props {
   initialList: Record[];
-  total: number;
   initialPages: number;
   pageSize: number;
   focusId: number | null;
@@ -23,13 +23,6 @@ interface DayGroup {
   key: string;
   date: Dayjs;
   records: Record[];
-}
-
-interface MonthGroup {
-  key: string;
-  label: string;
-  count: number;
-  days: DayGroup[];
 }
 
 const WEEKDAYS = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
@@ -60,23 +53,7 @@ function groupByDay(list: Record[]): DayGroup[] {
   return groups;
 }
 
-/** 按月聚合天分组，用于月份分隔 */
-function groupByMonth(days: DayGroup[]): MonthGroup[] {
-  const months: MonthGroup[] = [];
-  for (const day of days) {
-    const key = day.date.format('YYYY-MM');
-    const last = months[months.length - 1];
-    if (last && last.key === key) {
-      last.days.push(day);
-      last.count += day.records.length;
-    } else {
-      months.push({ key, label: day.date.format('YYYY 年 M 月'), count: day.records.length, days: [day] });
-    }
-  }
-  return months;
-}
-
-export default function RecordTimeline({ initialList, total, initialPages, pageSize, focusId }: Props) {
+export default function RecordTimeline({ initialList, initialPages, pageSize, focusId }: Props) {
   const { author, theme } = useAppConfig();
 
   const [list, setList] = useState<Record[]>(initialList);
@@ -90,6 +67,8 @@ export default function RecordTimeline({ initialList, total, initialPages, pageS
   const recordName = theme?.record_name?.trim() || author?.name || '我';
   const recordAvatar = theme?.record_avatar?.trim() || author?.avatar || '';
   const recordInfo = theme?.record_info?.trim();
+  const bgCover =
+    theme?.record_cover?.trim() || getStableImage(undefined, theme?.covers, 'record-cover') || parseThemeCovers(theme?.covers)[0] || '';
 
   const loadMore = useCallback(async () => {
     if (loading || !hasMore) return;
@@ -137,7 +116,7 @@ export default function RecordTimeline({ initialList, total, initialPages, pageS
     });
   }, [focusId, list]);
 
-  const months = groupByMonth(groupByDay(list));
+  const dayGroups = groupByDay(list);
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#fbfbfd] px-4 pb-16 sm:px-6 lg:px-8 dark:bg-[#111318]">
@@ -146,83 +125,81 @@ export default function RecordTimeline({ initialList, total, initialPages, pageS
       <div className="pointer-events-none absolute inset-x-0 top-0 h-[520px] bg-[radial-gradient(circle_at_top_left,rgba(251,191,36,0.13),transparent_32%),radial-gradient(circle_at_top_right,rgba(244,114,182,0.1),transparent_30%),radial-gradient(circle_at_50%_38%,rgba(139,92,246,0.1),transparent_30%)] dark:bg-[radial-gradient(circle_at_top_left,rgba(251,191,36,0.14),transparent_32%),radial-gradient(circle_at_top_right,rgba(244,114,182,0.1),transparent_30%),radial-gradient(circle_at_50%_38%,rgba(139,92,246,0.12),transparent_30%)]" />
 
       <div className="relative mx-auto w-full max-w-[760px]">
-        <PageHeroHeader title="闪念" subtitle={recordInfo || '记录生活，遇见美好'} className="mb-0" />
+        <h1 className="sr-only">闪念</h1>
 
-        {/* 站长署名 */}
-        <div className="relative z-10 mt-2 mb-10 flex items-center justify-center gap-2">
-          <span className="flex size-7 items-center justify-center overflow-hidden rounded-full ring-2 ring-white dark:ring-[#1a212b]">
-            {recordAvatar ? (
-              <img src={recordAvatar} alt={recordName} className="h-full w-full object-cover" />
+        {/* 封面横幅 + 站长信息 */}
+        <div className="mt-20">
+          <div className="relative h-64 overflow-hidden rounded-3xl sm:h-80">
+            {bgCover ? (
+              <img src={bgCover} alt="" className="absolute inset-0 h-full w-full object-cover" />
             ) : (
-              <RandomAvatar seed={recordName} className="h-full w-full" />
+              <div className="absolute inset-0 bg-linear-to-br from-amber-200/60 via-rose-200/50 to-violet-200/60 dark:from-[#2b2436] dark:via-[#232a3a] dark:to-[#2b2436]" />
             )}
-          </span>
-          <span className="text-sm text-[#5c6470] dark:text-slate-400">{recordName}</span>
-          <span className="text-xs text-[#c0c7d2] dark:text-slate-600">· 共 {total} 条</span>
+            <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_55%,rgba(17,24,39,0.18))]" />
+          </div>
+
+          <div className="relative z-10 -mt-10 flex flex-col items-center">
+            <span className="flex size-20 items-center justify-center overflow-hidden rounded-full shadow-[0_8px_24px_rgba(15,23,42,0.15)] ring-4 ring-[#fbfbfd] dark:ring-[#111318]">
+              {recordAvatar ? (
+                <img src={recordAvatar} alt={recordName} className="h-full w-full object-cover" />
+              ) : (
+                <RandomAvatar seed={recordName} className="h-full w-full" />
+              )}
+            </span>
+            <p className="m-0 mt-3 text-xl font-bold text-[#191919] dark:text-white">{recordName}</p>
+            {recordInfo ? (
+              <p className="m-0 mt-1 text-sm text-[#8a94a3] dark:text-slate-400">{recordInfo}</p>
+            ) : null}
+          </div>
         </div>
 
         {list.length > 0 ? (
-          <div ref={timelineRef} className="relative">
-            {/* 时间轴主线 */}
-            <span
-              aria-hidden
-              className="absolute top-1 bottom-1 left-[6px] w-px bg-linear-to-b from-transparent via-black/12 to-transparent md:left-[112px] dark:via-white/12"
-            />
+          <div ref={timelineRef} className="relative mt-9">
+            <ol className="relative flex flex-col gap-8">
+              {/* 时间轴主线 */}
+              <span
+                aria-hidden
+                className="absolute top-2 bottom-2 left-[6px] w-px bg-linear-to-b from-transparent via-black/12 to-transparent md:left-[112px] dark:via-white/12"
+              />
 
-            {months.map((month) => (
-              <section key={month.key} className="relative">
-                <div className="sticky top-[60px] z-20 -mx-2 px-2 py-2">
-                  <span className="inline-flex items-center gap-1.5 rounded-full border border-black/5 bg-white/88 px-3.5 py-1.5 text-xs font-medium tracking-[0.12em] text-[#7b8494] shadow-[0_4px_16px_rgba(15,23,42,0.05)] backdrop-blur-md dark:border-white/10 dark:bg-[#1a212b]/88 dark:text-slate-400">
-                    {month.label}
-                    <span className="tracking-normal text-[#bfc6d1] dark:text-slate-600">{month.count} 条</span>
-                  </span>
-                </div>
-
-                <ol className="flex flex-col gap-9 pb-9">
-                  {month.days.map((day) => {
-                    const label = getDayLabelParts(day.date);
-                    return (
-                      <li key={day.key} className="relative">
-                        {/* 轴点 */}
-                        <span
-                          aria-hidden
-                          className="absolute top-6 left-0 size-3 rounded-full bg-amber-400 ring-4 ring-[#fbfbfd] md:left-[106px] dark:ring-[#111318]"
-                        />
-                        <div className="md:grid md:grid-cols-[112px_1fr]">
-                          <div className="hidden pt-5 pr-8 text-right md:block">
-                            <p
-                              className={`m-0 text-sm ${label.highlight ? 'font-semibold text-[#191919] dark:text-white' : 'font-medium text-[#5b6472] dark:text-slate-400'}`}
-                            >
-                              {label.main}
-                            </p>
-                            <p className="m-0 mt-0.5 text-[11px] text-[#aab1bd] dark:text-slate-600">{label.sub}</p>
-                          </div>
-                          <div className="pl-8 md:pl-7">
-                            <p className="m-0 mb-3 flex items-baseline gap-1.5 text-xs md:hidden">
-                              <span
-                                className={`font-medium ${label.highlight ? 'text-[#191919] dark:text-white' : 'text-[#5b6472] dark:text-slate-400'}`}
-                              >
-                                {label.main}
-                              </span>
-                              <span className="text-[11px] text-[#aab1bd] dark:text-slate-600">{label.sub}</span>
-                            </p>
-                            <div className="space-y-4">
-                              {day.records.map((item) => (
-                                <RecordCard
-                                  key={item.id}
-                                  record={item}
-                                  highlighted={focusId === item.id}
-                                />
-                              ))}
-                            </div>
-                          </div>
+              {dayGroups.map((day) => {
+                const label = getDayLabelParts(day.date);
+                return (
+                  <li key={day.key} className="relative">
+                    {/* 轴点 */}
+                    <span
+                      aria-hidden
+                      className="absolute top-6 left-0 size-3 rounded-full bg-amber-400 ring-4 ring-[#fbfbfd] md:left-[106px] dark:ring-[#111318]"
+                    />
+                    <div className="md:grid md:grid-cols-[112px_1fr]">
+                      <div className="hidden pt-5 pr-8 text-right md:block">
+                        <p
+                          className={`m-0 text-sm ${label.highlight ? 'font-semibold text-[#191919] dark:text-white' : 'font-medium text-[#5b6472] dark:text-slate-400'}`}
+                        >
+                          {label.main}
+                        </p>
+                        <p className="m-0 mt-0.5 text-[11px] text-[#aab1bd] dark:text-slate-600">{label.sub}</p>
+                      </div>
+                      <div className="pl-8 md:pl-7">
+                        <p className="m-0 mb-3 flex items-baseline gap-1.5 text-xs md:hidden">
+                          <span
+                            className={`font-medium ${label.highlight ? 'text-[#191919] dark:text-white' : 'text-[#5b6472] dark:text-slate-400'}`}
+                          >
+                            {label.main}
+                          </span>
+                          <span className="text-[11px] text-[#aab1bd] dark:text-slate-600">{label.sub}</span>
+                        </p>
+                        <div className="space-y-4">
+                          {day.records.map((item) => (
+                            <RecordCard key={item.id} record={item} highlighted={focusId === item.id} />
+                          ))}
                         </div>
-                      </li>
-                    );
-                  })}
-                </ol>
-              </section>
-            ))}
+                      </div>
+                    </div>
+                  </li>
+                );
+              })}
+            </ol>
 
             {hasMore && <div ref={sentinelRef} className="h-px" />}
             {loading && <p className="py-5 text-center text-xs text-[#b6bdca] dark:text-slate-600">加载中…</p>}
@@ -233,7 +210,7 @@ export default function RecordTimeline({ initialList, total, initialPages, pageS
             )}
           </div>
         ) : (
-          <div className="flex items-center justify-center py-16">
+          <div className="mt-9 flex items-center justify-center py-16">
             <Empty info="暂无闪念~" />
           </div>
         )}

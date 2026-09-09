@@ -23,7 +23,6 @@ export default async (props: Props) => {
   return (
     <RecordTimeline
       initialList={data?.result ?? []}
-      total={data?.total ?? 0}
       initialPages={data?.pages ?? 1}
       pageSize={PAGE_SIZE}
       focusId={id ? Number(id) : null}

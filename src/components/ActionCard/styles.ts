@@ -1,20 +1,20 @@
 import { cn } from '@/lib/utils';
 
-export const actionBarClass =
-  'inline-flex items-center gap-3 rounded-full p-1';
+/** ActionBar 简约模式：单行胶囊容器 */
+export const actionBarPillClass = cn(
+  'inline-flex items-center rounded-full border border-gray-200 bg-white p-1',
+  'shadow-[0_4px_20px_-4px_rgba(0,0,0,0.08)]',
+  'dark:border-gray-800 dark:bg-black-b dark:shadow-none',
+);
 
-export const actionPillClass =
-  'inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium text-slate-600 transition-colors dark:text-slate-300';
+export const actionBarDividerClass = 'h-5 w-px bg-gray-100 dark:bg-white/10';
 
 /** ActionBar 简约模式：整项 hover / active 触发动画 */
 export const actionMinimalItemClass =
-  'group/action relative inline-flex select-none flex-col items-center cursor-pointer';
-
-export const actionMinimalButtonClass =
-  'cursor-pointer px-2 py-2 transition-colors duration-200 hover:bg-white dark:hover:bg-white/5';
+  'group/action relative inline-flex cursor-pointer select-none items-center gap-1.5 rounded-full px-3.5 py-1.5 text-sm font-bold text-slate-600 dark:text-slate-300';
 
 export const actionMinimalIconClass =
-  'transition-[translate,scale] duration-200 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover/action:-translate-y-0.5 group-hover/action:scale-110 group-active/action:translate-y-0 group-active/action:scale-95';
+  'shrink-0 transition-[scale] duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover/action:scale-110 group-active/action:scale-90';
 
 export const actionMinimalCountClass =
   'transition-[scale] duration-200 ease-out group-hover/action:scale-110 group-active/action:scale-95';

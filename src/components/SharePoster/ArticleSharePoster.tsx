@@ -2,8 +2,7 @@
 
 import { useState } from 'react';
 import { Modal, Button, Spinner } from '@/ThriveUI';
-import { RiDownloadLine, RiLink } from 'react-icons/ri';
-import { ShareActionIcon } from '@/components/ActionBar/icons';
+import { RiDownloadLine, RiLink, RiShareForwardLine } from 'react-icons/ri';
 import { toast } from 'react-toastify';
 import { cn } from '@/lib/utils';
 import {
@@ -11,11 +10,9 @@ import {
   actionCardDividerClass,
   actionIconWrapClass,
   actionLabelClass,
-  actionMinimalButtonClass,
   actionMinimalCountClass,
   actionMinimalIconClass,
   actionMinimalItemClass,
-  actionPillClass,
   actionPrimaryClass,
   actionTextColClass,
 } from '@/components/ActionCard/styles';
@@ -106,45 +103,37 @@ export default function ArticleSharePoster({ data, minimal = false, className, s
 
   return (
     <>
-      <div className={cn(actionMinimalItemClass, minimal && className, !minimal && 'relative inline-flex select-none flex-col items-center')}>
+      {minimal ? (
         <button
           type="button"
           onClick={handleOpen}
-          className={
-            minimal
-              ? cn(actionPillClass, actionMinimalButtonClass)
-              : cn(actionCardClass('blue', className), 'cursor-pointer transition-colors')
-          }
           aria-label="生成分享海报"
+          className={cn(actionMinimalItemClass, 'hover:bg-primary/10 dark:hover:bg-primary/15', className)}
         >
-          {minimal ? (
-            <span className={cn(actionIconWrapClass, actionMinimalIconClass, 'flex h-11 w-11 items-center justify-center p-0')}>
-              <ShareActionIcon className="h-11 w-11" />
-            </span>
-          ) : (
-            <>
-              <span className={actionIconWrapClass}>
-                <ShareActionIcon className="h-15 w-15" />
-              </span>
-              <div className={actionCardDividerClass('blue')} aria-hidden />
-              <div className={actionTextColClass}>
-                <span className={actionPrimaryClass}>分享</span>
-                <span className={actionLabelClass}>生成海报</span>
-              </div>
-            </>
+          <RiShareForwardLine className={cn(actionMinimalIconClass, 'text-lg text-primary')} />
+          {typeof shareCount === 'number' && (
+            <span className={cn('tabular-nums', actionMinimalCountClass)}>{shareCount}</span>
           )}
         </button>
-        {minimal && typeof shareCount === 'number' && (
-          <span
-            className={cn(
-              'mt-1 min-w-8 rounded-full px-2 py-0.5 text-center text-xs font-bold leading-none text-[#409EFF] tabular-nums',
-              actionMinimalCountClass,
-            )}
+      ) : (
+        <div className="relative inline-flex select-none flex-col items-center">
+          <button
+            type="button"
+            onClick={handleOpen}
+            className={cn(actionCardClass('blue', className), 'cursor-pointer transition-colors')}
+            aria-label="生成分享海报"
           >
-            {shareCount}
-          </span>
-        )}
-      </div>
+            <span className={actionIconWrapClass}>
+              <RiShareForwardLine className="h-14 w-14 text-primary" />
+            </span>
+            <div className={actionCardDividerClass('blue')} aria-hidden />
+            <div className={actionTextColClass}>
+              <span className={actionPrimaryClass}>分享</span>
+              <span className={actionLabelClass}>生成海报</span>
+            </div>
+          </button>
+        </div>
+      )}
 
       <Modal
         open={open}

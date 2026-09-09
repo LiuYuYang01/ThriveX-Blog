@@ -8,11 +8,9 @@ import {
   actionCardDividerClass,
   actionIconWrapClass,
   actionLabelClass,
-  actionMinimalButtonClass,
   actionMinimalCountClass,
   actionMinimalIconClass,
   actionMinimalItemClass,
-  actionPillClass,
   actionTextColClass,
 } from '@/components/ActionCard/styles';
 import './index.scss';
@@ -84,8 +82,8 @@ export default function LikeButtonCore({
 
   const isHero = variant === 'hero';
   const isInline = variant === 'inline';
-  const btnSize = isInline ? 'inline' : isHero ? 'sm' : minimal ? 'md' : size;
-  const isLarge = size === 'lg' && !minimal && !isInline;
+  const btnSize = isInline ? 'inline' : isHero ? 'sm' : size;
+  const isLarge = size === 'lg' && !isInline;
 
   const spawnParticles = (intensity: number) => {
     const particleCount = Math.min(intensity >= 5 ? 4 : intensity >= 3 ? 3 : 2, 4);
@@ -155,7 +153,6 @@ export default function LikeButtonCore({
   const btnClass = cn(
     BTN_BASE,
     BTN_SIZE[btnSize],
-    minimal && 'bg-none bg-rose-500 shadow-md shadow-rose-500/30 group-hover:shadow-lg group-hover:shadow-rose-500/40',
     popping && 'like-btn--popping',
     comboShaking && !isHero && 'like-btn--combo-shake',
     isInline && 'like-btn--inline',
@@ -209,14 +206,8 @@ export default function LikeButtonCore({
     </>
   );
 
-  const heartCircle = (
-    <span className={cn(btnClass, minimal && 'pointer-events-none')}>
-      <RiHeartFill className={iconClass} />
-    </span>
-  );
-
   const likeButton = (
-    <div className={cn(actionIconWrapClass, !isLarge && !minimal && 'p-0.5', minimal && 'p-0')}>
+    <div className={cn(actionIconWrapClass, !isLarge && 'p-0.5')}>
       {likeEffects}
       <button type="button" onClick={handleLike} className={btnClass} aria-label={ariaLabel}>
         <RiHeartFill className={iconClass} />
@@ -265,7 +256,12 @@ export default function LikeButtonCore({
 
   if (minimal) {
     return (
-      <div className={cn(actionMinimalItemClass, className)}>
+      <button
+        type="button"
+        onClick={handleLike}
+        aria-label={ariaLabel}
+        className={cn(actionMinimalItemClass, 'hover:bg-rose-50 dark:hover:bg-rose-500/10', className)}
+      >
         {combo >= 2 && (
           <span
             key={combo}
@@ -274,27 +270,16 @@ export default function LikeButtonCore({
             ×{combo}
           </span>
         )}
-        <button
-          type="button"
-          onClick={handleLike}
-          className={cn(actionPillClass, actionMinimalButtonClass, 'relative')}
-          aria-label={ariaLabel}
-        >
-          <span className={cn(actionIconWrapClass, actionMinimalIconClass, 'relative p-0')}>
-            {likeEffects}
-            {heartCircle}
-          </span>
-        </button>
-        <span
-          className={cn(
-            'mt-1 min-w-8 rounded-full px-2 py-0.5 text-center text-xs font-bold leading-none text-rose-600 tabular-nums',
-            actionMinimalCountClass,
-            countBump && 'like-count--bump',
-          )}
-        >
+        <span className="relative flex items-center justify-center">
+          {likeEffects}
+          <RiHeartFill
+            className={cn(actionMinimalIconClass, 'text-lg text-rose-500', popping && 'like-btn--popping')}
+          />
+        </span>
+        <span className={cn('tabular-nums', actionMinimalCountClass, countBump && 'like-count--bump')}>
           {count}
         </span>
-      </div>
+      </button>
     );
   }
 

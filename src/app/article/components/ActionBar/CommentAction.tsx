@@ -1,13 +1,10 @@
 'use client';
 
-import { CommentActionIcon } from '@/components/ActionBar/icons';
+import { RiChat3Line } from 'react-icons/ri';
 import {
-  actionIconWrapClass,
-  actionMinimalButtonClass,
   actionMinimalCountClass,
   actionMinimalIconClass,
   actionMinimalItemClass,
-  actionPillClass,
 } from '@/components/ActionCard/styles';
 import { cn } from '@/lib/utils';
 
@@ -27,25 +24,14 @@ export default function CommentAction({ count, className }: Props) {
   };
 
   return (
-    <div className={cn(actionMinimalItemClass, className)}>
-      <button
-        type="button"
-        onClick={scrollToComment}
-        className={cn(actionPillClass, actionMinimalButtonClass)}
-        aria-label="查看评论"
-      >
-        <span className={cn(actionIconWrapClass, actionMinimalIconClass, 'flex h-11 w-11 items-center justify-center p-0')}>
-          <CommentActionIcon className="h-11 w-11" />
-        </span>
-      </button>
-      <span
-        className={cn(
-          'mt-1 min-w-[2rem] rounded-full px-2 py-0.5 text-center text-xs font-bold leading-none text-[#FA8511] tabular-nums',
-          actionMinimalCountClass,
-        )}
-      >
-        {count}
-      </span>
-    </div>
+    <button
+      type="button"
+      onClick={scrollToComment}
+      aria-label="查看评论"
+      className={cn(actionMinimalItemClass, 'hover:bg-orange-50 dark:hover:bg-orange-500/10', className)}
+    >
+      <RiChat3Line className={cn(actionMinimalIconClass, 'text-lg text-orange-500')} />
+      <span className={cn('tabular-nums', actionMinimalCountClass)}>{count}</span>
+    </button>
   );
 }

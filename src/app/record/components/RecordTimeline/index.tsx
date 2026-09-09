@@ -27,14 +27,15 @@ interface DayGroup {
 
 const WEEKDAYS = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
 
-/** 日期分组标签：今天 / 昨天 / 9月7日 / 2024年12月31日 */
+/** 日期分组标签：今天 / 昨天 / 6月29日（跨年在第二行补年份） */
 function getDayLabelParts(date: Dayjs) {
   const now = dayjs();
   const weekday = WEEKDAYS[date.day()];
+  const main = date.format('M月D日');
   if (date.isSame(now, 'day')) return { main: '今天', sub: weekday, highlight: true };
   if (date.isSame(now.subtract(1, 'day'), 'day')) return { main: '昨天', sub: weekday, highlight: true };
-  if (date.isSame(now, 'year')) return { main: date.format('M月D日'), sub: weekday, highlight: false };
-  return { main: date.format('YYYY年M月D日'), sub: weekday, highlight: false };
+  if (date.isSame(now, 'year')) return { main, sub: weekday, highlight: false };
+  return { main, sub: `${date.format('YYYY')} · ${weekday}`, highlight: false };
 }
 
 /** 按天分组（列表已按时间倒序） */
@@ -155,7 +156,7 @@ export default function RecordTimeline({ initialList, initialPages, pageSize, fo
 
         {list.length > 0 ? (
           <div ref={timelineRef} className="relative mt-9">
-            <ol className="relative flex flex-col gap-8">
+            <ol className="relative flex flex-col gap-6">
               {/* 时间轴主线 */}
               <span
                 aria-hidden
@@ -165,20 +166,22 @@ export default function RecordTimeline({ initialList, initialPages, pageSize, fo
               {dayGroups.map((day) => {
                 const label = getDayLabelParts(day.date);
                 return (
-                  <li key={day.key} className="relative">
+                  <li key={day.key} className="group/day relative">
                     {/* 轴点 */}
                     <span
                       aria-hidden
                       className="absolute top-6 left-0 size-3 rounded-full bg-amber-400 ring-4 ring-[#fbfbfd] md:left-[106px] dark:ring-[#111318]"
                     />
                     <div className="md:grid md:grid-cols-[112px_1fr]">
-                      <div className="hidden pt-5 pr-8 text-right md:block">
+                      <div className="hidden pt-5 pr-8 text-right text-[#a8b1bf] group-hover/day:text-[#191919] dark:text-[#55617a] dark:group-hover/day:text-white md:block">
                         <p
-                          className={`m-0 text-sm ${label.highlight ? 'font-semibold text-[#191919] dark:text-white' : 'font-medium text-[#5b6472] dark:text-slate-400'}`}
+                          className={`m-0 whitespace-nowrap text-sm ${label.highlight ? 'font-semibold' : 'font-medium'}`}
                         >
                           {label.main}
                         </p>
-                        <p className="m-0 mt-0.5 text-[11px] text-[#aab1bd] dark:text-slate-600">{label.sub}</p>
+                        <p className="m-0 mt-0.5 whitespace-nowrap text-[11px] text-[#c2c9d4] group-hover/day:text-[#8a94a3] dark:text-[#4a5468] dark:group-hover/day:text-slate-400">
+                          {label.sub}
+                        </p>
                       </div>
                       <div className="pl-8 md:pl-7">
                         <p className="m-0 mb-3 flex items-baseline gap-1.5 text-xs md:hidden">

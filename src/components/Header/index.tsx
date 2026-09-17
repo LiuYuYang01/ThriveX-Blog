@@ -17,9 +17,9 @@ import { BsFillMoonStarsFill } from 'react-icons/bs';
 import { Cate } from '@/types/app/cate';
 import { Theme } from '@/types/app/config';
 import { getCateListAPI } from '@/api/cate';
-import { getCateNavHref, getCateNavRel, getCateNavTarget } from '@/utils/cateNav';
+import { getCateNavHref, getCateNavRel, getCateNavTarget, isRecordNavHref } from '@/utils/cateNav';
 
-import { useConfigStore } from '@/stores';
+import { useConfigStore, useRecordModalStore } from '@/stores';
 import useMounted from '@/hooks/useMounted';
 import { requestThemeTransition } from '@/utils/themeTransition';
 
@@ -37,7 +37,15 @@ const submenuPanelClass =
 const submenuItemClass =
   'group/item flex w-full min-w-0 items-center gap-2 rounded-lg px-3 py-2.5 text-[14px] text-[#666] dark:text-white cursor-pointer hover:text-primary! hover:bg-[#f0f7ff] dark:hover:bg-[#3a4556]';
 
-const Submenu = ({ items, showIcon }: { items: Cate[]; showIcon?: boolean }) => {
+const Submenu = ({
+  items,
+  showIcon,
+  onNavClick,
+}: {
+  items: Cate[];
+  showIcon?: boolean;
+  onNavClick: (e: React.MouseEvent, href: string) => void;
+}) => {
   const count = items.length;
   return (
     <ul
@@ -54,6 +62,7 @@ const Submenu = ({ items, showIcon }: { items: Cate[]; showIcon?: boolean }) => 
               rel={getCateNavRel(two.type)}
               title={two.name}
               className={submenuItemClass}
+              onClick={(e) => onNavClick(e, href)}
             >
               {showIcon && two.icon ? <span className="shrink-0 text-base leading-none">{two.icon}</span> : null}
               <span className="truncate">{two.name}</span>
@@ -70,6 +79,14 @@ export default ({ theme }: { theme: Theme }) => {
 
   const { isDark } = useConfigStore();
   const mounted = useMounted();
+  const openRecordModal = useRecordModalStore((s) => s.openModal);
+
+  // 弹窗模式下拦截闪念导航链接改为打开弹窗
+  const handleNavClick = (e: React.MouseEvent, href: string) => {
+    if (theme?.record_mode !== 'modal' || !isRecordNavHref(href)) return;
+    e.preventDefault();
+    openRecordModal();
+  };
 
   // 这些路径段不需要改变导航样式
   const isPathSty = ['/my', '/wall', '/record', '/equipment', '/tags', '/resume', '/album', '/fishpond', '/friend', '/echoes', '/sponsors'].some((path) => patchName.includes(path));
@@ -165,12 +182,12 @@ export default ({ theme }: { theme: Theme }) => {
                             <IoIosArrowDown className="ml-2 transition-[rotate] duration-200 group-hover/one:rotate-180" />
                           </span>
                         ) : (
-                          <Link href={href} target={getCateNavTarget(one.type)} rel={getCateNavRel(one.type)} className={`${linkClass} px-5`}>
+                          <Link href={href} target={getCateNavTarget(one.type)} rel={getCateNavRel(one.type)} className={`${linkClass} px-5`} onClick={(e) => handleNavClick(e, href)}>
                             {one.icon} {one.name}
                           </Link>
                         )}
                         <Show is={!!one.children.length}>
-                          <Submenu items={one.children} />
+                          <Submenu items={one.children} onNavClick={handleNavClick} />
                         </Show>
                       </li>
                     )}
@@ -183,12 +200,12 @@ export default ({ theme }: { theme: Theme }) => {
                             <IoIosArrowDown className="ml-2 transition-[rotate] duration-200 group-hover/one:rotate-180" />
                           </span>
                         ) : (
-                          <Link href={href} target={getCateNavTarget(one.type)} rel={getCateNavRel(one.type)} className={`${linkClass} px-10`}>
+                          <Link href={href} target={getCateNavTarget(one.type)} rel={getCateNavRel(one.type)} className={`${linkClass} px-10`} onClick={(e) => handleNavClick(e, href)}>
                             {one.icon} {one.name}
                           </Link>
                         )}
                         <Show is={!!one.children?.length}>
-                          <Submenu items={one.children} showIcon />
+                          <Submenu items={one.children} showIcon onNavClick={handleNavClick} />
                         </Show>
                       </li>
                     )}
@@ -201,12 +218,12 @@ export default ({ theme }: { theme: Theme }) => {
                             <IoIosArrowDown className="ml-2 transition-[rotate] duration-200 group-hover/one:rotate-180" />
                           </span>
                         ) : (
-                          <Link href={href} target={getCateNavTarget(one.type)} rel={getCateNavRel(one.type)} className={`${linkClass} px-10`}>
+                          <Link href={href} target={getCateNavTarget(one.type)} rel={getCateNavRel(one.type)} className={`${linkClass} px-10`} onClick={(e) => handleNavClick(e, href)}>
                             {one.icon} {one.name}
                           </Link>
                         )}
                         <Show is={!!one.children?.length}>
-                          <Submenu items={one.children} showIcon />
+                          <Submenu items={one.children} showIcon onNavClick={handleNavClick} />
                         </Show>
                       </li>
                     )}

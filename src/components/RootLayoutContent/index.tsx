@@ -10,6 +10,7 @@ import FloatingBlock from '@/components/FloatingBlock';
 import ThemeTransition from '@/components/ThemeTransition';
 import AppConfigProvider from '@/components/AppConfigProvider';
 import RecordEntry from '@/components/RecordEntry';
+import RecordModal from '@/components/RecordModal';
 import { getAppConfigCacheAPI } from '@/lib/config';
 
 interface Props {
@@ -39,6 +40,8 @@ export default async function RootLayoutContent({ children }: Props) {
         <Footer />
         <FloatingBlock />
         <RecordEntry />
+        {/* 弹窗模式下挂载闪念弹窗 */}
+        {theme?.record_mode === 'modal' && <RecordModal />}
         <ThemeTransition />
       </AppConfigProvider>
     </>

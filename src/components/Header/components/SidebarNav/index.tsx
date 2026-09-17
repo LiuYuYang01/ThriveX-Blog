@@ -1,8 +1,10 @@
 import Show from '@/components/Show';
 import { Cate } from '@/types/app/cate';
-import { getCateNavHref, getCateNavRel, getCateNavTarget } from '@/utils/cateNav';
+import { getCateNavHref, getCateNavRel, getCateNavTarget, isRecordNavHref } from '@/utils/cateNav';
+import { useAppConfig } from '@/components/AppConfigProvider';
+import { useRecordModalStore } from '@/stores';
 import Link from 'next/link';
-import { Fragment } from 'react';
+import { Fragment, type MouseEvent } from 'react';
 import { IoIosArrowDown } from 'react-icons/io';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -13,6 +15,20 @@ interface Props {
 }
 
 export default ({ list, open, onClose }: Props) => {
+  const { theme } = useAppConfig();
+  const openRecordModal = useRecordModalStore((s) => s.openModal);
+
+  // 弹窗模式下拦截闪念导航链接改为打开弹窗
+  const handleNavClick = (e: MouseEvent, href: string) => {
+    if (theme?.record_mode !== 'modal' || !isRecordNavHref(href)) {
+      onClose();
+      return;
+    }
+    e.preventDefault();
+    onClose();
+    openRecordModal();
+  };
+
   return (
     <>
       <AnimatePresence>
@@ -32,7 +48,7 @@ export default ({ list, open, onClose }: Props) => {
                               <IoIosArrowDown className="ml-2" />
                             </span>
                           ) : (
-                            <Link href={href} target={getCateNavTarget(one.type)} rel={getCateNavRel(one.type)} className="flex justify-between items-center p-3 px-5 text-[15px] group-hover/one:text-primary! text-[#333] dark:text-white whitespace-nowrap" onClick={onClose}>
+                            <Link href={href} target={getCateNavTarget(one.type)} rel={getCateNavRel(one.type)} className="flex justify-between items-center p-3 px-5 text-[15px] group-hover/one:text-primary! text-[#333] dark:text-white whitespace-nowrap" onClick={(e) => handleNavClick(e, href)}>
                               {one.icon} {one.name}
                             </Link>
                           )}
@@ -43,7 +59,7 @@ export default ({ list, open, onClose }: Props) => {
                                 const childHref = getCateNavHref(two);
                                 return (
                                   <li key={two.id} className="group/two">
-                                    <Link href={childHref} target={getCateNavTarget(two.type)} rel={getCateNavRel(two.type)} className="inline-block w-full p-2.5 pl-10 text-[15px] box-border text-[#666] dark:text-[#8c9ab1] hover:text-primary!" onClick={onClose}>
+                                    <Link href={childHref} target={getCateNavTarget(two.type)} rel={getCateNavRel(two.type)} className="inline-block w-full p-2.5 pl-10 text-[15px] box-border text-[#666] dark:text-[#8c9ab1] hover:text-primary!" onClick={(e) => handleNavClick(e, childHref)}>
                                       {two.name}
                                     </Link>
                                   </li>
@@ -62,7 +78,7 @@ export default ({ list, open, onClose }: Props) => {
                               <IoIosArrowDown className="ml-2" />
                             </span>
                           ) : (
-                            <Link href={href} target={getCateNavTarget(one.type)} rel={getCateNavRel(one.type)} className="flex justify-between items-center p-3 px-5 text-[15px] group-hover/one:text-primary! text-[#333] dark:text-white whitespace-nowrap" onClick={onClose}>
+                            <Link href={href} target={getCateNavTarget(one.type)} rel={getCateNavRel(one.type)} className="flex justify-between items-center p-3 px-5 text-[15px] group-hover/one:text-primary! text-[#333] dark:text-white whitespace-nowrap" onClick={(e) => handleNavClick(e, href)}>
                               {one.icon} {one.name}
                             </Link>
                           )}
@@ -73,7 +89,7 @@ export default ({ list, open, onClose }: Props) => {
                                 const childHref = getCateNavHref(two);
                                 return (
                                   <li key={two.id} className="group/two">
-                                    <Link href={childHref} target={getCateNavTarget(two.type)} rel={getCateNavRel(two.type)} className="inline-block w-full p-2.5 pl-10 text-[15px] box-border text-[#666] dark:text-[#8c9ab1] hover:text-primary!" onClick={onClose}>
+                                    <Link href={childHref} target={getCateNavTarget(two.type)} rel={getCateNavRel(two.type)} className="inline-block w-full p-2.5 pl-10 text-[15px] box-border text-[#666] dark:text-[#8c9ab1] hover:text-primary!" onClick={(e) => handleNavClick(e, childHref)}>
                                       {two.icon} {two.name}
                                     </Link>
                                   </li>

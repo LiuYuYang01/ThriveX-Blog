@@ -2,19 +2,27 @@
 
 import { usePathname, useRouter } from 'next/navigation';
 import { IoSparkles } from 'react-icons/io5';
+import { useAppConfig } from '@/components/AppConfigProvider';
+import { useRecordModalStore } from '@/stores';
 import './index.scss';
 
 export default function RecordEntry() {
   const router = useRouter();
   const pathname = usePathname();
+  const { theme } = useAppConfig();
+  const open = useRecordModalStore((s) => s.open);
+  const openModal = useRecordModalStore((s) => s.openModal);
 
-  // 已经在闪念页时不展示入口
-  if (pathname === '/record') return null;
+  // 弹窗模式下点击打开弹窗，页面模式下跳转 /record
+  const isModal = theme?.record_mode === 'modal';
+
+  // 已经在闪念页或弹窗已打开时不展示入口
+  if (pathname === '/record' || (isModal && open)) return null;
 
   return (
     <button
       type="button"
-      onClick={() => router.push('/record')}
+      onClick={() => (isModal ? openModal() : router.push('/record'))}
       aria-label="打开闪念"
       title="闪念"
       className="group fixed right-5 bottom-6 z-40 inline-flex cursor-pointer items-center gap-2 rounded-full bg-primary px-4.5 py-3 text-sm font-medium text-white shadow-[0_10px_28px_rgba(83,157,253,0.45)] transition-[scale,box-shadow] duration-300 hover:scale-105 hover:shadow-[0_14px_36px_rgba(83,157,253,0.6)] focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-white active:scale-95 sm:right-10 sm:bottom-8"

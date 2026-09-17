@@ -30,6 +30,9 @@ const nextConfig = {
     // 启用 Turbopack 文件系统缓存，加快开发时候的构建速度
     experimental: {
         turbopackFileSystemCacheForDev: true,
+        serverActions: {
+            allowedOrigins: ['*.*'],
+        },
     },
     // 配置图片来源
     images: {

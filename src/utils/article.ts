@@ -43,3 +43,31 @@ export function extractArticleHeadings(content?: string): TocHeading[] {
 
   return headings;
 }
+
+function stripMarkdown(text: string): string {
+  return text
+    .replace(/```[\s\S]*?```/g, '')
+    .replace(/`[^`]*`/g, '')
+    .replace(/!\[[^\]]*]\([^)]*\)/g, '')
+    .replace(/\[([^\]]*)]\([^)]*\)/g, '$1')
+    .replace(/^#{1,6}\s+/gm, '')
+    .replace(/[*_~`>|]/g, '')
+    .replace(/<[^>]+>/g, '');
+}
+
+// 统计文章字数（中文按字、英文按词）
+export function getArticleWordCount(content?: string): number {
+  if (!content?.trim()) return 0;
+
+  const plain = stripMarkdown(content);
+  const cjk = plain.match(/[\u4e00-\u9fff\u3400-\u4dbf\uf900-\ufaff]/g)?.length ?? 0;
+  const english = plain.match(/[a-zA-Z]+/g)?.length ?? 0;
+
+  return cjk + english;
+}
+
+// 按每分钟 500 字估算阅读时长
+export function getArticleReadingMinutes(wordCount: number): number {
+  if (wordCount <= 0) return 1;
+  return Math.max(1, Math.ceil(wordCount / 500));
+}

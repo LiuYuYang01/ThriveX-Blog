@@ -19,6 +19,7 @@ import Comment from '../components/Comment';
 import { ArticleLikeProvider, ArticleLikeHero } from '../components/Like';
 import { ArticleShareProvider } from '../components/Share';
 import { ArticleActionBar } from '../components/ActionBar';
+import ArticleHero from '../components/ArticleHero';
 import MD from '../components/MD';
 import Summary from '../components/Summary';
 import ArticleTOC from '../components/ArticleTOC';
@@ -129,45 +130,50 @@ export default async (props: Props) => {
         <ArticleShareProvider articleId={id} initialCount={data?.shareCount ?? 0}>
           <div className="ArticlePage">
             <ReadingProgress />
-            <div id="article-hero">
-              <Slide src={heroSrc} covers={covers} priority={!!heroSrc}>
-                {/* 星空背景组件 */}
-                <Starry />
+            {/* 文章头图风格：editorial 杂志编辑风 / slide 轮播大图（默认） */}
+            {theme?.article_hero === 'editorial' ? (
+              <ArticleHero article={data} cover={heroSrc} />
+            ) : (
+              <div id="article-hero">
+                <Slide src={heroSrc} covers={covers} priority={!!heroSrc}>
+                  {/* 星空背景组件 */}
+                  <Starry />
 
-                <div className="absolute w-[80%] sm:w-[70%] lg:w-[60%] xl:w-[50%] top-[60%] md:top-1/2 left-1/2 -translate-x-1/2 translate-y-[-65%] text-white custom_text_shadow">
-                  <div className="text-xl mb-3 sm:text-2xl lg:text-3xl xl:text-4xl text-center sm:mb-4 md:mb-5">{data?.title}</div>
+                  <div className="absolute w-[80%] sm:w-[70%] lg:w-[60%] xl:w-[50%] top-[60%] md:top-1/2 left-1/2 -translate-x-1/2 translate-y-[-65%] text-white custom_text_shadow">
+                    <div className="text-xl mb-3 sm:text-2xl lg:text-3xl xl:text-4xl text-center sm:mb-4 md:mb-5">{data?.title}</div>
 
-                  <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs sm:gap-x-10 sm:text-sm">
-                    <div className="flex items-center">
-                      <span>{data?.cateList?.[0]?.name}</span>
-                    </div>
+                    <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs sm:gap-x-10 sm:text-sm">
+                      <div className="flex items-center">
+                        <span>{data?.cateList?.[0]?.name}</span>
+                      </div>
 
-                    <div className="flex items-center">
-                      <span className={`${iconSty} bg-[#EA3B24]`}>
-                        <FaHotjar />
-                      </span>
-                      <span>{data?.view}</span>
-                    </div>
+                      <div className="flex items-center">
+                        <span className={`${iconSty} bg-[#EA3B24]`}>
+                          <FaHotjar />
+                        </span>
+                        <span>{data?.view}</span>
+                      </div>
 
-                    <div className="flex items-center">
-                      <span className={`${iconSty} bg-[#4FA759]`}>
-                        <AiOutlineComment />
-                      </span>
-                      <span>{data?.comment}</span>
-                    </div>
+                      <div className="flex items-center">
+                        <span className={`${iconSty} bg-[#4FA759]`}>
+                          <AiOutlineComment />
+                        </span>
+                        <span>{data?.comment}</span>
+                      </div>
 
-                    <ArticleLikeHero className="mb-0" />
+                      <ArticleLikeHero className="mb-0" />
 
-                    <div className="flex items-center">
-                      <span className={`${iconSty} bg-[#5A9CF8]`}>
-                        <LuTimer />
-                      </span>
-                      <span>{dayjs(+data?.createTime).format('YYYY-MM-DD HH:mm')}</span>
+                      <div className="flex items-center">
+                        <span className={`${iconSty} bg-[#5A9CF8]`}>
+                          <LuTimer />
+                        </span>
+                        <span>{dayjs(+data?.createTime).format('YYYY-MM-DD HH:mm')}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </Slide>
-            </div>
+                </Slide>
+              </div>
+            )}
 
             <div className="w-[90%] xl:w-6/12 mx-auto mt-12 relative">
               <ArticleTOC headings={headings}>

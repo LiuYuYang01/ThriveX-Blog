@@ -10,6 +10,7 @@ import useDebouncedLike from '@/hooks/useDebouncedLike';
 import { likeRecordAction } from '@/actions/record';
 import { getRecordCommentListAPI } from '@/api/recordComment';
 import { Record } from '@/types/app/record';
+import { getDouyinEmbedUrl } from '@/utils';
 import './like.scss';
 
 interface Props {
@@ -123,7 +124,16 @@ export default function RecordCard({ record, highlighted }: Props) {
 
       {record.video && (
         <div className="mt-2.5 overflow-hidden rounded-xl border border-black/6 dark:border-white/8">
-          <video src={record.video} controls preload="metadata" className="block w-full max-h-80 bg-black object-contain" />
+          {getDouyinEmbedUrl(record.video) ? (
+            <iframe
+              src={getDouyinEmbedUrl(record.video)!}
+              title="抖音视频"
+              allow="fullscreen"
+              className="block aspect-[9/16] max-h-80 w-full border-0 bg-black"
+            />
+          ) : (
+            <video src={record.video} controls preload="metadata" className="block w-full max-h-80 bg-black object-contain" />
+          )}
         </div>
       )}
 

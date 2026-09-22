@@ -8,6 +8,7 @@ import useDebouncedLike from '@/hooks/useDebouncedLike';
 import { likeRecordAction } from '@/actions/record';
 import { getRecordCommentListAPI } from '@/api/recordComment';
 import { getRelativeTimeLabel } from '@/utils/dayFormat';
+import { getDouyinEmbedUrl } from '@/utils';
 import { User } from '@/types/app/user';
 import '@/app/record/components/RecordCard/like.scss';
 
@@ -140,7 +141,16 @@ export default function RecordItem({
         )}
         {video && (
           <div className="mt-2 overflow-hidden rounded-md border border-[#f0f0f0] dark:border-white/8">
-            <video src={video} controls preload="metadata" className="block w-full max-h-64 bg-black object-contain" />
+            {getDouyinEmbedUrl(video) ? (
+              <iframe
+                src={getDouyinEmbedUrl(video)!}
+                title="抖音视频"
+                allow="fullscreen"
+                className="block aspect-[9/16] max-h-64 w-full border-0 bg-black"
+              />
+            ) : (
+              <video src={video} controls preload="metadata" className="block w-full max-h-64 bg-black object-contain" />
+            )}
           </div>
         )}
         <div className="mt-1.5 flex items-end justify-between gap-2">

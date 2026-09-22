@@ -15,6 +15,7 @@ interface Props {
   id: number | string;
   content: string;
   images: string | string[] | null;
+  video?: string | null;
   likeCount?: number;
   mood?: string;
   location?: string;
@@ -34,6 +35,7 @@ export default function RecordItem({
   id,
   content,
   images,
+  video,
   likeCount,
   mood,
   location,
@@ -134,6 +136,11 @@ export default function RecordItem({
         {imageList.length > 0 && (
           <div className="mt-2">
             <ImageList list={imageList} />
+          </div>
+        )}
+        {video && (
+          <div className="mt-2 overflow-hidden rounded-md border border-[#f0f0f0] dark:border-white/8">
+            <video src={video} controls preload="metadata" className="block w-full max-h-64 bg-black object-contain" />
           </div>
         )}
         <div className="mt-1.5 flex items-end justify-between gap-2">

@@ -214,6 +214,7 @@ export default function RecordModal() {
                       id={item.id as number}
                       content={item.content}
                       images={item.images}
+                      video={item.video}
                       likeCount={item.likeCount}
                       mood={item.mood}
                       location={item.location}

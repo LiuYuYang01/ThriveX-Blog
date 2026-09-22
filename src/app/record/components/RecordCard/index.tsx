@@ -121,6 +121,12 @@ export default function RecordCard({ record, highlighted }: Props) {
         </div>
       )}
 
+      {record.video && (
+        <div className="mt-2.5 overflow-hidden rounded-xl border border-black/6 dark:border-white/8">
+          <video src={record.video} controls preload="metadata" className="block w-full max-h-80 bg-black object-contain" />
+        </div>
+      )}
+
       <div className="mt-3 flex items-end justify-between gap-2">
         <div className="flex min-w-0 items-center gap-2.5 text-xs text-[#9aa3b2] dark:text-slate-500">
           {record.createTime ? <span className="tabular-nums">{dayjs(+record.createTime).format('HH:mm')}</span> : null}

@@ -2,12 +2,19 @@
 
 import type { WidgetPayload } from './types';
 import {
+  ArticleRefWidget,
   AudioWidget,
   BilibiliWidget,
+  CalloutWidget,
+  CollapseWidget,
+  ComparisonWidget,
   CtaWidget,
+  DiffWidget,
   DouyinWidget,
   GalleryWidget,
+  LinkCardWidget,
   NeteaseWidget,
+  RatingWidget,
   StepsWidget,
   TabsWidget,
   TimelineWidget,
@@ -17,6 +24,8 @@ import {
 type Props = {
   data: WidgetPayload;
   onPreview?: (src: string, urls: string[]) => void;
+  /** 段落内链接别名渲染的块级组件标记，供 p 渲染器识别（内部约定，不进 DOM） */
+  txBlock?: boolean;
 };
 
 export default function WidgetRenderer({ data, onPreview }: Props) {
@@ -41,6 +50,20 @@ export default function WidgetRenderer({ data, onPreview }: Props) {
       return <CtaWidget data={data} />;
     case 'gallery':
       return <GalleryWidget data={data} onPreview={onPreview} />;
+    case 'callout':
+      return <CalloutWidget data={data} />;
+    case 'link-card':
+      return <LinkCardWidget data={data} />;
+    case 'collapse':
+      return <CollapseWidget data={data} />;
+    case 'diff':
+      return <DiffWidget data={data} />;
+    case 'rating':
+      return <RatingWidget data={data} />;
+    case 'comparison':
+      return <ComparisonWidget data={data} />;
+    case 'article-ref':
+      return <ArticleRefWidget data={data} />;
     default:
       return (
         <div className="tx-widget tx-widget--unknown">

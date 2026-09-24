@@ -40,7 +40,7 @@ export default function WidgetsDemoPage() {
 
         <div className="rounded-2xl border border-[#e8eef6] bg-white px-4 py-6 dark:border-[#3d4654] dark:bg-[#161b26] sm:px-8">
           <ArticleTOC headings={headings}>
-            <Summary content="当前保留：媒体嵌入、Tabs / 时间线 / 步骤、画廊、CTA。统一用 tx-widget 语法插入。" />
+            <Summary content="当前保留：媒体嵌入、Tabs / 时间线 / 步骤 / 折叠面板、画廊、CTA、提示块 / 网址卡片 / 代码对比 / 评分卡 / 双栏对比、文章引用。统一用 tx-widget 语法插入。" />
             <MD data={content} headings={headings} />
           </ArticleTOC>
         </div>

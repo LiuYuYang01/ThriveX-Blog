@@ -186,12 +186,20 @@ const MarkdownBody = memo(function MarkdownBody({
   const renderers = useMemo<Partial<Components>>(
     () => ({
       img: (props) => <MarkdownImage {...props} onPreview={onOpenPreview} />,
+      p: ({ children }) => {
+        // 链接别名写法会在段落里渲染块级小组件，p 不允许嵌套块级元素，此时去掉 p 包裹
+        const hasBlockWidget = React.Children.toArray(children).some(
+          (child) => React.isValidElement(child) && (child.props as { txBlock?: boolean })?.txBlock === true,
+        );
+        return hasBlockWidget ? <>{children}</> : <p>{children}</p>;
+      },
       a: ({ href, children }: { href?: string; children?: React.ReactNode }) => {
         const label = typeof children === 'string' ? children : Array.isArray(children) && children.length === 1 && typeof children[0] === 'string' ? children[0] : null;
         if (label && href) {
           const payload = payloadFromLinkAlias(label, href);
           if (payload) {
-            return <WidgetRenderer data={payload} onPreview={onOpenGalleryPreview} />;
+            // txBlock 供 p 渲染器识别该链接渲染的是块级小组件
+            return <WidgetRenderer txBlock data={payload} onPreview={onOpenGalleryPreview} />;
           }
         }
         return <a href={href}>{children}</a>;

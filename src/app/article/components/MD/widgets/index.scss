@@ -75,8 +75,10 @@
     }
 
     &--portrait {
-      padding-top: 70%;
-      max-width: 420px;
+      // 抖音视频是 9:16 竖屏，容器比例一致才不会被播放器 letterbox 出黑边
+      padding-top: 0;
+      aspect-ratio: 9 / 16;
+      max-width: 360px;
       margin: 0 auto;
     }
   }
@@ -922,5 +924,255 @@
     margin: 0.75rem 0 0;
     font-size: 0.75rem;
     color: #94a3b8;
+  }
+
+  // ------------------------------------------------ 提示块（callout）
+  &--callout {
+    --callout-color: #539dfd;
+
+    display: flex;
+    gap: 0.75rem;
+    padding: 0.95rem 1.05rem;
+    border-radius: 12px;
+    border-left: 3px solid var(--callout-color);
+    background: color-mix(in srgb, var(--callout-color) 9%, transparent);
+
+    &.is-tip {
+      --callout-color: #16a34a;
+    }
+
+    &.is-info {
+      --callout-color: #0891b2;
+    }
+
+    &.is-warning {
+      --callout-color: #d97706;
+    }
+
+    &.is-danger {
+      --callout-color: #dc2626;
+    }
+
+    > svg {
+      flex-shrink: 0;
+      margin-top: 0.15rem;
+      color: var(--callout-color);
+    }
+
+    strong {
+      display: block;
+      margin-bottom: 0.2rem;
+      color: #1f2937;
+
+      .dark & {
+        color: #e2e8f0;
+      }
+    }
+
+    p {
+      margin: 0;
+      line-height: 1.7;
+      color: #475569;
+
+      .dark & {
+        color: #94a3b8;
+      }
+    }
+  }
+
+  // ------------------------------------------------ 网址卡片（link-card）：整卡可点击
+  a#{&}__info {
+    color: inherit;
+    text-decoration: none;
+    cursor: pointer;
+
+    &:hover .tx-widget__info-body strong {
+      color: #539dfd;
+    }
+  }
+
+  &__info-cover--empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: #94a3b8;
+    background: #f1f5f9;
+
+    .dark & {
+      background: #1e293b;
+    }
+  }
+
+  // 折叠面板触发按钮的悬停反馈与配色
+  &__collapse-trigger {
+    border: 0;
+    background: transparent;
+    color: #1f2937;
+    font-size: 0.95rem;
+
+    .dark & {
+      color: #e2e8f0;
+    }
+
+    &:hover {
+      background: rgba(83, 157, 253, 0.06);
+    }
+
+    svg {
+      color: #94a3b8;
+    }
+  }
+
+  // ------------------------------------------------ 代码对比（diff）
+  &__diff {
+    border-radius: 12px;
+    overflow: hidden;
+    background: #f8fafc;
+
+    .dark & {
+      background: rgba(15, 23, 42, 0.6);
+    }
+  }
+
+  // ------------------------------------------------ 评分卡（rating）
+  &__rating {
+    display: grid;
+    gap: 0.65rem;
+    padding: 1rem 1.1rem 1.1rem;
+
+    > strong {
+      font-size: 1.05rem;
+      margin-bottom: 0.15rem;
+    }
+  }
+
+  &__rating-row {
+    display: grid;
+    grid-template-columns: minmax(64px, 96px) 1fr auto;
+    align-items: center;
+    gap: 0.75rem;
+
+    > span:first-child {
+      color: #64748b;
+      font-size: 0.875rem;
+    }
+  }
+
+  &__rating-stars {
+    display: inline-flex;
+    gap: 0.15rem;
+
+    svg {
+      color: #d3dce8;
+
+      .dark & {
+        color: #3d4654;
+      }
+
+      &.is-on {
+        color: #f59e0b;
+      }
+    }
+  }
+
+  &__rating-score {
+    font-size: 0.8125rem;
+    color: #64748b;
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__rating-summary {
+    margin: 0;
+    padding-top: 0.55rem;
+    border-top: 1px dashed #e2e8f0;
+    color: #64748b;
+    font-size: 0.875rem;
+    line-height: 1.6;
+
+    .dark & {
+      border-top-color: #3d4654;
+      color: #94a3b8;
+    }
+  }
+
+  // ------------------------------------------------ 双栏对比（comparison）
+  &__versus {
+    display: grid;
+    padding: 1rem 1.1rem 1.1rem;
+    font-size: 0.9rem;
+  }
+
+  &__versus-head,
+  &__versus-row {
+    display: grid;
+    grid-template-columns: minmax(56px, 88px) 1fr 1fr;
+    gap: 0.75rem;
+    align-items: center;
+  }
+
+  &__versus-head {
+    padding-bottom: 0.7rem;
+
+    em {
+      font-style: normal;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 2rem;
+      height: 1.5rem;
+      border-radius: 999px;
+      background: rgba(83, 157, 253, 0.12);
+      color: #539dfd;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    > span {
+      font-weight: 700;
+      color: #1f2937;
+
+      .dark & {
+        color: #e2e8f0;
+      }
+    }
+  }
+
+  &__versus-row {
+    padding: 0.6rem 0;
+    border-top: 1px dashed #e2e8f0;
+
+    .dark & {
+      border-top-color: #3d4654;
+    }
+
+    > span:first-child {
+      color: #94a3b8;
+      font-size: 0.8125rem;
+    }
+
+    > span:not(:first-child) {
+      color: #475569;
+
+      .dark & {
+        color: #cbd5e1;
+      }
+    }
+  }
+
+  // ------------------------------------------------ 文章引用（article-ref）：带封面缩略图
+  &__related li a.is-cover {
+    display: grid;
+    grid-template-columns: 72px minmax(0, 1fr);
+    gap: 0.75rem;
+    align-items: center;
+  }
+
+  &__related-cover {
+    width: 72px;
+    height: 54px;
+    object-fit: cover;
+    border-radius: 8px;
+    background: #e2e8f0;
   }
 }

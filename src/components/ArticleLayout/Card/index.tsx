@@ -3,6 +3,7 @@ import { getStableImage } from '@/utils';
 import { getThemeCoversCacheAPI } from '@/lib/theme';
 import { Article } from '@/types/app/article';
 import ArticleMeta from '@/components/ArticleLayout/components/ArticleMeta';
+import PinBadge from '@/components/ArticleLayout/components/PinBadge';
 import CoverImage from '@/components/CoverImage';
 import Empty from '@/components/Empty';
 import Show from '@/components/Show';
@@ -29,9 +30,12 @@ const Card = async ({ data, covers: coversProp }: CardProps) => {
 
         return (
           <div key={item.id} className="panel relative overflow-hidden flex h-[190px] md:h-60 lg:h-52 xl:h-60 bg-black-b">
+            {item.isTop && <PinBadge />}
             <div className="relative w-full py-5 px-5 sm:px-10 lg:px-5 xl:px-10 z-20">
               <Link href={`/article/${item.id}`} className="flex flex-col justify-between h-full text-center sm:text-start">
-                <h3 className="overflow-hidden relative w-full my-2.5 text_shadow text-white hover:text-primary text-center text-lg md:text-xl lg:text-[22px] xl:text-2xl   line-clamp-1">{item.title}</h3>
+                <div className="flex items-center justify-center gap-2 sm:justify-start">
+                  <h3 className="overflow-hidden relative min-w-0 flex-1 my-2.5 text_shadow text-white hover:text-primary text-center text-lg md:text-xl lg:text-[22px] xl:text-2xl line-clamp-1">{item.title}</h3>
+                </div>
                 <p className="text-center text-[#cecece] text-sm sm:text-[15px] leading-7 sm:indent-8 line-clamp-2 xl:line-clamp-3">{genArticleInfo(item)}</p>
                 <ArticleMeta article={item} className="justify-center sm:justify-start" />
               </Link>

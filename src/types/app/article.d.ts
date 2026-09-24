@@ -27,6 +27,7 @@ export interface Article {
     comment?: number,
     likeCount?: number,
     shareCount?: number,
+    isTop?: boolean,
     config: Config,
     prev: { id: number, title: string },
     next: { id: number, title: string },

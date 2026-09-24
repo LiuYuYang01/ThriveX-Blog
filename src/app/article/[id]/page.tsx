@@ -24,11 +24,11 @@ import MD from '../components/MD';
 import Summary from '../components/Summary';
 import ArticleTOC from '../components/ArticleTOC';
 import ReadingProgress from '../components/ReadingProgress';
-import { extractArticleHeadings } from '@/utils/article';
+import { extractArticleHeadings, getArticleWordCount, getArticleReadingMinutes } from '@/utils/article';
 
 import { FaHotjar } from 'react-icons/fa';
 import { AiOutlineComment } from 'react-icons/ai';
-import { LuTimer } from 'react-icons/lu';
+import { LuTimer, LuClock3 } from 'react-icons/lu';
 
 import dayjs from 'dayjs';
 import Encrypt from '@/components/Encrypt';
@@ -120,6 +120,10 @@ export default async (props: Props) => {
 
   const headings = extractArticleHeadings(data?.content);
 
+  // 字数与阅读时长由前端计算
+  const wordCount = getArticleWordCount(data?.content || data?.description || '');
+  const readingMinutes = getArticleReadingMinutes(wordCount);
+
   // 图标样式
   const iconSty = 'flex justify-center items-center w-5 h-5 rounded-full text-xs mr-1';
 
@@ -159,6 +163,13 @@ export default async (props: Props) => {
                           <AiOutlineComment />
                         </span>
                         <span>{data?.comment}</span>
+                      </div>
+
+                      <div className="flex items-center">
+                        <span className={`${iconSty} bg-[#9A6FF0]`}>
+                          <LuClock3 />
+                        </span>
+                        <span>约 {readingMinutes} 分钟 · {wordCount} 字</span>
                       </div>
 
                       <ArticleLikeHero className="mb-0" />

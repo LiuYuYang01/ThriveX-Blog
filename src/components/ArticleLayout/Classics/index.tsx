@@ -3,6 +3,7 @@ import { getStableImage } from '@/utils';
 import { getThemeCoversCacheAPI } from '@/lib/theme';
 import { Article } from '@/types/app/article';
 import ArticleMeta from '@/components/ArticleLayout/components/ArticleMeta';
+import PinBadge from '@/components/ArticleLayout/components/PinBadge';
 import CoverImage from '@/components/CoverImage';
 import Empty from '@/components/Empty';
 import Show from '@/components/Show';
@@ -29,6 +30,7 @@ const Classics = async ({ data, covers: coversProp }: ClassicsProps) => {
 
         return (
           <div key={item.id} className="panel relative overflow-hidden flex h-[190px] md:h-60 lg:h-52 xl:h-60 bg-black-b">
+            {item.isTop && <PinBadge />}
             {index % 2 === 0 && (
               <div
                 className="hidden sm:block relative min-w-[45%] overflow-hidden scale-100 hover:scale-125 z-10 transition-[scale] duration-300 ease-out"
@@ -40,7 +42,9 @@ const Classics = async ({ data, covers: coversProp }: ClassicsProps) => {
 
             <div className="relative w-full sm:w-[65%] py-5 px-5 sm:px-10 lg:px-5 xl:px-10 z-20">
               <Link href={`/article/${item.id}`} className="flex flex-col justify-between h-full text-center sm:text-start">
-                <h3 className="overflow-hidden relative w-full my-2.5 text-white hover:text-primary text-lg md:text-xl lg:text-[22px] xl:text-2xl   line-clamp-1">{item.title}</h3>
+                <div className="flex items-center justify-center gap-2 sm:justify-start">
+                  <h3 className="overflow-hidden relative min-w-0 flex-1 my-2.5 text-white hover:text-primary text-lg md:text-xl lg:text-[22px] xl:text-2xl line-clamp-1">{item.title}</h3>
+                </div>
                 <p className="text-[#cecece] text-sm sm:text-[15px] leading-7 sm:indent-8 line-clamp-2 xl:line-clamp-3">{genArticleInfo(item)}</p>
                 <ArticleMeta
                   article={item}

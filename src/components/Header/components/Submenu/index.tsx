@@ -22,7 +22,7 @@ export default ({ items, showIcon, onNavClick }: { items: Cate[]; showIcon?: boo
   const count = items.length;
   return (
     <ul
-      className={`${submenuPanelClass} ${getSubmenuPositionClass(count)} grid ${getSubmenuGridClass(count)} gap-1 p-1.5 border border-black/5 dark:border-white/10 bg-[rgba(255,255,255,0.95)] dark:bg-[rgba(44,51,62,0.95)] backdrop-blur-md`}
+      className={`${submenuPanelClass} ${getSubmenuPositionClass(count)} grid ${getSubmenuGridClass(count)} gap-1 p-1.5 border border-black/5 dark:border-white/10 bg-[rgba(255,255,255,0.6)] dark:bg-[rgba(44,51,62,0.6)] backdrop-blur-md`}
       style={{ boxShadow: '0 12px 32px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(0, 0, 0, 0.08)' }}
     >
       {items.map((two) => {

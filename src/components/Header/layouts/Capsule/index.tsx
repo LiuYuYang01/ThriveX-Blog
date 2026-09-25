@@ -23,28 +23,24 @@ export default ({ theme, isDark, mounted, isPathSty, isScrolled, cateList, handl
 
   const linkClass = `flex items-center rounded-full px-4 py-2 text-[15px] whitespace-nowrap cursor-pointer hover:text-primary! ${isOverHero ? 'text-white hover:bg-white/10' : 'text-[#333] dark:text-white hover:bg-black/5 dark:hover:bg-white/10'}`;
 
-  const logoSrc = !mounted
-    ? theme?.dark_logo || theme?.light_logo || ''
-    : isDark
-      ? theme?.dark_logo
-      : isOverHero
-        ? theme?.dark_logo
-        : theme?.light_logo;
+  const logoSrc = !mounted ? theme?.dark_logo || theme?.light_logo || '' : isDark ? theme?.dark_logo : isOverHero ? theme?.dark_logo : theme?.light_logo;
 
   return (
     <div className="header fixed inset-x-0 top-3 z-50 px-4">
-      <div className={`flex items-center justify-between h-[56px] max-w-[1200px] mx-auto rounded-full pl-4 pr-2 ${isOverHero ? 'border border-transparent' : 'border border-black/5 dark:border-white/10 bg-[rgba(255,255,255,0.6)] dark:bg-[rgba(44,51,62,0.6)] backdrop-blur-md shadow-[0_8px_24px_rgba(0,0,0,0.08)]'}`}>
-        <div className="flex items-center min-w-0">
+      <div className="relative flex items-center justify-between h-14 max-w-300 mx-auto px-8">
+        {/* 毛玻璃背景层：独立于内容，避免嵌套 backdrop-filter 导致下拉子菜单模糊失效 */}
+        {!isOverHero && (
+          <div aria-hidden className="absolute inset-0 rounded-full border border-black/5 dark:border-white/10 bg-[rgba(255,255,255,0.6)] dark:bg-[rgba(44,51,62,0.6)] backdrop-blur-md shadow-[0_8px_24px_rgba(0,0,0,0.08)]" />
+        )}
+
+        <div className="relative flex items-center min-w-0">
           {/* 移动端侧边导航入口 */}
-          <div
-            className="md:hidden flex items-center justify-center size-9 shrink-0 rounded-full cursor-pointer hover:bg-white/10 dark:hover:bg-white/10"
-            onClick={openSidebarNav}
-          >
+          <div className="md:hidden flex items-center justify-center size-9 shrink-0 rounded-full cursor-pointer hover:bg-white/10 dark:hover:bg-white/10" onClick={openSidebarNav}>
             <LuMenu className={`text-xl ${isOverHero ? 'text-white' : 'text-[#333] dark:text-white'}`} />
           </div>
 
           {/* logo */}
-          <Link href="/" className="flex items-center h-[56px] text-[15px]">
+          <Link href="/" className="flex items-center h-14 text-[15px]">
             <div className="relative h-9 w-32 md:h-10 md:w-40 md:pr-5 hover:scale-90 transition-[scale]">
               <OptimizedImage src={logoSrc} alt="Logo" fill sizes="160px" className="object-contain object-left" />
             </div>
@@ -82,13 +78,7 @@ export default ({ theme, isDark, mounted, isPathSty, isScrolled, cateList, handl
         </div>
 
         {/* 主题切换开关 */}
-        <Switch
-          size="lg"
-          isSelected={isDark}
-          onValueChange={toTheme}
-          thumbIcon={({ isSelected }) => (isSelected ? <BsFillMoonStarsFill className="text-gray-500" /> : <FaRegSun className="text-gray-500" />)}
-          className="shrink-0"
-        />
+        <Switch size="lg" isSelected={isDark} onValueChange={toTheme} thumbIcon={({ isSelected }) => (isSelected ? <BsFillMoonStarsFill className="text-gray-500" /> : <FaRegSun className="text-gray-500" />)} className="relative shrink-0" />
       </div>
     </div>
   );

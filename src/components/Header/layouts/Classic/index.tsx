@@ -27,8 +27,11 @@ export default ({ theme, isDark, mounted, isPathSty, isScrolled, cateList, handl
         : theme?.dark_logo;
 
   return (
-    <div className={`header fixed inset-x-0 top-0 w-full h-[60px] z-50 overflow-visible after:content-[''] after:block after:w-full after:h-0 after:bg-[linear-gradient(#fff,transparent_70%)] dark:after:bg-[linear-gradient(#2b333e,transparent_70%)] ${isPathSty || isScrolled ? 'bg-[rgba(255,255,255,0.5)] dark:bg-[rgba(44,51,62,0.7)] backdrop-blur-md border-b dark:border-[#2b333e] after:h-5! after:transition-height]' : 'border-transparent'}`}>
-      <div className="grid grid-cols-[1fr_auto_1fr] grid-rows-[60px] h-[60px] md:flex md:justify-between items-center w-full max-w-[1200px] mx-auto px-4 md:px-6 lg:px-0!">
+    <div className={`header fixed inset-x-0 top-0 w-full h-[60px] z-50 overflow-visible after:content-[''] after:block after:w-full after:h-0 after:bg-[linear-gradient(#fff,transparent_70%)] dark:after:bg-[linear-gradient(#2b333e,transparent_70%)] ${isPathSty || isScrolled ? 'bg-[rgba(255,255,255,0.5)] dark:bg-[rgba(44,51,62,0.7)] border-b dark:border-[#2b333e] after:h-5! after:transition-height]' : 'border-transparent'}`}>
+      {/* 毛玻璃层独立于内容，避免嵌套 backdrop-filter 导致下拉子菜单模糊失效 */}
+      {(isPathSty || isScrolled) && <div aria-hidden className="absolute inset-0 backdrop-blur-md" />}
+
+      <div className="relative grid grid-cols-[1fr_auto_1fr] grid-rows-[60px] h-[60px] md:flex md:justify-between items-center w-full max-w-[1200px] mx-auto px-4 md:px-6 lg:px-0!">
         <div
           className="md:hidden group flex items-center justify-center size-9 shrink-0 rounded-full transition-colors cursor-pointer hover:bg-[#e9edf4] dark:hover:bg-[#455162]"
           onClick={openSidebarNav}

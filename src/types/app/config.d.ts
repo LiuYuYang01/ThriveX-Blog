@@ -29,11 +29,15 @@ export type ArticleLayout = 'classics' | 'card' | 'waterfall' | ''
 export type RightSidebar = 'author' | 'hotArticle' | 'randomArticle' | 'newComments' | 'runTime' | 'study'
 // 文章头图风格：slide 轮播大图 / editorial 杂志编辑风
 export type ArticleHeroStyle = 'slide' | 'editorial'
+// 菜单栏布局：classic 经典通栏 / capsule 悬浮胶囊
+export type HeaderLayout = 'classic' | 'capsule'
 
 // 主题配置
 export interface Theme {
     is_article_layout: string,
     article_hero?: ArticleHeroStyle,
+    // 菜单栏布局，默认 classic
+    header_layout?: HeaderLayout,
     right_sidebar: RightSidebar[],
     light_logo: string,
     dark_logo: string,

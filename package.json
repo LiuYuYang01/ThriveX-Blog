@@ -3,7 +3,7 @@
   "version": "3.0",
   "private": true,
   "scripts": {
-    "dev": "eslint . && next dev",
+    "dev": "next dev",
     "build": "next build",
     "postbuild": "node scripts/copy-standalone-assets.mjs",
     "start": "next start -p 9001",

@@ -67,11 +67,17 @@ export interface EnvConfigKey {
     key: string
 }
 
+// 高德地图配置
+export interface GaodeMapConfig {
+    key_code: string
+    security_code: string
+}
+
 // 公开环境配置
 export interface PublicConfig {
     baidu_statis_key: EnvConfigKey | null
     hcaptcha_key: EnvConfigKey | null
-    gaode_map_kay: EnvConfigKey | null
+    gaode_map_key: GaodeMapConfig | null
 }
 
 export interface Config {

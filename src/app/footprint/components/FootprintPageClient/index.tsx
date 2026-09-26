@@ -6,7 +6,7 @@ import PhotoPreview, { type PhotoItem } from '@/ThriveUI/PhotoPreview';
 import { Footprint } from '@/types/app/footprint';
 import dayjs from 'dayjs';
 import Masonry from 'react-masonry-css';
-import { getGaodeMapConfigDataAPI } from '@/api/config';
+import { useAppConfig } from '@/components/AppConfigProvider';
 
 const breakpointColumnsObj = {
   default: 4,
@@ -26,6 +26,10 @@ export default function FootprintPageClient({ list }: FootprintPageClientProps) 
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewIndex, setPreviewIndex] = useState(0);
 
+  // 高德地图配置随页面 SSR 注入，无需额外请求
+  const { publicConfig } = useAppConfig();
+  const gaodeConfig = publicConfig?.gaode_map_key;
+
   const photos = useMemo<PhotoItem[]>(
     () => data?.images?.map((url, i) => ({ id: `${i}`, url })) ?? [],
     [data?.images],
@@ -36,21 +40,14 @@ export default function FootprintPageClient({ list }: FootprintPageClientProps) 
   useEffect(() => {
     if (!list.length) return;
 
-    import('@amap/amap-jsapi-loader').then(async (AMapLoader) => {
-      setMapLoadError(null);
+    if (!gaodeConfig?.key_code) {
+      setMapLoadError('地图尚未配置，请联系站长在后台填写高德 Key 与安全密钥。');
+      return;
+    }
+    const { key_code, security_code } = gaodeConfig;
 
-      let key_code: string;
-      let security_code: string;
-      try {
-        const { data: cfg } = await getGaodeMapConfigDataAPI();
-        ({ key_code, security_code } = cfg as { key_code: string; security_code: string });
-      } catch (e) {
-        console.error('加载地图配置失败：', e);
-        setMapLoadError(
-          '无法获取地图配置。请稍后刷新页面重试；若持续失败，请联系站长检查后台高德 Key 与安全密钥是否已正确填写。',
-        );
-        return;
-      }
+    import('@amap/amap-jsapi-loader').then((AMapLoader) => {
+      setMapLoadError(null);
 
       (window as any)._AMapSecurityConfig = {
         securityJsCode: security_code,
@@ -186,7 +183,7 @@ export default function FootprintPageClient({ list }: FootprintPageClientProps) 
         infoWindow?.destroy();
       };
     });
-  }, [list, onOpen]);
+  }, [list, onOpen, gaodeConfig]);
 
   return (
     <>

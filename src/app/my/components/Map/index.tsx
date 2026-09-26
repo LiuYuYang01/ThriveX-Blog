@@ -5,19 +5,22 @@ import { useEffect } from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 
-import { getGaodeMapConfigDataAPI } from '@/api/config';
+import { useAppConfig } from '@/components/AppConfigProvider';
 
 export default function MapContainer({ position }: { position: number[] }) {
   let map: any;
+  const { publicConfig } = useAppConfig();
+  const gaodeConfig = publicConfig?.gaode_map_key;
 
   useEffect(() => {
     AOS.init();
 
-    // 确保代码仅在客户端执行
-    import('@amap/amap-jsapi-loader').then(async (AMapLoader) => {
-      const { data } = await getGaodeMapConfigDataAPI();
-      const { key_code, security_code } = data as { key_code: string; security_code: string };
+    // 后台未配置高德 Key 时不加载地图
+    if (!gaodeConfig?.key_code) return;
+    const { key_code, security_code } = gaodeConfig;
 
+    // 确保代码仅在客户端执行
+    import('@amap/amap-jsapi-loader').then((AMapLoader) => {
       (window as any)._AMapSecurityConfig = {
         securityJsCode: security_code,
       };
@@ -45,7 +48,7 @@ export default function MapContainer({ position }: { position: number[] }) {
 
       return () => map?.destroy();
     });
-  }, []);
+  }, [gaodeConfig]);
 
   return (
     <>

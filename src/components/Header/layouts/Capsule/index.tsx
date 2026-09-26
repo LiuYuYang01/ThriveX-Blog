@@ -7,6 +7,7 @@ import { Switch } from '@/ThriveUI';
 import Show from '@/components/Show';
 import OptimizedImage from '@/components/OptimizedImage';
 import Submenu from '../../components/Submenu';
+import HeaderSearch from '../../components/HeaderSearch';
 import { HeaderLayoutProps } from '../../types';
 
 import { getCateNavHref, getCateNavRel, getCateNavTarget } from '@/utils/cateNav';
@@ -77,8 +78,11 @@ export default ({ theme, isDark, mounted, isPathSty, isScrolled, cateList, handl
           </ul>
         </div>
 
-        {/* 主题切换开关 */}
-        <Switch size="lg" isSelected={isDark} onValueChange={toTheme} thumbIcon={({ isSelected }) => (isSelected ? <BsFillMoonStarsFill className="text-gray-500" /> : <FaRegSun className="text-gray-500" />)} className="relative shrink-0" />
+        {/* 搜索入口 + 主题切换开关 */}
+        <div className="relative flex items-center gap-3 shrink-0">
+          <HeaderSearch overHero={isOverHero} />
+          <Switch size="lg" isSelected={isDark} onValueChange={toTheme} thumbIcon={({ isSelected }) => (isSelected ? <BsFillMoonStarsFill className="text-gray-500" /> : <FaRegSun className="text-gray-500" />)} />
+        </div>
       </div>
     </div>
   );

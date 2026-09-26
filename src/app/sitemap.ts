@@ -7,7 +7,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   await connection();
   // 获取网站配置
   const webConfig = await getWebConfigCacheAPI();
-  const baseUrl = webConfig?.url ?? 'https://liuyuyang.net';
+  // 去掉尾部斜杠，避免拼接出 //article/1 这类双斜杠地址
+  const baseUrl = (webConfig?.url ?? 'https://liuyuyang.net').replace(/\/+$/, '');
   const res = await getAllArticleListCacheAPI();
   const articles = res?.data.result ?? [];
 

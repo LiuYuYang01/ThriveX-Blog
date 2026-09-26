@@ -6,8 +6,7 @@ import { Button, useDisclosure } from '@/ThriveUI';
 import { BiCog, BiCommand } from 'react-icons/bi';
 import { IoSearchOutline, IoArrowUpOutline, IoLogoRss } from 'react-icons/io5';
 import { useAppConfig } from '@/components/AppConfigProvider';
-import { useConfigStore } from '@/stores';
-import Search from '../Search';
+import { useConfigStore, useCommandPaletteStore } from '@/stores';
 import Rss from '../Tools/components/Rss';
 import { LuMoonStar } from 'react-icons/lu';
 import { FaRegSun } from 'react-icons/fa';
@@ -24,7 +23,7 @@ const FloatingBlock = () => {
   const constraintsRef = useRef(null); // 拖拽约束参考
   const { web } = useAppConfig();
   const { isDark } = useConfigStore();
-  const { isOpen: isSearchOpen, onOpen: onSearchOpen, onClose: onSearchClose } = useDisclosure();
+  const openPalette = useCommandPaletteStore((s) => s.openModal);
   const { isOpen: isRssOpen, onOpen: onRssOpen, onClose: onRssClose } = useDisclosure();
 
   const toggleExpanded = () => {
@@ -68,8 +67,8 @@ const FloatingBlock = () => {
     {
       icon: IoSearchOutline,
       id: 'search',
-      label: '搜索',
-      onClick: onSearchOpen,
+      label: '搜索 (Ctrl+K)',
+      onClick: openPalette,
     },
     {
       icon: IoLogoRss,
@@ -174,7 +173,6 @@ const FloatingBlock = () => {
       </div>
 
       {/* Modal 须放在 motion.div 外，否则 drag 的 transform 会使 fixed 定位失效 */}
-      <Search disclosure={{ isOpen: isSearchOpen, onClose: onSearchClose }} />
       <Rss data={web} disclosure={{ isOpen: isRssOpen, onClose: onRssClose }} />
     </>
   );

@@ -12,7 +12,8 @@ import AppConfigProvider from '@/components/AppConfigProvider';
 import RecordEntry from '@/components/RecordEntry';
 import RecordModal from '@/components/RecordModal';
 import CommandPalette from '@/components/CommandPalette';
-import { getAppConfigCacheAPI } from '@/lib/config';
+import AnnouncementModal from '@/components/Announcement';
+import { getAnnouncementConfigCacheAPI, getAppConfigCacheAPI } from '@/lib/config';
 
 interface Props {
   children: React.ReactNode;
@@ -20,7 +21,10 @@ interface Props {
 
 export default async function RootLayoutContent({ children }: Props) {
   await connection();
-  const { web: data, theme, other, publicConfig, author } = await getAppConfigCacheAPI();
+  const [{ web: data, theme, other, publicConfig, author }, announcement] = await Promise.all([
+    getAppConfigCacheAPI(),
+    getAnnouncementConfigCacheAPI(),
+  ]);
 
   return (
     <>
@@ -43,6 +47,10 @@ export default async function RootLayoutContent({ children }: Props) {
         <RecordEntry />
         {/* 弹窗模式下挂载闪念弹窗 */}
         {theme?.record_mode === 'modal' && <RecordModal />}
+        {/* 站点公告弹窗 */}
+        {announcement?.enable && announcement.content.trim() && (
+          <AnnouncementModal config={announcement} />
+        )}
         {/* 全局命令面板 Ctrl+K */}
         <CommandPalette />
         <ThemeTransition />

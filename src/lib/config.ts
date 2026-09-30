@@ -3,7 +3,7 @@ import { cacheLife, cacheTag } from 'next/cache';
 import { getPageConfigDataByNameAPI, getPublicConfigDataAPI, getWebConfigDataAPI } from '@/api/config';
 import { getAuthorDataAPI } from '@/api/user';
 import { CACHE_TAGS } from '@/lib/cache-tags';
-import { Other, PublicConfig, Theme, Web } from '@/types/app/config';
+import { Announcement, Other, PublicConfig, Theme, Web } from '@/types/app/config';
 import { User } from '@/types/app/user';
 
 export async function getWebConfigCacheAPI() {
@@ -31,6 +31,16 @@ export async function getOtherConfigCacheAPI() {
 
   const { data } = await getWebConfigDataAPI<{ value: Other }>('other');
   return data?.value as Other;
+}
+
+// 站点公告配置（未配置时返回 null）
+export async function getAnnouncementConfigCacheAPI() {
+  'use cache';
+  cacheLife('config');
+  cacheTag(CACHE_TAGS.config);
+
+  const { data } = await getWebConfigDataAPI<{ value: Announcement }>('announcement');
+  return (data?.value ?? null) as Announcement | null;
 }
 
 export async function getPublicConfigCacheAPI() {

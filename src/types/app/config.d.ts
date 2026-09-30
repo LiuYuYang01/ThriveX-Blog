@@ -60,6 +60,19 @@ export interface Other {
     hcaptcha_key: string,
 }
 
+// 站点公告配置
+export interface Announcement {
+    enable: boolean,
+    title: string,
+    content: string,
+    // 自动关闭秒数，0 表示不自动关闭
+    auto_close: number,
+    // 关闭后 N 天内不再显示，0 表示每次访问都显示
+    silent_days: number,
+    // 保存时间戳，公告更新后据此重新弹出
+    update_time: number,
+}
+
 
 export type EnvConfigName = 'baidu_statis' | 'email' | 'gaode_map' | 'gaode_coordinate'
 

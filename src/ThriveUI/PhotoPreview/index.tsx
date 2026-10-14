@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import {
   FiChevronLeft,
   FiChevronRight,
@@ -10,6 +11,7 @@ import {
   FiZoomIn,
   FiZoomOut,
 } from 'react-icons/fi';
+import useMounted from '@/hooks/useMounted';
 
 export type PhotoItem = {
   id: string;
@@ -45,6 +47,7 @@ export default function PhotoPreview({
   const [rotation, setRotation] = useState(0);
   const [scale, setScale] = useState(1);
   const [currentIndex, setCurrentIndex] = useState(index);
+  const mounted = useMounted();
 
   const boundedIndex = Math.min(Math.max(index, 0), Math.max(photos.length - 1, 0));
 
@@ -116,11 +119,12 @@ export default function PhotoPreview({
     setScale((prev) => Math.max(prev - 0.1, 0.4));
   };
 
-  if (!open || !photos.length || !activePhoto) return null;
+  if (!open || !photos.length || !activePhoto || !mounted) return null;
 
-  return (
+  // 通过 portal 挂到 body，避免被弹窗（z-1100）等祖先层叠上下文遮挡
+  return createPortal(
     <div
-      className="fixed inset-0 z-200 flex items-center justify-center bg-black/92"
+      className="fixed inset-0 z-1200 flex items-center justify-center bg-black/92"
       onClick={onClose}
       role="dialog"
       aria-modal
@@ -171,7 +175,7 @@ export default function PhotoPreview({
         <img
           src={activePhoto.url}
           alt={activePhoto.alt || ''}
-          className="h-full w-full select-none object-contain"
+          className="max-h-full max-w-full select-none object-contain"
           style={{ transform: `rotate(${rotation}deg) scale(${scale})` }}
           draggable={false}
         />
@@ -239,6 +243,7 @@ export default function PhotoPreview({
           </button>
         ) : null}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

@@ -206,6 +206,8 @@ const MarkdownBody = memo(function MarkdownBody({
       },
       // CodeBlock / Widget 自身已输出完整块级结构，避免再包一层 pre
       pre: ({ children }) => <>{children}</>,
+      // 窄屏下表格按 min-content 撑开并横向滚动，避免列被压成竖排单字
+      table: ({ children }) => <div className="table-scroll w-full overflow-x-auto">{children}</div>,
       code: ({ node, inline, className = '', children, ...props }: any) => {
         const match = /language-([\w-]+)/.exec(className || '');
         const codeString = node?.value ?? String(children).replace(/\n$/, '');

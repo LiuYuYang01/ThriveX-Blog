@@ -268,6 +268,14 @@
     }
   }
 
+  .table-scroll {
+    // 单元格不换行，窄屏下表格才会横向滚动而不是把中文压成竖排单字
+    th,
+    td {
+      @apply whitespace-nowrap;
+    }
+  }
+
   input[type="checkbox"] {
     width: 16px;
     height: 16px;

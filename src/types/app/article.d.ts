@@ -10,7 +10,10 @@ export interface Config {
     status: Status,
     isEncrypt: number,
     isDel: number,
-    password: string
+    /** 访问密码：服务端不再下发明文，仅提交时携带 */
+    password?: string,
+    /** 服务端只读标记：是否已设置过访问密码 */
+    hasPassword?: boolean
 }
 
 export interface Article {

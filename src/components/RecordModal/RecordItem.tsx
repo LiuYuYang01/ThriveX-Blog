@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
-import { RiChat3Line, RiHeartFill, RiMapPinLine } from 'react-icons/ri';
+import { RiChat3Line, RiHeartFill, RiMapPinLine, RiPushpin2Fill } from 'react-icons/ri';
 import ImageList from '@/app/record/components/ImageList';
 import RecordCommentPanel from '@/app/record/components/Comment';
 import useDebouncedLike from '@/hooks/useDebouncedLike';
@@ -23,6 +23,7 @@ interface Props {
   createTime?: string | number | Date;
   user: Pick<User, 'avatar' | 'name'> | null;
   highlighted?: boolean;
+  top?: boolean;
 }
 
 interface Particle {
@@ -43,6 +44,7 @@ export default function RecordItem({
   createTime,
   user,
   highlighted,
+  top,
 }: Props) {
   const imageList: string[] = Array.isArray(images) ? images : JSON.parse((images as string) ?? '[]');
   const { count, like } = useDebouncedLike(Number(id), likeCount ?? 0, likeRecordAction);
@@ -104,19 +106,31 @@ export default function RecordItem({
         highlighted ? 'record-item-flash' : ''
       }`}
     >
-      {user?.avatar ? (
-        <img
-          src={user.avatar}
-          alt={user.name ?? '作者'}
-          width={40}
-          height={40}
-          className="mt-0.5 h-10 w-10 shrink-0 rounded-md object-cover"
-        />
-      ) : (
-        <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-[#eee] text-sm text-[#999] dark:bg-[#323e50] dark:text-slate-400">
-          {(user?.name ?? '我').slice(0, 1)}
-        </div>
-      )}
+      <span className="relative mt-0.5 shrink-0">
+        {user?.avatar ? (
+          <img
+            src={user.avatar}
+            alt={user.name ?? '作者'}
+            width={40}
+            height={40}
+            className="h-10 w-10 rounded-md object-cover"
+          />
+        ) : (
+          <div className="flex h-10 w-10 items-center justify-center rounded-md bg-[#eee] text-sm text-[#999] dark:bg-[#323e50] dark:text-slate-400">
+            {(user?.name ?? '我').slice(0, 1)}
+          </div>
+        )}
+
+        {/* 置顶标记贴在头像角上，跟朋友圈给置顶动态打标的方式一致 */}
+        {top ? (
+          <span
+            title="置顶"
+            className="absolute -top-1.5 -left-1.5 flex size-4 items-center justify-center rounded-full bg-amber-400 text-white ring-2 ring-white dark:ring-[#1e2430]"
+          >
+            <RiPushpin2Fill className="h-2.5 w-2.5" />
+          </span>
+        ) : null}
+      </span>
       <div className="relative min-w-0 flex-1">
         <p className="m-0 text-[15px] font-medium leading-snug text-[#576b95] dark:text-[#7b93c4]">
           {user?.name}

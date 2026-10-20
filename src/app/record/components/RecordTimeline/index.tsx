@@ -1,7 +1,8 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import dayjs, { type Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
+import { RiPushpin2Fill } from 'react-icons/ri';
 
 import { getRecordListAPI } from '@/api/record';
 import Empty from '@/components/Empty';
@@ -21,14 +22,16 @@ interface Props {
 
 interface DayGroup {
   key: string;
-  date: Dayjs;
   records: Record[];
 }
 
 const WEEKDAYS = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
 
-/** 日期分组标签：今天 / 昨天 / 6月29日（跨年在第二行补年份） */
-function getDayLabelParts(date: Dayjs) {
+const PINNED_LABEL = { main: '置顶', sub: '', highlight: true };
+
+/** 日期分组标签：今天 / 昨天 / 6月29日（跨年在第二行补年份），key 为 YYYY-MM-DD */
+function getDayLabelParts(key: string) {
+  const date = dayjs(key);
   const now = dayjs();
   const weekday = WEEKDAYS[date.day()];
   const main = date.format('M月D日');
@@ -42,13 +45,12 @@ function getDayLabelParts(date: Dayjs) {
 function groupByDay(list: Record[]): DayGroup[] {
   const groups: DayGroup[] = [];
   for (const item of list) {
-    const date = dayjs(+(item.createTime ?? 0));
-    const key = date.format('YYYY-MM-DD');
+    const key = dayjs(+(item.createTime ?? 0)).format('YYYY-MM-DD');
     const last = groups[groups.length - 1];
     if (last && last.key === key) {
       last.records.push(item);
     } else {
-      groups.push({ key, date, records: [item] });
+      groups.push({ key, records: [item] });
     }
   }
   return groups;
@@ -63,7 +65,7 @@ export default function RecordTimeline({ initialList, initialPages, pageSize, fo
   const pageRef = useRef(1);
   const sentinelRef = useRef<HTMLDivElement>(null);
   const timelineRef = useRef<HTMLDivElement>(null);
-  const flashedRef = useRef(false);
+  const flashedIdRef = useRef<number | null>(null);
 
   const recordName = theme?.record_name?.trim() || author?.name || '我';
   const recordAvatar = theme?.record_avatar?.trim() || author?.avatar || '';
@@ -106,10 +108,10 @@ export default function RecordTimeline({ initialList, initialPages, pageSize, fo
 
   // 从侧栏轮播卡带 id 进入时，定位并高亮对应闪念
   useEffect(() => {
-    if (!focusId || flashedRef.current || !list.length) return;
+    if (!focusId || flashedIdRef.current === focusId || !list.length) return;
     const el = timelineRef.current?.querySelector<HTMLElement>(`[data-record-id="${focusId}"]`);
     if (!el) return;
-    flashedRef.current = true;
+    flashedIdRef.current = focusId;
     requestAnimationFrame(() => {
       el.scrollIntoView({ behavior: 'smooth', block: 'center' });
       el.classList.add('record-item-flash');
@@ -117,7 +119,11 @@ export default function RecordTimeline({ initialList, initialPages, pageSize, fo
     });
   }, [focusId, list]);
 
-  const dayGroups = groupByDay(list);
+  const pinnedRecords = list.filter((item) => item.top);
+  // 置顶作为时间轴顶部的特殊分组：标题换字、轴点换图钉，卡片与日期分组完全共用
+  const groups = pinnedRecords.length
+    ? [{ key: 'pinned', records: pinnedRecords }, ...groupByDay(list.filter((item) => !item.top))]
+    : groupByDay(list);
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#fbfbfd] px-4 pb-16 sm:px-6 lg:px-8 dark:bg-[#111318]">
@@ -163,15 +169,22 @@ export default function RecordTimeline({ initialList, initialPages, pageSize, fo
                 className="absolute top-2 bottom-2 left-[6px] w-px bg-linear-to-b from-transparent via-black/12 to-transparent md:left-[112px] dark:via-white/12"
               />
 
-              {dayGroups.map((day) => {
-                const label = getDayLabelParts(day.date);
+              {groups.map((day) => {
+                const isPinned = day.key === 'pinned';
+                const label = isPinned ? PINNED_LABEL : getDayLabelParts(day.key);
                 return (
                   <li key={day.key} className="group/day relative">
-                    {/* 轴点 */}
-                    <span
-                      aria-hidden
-                      className="absolute top-6 left-0 size-3 rounded-full bg-amber-400 ring-4 ring-[#fbfbfd] md:left-[106px] dark:ring-[#111318]"
-                    />
+                    {/* 轴点：置顶分组用图钉，日期分组用圆点 */}
+                    {isPinned ? (
+                      <span className="absolute top-[17px] left-[-2px] flex size-4 items-center justify-center rounded-full bg-amber-400 text-white ring-4 ring-[#fbfbfd] md:left-[104px] dark:ring-[#111318]">
+                        <RiPushpin2Fill className="h-2.5 w-2.5" />
+                      </span>
+                    ) : (
+                      <span
+                        aria-hidden
+                        className="absolute top-6 left-0 size-3 rounded-full bg-amber-400 ring-4 ring-[#fbfbfd] md:left-[106px] dark:ring-[#111318]"
+                      />
+                    )}
                     <div className="md:grid md:grid-cols-[112px_1fr]">
                       <div className="hidden pt-5 pr-8 text-right text-[#a8b1bf] group-hover/day:text-[#191919] dark:text-[#55617a] dark:group-hover/day:text-white md:block">
                         <p
@@ -179,9 +192,11 @@ export default function RecordTimeline({ initialList, initialPages, pageSize, fo
                         >
                           {label.main}
                         </p>
-                        <p className="m-0 mt-0.5 whitespace-nowrap text-[11px] text-[#c2c9d4] group-hover/day:text-[#8a94a3] dark:text-[#4a5468] dark:group-hover/day:text-slate-400">
-                          {label.sub}
-                        </p>
+                        {label.sub ? (
+                          <p className="m-0 mt-0.5 whitespace-nowrap text-[11px] text-[#c2c9d4] group-hover/day:text-[#8a94a3] dark:text-[#4a5468] dark:group-hover/day:text-slate-400">
+                            {label.sub}
+                          </p>
+                        ) : null}
                       </div>
                       <div className="pl-8 md:pl-7">
                         <p className="m-0 mb-3 flex items-baseline gap-1.5 text-xs md:hidden">

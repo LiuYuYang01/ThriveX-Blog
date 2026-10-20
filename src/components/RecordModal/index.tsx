@@ -126,6 +126,10 @@ export default function RecordModal() {
     });
   }, [open, focusId, loading, records, clearFocus]);
 
+  // 置顶项单独成组排在最前，接口已按 top 优先返回，这里只做拆分
+  const pinnedRecords = records.filter((item) => item.top);
+  const otherRecords = records.filter((item) => !item.top);
+
   const openCoverPreview = () => {
     if (!bgCover) return;
     setPreview({ photos: [{ id: 'cover', url: bgCover, alt: '封面' }], index: 0 });
@@ -208,7 +212,24 @@ export default function RecordModal() {
                 <RecordListSkeleton />
               ) : (
                 <>
-                  {records.map((item) => (
+                  {/* 置顶项按接口返回顺序排在最前，身份由条目上的图钉角标体现 */}
+                  {pinnedRecords.map((item) => (
+                    <RecordItem
+                      key={item.id}
+                      id={item.id as number}
+                      content={item.content}
+                      images={item.images}
+                      video={item.video}
+                      likeCount={item.likeCount}
+                      mood={item.mood}
+                      location={item.location}
+                      createTime={item.createTime as string | number | undefined}
+                      user={recordUser}
+                      highlighted={focusId === item.id}
+                      top={Boolean(item.top)}
+                    />
+                  ))}
+                  {otherRecords.map((item) => (
                     <RecordItem
                       key={item.id}
                       id={item.id as number}

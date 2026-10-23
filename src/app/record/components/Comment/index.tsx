@@ -4,8 +4,8 @@ import { useEffect, useRef, useState } from 'react';
 import { type SubmitHandler } from 'react-hook-form';
 import { Bounce, ToastOptions, toast } from 'react-toastify';
 import { FormProvider, Input, Spinner, Textarea, useForm } from '@/ThriveUI';
-import HCaptchaType from '@hcaptcha/react-hcaptcha';
-import HCaptcha from '@/components/HCaptcha';
+import type { TurnstileInstance } from '@marsidev/react-turnstile';
+import Turnstile from '@/components/Turnstile';
 import Show from '@/components/Show';
 import { addRecordCommentAction } from '@/actions/record';
 import { getRecordCommentListAPI } from '@/api/recordComment';
@@ -44,13 +44,13 @@ export default function RecordCommentPanel({ recordId, onCountChange }: Props) {
   const [showForm, setShowForm] = useState(true);
   const [commentId, setCommentId] = useState(0);
   const [placeholder, setPlaceholder] = useState('写评论…');
-  const captchaRef = useRef<HCaptchaType>(null);
+  const captchaRef = useRef<TurnstileInstance>(null);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [captchaError, setCaptchaError] = useState('');
   const [showCaptcha, setShowCaptcha] = useState(false);
 
   const { publicConfig } = useAppConfig();
-  const hasHCaptcha = !!publicConfig?.hcaptcha_key?.key;
+  const hasTurnstile = !!publicConfig?.turnstile_key?.key;
 
   const methods = useForm<CommentForm>({ defaultValues: { content: '', name: '', email: '', url: '', avatar: '' } });
   const { setValue, setFocus, reset, handleSubmit } = methods;
@@ -88,7 +88,7 @@ export default function RecordCommentPanel({ recordId, onCountChange }: Props) {
     setCaptchaToken(null);
     setCaptchaError('');
     setShowCaptcha(false);
-    captchaRef.current?.resetCaptcha();
+    captchaRef.current?.reset();
   };
 
   const replyComment = (id: number, name: string) => {
@@ -100,7 +100,7 @@ export default function RecordCommentPanel({ recordId, onCountChange }: Props) {
 
   const onSubmit: SubmitHandler<CommentForm> = async (data) => {
     setCaptchaError('');
-    if (hasHCaptcha && !captchaToken) {
+    if (hasTurnstile && !captchaToken) {
       setShowCaptcha(true);
       setCaptchaError('请完成人机验证');
       return;
@@ -121,11 +121,11 @@ export default function RecordCommentPanel({ recordId, onCountChange }: Props) {
       recordId,
       commentId,
       createTime: Date.now().toString(),
-      h_captcha_response: captchaToken,
+      cf_turnstile_response: captchaToken,
     });
 
     if (code !== 200) {
-      captchaRef.current?.resetCaptcha();
+      captchaRef.current?.reset();
       toast.error('发布评论失败：' + message, toastConfig);
       setSubmitting(false);
       return;
@@ -138,7 +138,7 @@ export default function RecordCommentPanel({ recordId, onCountChange }: Props) {
     setCaptchaToken(null);
     setCaptchaError('');
     setShowCaptcha(false);
-    captchaRef.current?.resetCaptcha();
+    captchaRef.current?.reset();
     localStorage.setItem('comment_data', JSON.stringify(data));
     setSubmitting(false);
     void fetchComments();
@@ -236,9 +236,9 @@ export default function RecordCommentPanel({ recordId, onCountChange }: Props) {
               />
             </div>
 
-            {hasHCaptcha && showCaptcha && (
+            {hasTurnstile && showCaptcha && (
               <div>
-                <HCaptcha
+                <Turnstile
                   ref={captchaRef}
                   setToken={(token) => {
                     setCaptchaToken(token);

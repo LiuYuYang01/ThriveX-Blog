@@ -57,7 +57,6 @@ export interface Theme {
 // 其他配置
 export interface Other {
     baidu_token: string,
-    hcaptcha_key: string,
 }
 
 // 站点公告配置
@@ -89,7 +88,7 @@ export interface GaodeMapConfig {
 // 公开环境配置
 export interface PublicConfig {
     baidu_statis_key: EnvConfigKey | null
-    hcaptcha_key: EnvConfigKey | null
+    turnstile_key: EnvConfigKey | null
     gaode_map_key: GaodeMapConfig | null
 }
 

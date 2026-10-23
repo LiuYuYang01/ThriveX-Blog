@@ -16,8 +16,8 @@ import { Web, WebType } from '@/types/app/web';
 import { addWebAction } from '@/actions/web';
 import { getWebTypeListAPI } from '@/api/web';
 import { Bounce, toast, ToastOptions } from 'react-toastify';
-import HCaptchaType from '@hcaptcha/react-hcaptcha';
-import HCaptcha from '@/components/HCaptcha';
+import type { TurnstileInstance } from '@marsidev/react-turnstile';
+import Turnstile from '@/components/Turnstile';
 import { useAppConfig } from '@/components/AppConfigProvider';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -37,13 +37,13 @@ export default () => {
   const [loading, setLoading] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const captchaRef = useRef<HCaptchaType>(null);
+  const captchaRef = useRef<TurnstileInstance>(null);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [captchaError, setCaptchaError] = useState<string>('');
   const [showCaptcha, setShowCaptcha] = useState(false);
 
   const { publicConfig } = useAppConfig();
-  const hasHCaptcha = !!publicConfig?.hcaptcha_key?.key;
+  const hasTurnstile = !!publicConfig?.turnstile_key?.key;
 
   const [typeList, setTypeList] = useState<WebType[]>([]);
   const getWebTypeList = async () => {
@@ -61,7 +61,7 @@ export default () => {
     event?.preventDefault();
     setCaptchaError('');
 
-    if (hasHCaptcha && !captchaToken) {
+    if (hasTurnstile && !captchaToken) {
       setShowCaptcha(true);
       return setCaptchaError('请完成人机验证');
     }
@@ -70,10 +70,10 @@ export default () => {
     const { code, message } = await addWebAction({
       ...data,
       createTime: Date.now().toString(),
-      h_captcha_response: captchaToken!,
+      cf_turnstile_response: captchaToken!,
     });
     if (code !== 200) {
-      captchaRef.current?.resetCaptcha();
+      captchaRef.current?.reset();
       setLoading(false);
       return toast.error(message, toastConfig);
     }
@@ -82,7 +82,7 @@ export default () => {
     setCaptchaError('');
     setCaptchaToken(null);
     setShowCaptcha(false);
-    captchaRef.current?.resetCaptcha();
+    captchaRef.current?.reset();
     methods.reset({} as Web);
 
     toast.success('🎉 提交成功, 请等待审核!', toastConfig);
@@ -166,9 +166,9 @@ export default () => {
               rules={{ pattern: { value: /^https?:\/\//, message: '请输入正确的订阅地址' } }}
             />
 
-            {hasHCaptcha && showCaptcha && (
+            {hasTurnstile && showCaptcha && (
               <div className="flex flex-col sm:col-span-2">
-                <HCaptcha ref={captchaRef} setToken={handleCaptchaSuccess} />
+                <Turnstile ref={captchaRef} setToken={handleCaptchaSuccess} />
                 {captchaError && <span className="mt-1 pl-3 text-sm text-red-400">{captchaError}</span>}
               </div>
             )}

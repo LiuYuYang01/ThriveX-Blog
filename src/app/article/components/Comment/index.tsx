@@ -5,9 +5,9 @@ import { useForm } from 'react-hook-form';
 import { addArticleCommentAction } from '@/actions/article';
 import { Bounce, ToastOptions, toast } from 'react-toastify';
 import { Spinner, Popover, PopoverTrigger, PopoverContent } from '@/ThriveUI';
-import HCaptchaType from '@hcaptcha/react-hcaptcha';
+import type { TurnstileInstance } from '@marsidev/react-turnstile';
 import List from './components/List';
-import HCaptcha from '@/components/HCaptcha';
+import Turnstile from '@/components/Turnstile';
 import EmojiBag from '@/components/EmojiBag';
 import { useAppConfig } from '@/components/AppConfigProvider';
 import 'react-toastify/dist/ReactToastify.css';
@@ -50,13 +50,13 @@ const CommentForm = ({ articleId }: Props) => {
 
   const commentRef = useRef<{ getCommentList: () => void }>(null);
 
-  const captchaRef = useRef<HCaptchaType>(null);
+  const captchaRef = useRef<TurnstileInstance>(null);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [captchaError, setCaptchaError] = useState<string>('');
   const [showCaptcha, setShowCaptcha] = useState(false);
 
   const { publicConfig } = useAppConfig();
-  const hasHCaptcha = !!publicConfig?.hcaptcha_key?.key;
+  const hasTurnstile = !!publicConfig?.turnstile_key?.key;
 
   const {
     register,
@@ -77,7 +77,7 @@ const CommentForm = ({ articleId }: Props) => {
   const onSubmit = async (data: CommentForm) => {
     setCaptchaError('');
 
-    if (hasHCaptcha && !captchaToken) {
+    if (hasTurnstile && !captchaToken) {
       setShowCaptcha(true);
       return setCaptchaError('请完成人机验证');
     }
@@ -98,11 +98,11 @@ const CommentForm = ({ articleId }: Props) => {
       articleId,
       commentId: commentId === articleId ? 0 : commentId,
       createTime: Date.now().toString(),
-      h_captcha_response: captchaToken,
+      cf_turnstile_response: captchaToken,
     });
 
     if (code !== 200) {
-      captchaRef.current?.resetCaptcha();
+      captchaRef.current?.reset();
       return toast.error('发布评论失败：' + message, toastConfig);
     }
 
@@ -118,7 +118,7 @@ const CommentForm = ({ articleId }: Props) => {
     setCaptchaError('');
     setCaptchaToken(null);
     setShowCaptcha(false);
-    captchaRef.current?.resetCaptcha();
+    captchaRef.current?.reset();
 
     // 提交成功后把评论的数据持久化到本地
     localStorage.setItem('comment_data', JSON.stringify(data));
@@ -230,9 +230,9 @@ const CommentForm = ({ articleId }: Props) => {
             {errors.url?.message ? <span className="text-red-400 text-sm pl-3 mt-1">{errors.url.message}</span> : null}
           </div>
 
-          {hasHCaptcha && showCaptcha && (
+          {hasTurnstile && showCaptcha && (
             <div className="flex flex-col">
-              <HCaptcha ref={captchaRef} setToken={handleCaptchaSuccess} />
+              <Turnstile ref={captchaRef} setToken={handleCaptchaSuccess} />
               {captchaError && <span className="text-red-400 text-sm pl-3 mt-1">{captchaError}</span>}
             </div>
           )}

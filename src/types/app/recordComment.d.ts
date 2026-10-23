@@ -12,7 +12,7 @@ export interface RecordComment {
   status?: number;
   children?: RecordComment[];
   createTime: string;
-  h_captcha_response?: string | null;
+  cf_turnstile_response?: string | null;
 }
 
 export interface RecordCommentFilterQueryParams extends QueryParams {

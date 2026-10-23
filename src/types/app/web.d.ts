@@ -18,5 +18,5 @@ export interface Web {
   type: WebType,
   auditStatus: number,
   createTime?: string
-  h_captcha_response: string
+  cf_turnstile_response?: string | null
 }

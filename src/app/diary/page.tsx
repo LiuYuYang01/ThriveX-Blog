@@ -2,9 +2,9 @@ import { Metadata } from 'next';
 import { connection } from 'next/server';
 
 import { getDiaryQuestionListAPI } from '@/api/diary';
-import { getDiaryBookDataAPI, readDiaryToken } from '@/lib/diary';
+import { getDiaryPagesDataAPI, readDiaryToken } from '@/lib/diary';
 import DiaryGate from './components/DiaryGate';
-import DiaryBook from './components/DiaryBook';
+import DiaryReader from './components/DiaryReader';
 
 import './diary.scss';
 
@@ -24,10 +24,10 @@ export default async function DiaryPage() {
   const [{ data }, token] = await Promise.all([getDiaryQuestionListAPI(), readDiaryToken()]);
   const questions = data ?? [];
 
-  // 有凭证就先替读者取回内容，取不到（过期/失效）就退回封面
+  // 有凭证就先替读者取回整本，取不到（过期/失效）就退回封面
   if (token) {
-    const { code, data: book } = await getDiaryBookDataAPI();
-    if (code === 200 && book) return <DiaryBook book={book} />;
+    const { code, data } = await getDiaryPagesDataAPI();
+    if (code === 200 && data) return <DiaryReader pages={data} />;
   }
 
   return <DiaryGate questions={questions} expired={!!token} />;

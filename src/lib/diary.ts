@@ -1,22 +1,14 @@
 import { cookies } from 'next/headers';
 
-import type { DiaryBook } from '@/types/app/diary';
+import type { Diary } from '@/types/app/diary';
 
 // 访客阅读凭证：HttpOnly，页面脚本读不到，只由本站接口写入
 export const DIARY_COOKIE = 'thrivex_diary_reader';
 
 const DEFAULT_MAX_AGE = 7 * 24 * 60 * 60;
-const BOOK_HEADER = 'X-Diary-Token';
+const READER_HEADER = 'X-Diary-Token';
 
 const getApiUrl = () => process.env.PROJECT_API_INTERNAL || process.env.NEXT_PUBLIC_PROJECT_API || '';
-
-const bookQuery = ({ year, month }: { year?: number; month?: number } = {}) => {
-  const search = new URLSearchParams();
-  if (year) search.set('year', `${year}`);
-  if (month) search.set('month', `${month}`);
-  const query = search.toString();
-  return query ? `?${query}` : '';
-};
 
 export const diaryCookieOptions = (maxAge?: number) => ({
   httpOnly: true,
@@ -32,15 +24,15 @@ export async function readDiaryToken() {
 }
 
 // 服务端带令牌直连后端；没有凭证时直接给出与后端一致的 401
-export async function getDiaryBookDataAPI(params?: { year?: number; month?: number }): Promise<ResponseData<DiaryBook | null>> {
+export async function getDiaryPagesDataAPI(): Promise<ResponseData<Diary[] | null>> {
   const token = await readDiaryToken();
   if (!token) return { code: 401, message: '请先答出密语', data: null };
 
-  const res = await fetch(`${getApiUrl()}/diary/book${bookQuery(params)}`, {
-    headers: { [BOOK_HEADER]: token },
+  const res = await fetch(`${getApiUrl()}/diary/pages`, {
+    headers: { [READER_HEADER]: token },
     cache: 'no-store',
   });
-  return res.json() as Promise<ResponseData<DiaryBook | null>>;
+  return res.json() as Promise<ResponseData<Diary[] | null>>;
 }
 
 // 服务端把答案交给后端校验，令牌只写 Cookie，不回传页面

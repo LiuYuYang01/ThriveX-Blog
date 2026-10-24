@@ -1,0 +1,882 @@
+// 牛皮纸日记本：桌面、书页、装订线，全部收在 .diary-reader 里
+// 深色只压暗桌面与纸张的亮度，纸还是纸，不换成黑底
+.diary-reader {
+  --diary-desk: #e8e1d6;
+  --diary-glow: #f8f3ea;
+  --diary-paper: #faf6ec;
+  --diary-paper-2: #f3ecdc;
+  --diary-stack: rgba(225, 214, 196, 0.9);
+  --diary-grain: rgba(150, 130, 100, 0.05);
+  --diary-blush: rgba(200, 182, 150, 0.1);
+  --diary-gutter: rgba(130, 110, 85, 0.1);
+  --diary-shade: rgba(80, 60, 38, 0.1);
+  --diary-ink: #312b24;
+  --diary-ink-2: #6d6357;
+  --diary-ink-3: #a89c8c;
+  --diary-desk-ink: #312b24;
+  --diary-desk-ink-2: #6d6357;
+  --diary-alert: #a4463a;
+  --diary-accent: #b0783f;
+  --diary-ribbon: #c25e4c;
+  --diary-ribbon-2: #a4463a;
+  --diary-drop: rgba(55, 40, 22, 0.26);
+  --diary-drop-2: rgba(55, 40, 22, 0.12);
+  --diary-fold: rgba(70, 52, 30, 0.55);
+  --diary-serif: Georgia, 'Songti SC', 'STSong', serif;
+  --diary-kai: 'Kaiti SC', 'STKaiti', KaiTi, '楷体', 'Songti SC', serif;
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: 84px 22px 22px;
+  color: var(--diary-ink);
+  background: radial-gradient(1200px 700px at 50% -15%, var(--diary-glow) 0%, transparent 60%), var(--diary-desk);
+  font-family: system-ui, -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+
+  ::selection {
+    color: #fff;
+    background: var(--diary-accent);
+  }
+}
+
+.dark .diary-reader {
+  --diary-desk: #201c16;
+  --diary-glow: #2c261e;
+  --diary-paper: #e9e1d2;
+  --diary-paper-2: #ded5c3;
+  --diary-stack: rgba(196, 182, 158, 0.75);
+  --diary-grain: rgba(70, 55, 30, 0.07);
+  --diary-blush: rgba(120, 100, 65, 0.12);
+  --diary-gutter: rgba(60, 45, 25, 0.14);
+  --diary-shade: rgba(20, 12, 4, 0.18);
+  --diary-ink: #2f2820;
+  --diary-ink-2: #5c5142;
+  --diary-ink-3: #8b806d;
+  --diary-desk-ink: #e6dcc8;
+  --diary-desk-ink-2: #a2947c;
+  --diary-alert: #d98a72;
+  --diary-accent: #9c6a34;
+  --diary-drop: rgba(0, 0, 0, 0.5);
+  --diary-drop-2: rgba(0, 0, 0, 0.28);
+  --diary-fold: rgba(35, 24, 10, 0.6);
+}
+
+// ================= 上下两条横梁 =================
+.diary-bar {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 4px;
+  min-height: 40px;
+}
+
+.diary-bar-foot {
+  justify-content: center;
+  gap: 20px;
+}
+
+.diary-brand {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  min-width: 0;
+}
+
+.diary-brand-title {
+  font-family: var(--diary-serif);
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  color: var(--diary-desk-ink);
+  opacity: 0.9;
+}
+
+.diary-brand-note {
+  overflow: hidden;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--diary-desk-ink-2);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.diary-tools {
+  display: flex;
+  flex: none;
+  gap: 6px;
+}
+
+.diary-tool {
+  display: inline-flex;
+  gap: 7px;
+  align-items: center;
+  padding: 7px 12px;
+  border: 1px solid color-mix(in srgb, var(--diary-ink) 12%, transparent);
+  border-radius: 9999px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 12.5px;
+  letter-spacing: 0.06em;
+  color: var(--diary-ink-2);
+  background: var(--diary-paper);
+  transition: transform 0.18s ease;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.4;
+  }
+
+  &.is-open {
+    border-color: var(--diary-accent);
+    color: var(--diary-accent);
+  }
+}
+
+.diary-turn {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid color-mix(in srgb, var(--diary-ink) 12%, transparent);
+  border-radius: 50%;
+  cursor: pointer;
+  color: var(--diary-ink-2);
+  background: var(--diary-paper);
+  transition: transform 0.18s ease;
+
+  &:hover:not(:disabled) {
+    transform: scale(1.06);
+  }
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.3;
+  }
+}
+
+.diary-pager {
+  margin: 0;
+  min-width: 118px;
+  font-family: var(--diary-serif);
+  font-size: 12.5px;
+  font-style: italic;
+  letter-spacing: 0.12em;
+  color: var(--diary-desk-ink);
+  text-align: center;
+  opacity: 0.75;
+}
+
+.diary-notice {
+  margin: 0;
+  min-height: 18px;
+  font-size: 12px;
+  color: var(--diary-alert);
+  text-align: center;
+}
+
+// ================= 书本 =================
+.diary-stage {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  perspective: 2800px;
+}
+
+/* 书本用静态 box-shadow：filter 会让整棵子树进离屏层，翻页时逐帧重算形状，卡顿的源头 */
+.diary-book {
+  position: relative;
+  width: min(980px, 100%);
+  height: min(660px, calc(100dvh - 260px));
+  min-height: 380px;
+  border-radius: 4px;
+  touch-action: pan-y;
+  box-shadow:
+    0 30px 50px var(--diary-drop),
+    0 8px 16px var(--diary-drop-2);
+  animation: diary-book-in 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  transform-style: preserve-3d;
+}
+
+@keyframes diary-book-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px) rotateX(14deg) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.diary-leaf,
+.diary-paper-face {
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 18% 12%, var(--diary-blush), transparent 55%),
+    radial-gradient(ellipse at 85% 88%, var(--diary-blush), transparent 55%),
+    repeating-linear-gradient(0deg, transparent 0 29px, var(--diary-grain) 29px 30px),
+    linear-gradient(105deg, var(--diary-paper) 0%, var(--diary-paper-2) 100%);
+  backface-visibility: hidden;
+}
+
+.diary-leaf {
+  position: absolute;
+  top: 0;
+  height: 100%;
+}
+
+.diary-leaf-left {
+  left: 0;
+  width: 50%;
+  border-radius: 5px 0 0 5px;
+  box-shadow:
+    -2px 0 0 var(--diary-stack),
+    -3px 0 0 var(--diary-paper),
+    -4px 0 0 var(--diary-stack),
+    -5px 0 0 var(--diary-paper),
+    inset -1px 0 0 var(--diary-gutter),
+    inset -14px 0 22px -16px var(--diary-shade);
+}
+
+.diary-leaf-right {
+  left: 50%;
+  width: 50%;
+  border-radius: 0 5px 5px 0;
+  box-shadow:
+    2px 0 0 var(--diary-stack),
+    3px 0 0 var(--diary-paper),
+    4px 0 0 var(--diary-stack),
+    5px 0 0 var(--diary-paper),
+    inset 1px 0 0 var(--diary-gutter),
+    inset 14px 0 22px -16px var(--diary-shade);
+}
+
+.diary-leaf::after {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  content: '';
+}
+
+.diary-leaf-left::after {
+  background: linear-gradient(to left, var(--diary-shade), transparent 14%);
+}
+
+.diary-leaf-right::after {
+  background: linear-gradient(to right, var(--diary-shade), transparent 14%);
+}
+
+.diary-spine {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  z-index: 15;
+  width: 3px;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    var(--diary-shade) 6%,
+    var(--diary-shade) 50%,
+    var(--diary-shade) 94%,
+    transparent 100%
+  );
+  box-shadow: 0 0 8px var(--diary-shade);
+  transform: translateX(-50%);
+}
+
+.diary-ribbon {
+  position: absolute;
+  top: -8px;
+  right: 13%;
+  z-index: 16;
+  width: 18px;
+  height: 64px;
+  pointer-events: none;
+  background: linear-gradient(var(--diary-ribbon), var(--diary-ribbon-2));
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 82%, 0 100%);
+  box-shadow: 0 2px 6px var(--diary-drop);
+}
+
+/* 翻页纸：will-change 让它提前进入独立合成层，transform 与阴影由 JS 逐帧同步 */
+.diary-paper {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  z-index: 20;
+  width: 50%;
+  height: 100%;
+  transform-origin: left center;
+  will-change: transform;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+}
+
+.diary-paper-face {
+  position: absolute;
+  inset: 0;
+}
+
+.diary-paper-front {
+  border-radius: 0 5px 5px 0;
+  box-shadow: inset 1px 0 0 var(--diary-gutter);
+}
+
+.diary-paper-back {
+  border-radius: 5px 0 0 5px;
+  box-shadow: inset -1px 0 0 var(--diary-gutter);
+  transform: rotateY(180deg);
+}
+
+.diary-paper-face::after {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  content: '';
+}
+
+.diary-paper-front::after {
+  background: linear-gradient(to right, var(--diary-fold), transparent 22%);
+  opacity: var(--fs, 0);
+}
+
+.diary-paper-back::after {
+  background: linear-gradient(to left, var(--diary-fold), transparent 22%);
+  opacity: var(--bs, 0);
+}
+
+// ================= 一页纸的内容 =================
+.diary-sheet {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  padding: 44px 48px 56px 44px;
+  overflow: hidden;
+}
+
+.diary-leaf-right .diary-sheet,
+.diary-paper-back .diary-sheet {
+  padding: 44px 44px 56px 48px;
+}
+
+.diary-sheet.is-blank {
+  background: none;
+}
+
+.diary-sheet-head {
+  display: flex;
+  flex: none;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.diary-sheet-date {
+  font-family: var(--diary-serif);
+  font-size: 12.5px;
+  letter-spacing: 0.1em;
+  color: var(--diary-ink-2);
+}
+
+.diary-sheet-week,
+.diary-sheet-num {
+  font-size: 11.5px;
+  letter-spacing: 0.06em;
+  color: var(--diary-ink-3);
+}
+
+.diary-sheet-meta {
+  display: flex;
+  flex: none;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin: 16px 0 0;
+  font-size: 12.5px;
+  letter-spacing: 0.06em;
+  color: var(--diary-ink-2);
+}
+
+.diary-sheet-mood {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.diary-sheet-tag {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+  color: var(--diary-ink-3);
+}
+
+.diary-sheet-title {
+  margin: 12px 0 0;
+  font-family: var(--diary-serif);
+  font-size: 23px;
+  font-weight: 700;
+  line-height: 1.5;
+  letter-spacing: 0.02em;
+  color: var(--diary-ink);
+}
+
+.diary-sheet-rule {
+  flex: none;
+  width: 34px;
+  height: 2px;
+  margin: 16px 0 20px;
+  background: var(--diary-accent);
+  opacity: 0.45;
+}
+
+.diary-sheet-text {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-right: 10px;
+  scrollbar-color: var(--diary-ink-3) transparent;
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  font-family: var(--diary-kai);
+  font-size: 16.5px;
+  line-height: 2.02;
+  letter-spacing: 0.015em;
+  color: var(--diary-ink);
+
+  p {
+    margin: 0 0 0.82em;
+    text-indent: 2em;
+    white-space: pre-wrap;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 9999px;
+    background: var(--diary-ink-3);
+  }
+}
+
+.diary-sheet-num {
+  position: absolute;
+  right: 42px;
+  bottom: 22px;
+  font-family: var(--diary-serif);
+  font-style: italic;
+  letter-spacing: 0.14em;
+}
+
+.diary-leaf-left .diary-sheet-num,
+.diary-paper-back .diary-sheet-num {
+  right: auto;
+  left: 42px;
+}
+
+.diary-blank {
+  max-width: 30ch;
+  font-family: var(--diary-kai);
+  font-size: 16px;
+  line-height: 2.2;
+  color: var(--diary-desk-ink-2);
+  text-align: center;
+}
+
+// ================= 目录 / 日历 =================
+// 站点的工具浮窗是 z-999，遮罩与面板要盖住它和页头
+.diary-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(43, 34, 22, 0.32);
+}
+
+.diary-panel {
+  position: fixed;
+  top: 88px;
+  right: 22px;
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  width: min(340px, calc(100vw - 44px));
+  max-height: calc(100dvh - 112px);
+  border-radius: 6px;
+  background: linear-gradient(105deg, var(--diary-paper) 0%, var(--diary-paper-2) 100%);
+  box-shadow:
+    0 24px 44px -18px var(--diary-drop),
+    inset 0 0 0 1px var(--diary-gutter);
+  color: var(--diary-ink);
+  animation: diary-panel-in 0.26s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes diary-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.diary-panel-head {
+  display: flex;
+  flex: none;
+  gap: 8px;
+  align-items: center;
+  padding: 16px 16px 12px;
+  border-bottom: 1px solid var(--diary-gutter);
+}
+
+.diary-panel-title {
+  margin: 0;
+  font-family: var(--diary-serif);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--diary-ink);
+}
+
+.diary-panel-note {
+  margin-left: auto;
+  font-size: 11.5px;
+  letter-spacing: 0.06em;
+  color: var(--diary-ink-3);
+}
+
+.diary-panel-close {
+  display: grid;
+  place-items: center;
+  padding: 4px;
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+  color: var(--diary-ink-2);
+  background: transparent;
+}
+
+.diary-index-list {
+  position: relative;
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 10px 14px;
+}
+
+.diary-index-group + .diary-index-group {
+  margin-top: 4px;
+}
+
+.diary-index-month {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin: 14px 6px 4px;
+  font-family: var(--diary-serif);
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--diary-ink-2);
+}
+
+.diary-index-count {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--diary-ink-3);
+}
+
+.diary-index-items {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.diary-index-row {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  width: 100%;
+  padding: 8px 6px;
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13.5px;
+  color: var(--diary-ink-2);
+  text-align: left;
+  background: transparent;
+  transition: transform 0.16s ease;
+
+  &:hover {
+    transform: translateX(2px);
+    color: var(--diary-ink);
+  }
+
+  &.is-current {
+    color: var(--diary-accent);
+    background: color-mix(in srgb, var(--diary-accent) 10%, transparent);
+  }
+}
+
+.diary-index-day {
+  flex: none;
+  width: 22px;
+  font-family: var(--diary-serif);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--diary-ink);
+}
+
+.diary-index-row.is-current .diary-index-day {
+  color: var(--diary-accent);
+}
+
+.diary-index-name {
+  overflow: hidden;
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.diary-index-num {
+  flex: none;
+  font-family: var(--diary-serif);
+  font-size: 11px;
+  font-style: italic;
+  color: var(--diary-ink-3);
+}
+
+.diary-cal-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 14px 6px;
+}
+
+.diary-cal-step {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--diary-gutter);
+  border-radius: 50%;
+  cursor: pointer;
+  color: var(--diary-ink-2);
+  background: transparent;
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.3;
+  }
+}
+
+.diary-cal-label {
+  font-family: var(--diary-serif);
+  font-size: 14px;
+  letter-spacing: 0.1em;
+  color: var(--diary-ink);
+}
+
+.diary-cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  padding: 6px 14px 4px;
+}
+
+.diary-cal-week {
+  font-size: 10.5px;
+  color: var(--diary-ink-3);
+  text-align: center;
+}
+
+.diary-cal-day {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  padding: 7px 0 10px;
+  border: 0;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 12.5px;
+  color: var(--diary-ink-3);
+  background: transparent;
+}
+
+.diary-cal-day.is-written {
+  cursor: pointer;
+  color: var(--diary-ink);
+  background: color-mix(in srgb, var(--diary-paper-2) 70%, transparent);
+
+  &:hover {
+    color: var(--diary-accent);
+  }
+}
+
+.diary-cal-dot {
+  position: absolute;
+  bottom: 4px;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--diary-ribbon);
+}
+
+.diary-cal-day.is-today {
+  box-shadow: inset 0 0 0 1px var(--diary-gutter);
+}
+
+.diary-cal-day.is-current {
+  color: #fff;
+  background: var(--diary-accent);
+
+  .diary-cal-dot {
+    background: #fff;
+  }
+}
+
+.diary-cal-hint {
+  margin: 0;
+  padding: 8px 16px 16px;
+  font-size: 11px;
+  line-height: 1.7;
+  color: var(--diary-ink-3);
+}
+
+// ================= 焦点与窄屏 =================
+.diary-reader :is(.diary-tool, .diary-turn, .diary-panel-close, .diary-index-row, .diary-cal-day.is-written, .diary-cal-step):focus-visible {
+  outline: 2px solid var(--diary-accent);
+  outline-offset: 2px;
+}
+
+@media (max-width: 860px) {
+  .diary-reader {
+    gap: 8px;
+    padding: 76px 12px 14px;
+  }
+
+  .diary-brand-note {
+    display: none;
+  }
+
+  .diary-tool span {
+    display: none;
+  }
+
+  .diary-tool {
+    padding: 8px;
+  }
+
+  .diary-book {
+    width: 100%;
+    height: min(560px, calc(100dvh - 232px));
+    min-height: 340px;
+  }
+
+  .diary-leaf-left {
+    width: 100%;
+    border-radius: 5px;
+  }
+
+  .diary-leaf-right,
+  .diary-spine,
+  .diary-ribbon,
+  .diary-leaf::after {
+    display: none;
+  }
+
+  .diary-paper {
+    left: 0;
+    width: 100%;
+  }
+
+  .diary-paper-front,
+  .diary-paper-back {
+    border-radius: 5px;
+  }
+
+  .diary-sheet,
+  .diary-leaf-right .diary-sheet,
+  .diary-paper-back .diary-sheet,
+  .diary-paper-front .diary-sheet {
+    padding: 30px 26px 52px;
+  }
+
+  .diary-sheet-title {
+    font-size: 20px;
+  }
+
+  .diary-sheet-text {
+    font-size: 15.5px;
+    line-height: 1.94;
+  }
+
+  .diary-sheet-num,
+  .diary-leaf-left .diary-sheet-num,
+  .diary-paper-back .diary-sheet-num {
+    right: 24px;
+    bottom: 18px;
+    left: auto;
+  }
+
+  .diary-turn {
+    width: 38px;
+    height: 38px;
+  }
+
+  .diary-pager {
+    min-width: 96px;
+    font-size: 12px;
+  }
+
+  .diary-panel {
+    top: auto;
+    right: 12px;
+    bottom: 12px;
+    left: 12px;
+    width: auto;
+    max-height: 68dvh;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .diary-book,
+  .diary-panel {
+    animation: none;
+  }
+
+  .diary-tool,
+  .diary-turn,
+  .diary-index-row {
+    transition: none;
+
+    &:hover {
+      transform: none;
+    }
+  }
+}

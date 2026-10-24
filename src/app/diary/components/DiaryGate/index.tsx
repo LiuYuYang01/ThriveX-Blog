@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { FiEye, FiEyeOff, FiKey } from 'react-icons/fi';
+import { FiKey } from 'react-icons/fi';
 
 import { Button, TextField } from '@/ThriveUI';
 import { useAppConfig } from '@/components/AppConfigProvider';
@@ -25,7 +25,6 @@ export default function DiaryGate({ questions, expired }: Props) {
 
   const [questionId, setQuestionId] = useState<number>(questions[0]?.id ?? 0);
   const [answer, setAnswer] = useState('');
-  const [reveal, setReveal] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [opening, setOpening] = useState(false);
@@ -106,18 +105,11 @@ export default function DiaryGate({ questions, expired }: Props) {
                   </div>
                 </fieldset>
 
-                <div className="relative mt-5">
-                  <TextField aria-label="密语答案" type={reveal ? 'text' : 'password'} autoComplete="off" placeholder="写下你的答案" className="pr-11" value={answer} onChange={(e) => setAnswer(e.target.value)} disabled={busy} />
-                  <button type="button" onClick={() => setReveal((v) => !v)} aria-label={reveal ? '隐藏答案' : '显示答案'} className="absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer text-base text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200">
-                    {reveal ? <FiEyeOff /> : <FiEye />}
-                  </button>
-                </div>
-
-                <div className="mt-5 flex flex-wrap items-center gap-4">
-                  <Button type="submit" color="primary" loading={busy} disabled={!answer.trim()} startContent={<FiKey className="text-base" />}>
+                <div className="mt-5 flex items-center gap-3">
+                  <TextField aria-label="密语答案" autoComplete="off" placeholder="写下你的答案" fieldClassName="min-w-0 flex-1" value={answer} onChange={(e) => setAnswer(e.target.value)} disabled={busy} />
+                  <Button type="submit" color="primary" loading={busy} disabled={!answer.trim()} className="shrink-0 cursor-pointer" startContent={<FiKey className="text-base" />}>
                     打开本子
                   </Button>
-                  <span className="text-xs text-[#a8b1bf] dark:text-slate-500">答案按原文逐字比对，首尾空格不算</span>
                 </div>
 
                 <div aria-live="polite" className="min-h-6">

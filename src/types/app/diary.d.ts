@@ -16,17 +16,3 @@ export interface Diary {
   createTime?: number;
   updateTime?: number;
 }
-
-export interface DiaryMonth {
-  year: number;
-  month: number;
-  count: number;
-}
-
-export interface DiaryBook {
-  year: number;
-  month: number;
-  total: number;
-  months: DiaryMonth[];
-  entries: Diary[];
-}

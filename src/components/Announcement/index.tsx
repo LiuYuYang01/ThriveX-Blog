@@ -8,6 +8,9 @@ import type { Announcement } from '@/types/app/config';
 
 const DISMISS_KEY = 'announcement-dismiss';
 
+// 同一次页面加载内关闭后不再重复弹出，避免 router.refresh（如日记本开合）触发重弹
+let dismissedThisLoad = false;
+
 interface DismissRecord {
   version: number;
   dismissed_at: number;
@@ -26,10 +29,11 @@ interface Props {
 
 export default function AnnouncementModal({ config }: Props) {
   const [open, setOpen] = useState(false);
-  const [remaining, setRemaining] = useState(0);
+  const [remaining, setRemaining] = useState(config.auto_close);
 
   const close = () => {
     setOpen(false);
+    dismissedThisLoad = true;
     try {
       const record: DismissRecord = { version: config.update_time, dismissed_at: Date.now() };
       localStorage.setItem(DISMISS_KEY, JSON.stringify(record));
@@ -39,6 +43,7 @@ export default function AnnouncementModal({ config }: Props) {
   };
 
   useEffect(() => {
+    if (dismissedThisLoad) return;
     if (!config.enable || !config.content.trim()) return;
     try {
       const record = JSON.parse(localStorage.getItem(DISMISS_KEY) ?? 'null') as DismissRecord | null;

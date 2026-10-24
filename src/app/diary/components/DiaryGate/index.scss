@@ -1,0 +1,207 @@
+// 布面精装本：墨蓝布纹 + 竖排题签 + 朱砂印，是日记封面的全部道具
+.diary-cover-stage {
+  perspective: 1400px;
+}
+
+.diary-cover {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  padding: 26px 22px 22px 40px;
+  overflow: hidden;
+  border-radius: 4px 10px 10px 4px;
+  transform-origin: left center;
+  background-color: var(--diary-ink);
+  // 布纹：两组极细的经纬线叠在墨蓝底上
+  background-image: repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.045) 0 1px, transparent 1px 3px), repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.16) 0 1px, transparent 1px 3px);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.07),
+    0 18px 40px -18px rgba(15, 23, 42, 0.55);
+}
+
+// 书脊：靠左的一道暗带，压两道横箍
+.diary-cover-spine {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 26px;
+  background: linear-gradient(90deg, var(--diary-ink-edge), transparent);
+  box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.06);
+}
+
+.diary-cover-spine::before,
+.diary-cover-spine::after {
+  position: absolute;
+  right: 5px;
+  left: 5px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.14);
+  content: '';
+}
+
+.diary-cover-spine::before {
+  top: 30%;
+}
+
+.diary-cover-spine::after {
+  bottom: 30%;
+}
+
+// 压印边框：向内凹的一圈细线
+.diary-cover-body {
+  position: absolute;
+  inset: 14px 14px 14px 34px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 0 5px rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 20px;
+}
+
+// 题签：糊在布面上的一张白纸，竖排写着书名和记者
+.diary-cover-slip {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 14px 10px 16px;
+  border: 1px solid rgba(34, 48, 71, 0.12);
+  background: #f2ede2;
+  box-shadow: 0 2px 10px -2px rgba(10, 16, 26, 0.5);
+}
+
+.diary-cover-title {
+  margin: 0;
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.24;
+  letter-spacing: 0.16em;
+  color: var(--diary-ink);
+  writing-mode: vertical-rl;
+}
+
+.diary-cover-author {
+  margin: 20px 0 0;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  color: rgba(34, 48, 71, 0.62);
+  writing-mode: vertical-rl;
+}
+
+// 朱砂印：略微歪一点，像手工盖的
+.diary-cover-seal {
+  position: absolute;
+  right: 24px;
+  bottom: 24px;
+  display: grid;
+  width: 46px;
+  height: 46px;
+  padding-top: 3px;
+  border-radius: 3px;
+  place-items: center;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: 0.04em;
+  color: #f6efe8;
+  text-align: center;
+  background: var(--diary-seal);
+  transform: rotate(-5deg);
+  writing-mode: vertical-rl;
+  box-shadow: inset 0 0 0 1.5px rgba(246, 239, 232, 0.5);
+}
+
+.diary-question {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 12px 14px;
+  border: 1px solid var(--diary-line);
+  border-radius: 10px;
+  cursor: pointer;
+  color: #3d4653;
+  background: rgba(255, 255, 255, 0.6);
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: translateX(2px);
+  }
+
+  &.is-active {
+    border-color: var(--diary-seal);
+    color: #191919;
+    background: #fff;
+  }
+
+  .dark & {
+    color: #cbd3df;
+    background: rgba(255, 255, 255, 0.03);
+
+    &.is-active {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.06);
+    }
+  }
+}
+
+.diary-question-dot {
+  flex-shrink: 0;
+  width: 12px;
+  height: 12px;
+  margin-top: 8px;
+  border: 1px solid var(--diary-line);
+  border-radius: 9999px;
+  background: transparent;
+}
+
+.diary-question.is-active .diary-question-dot {
+  border-color: var(--diary-seal);
+  background: var(--diary-seal);
+}
+
+// 唯一一次动效：答对后封面绕书脊翻开，内页随后接管
+@keyframes diary-cover-open {
+  from {
+    transform: rotateY(0deg);
+    opacity: 1;
+  }
+
+  to {
+    transform: rotateY(-86deg);
+    opacity: 0.15;
+  }
+}
+
+@keyframes diary-lock-away {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+.diary-cover.is-opening {
+  animation: diary-cover-open 0.62s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.diary-lock.is-closing {
+  animation: diary-lock-away 0.3s ease forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .diary-question {
+    transition: none;
+
+    &:hover {
+      transform: none;
+    }
+  }
+
+  .diary-cover.is-opening,
+  .diary-lock.is-closing {
+    animation: none;
+  }
+}

@@ -1,0 +1,31 @@
+// 日记本专用色：墨蓝布面、朱砂印、宣纸内页
+// 只在 .diary-gate / .diary-book 内生效，主题切换靠变量换值，不加颜色过渡
+.diary-gate,
+.diary-book {
+  --diary-ink: #223047;
+  --diary-ink-edge: #16202f;
+  --diary-seal: #b4402f;
+  --diary-paper: #fbfaf7;
+  --diary-paper-edge: #e6e1d6;
+  --diary-line: rgba(34, 48, 71, 0.16);
+  --diary-text: #2b2a28;
+  --diary-muted: #6c7482;
+}
+
+.dark .diary-gate,
+.dark .diary-book {
+  --diary-ink: #26334a;
+  --diary-ink-edge: #1a2434;
+  --diary-seal: #d6705c;
+  --diary-paper: #18202b;
+  --diary-paper-edge: #273244;
+  --diary-line: rgba(255, 255, 255, 0.14);
+  --diary-text: #dfe3ea;
+  --diary-muted: #94a0b1;
+}
+
+// 选中内页文字时用朱砂，而不是默认的蓝
+.diary-book ::selection {
+  color: #fff;
+  background: var(--diary-seal);
+}

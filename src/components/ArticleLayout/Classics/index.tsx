@@ -20,7 +20,7 @@ const Classics = async ({ data, covers: coversProp }: ClassicsProps) => {
     if (data.description?.trim()?.length) {
       return data.description;
     }
-    return data.content.slice(0, 100);
+    return data.content?.slice(0, 100) ?? '';
   };
 
   return (

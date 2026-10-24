@@ -16,8 +16,8 @@ export default function RecordEntry() {
   // 弹窗模式下点击打开弹窗，页面模式下跳转 /record
   const isModal = theme?.record_mode === 'modal';
 
-  // 已经在闪念页或弹窗已打开时不展示入口
-  if (pathname === '/record' || (isModal && open)) return null;
+  // 已经在闪念页、日记本页或弹窗已打开时不展示入口
+  if (pathname === '/record' || pathname === '/diary' || (isModal && open)) return null;
 
   return (
     <button

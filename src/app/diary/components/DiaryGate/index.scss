@@ -1,21 +1,412 @@
-// 布面精装本：墨蓝布纹 + 竖排题签 + 朱砂印，是日记封面的全部道具
-.diary-cover-stage {
-  perspective: 1400px;
+// 一本布面精装本：合着时只有封面，点开后封面的背板成了左页，密语写在牛皮纸右页
+// 宽高、字号、印章都从 --page-w 推，桌面是两页对开，窄屏只留一页
+.diary-booklet {
+  --page-w: min(340px, 86vw, calc((100dvh - 250px) * 0.75));
+  // 内页牛皮纸，和翻页那本书用同一套暖色
+  --page-paper: #faf5e9;
+  --page-paper-2: #f1e8d6;
+  --page-edge: #e7dcc6;
+  --page-edge-2: #ddd0b7;
+  --page-ink: #312b24;
+  --page-ink-2: #6d6357;
+  --page-ink-3: #a89c8c;
+  --page-line: rgba(90, 70, 45, 0.2);
+  --page-rule: rgba(120, 95, 60, 0.06);
+  --page-seal: #b4402f;
+  --page-seal-soft: rgba(180, 64, 47, 0.14);
+  --page-note: rgba(180, 64, 47, 0.07);
+  --page-gloss: rgba(255, 255, 255, 0.56);
+  --gate-drop: rgba(52, 38, 20, 0.3);
+  --diary-serif: Georgia, 'Songti SC', 'STSong', serif;
+
+  position: relative;
+  width: var(--page-w);
+  height: calc(var(--page-w) * 4 / 3);
+  perspective: 1800px;
+  transition: opacity 0.26s ease;
 }
 
-.diary-cover {
+.dark .diary-booklet {
+  --page-paper: #e9e1d2;
+  --page-paper-2: #ded5c3;
+  --page-edge: #cfc2a9;
+  --page-edge-2: #c1b499;
+  --page-ink: #2f2820;
+  --page-ink-2: #5c5142;
+  --page-ink-3: #8b806d;
+  --page-line: rgba(60, 45, 25, 0.24);
+  --page-rule: rgba(60, 45, 25, 0.09);
+  --page-gloss: rgba(255, 255, 255, 0.3);
+  --gate-drop: rgba(0, 0, 0, 0.55);
+}
+
+// 答对后整本淡出，交给翻页那一侧接手
+.diary-booklet.is-unlocking {
+  opacity: 0;
+}
+
+// ================= 右页：写着密语的牛皮纸 =================
+.diary-page {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  border-radius: 3px 8px 8px 3px;
+  color: var(--page-ink);
+  background:
+    radial-gradient(120% 90% at 14% 0%, var(--page-gloss), transparent 60%),
+    repeating-linear-gradient(0deg, transparent 0 29px, var(--page-rule) 29px 30px),
+    linear-gradient(100deg, var(--page-paper) 0%, var(--page-paper-2) 100%);
+  box-shadow:
+    inset 0 0 0 1px var(--page-line),
+    inset 28px 0 34px -32px rgba(58, 40, 18, 0.55),
+    3px 0 0 -1px var(--page-edge),
+    6px 0 0 -2px var(--page-edge-2),
+    0 26px 50px -30px var(--gate-drop);
+}
+
+.diary-page-content {
   position: relative;
-  aspect-ratio: 3 / 4;
-  padding: 26px 22px 22px 40px;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 28px 24px 24px;
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 0.36s ease,
+    transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  .diary-booklet.is-open & {
+    opacity: 1;
+    transform: none;
+    transition-delay: 0.24s;
+  }
+}
+
+.diary-page-head {
+  display: flex;
+  flex: none;
+  gap: 10px;
+  align-items: center;
+  padding-bottom: 13px;
+  border-bottom: 1px solid var(--page-line);
+}
+
+.diary-page-mark {
+  display: grid;
+  width: 22px;
+  height: 22px;
+  border: 1px solid var(--page-seal);
+  border-radius: 2px;
+  place-items: center;
+  font-family: var(--diary-serif);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--page-seal);
+  transform: rotate(-3deg);
+}
+
+.diary-page-title {
+  margin: 0;
+  font-family: var(--diary-serif);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.32em;
+  color: var(--page-ink);
+}
+
+.diary-page-count {
+  margin-left: auto;
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  color: var(--page-ink-3);
+}
+
+.diary-lock-form {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}
+
+.diary-lock-body {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 100%;
+  margin-block: auto;
+  padding-block: 16px 4px;
+}
+
+.diary-lock-note {
+  margin: 0;
+  padding: 8px 10px;
+  border-left: 2px solid var(--page-seal);
+  background: var(--page-note);
+  font-size: 12px;
+  line-height: 1.65;
+  color: var(--page-ink-2);
+}
+
+.diary-lock-lead {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.7;
+  color: var(--page-ink-2);
+}
+
+.diary-lock-questions {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.diary-question {
+  display: flex;
+  gap: 11px;
+  align-items: flex-start;
+  padding: 11px 2px;
+  border-bottom: 1px dashed var(--page-line);
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--page-ink-2);
+
+  &:last-child {
+    border-bottom: 0;
+  }
+
+  &:hover,
+  &.is-active {
+    color: var(--page-ink);
+  }
+
+  &:has(input:focus-visible) {
+    border-radius: 2px;
+    outline: 1px dashed var(--page-seal);
+    outline-offset: 2px;
+  }
+}
+
+.diary-question-dot {
+  flex-shrink: 0;
+  width: 9px;
+  height: 9px;
+  margin-top: 8px;
+  border: 1px solid var(--page-ink-3);
+  border-radius: 9999px;
+}
+
+.diary-question.is-active .diary-question-dot {
+  border-color: var(--page-seal);
+  background: var(--page-seal);
+  box-shadow: 0 0 0 3px var(--page-seal-soft);
+}
+
+.diary-lock-answer {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.diary-lock-label {
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  color: var(--page-ink-3);
+}
+
+// 纸上的答案写成一条横线，不用站里的白盒子
+.diary-gate .diary-page .diary-answer {
+  min-height: 42px;
+  padding: 2px 0 8px;
+  border: 0;
+  border-bottom: 1px solid var(--page-line);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--page-ink);
+  caret-color: var(--page-seal);
+  font-size: 16px;
+  transition: none;
+
+  &::placeholder {
+    color: var(--page-ink-3);
+  }
+
+  &:focus {
+    border-bottom-color: var(--page-seal);
+    box-shadow: inset 0 -1px 0 var(--page-seal);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+  }
+}
+
+.diary-lock-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  min-height: 42px;
+}
+
+.diary-lock-status {
+  flex: 1;
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--page-seal);
+}
+
+// 朱砂按钮：像在纸页上盖一个印，不用站里的蓝色渐变
+.diary-gate .diary-page .diary-unlock {
+  flex: none;
+  height: 42px;
+  padding: 0 22px;
+  border: 0;
+  border-radius: 3px;
+  background-color: var(--page-seal);
+  background-image: none;
+  color: #f8f0e3;
+  font-size: 13px;
+  letter-spacing: 0.16em;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 12px 22px -14px rgba(120, 40, 28, 0.7);
+  transition-property: transform;
+  transition-duration: 0.18s;
+
+  &:hover:not(:disabled) {
+    background-color: #9c3425;
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+
+  &:disabled {
+    opacity: 0.62;
+  }
+
+  // 还没落笔时按钮是一枚没沾印泥的章，不用站里的灰按钮
+  &.is-idle {
+    border: 1px solid var(--page-line);
+    background-color: transparent;
+    color: var(--page-ink-3);
+    opacity: 1;
+    box-shadow: none;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--page-seal);
+    outline-offset: 3px;
+  }
+}
+
+// ================= 封面：整个按钮就是那本布面书 =================
+.diary-cover {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: block;
+  padding: 0;
+  border: 0;
+  border-radius: 4px 10px 10px 4px;
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+  text-align: inherit;
+  background: none;
+  transform-origin: left center;
+  transform-style: preserve-3d;
+  transition:
+    transform 0.78s cubic-bezier(0.34, 0.9, 0.28, 1),
+    opacity 0.3s ease 0.3s;
+
+  &:hover:not(:disabled) {
+    transform: rotateY(-5deg);
+  }
+
+  &:disabled {
+    cursor: default;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--diary-seal);
+    outline-offset: 6px;
+  }
+}
+
+// 封面的正反两面各自成板，背板才是翻开后的左页
+.diary-cover-face {
+  position: absolute;
+  inset: 0;
+  display: block;
   overflow: hidden;
   border-radius: 4px 10px 10px 4px;
-  transform-origin: left center;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.diary-cover-front {
   background-color: var(--diary-ink);
   // 布纹：两组极细的经纬线叠在墨蓝底上
-  background-image: repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.045) 0 1px, transparent 1px 3px), repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.16) 0 1px, transparent 1px 3px);
+  background-image:
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.045) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.16) 0 1px, transparent 1px 3px);
   box-shadow:
     inset 0 0 0 1px rgba(255, 255, 255, 0.07),
     0 18px 40px -18px rgba(15, 23, 42, 0.55);
+}
+
+.diary-cover-back {
+  display: none;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+  border-radius: 10px 4px 4px 10px;
+  transform: rotateY(180deg);
+  background-color: var(--diary-ink);
+  background-image:
+    radial-gradient(120% 80% at 30% 0%, rgba(255, 255, 255, 0.08), transparent 62%),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.04) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.16) 0 1px, transparent 1px 3px);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05),
+    inset -28px 0 34px -32px rgba(0, 0, 0, 0.65),
+    0 20px 44px -22px rgba(15, 23, 42, 0.5);
+}
+
+.diary-cover-frame {
+  position: absolute;
+  inset: 16px;
+  border: 1px solid rgba(246, 239, 232, 0.14);
+  border-radius: 2px;
+}
+
+.diary-cover-inside-title {
+  font-family: var(--diary-serif);
+  font-size: calc(var(--page-w) * 0.09);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0.26em;
+  color: rgba(246, 239, 232, 0.9);
+  writing-mode: vertical-rl;
+}
+
+.diary-cover-inside-author {
+  margin-top: -6px;
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  color: rgba(246, 239, 232, 0.46);
+  writing-mode: vertical-rl;
 }
 
 // 书脊：靠左的一道暗带，压两道横箍
@@ -49,20 +440,20 @@
 .diary-cover-body {
   position: absolute;
   inset: 14px 14px 14px 34px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 0 0 5px rgba(255, 255, 255, 0.05);
   display: flex;
   align-items: flex-start;
   justify-content: center;
   padding-top: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 0 5px rgba(255, 255, 255, 0.05);
 }
 
 // 题签：糊在布面上的一张白纸，竖排写着书名和记者
 .diary-cover-slip {
   display: flex;
   flex-direction: row-reverse;
-  align-items: flex-start;
   gap: 8px;
+  align-items: flex-start;
   padding: 14px 10px 16px;
   border: 1px solid rgba(34, 48, 71, 0.12);
   background: #f2ede2;
@@ -70,8 +461,7 @@
 }
 
 .diary-cover-title {
-  margin: 0;
-  font-size: 30px;
+  font-size: calc(var(--page-w) * 0.084);
   font-weight: 700;
   line-height: 1.24;
   letter-spacing: 0.16em;
@@ -80,8 +470,8 @@
 }
 
 .diary-cover-author {
-  margin: 20px 0 0;
-  font-size: 12px;
+  margin-top: 20px;
+  font-size: 12.5px;
   letter-spacing: 0.14em;
   color: rgba(34, 48, 71, 0.62);
   writing-mode: vertical-rl;
@@ -110,98 +500,117 @@
   box-shadow: inset 0 0 0 1.5px rgba(246, 239, 232, 0.5);
 }
 
-.diary-question {
-  display: flex;
-  gap: 12px;
-  align-items: flex-start;
-  padding: 12px 14px;
-  border: 1px solid var(--diary-line);
-  border-radius: 10px;
-  cursor: pointer;
-  color: #3d4653;
-  background: rgba(255, 255, 255, 0.6);
-  transition: transform 0.2s ease;
+// 封里也盖一枚，落在左上角的外缘
+.diary-cover-seal-back {
+  top: 32px;
+  right: auto;
+  bottom: auto;
+  left: 32px;
+  width: 44px;
+  height: 44px;
+  font-size: 12.5px;
+}
 
-  &:hover {
-    transform: translateX(2px);
-  }
+// 窄屏：封面收走，只留一页密语
+.diary-booklet.is-open .diary-cover {
+  transform: translateX(-6%) rotateY(-96deg);
+  opacity: 0;
+  pointer-events: none;
+}
 
-  &.is-active {
-    border-color: var(--diary-seal);
-    color: #191919;
-    background: #fff;
+// 封面下面那一句提示：点开就退场
+.diary-gate-cue {
+  margin: 24px 0 0;
+  font-size: 11.5px;
+  letter-spacing: 0.16em;
+  color: rgba(34, 48, 71, 0.42);
+  transition: opacity 0.24s ease;
+
+  &.is-gone {
+    opacity: 0;
   }
 
   .dark & {
-    color: #cbd3df;
-    background: rgba(255, 255, 255, 0.03);
+    color: rgba(255, 255, 255, 0.34);
+  }
+}
 
-    &.is-active {
-      color: #fff;
-      background: rgba(255, 255, 255, 0.06);
+// 矮屏手机：收一点留白，别让密语纸自己滚动
+@media (max-height: 720px) {
+  .diary-booklet {
+    --page-w: min(320px, 82vw, calc((100dvh - 230px) * 0.75));
+  }
+
+  .diary-page-content {
+    padding: 22px 20px 18px;
+  }
+
+  .diary-page-head {
+    padding-bottom: 10px;
+  }
+
+  .diary-lock-body {
+    gap: 12px;
+    padding-block: 12px 0;
+  }
+}
+
+// ================= 桌面：两页对开 =================
+// 合着时封面居中；翻开时封面绕书脊转到左边，书本顺势右移，对开页停在正中
+@media (min-width: 900px) {
+  .diary-booklet {
+    --page-w: min(clamp(300px, 31vw, 420px), calc((100dvh - 230px) * 0.75), calc((100vw - 64px) / 2));
+
+    width: calc(var(--page-w) * 2);
+    transform: translateX(calc(var(--page-w) * -0.5));
+    transition:
+      transform 0.8s cubic-bezier(0.34, 0.9, 0.28, 1),
+      opacity 0.26s ease;
+
+    &.is-open {
+      transform: translateX(0);
     }
   }
-}
 
-.diary-question-dot {
-  flex-shrink: 0;
-  width: 12px;
-  height: 12px;
-  margin-top: 8px;
-  border: 1px solid var(--diary-line);
-  border-radius: 9999px;
-  background: transparent;
-}
+  .diary-page {
+    right: 0;
+    left: 50%;
+    // 装订侧不留圆角，两页在中缝齐平
+    border-radius: 0 8px 8px 0;
+    box-shadow:
+      inset 0 0 0 1px var(--page-line),
+      inset 30px 0 38px -34px rgba(58, 40, 18, 0.62),
+      3px 0 0 -1px var(--page-edge),
+      6px 0 0 -2px var(--page-edge-2),
+      0 30px 54px -30px var(--gate-drop);
+  }
 
-.diary-question.is-active .diary-question-dot {
-  border-color: var(--diary-seal);
-  background: var(--diary-seal);
-}
+  .diary-page-content {
+    padding: clamp(28px, 2.6vw, 38px) clamp(30px, 3.2vw, 44px) clamp(26px, 2.6vw, 34px) clamp(38px, 4.2vw, 54px);
+  }
 
-// 唯一一次动效：答对后封面绕书脊翻开，内页随后接管
-@keyframes diary-cover-open {
-  from {
-    transform: rotateY(0deg);
+  .diary-cover {
+    right: 0;
+    left: 50%;
+    transition: transform 0.8s cubic-bezier(0.34, 0.9, 0.28, 1);
+  }
+
+  .diary-cover-back {
+    display: flex;
+    border-radius: 10px 0 0 10px;
+  }
+
+  .diary-booklet.is-open .diary-cover {
+    transform: rotateY(-180deg);
     opacity: 1;
   }
-
-  to {
-    transform: rotateY(-86deg);
-    opacity: 0.15;
-  }
-}
-
-@keyframes diary-lock-away {
-  from {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  to {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-}
-
-.diary-cover.is-opening {
-  animation: diary-cover-open 0.62s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
-
-.diary-lock.is-closing {
-  animation: diary-lock-away 0.3s ease forwards;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .diary-question {
+  .diary-booklet,
+  .diary-cover,
+  .diary-page-content,
+  .diary-gate-cue {
     transition: none;
-
-    &:hover {
-      transform: none;
-    }
-  }
-
-  .diary-cover.is-opening,
-  .diary-lock.is-closing {
-    animation: none;
   }
 }

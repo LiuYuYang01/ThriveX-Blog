@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useRef } from 'react';
 import dayjs from 'dayjs';
-import { FiX } from 'react-icons/fi';
 
 import type { Diary } from '@/types/app/diary';
 
@@ -10,7 +9,6 @@ interface Props {
   pages: Diary[];
   active: number[];
   onJump: (index: number) => void;
-  onClose: () => void;
 }
 
 interface Group {
@@ -19,7 +17,7 @@ interface Group {
   items: { index: number; diary: Diary }[];
 }
 
-export default function DiaryIndex({ pages, active, onJump, onClose }: Props) {
+export default function DiaryIndex({ pages, active, onJump }: Props) {
   const groups = useMemo<Group[]>(() => {
     const map = new Map<string, Group>();
     pages.forEach((diary, index) => {
@@ -33,23 +31,21 @@ export default function DiaryIndex({ pages, active, onJump, onClose }: Props) {
   }, [pages]);
 
   const listRef = useRef<HTMLDivElement>(null);
-  const currentRef = useRef<HTMLButtonElement>(null);
+  const current = active.length ? Math.max(...active) : -1;
 
+  // 目录常驻在书本左侧，翻页时把当前那一篇带回视线中间
   useEffect(() => {
     const list = listRef.current;
-    const item = currentRef.current;
+    const item = list?.querySelector<HTMLElement>(`[data-page="${current}"]`);
     if (!list || !item) return;
     list.scrollTop = item.offsetTop - list.clientHeight / 2 + item.offsetHeight / 2;
-  }, []);
+  }, [current]);
 
   return (
     <>
-      <div className="diary-panel-head">
-        <h3 className="diary-panel-title">目录</h3>
-        <span className="diary-panel-note">{pages.length} 页</span>
-        <button type="button" className="diary-panel-close" onClick={onClose} aria-label="关闭目录">
-          <FiX className="size-4" />
-        </button>
+      <div className="diary-rail-head">
+        <h3 className="diary-rail-title">目录</h3>
+        <span className="diary-rail-note">{pages.length} 页</span>
       </div>
 
       <div ref={listRef} className="diary-index-list">
@@ -64,7 +60,7 @@ export default function DiaryIndex({ pages, active, onJump, onClose }: Props) {
                 const isCurrent = active.includes(index);
                 return (
                   <li key={diary.id}>
-                    <button type="button" ref={isCurrent ? currentRef : undefined} className={`diary-index-row ${isCurrent ? 'is-current' : ''}`} onClick={() => onJump(index)}>
+                    <button type="button" data-page={index} className={`diary-index-row ${isCurrent ? 'is-current' : ''}`} onClick={() => onJump(index)}>
                       <span className="diary-index-day">{dayjs(diary.diaryDate).format('D')}</span>
                       <span className="diary-index-name">{diary.title || '无题'}</span>
                       <span className="diary-index-num">{index + 1}</span>

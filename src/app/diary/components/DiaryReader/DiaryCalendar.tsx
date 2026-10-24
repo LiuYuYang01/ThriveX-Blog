@@ -1,8 +1,8 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import dayjs from 'dayjs';
-import { FiChevronLeft, FiChevronRight, FiX } from 'react-icons/fi';
+import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 
 interface Props {
   // 日期 -> 当天第一篇日记的页码
@@ -10,14 +10,18 @@ interface Props {
   activeDates: string[];
   month: string;
   onJump: (index: number) => void;
-  onClose: () => void;
 }
 
 const WEEK = ['一', '二', '三', '四', '五', '六', '日'];
 
-export default function DiaryCalendar({ marked, activeDates, month, onJump, onClose }: Props) {
+export default function DiaryCalendar({ marked, activeDates, month, onJump }: Props) {
   const months = useMemo(() => [...marked.keys()].map((date) => date.slice(0, 7)).sort(), [marked]);
   const [cursor, setCursor] = useState(() => (months.includes(month) ? month : (months[months.length - 1] ?? month)));
+
+  // 翻到别的月份时日历跟过去；自己点箭头浏览时，只要不翻页就停在原处
+  useEffect(() => {
+    if (months.includes(month)) setCursor(month);
+  }, [month, months]);
 
   const [year, m] = cursor.split('-').map(Number);
   const cells = useMemo(() => {
@@ -34,12 +38,9 @@ export default function DiaryCalendar({ marked, activeDates, month, onJump, onCl
 
   return (
     <>
-      <div className="diary-panel-head">
-        <h3 className="diary-panel-title">日历</h3>
-        <span className="diary-panel-note">{written} 篇</span>
-        <button type="button" className="diary-panel-close" onClick={onClose} aria-label="关闭日历">
-          <FiX className="size-4" />
-        </button>
+      <div className="diary-rail-head">
+        <h3 className="diary-rail-title">日历</h3>
+        <span className="diary-rail-note">{written} 篇</span>
       </div>
 
       <div className="diary-cal-bar">

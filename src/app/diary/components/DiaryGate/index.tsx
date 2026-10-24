@@ -7,6 +7,7 @@ import { Button, TextField } from '@/ThriveUI';
 import { useAppConfig } from '@/components/AppConfigProvider';
 import { unlockDiaryAPI } from '@/api/diary';
 import type { DiaryQuestion } from '@/types/app/diary';
+import DiaryLamp from '../DiaryLamp';
 
 import './index.scss';
 
@@ -54,8 +55,8 @@ export default function DiaryGate({ questions, expired }: Props) {
   };
 
   return (
-    <div className="diary-gate relative min-h-screen overflow-hidden bg-[#fbfbfd] px-4 pb-20 sm:px-6 lg:px-8 dark:bg-[#111318]">
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-[520px] bg-[radial-gradient(circle_at_50%_20%,rgba(83,157,253,0.1),transparent_42%),radial-gradient(circle_at_80%_8%,rgba(180,64,47,0.08),transparent_36%)] dark:bg-[radial-gradient(circle_at_50%_20%,rgba(83,157,253,0.13),transparent_42%),radial-gradient(circle_at_80%_8%,rgba(214,112,92,0.1),transparent_36%)]" />
+    <div className="diary-gate diary-scene relative min-h-screen overflow-hidden px-4 pb-20 sm:px-6 lg:px-8">
+      <DiaryLamp />
 
       <div className="relative mx-auto flex min-h-[calc(100vh-120px)] w-full flex-col items-center justify-center pt-[92px] pb-16">
         <h1 className="sr-only">日记本</h1>
@@ -109,6 +110,8 @@ export default function DiaryGate({ questions, expired }: Props) {
               </form>
             </div>
           </div>
+
+          <span aria-hidden className="diary-cover-pages" />
 
           <button type="button" className="diary-cover" onClick={() => setOpened(true)} disabled={empty || opened} aria-label="打开日记本" aria-expanded={opened} aria-controls="diary-lock">
             <span className="diary-cover-face diary-cover-front">

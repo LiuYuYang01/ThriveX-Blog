@@ -3,12 +3,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import dayjs from 'dayjs';
 import { useRouter } from 'next/navigation';
-import { FiChevronLeft, FiChevronRight, FiLock } from 'react-icons/fi';
+import { FiCalendar, FiChevronLeft, FiChevronRight, FiLock } from 'react-icons/fi';
 
 import { lockDiaryAPI } from '@/api/diary';
 import type { Diary } from '@/types/app/diary';
+import DiaryLamp from '../DiaryLamp';
 import DiaryCalendar from './DiaryCalendar';
-import DiaryIndex from './DiaryIndex';
 import DiarySheet from './DiarySheet';
 
 import './index.scss';
@@ -63,6 +63,8 @@ export default function DiaryReader({ pages }: Props) {
   const paperRef = useRef<HTMLDivElement>(null);
   const frontRef = useRef<HTMLDivElement>(null);
   const backRef = useRef<HTMLDivElement>(null);
+  const calRef = useRef<HTMLDivElement>(null);
+  const calBtnRef = useRef<HTMLButtonElement>(null);
   const session = useRef<Session | null>(null);
   const drag = useRef<Drag | null>(null);
   const raf = useRef(0);
@@ -77,6 +79,7 @@ export default function DiaryReader({ pages }: Props) {
   const [slot, setSlot] = useState<Slot | null>(null);
   const [flip, setFlip] = useState<Flip | null>(null);
   const [closing, setClosing] = useState(false);
+  const [calOpen, setCalOpen] = useState(false);
   const [notice, setNotice] = useState('');
 
   useEffect(() => {
@@ -95,6 +98,25 @@ export default function DiaryReader({ pages }: Props) {
     mql.addEventListener('change', sync);
     return () => mql.removeEventListener('change', sync);
   }, []);
+
+  // 台历只是偶尔翻一下：点外面或按 Esc 就收起
+  useEffect(() => {
+    if (!calOpen) return;
+    const onDown = (e: PointerEvent) => {
+      if (!calRef.current?.contains(e.target as Node)) setCalOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return;
+      setCalOpen(false);
+      calBtnRef.current?.focus();
+    };
+    window.addEventListener('pointerdown', onDown);
+    window.addEventListener('keydown', onKey);
+    return () => {
+      window.removeEventListener('pointerdown', onDown);
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [calOpen]);
 
   // 跨断点时把视线交回同一篇日记；纸还在半空就立刻落平
   useEffect(() => {
@@ -193,7 +215,12 @@ export default function DiaryReader({ pages }: Props) {
     revealBook();
   };
 
-  // 目录和日历排在书本下面时，跳完页、合上本子都得把视线送回纸上
+  const jumpFromCalendar = (target: number) => {
+    jump(target);
+    setCalOpen(false);
+  };
+
+  // 日历落到书本下面时，跳完页、合上本子都得把视线送回纸上
   const revealBook = () => {
     const book = bookRef.current;
     if (!book) return;
@@ -312,6 +339,7 @@ export default function DiaryReader({ pages }: Props) {
   const closeBook = () => {
     if (closingRef.current) return;
     closingRef.current = true;
+    setCalOpen(false);
     setClosing(true);
     revealBook();
     const locked = lockDiaryAPI().then(
@@ -353,54 +381,69 @@ export default function DiaryReader({ pages }: Props) {
   const sheet = (n: number) => <DiarySheet diary={n >= 0 ? pages[n] : undefined} num={n >= 0 ? n + 1 : undefined} />;
 
   return (
-    <section className={`diary-reader ${closing ? 'is-shutting' : ''}`}>
-      <header className="diary-bar">
+    <section className={`diary-reader diary-scene ${closing ? 'is-shutting' : ''}`}>
+      <DiaryLamp />
+
+      <header className="diary-bar diary-bar-top">
         <button type="button" className="diary-tool" onClick={closeBook} aria-label="合上日记本" disabled={closing}>
           <FiLock className="size-4" />
           <span>合上日记本</span>
         </button>
+
+        {total ? (
+          <div className="diary-cal-slot" ref={calRef}>
+            <button
+              ref={calBtnRef}
+              type="button"
+              className="diary-tool"
+              onClick={() => setCalOpen((open) => !open)}
+              disabled={closing}
+              aria-expanded={calOpen}
+              aria-controls="diary-calendar"
+            >
+              <FiCalendar className="size-4" />
+              <span>日历</span>
+            </button>
+
+            {calOpen ? (
+              <div id="diary-calendar" className="diary-cal-pop" aria-label="日记日历">
+                <DiaryCalendar marked={marked} activeDates={activeDates} month={monthKey} onJump={jumpFromCalendar} onClose={() => setCalOpen(false)} />
+              </div>
+            ) : null}
+          </div>
+        ) : null}
       </header>
 
       <div className="diary-stage">
         {total ? (
-          <>
-            <div ref={bookRef} className={`diary-book ${closing ? 'is-closing' : ''}`} onPointerDown={onPointerDown}>
-              <div className="diary-leaf diary-leaf-left">{sheet(spread.left)}</div>
-              <div className="diary-leaf diary-leaf-right">{sheet(spread.right)}</div>
+          <div ref={bookRef} className={`diary-book ${closing ? 'is-closing' : ''}`} onPointerDown={onPointerDown}>
+            <div className="diary-leaf diary-leaf-left">{sheet(spread.left)}</div>
+            <div className="diary-leaf diary-leaf-right">{sheet(spread.right)}</div>
 
-              {flip ? (
-                <div className="diary-paper" ref={paperRef}>
-                  <div className="diary-paper-face diary-paper-front" ref={frontRef}>
-                    {sheet(flip.front)}
-                  </div>
-                  <div className="diary-paper-face diary-paper-back" ref={backRef}>
-                    {sheet(flip.back)}
-                  </div>
+            {flip ? (
+              <div className="diary-paper" ref={paperRef}>
+                <div className="diary-paper-face diary-paper-front" ref={frontRef}>
+                  {sheet(flip.front)}
                 </div>
-              ) : null}
-
-              {closing ? (
-                <div aria-hidden className="diary-lid">
-                  <div className="diary-lid-face diary-lid-page">{sheet(spread.left)}</div>
-                  <div className="diary-lid-face diary-lid-cover">
-                    <span className="diary-lid-slip">日记本</span>
-                    <span className="diary-lid-seal">慎独</span>
-                  </div>
+                <div className="diary-paper-face diary-paper-back" ref={backRef}>
+                  {sheet(flip.back)}
                 </div>
-              ) : null}
+              </div>
+            ) : null}
 
-              <span aria-hidden className="diary-spine" />
-              <span aria-hidden className="diary-ribbon" />
-            </div>
+            {closing ? (
+              <div aria-hidden className="diary-lid">
+                <div className="diary-lid-face diary-lid-page">{sheet(spread.left)}</div>
+                <div className="diary-lid-face diary-lid-cover">
+                  <span className="diary-lid-slip">日记本</span>
+                  <span className="diary-lid-seal">慎独</span>
+                </div>
+              </div>
+            ) : null}
 
-            <aside className="diary-rail diary-rail-index" aria-label="日记目录">
-              <DiaryIndex pages={pages} active={[logical.left, logical.right]} onJump={jump} />
-            </aside>
-
-            <aside className="diary-rail diary-rail-calendar" aria-label="日记日历">
-              <DiaryCalendar marked={marked} activeDates={activeDates} month={monthKey} onJump={jump} />
-            </aside>
-          </>
+            <span aria-hidden className="diary-spine" />
+            <span aria-hidden className="diary-ribbon" />
+          </div>
         ) : (
           <p className="diary-blank">本子还是空的。主理人在后台写下第一页，这里就有字了。</p>
         )}

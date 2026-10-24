@@ -1,0 +1,146 @@
+// 台灯立在书本右侧的桌面上，灯罩朝书页偏；只画剪影，光源交给灯罩内壁和桌面上那片暖光
+// 太窄或太矮的屏幕藏起来，别让灯和书页抢地方
+.diary-lamp {
+  position: absolute;
+  left: calc(50% + 498px);
+  bottom: clamp(30px, 4vh, 52px);
+  z-index: 0;
+  width: 180px;
+  height: 170px;
+  pointer-events: none;
+
+  // 白天灯是熄的：灯罩下只有一片影子；夜里才把桌面照暖
+  --lamp-halo: rgba(255, 240, 205, 0.5);
+  --lamp-pool: rgba(74, 52, 26, 0.22);
+  --lamp-bulb: rgba(255, 238, 202, 0.5);
+  --lamp-bulb-glow: rgba(255, 214, 160, 0.1);
+  --lamp-rim: rgba(255, 212, 158, 0.3);
+}
+
+.dark .diary-lamp {
+  --lamp-halo: rgba(255, 214, 160, 0.3);
+  --lamp-pool: rgba(255, 208, 150, 0.24);
+  --lamp-bulb: rgba(255, 240, 212, 0.9);
+  --lamp-bulb-glow: rgba(255, 194, 122, 0.12);
+  --lamp-rim: rgba(255, 212, 158, 0.6);
+}
+
+.diary-lamp-halo {
+  position: absolute;
+  top: -110px;
+  left: -170px;
+  width: 380px;
+  height: 400px;
+  border-radius: 50%;
+  background: radial-gradient(
+    closest-side,
+    var(--lamp-halo),
+    color-mix(in srgb, var(--lamp-halo) 30%, transparent) 46%,
+    transparent 76%
+  );
+}
+
+// 落在桌面上的那一小片光
+.diary-lamp-pool {
+  position: absolute;
+  right: 0;
+  bottom: -34px;
+  width: 540px;
+  height: 120px;
+  border-radius: 50%;
+  background: radial-gradient(
+    closest-side,
+    var(--lamp-pool),
+    color-mix(in srgb, var(--lamp-pool) 25%, transparent) 58%,
+    transparent 78%
+  );
+  filter: blur(4px);
+}
+
+.diary-lamp-base {
+  position: absolute;
+  right: 22px;
+  bottom: 0;
+  width: 104px;
+  height: 16px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #2f3e53, #101822);
+  box-shadow:
+    0 12px 22px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.diary-lamp-stem {
+  position: absolute;
+  right: 70px;
+  bottom: 6px;
+  width: 7px;
+  height: 96px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #1a2331, #3a4b64 55%, #161e29);
+  box-shadow: 1px 0 0 rgba(255, 220, 170, 0.12);
+
+  // 灯臂和立杆的转轴
+  &::after {
+    position: absolute;
+    top: -5px;
+    left: 50%;
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 32% 28%, #4a5e7c, #1a2330 72%);
+    box-shadow: inset 0 1px 0 rgba(255, 235, 205, 0.25);
+    content: '';
+    transform: translateX(-50%);
+  }
+}
+
+.diary-lamp-arm {
+  position: absolute;
+  top: 82px;
+  right: 68px;
+  width: 69px;
+  height: 5px;
+  border-radius: 3px;
+  background: linear-gradient(180deg, #3d4e68, #18212e);
+  transform: rotate(-48deg);
+  transform-origin: 100% 50%;
+}
+
+.diary-lamp-shade {
+  position: absolute;
+  top: 22px;
+  right: 78px;
+  width: 96px;
+  height: 66px;
+  background:
+    linear-gradient(180deg, transparent 54%, var(--lamp-rim) 97%),
+    linear-gradient(200deg, rgba(255, 255, 255, 0.14), transparent 38%),
+    linear-gradient(168deg, #3c4d68 0%, #243145 48%, #131b26 100%);
+  clip-path: polygon(33% 0, 67% 0, 100% 100%, 0 100%);
+  transform: rotate(22deg);
+}
+
+.diary-lamp-bulb {
+  position: absolute;
+  top: 78px;
+  right: 108px;
+  width: 60px;
+  height: 16px;
+  border-radius: 50%;
+  background: radial-gradient(
+    closest-side,
+    var(--lamp-bulb),
+    color-mix(in srgb, var(--lamp-bulb) 55%, transparent) 58%,
+    transparent 82%
+  );
+  filter: blur(5px);
+  transform: rotate(22deg);
+  box-shadow: 0 0 40px 16px var(--lamp-bulb-glow);
+}
+
+@media (max-width: 1439.98px), (max-height: 719.98px) {
+  .diary-lamp {
+    display: none;
+  }
+}

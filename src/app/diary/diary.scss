@@ -11,3 +11,31 @@
   --diary-ink-edge: #1a2434;
   --diary-seal: #d6705c;
 }
+
+// 书桌：浅色是白天的亚麻桌面，深色换成夜里只留一盏灯
+// 门里门外共用同一张桌子，解锁和合上都不会闪色
+.diary-scene {
+  --diary-glow: rgba(255, 249, 233, 0.9);
+  --diary-desk-ink: #4a4033;
+  --diary-desk-ink-2: #7d6f5b;
+  --diary-scene-bg:
+    radial-gradient(1200px 680px at 56% -16%, var(--diary-glow) 0%, transparent 64%),
+    radial-gradient(112% 88% at 50% 46%, transparent 42%, rgba(84, 62, 34, 0.16) 100%),
+    repeating-linear-gradient(94deg, rgba(120, 96, 62, 0.025) 0 1px, transparent 1px 5px),
+    linear-gradient(178deg, #ded2bc 0%, #d3c5ad 58%, #c6b6a0 100%);
+
+  background: var(--diary-scene-bg);
+}
+
+.dark .diary-scene {
+  --diary-desk: #120f0b;
+  --diary-glow: #221c14;
+  --diary-lamp: rgba(255, 202, 140, 0.1);
+  --diary-desk-ink: #e6dcc8;
+  --diary-desk-ink-2: #a2947c;
+  --diary-scene-bg:
+    radial-gradient(900px 560px at 50% 38%, var(--diary-lamp) 0%, color-mix(in srgb, var(--diary-lamp) 38%, transparent) 48%, transparent 74%),
+    radial-gradient(105% 82% at 50% 42%, transparent 42%, rgba(3, 7, 12, 0.45) 100%),
+    radial-gradient(1200px 700px at 50% -15%, var(--diary-glow) 0%, transparent 60%),
+    var(--diary-desk);
+}

@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import dayjs from 'dayjs';
-import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import { FiChevronLeft, FiChevronRight, FiX } from 'react-icons/fi';
 
 interface Props {
   // 日期 -> 当天第一篇日记的页码
@@ -10,11 +10,12 @@ interface Props {
   activeDates: string[];
   month: string;
   onJump: (index: number) => void;
+  onClose: () => void;
 }
 
 const WEEK = ['一', '二', '三', '四', '五', '六', '日'];
 
-export default function DiaryCalendar({ marked, activeDates, month, onJump }: Props) {
+export default function DiaryCalendar({ marked, activeDates, month, onJump, onClose }: Props) {
   const months = useMemo(() => [...marked.keys()].map((date) => date.slice(0, 7)).sort(), [marked]);
   const [cursor, setCursor] = useState(() => (months.includes(month) ? month : (months[months.length - 1] ?? month)));
 
@@ -38,9 +39,12 @@ export default function DiaryCalendar({ marked, activeDates, month, onJump }: Pr
 
   return (
     <>
-      <div className="diary-rail-head">
-        <h3 className="diary-rail-title">日历</h3>
-        <span className="diary-rail-note">{written} 篇</span>
+      <div className="diary-cal-head">
+        <h3 className="diary-cal-title">日历</h3>
+        <span className="diary-cal-note">{written} 篇</span>
+        <button type="button" className="diary-cal-close" onClick={onClose} aria-label="收起日历">
+          <FiX className="size-4" />
+        </button>
       </div>
 
       <div className="diary-cal-bar">

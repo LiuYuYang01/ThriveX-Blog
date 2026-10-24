@@ -17,7 +17,7 @@
   --page-note: rgba(180, 64, 47, 0.07);
   --page-gloss: rgba(255, 255, 255, 0.56);
   --gate-drop: rgba(52, 38, 20, 0.3);
-  --diary-serif: Georgia, 'Songti SC', 'STSong', serif;
+  --diary-serif: Georgia, 'Songti SC', 'STSong', 'Noto Serif SC', 'Source Han Serif SC', 'SimSun', serif;
 
   position: relative;
   width: var(--page-w);
@@ -309,6 +309,29 @@
 }
 
 // ================= 封面：整个按钮就是那本布面书 =================
+// 右侧露出的纸口：和封面对齐的一片纸垫在底下，用几层错开的细阴影露出书页侧口
+.diary-cover-pages {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  border-radius: 4px 10px 10px 4px;
+  background: var(--page-paper);
+  box-shadow:
+    1px 0 0 var(--page-edge-2),
+    2px 0 0 var(--page-paper),
+    3px 0 0 var(--page-edge),
+    4px 0 0 var(--page-paper-2),
+    5px 0 0 var(--page-edge-2),
+    6px 0 0 var(--page-paper),
+    0 18px 36px -20px var(--gate-drop);
+  transition: opacity 0.24s ease;
+}
+
+.diary-booklet.is-open .diary-cover-pages {
+  opacity: 0;
+}
+
 .diary-cover {
   position: absolute;
   inset: 0;
@@ -448,32 +471,54 @@
   box-shadow: 0 0 0 5px rgba(255, 255, 255, 0.05);
 }
 
-// 题签：糊在布面上的一张白纸，竖排写着书名和记者
+// 题签：一张裱在布面上的宣纸小签，细双框，竖排书名，款识落在左下
 .diary-cover-slip {
+  position: relative;
   display: flex;
   flex-direction: row-reverse;
-  gap: 8px;
-  align-items: flex-start;
-  padding: 14px 10px 16px;
-  border: 1px solid rgba(34, 48, 71, 0.12);
-  background: #f2ede2;
-  box-shadow: 0 2px 10px -2px rgba(10, 16, 26, 0.5);
+  gap: 7px;
+  align-items: stretch;
+  padding: 15px 11px 12px 12px;
+  background:
+    repeating-linear-gradient(90deg, rgba(120, 95, 60, 0.026) 0 1px, transparent 1px 3px),
+    radial-gradient(120% 80% at 30% 10%, rgba(255, 255, 255, 0.5), transparent 62%),
+    linear-gradient(158deg, #f8f3e7 0%, #f0e8d7 58%, #e8ddc9 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(96, 76, 48, 0.24),
+    inset 1px 1px 0 rgba(255, 255, 255, 0.7),
+    inset -1px -1px 0 rgba(110, 88, 56, 0.12),
+    0 1px 2px rgba(8, 13, 22, 0.34),
+    0 14px 24px -18px rgba(8, 13, 22, 0.65);
 }
 
+// 内框：离边 4px 的第二道细线，题签的老样式
+.diary-cover-slip::after {
+  position: absolute;
+  inset: 4px;
+  border: 1px solid rgba(96, 76, 48, 0.13);
+  pointer-events: none;
+  content: '';
+}
+
+// 题字用楷体，像请人手写的书签；没装楷体的系统退回宋体
 .diary-cover-title {
-  font-size: calc(var(--page-w) * 0.084);
-  font-weight: 700;
-  line-height: 1.24;
-  letter-spacing: 0.16em;
-  color: var(--diary-ink);
+  font-family: 'Kaiti SC', 'STKaiti', KaiTi, var(--diary-serif);
+  font-size: calc(var(--page-w) * 0.092);
+  font-weight: 400;
+  line-height: 1.18;
+  letter-spacing: 0.24em;
+  color: #262218;
   writing-mode: vertical-rl;
 }
 
 .diary-cover-author {
-  margin-top: 20px;
-  font-size: 12.5px;
-  letter-spacing: 0.14em;
-  color: rgba(34, 48, 71, 0.62);
+  margin-top: auto;
+  padding: 0 1px 2px;
+  font-family: 'Kaiti SC', 'STKaiti', KaiTi, var(--diary-serif);
+  font-size: 11.5px;
+  line-height: 1.2;
+  letter-spacing: 0.24em;
+  color: rgba(70, 58, 40, 0.6);
   writing-mode: vertical-rl;
 }
 
@@ -523,7 +568,7 @@
   margin: 24px 0 0;
   font-size: 11.5px;
   letter-spacing: 0.16em;
-  color: rgba(34, 48, 71, 0.42);
+  color: rgba(74, 64, 51, 0.55);
   transition: opacity 0.24s ease;
 
   &.is-gone {
@@ -531,7 +576,7 @@
   }
 
   .dark & {
-    color: rgba(255, 255, 255, 0.34);
+    color: rgba(241, 232, 215, 0.42);
   }
 }
 
@@ -595,6 +640,11 @@
     transition: transform 0.8s cubic-bezier(0.34, 0.9, 0.28, 1);
   }
 
+  // 合着时纸口跟着封面停在中缝右侧，翻开后由右页自己的纸边接手
+  .diary-cover-pages {
+    left: 50%;
+  }
+
   .diary-cover-back {
     display: flex;
     border-radius: 10px 0 0 10px;
@@ -609,6 +659,7 @@
 @media (prefers-reduced-motion: reduce) {
   .diary-booklet,
   .diary-cover,
+  .diary-cover-pages,
   .diary-page-content,
   .diary-gate-cue {
     transition: none;

@@ -8,7 +8,7 @@ export interface Config {
     articleId?: number,
     top: number,
     status: Status,
-    isEncrypt: number,
+    isEncrypt: boolean,
     isDel: number,
     /** 访问密码：服务端不再下发明文，仅提交时携带 */
     password?: string,

@@ -12,19 +12,23 @@
   --diary-seal: #d6705c;
 }
 
-// 书桌：浅色是白天的亚麻桌面，深色换成夜里只留一盏灯
+// 书桌：浅色是白天照进窗的实木桌面，深色换成夜里只留一盏灯
 // 门里门外共用同一张桌子，解锁和合上都不会闪色
+// 木纹来自 Poly Haven 的 CC0 柚木扫描，压成 16:9 放在 public/images/bg/diary-desk.webp
 .diary-scene {
-  --diary-glow: rgba(255, 249, 233, 0.9);
+  --diary-wood: url('/images/bg/diary-desk.webp');
+  --diary-glow: rgba(255, 249, 233, 0.72);
   --diary-desk-ink: #4a4033;
   --diary-desk-ink-2: #7d6f5b;
   --diary-scene-bg:
     radial-gradient(1200px 680px at 56% -16%, var(--diary-glow) 0%, transparent 64%),
-    radial-gradient(112% 88% at 50% 46%, transparent 42%, rgba(84, 62, 34, 0.16) 100%),
-    repeating-linear-gradient(94deg, rgba(120, 96, 62, 0.025) 0 1px, transparent 1px 5px),
-    linear-gradient(178deg, #ded2bc 0%, #d3c5ad 58%, #c6b6a0 100%);
+    radial-gradient(112% 88% at 50% 46%, transparent 40%, rgba(84, 62, 34, 0.3) 100%),
+    linear-gradient(178deg, rgba(248, 240, 224, 0.32) 0%, rgba(233, 220, 198, 0.22) 58%, rgba(202, 186, 163, 0.3) 100%),
+    var(--diary-wood) center / cover no-repeat;
 
   background: var(--diary-scene-bg);
+  // 图还没加载出来时先铺住原来的暖沙色
+  background-color: #c6b6a0;
 }
 
 .dark .diary-scene {
@@ -35,7 +39,11 @@
   --diary-desk-ink-2: #a2947c;
   --diary-scene-bg:
     radial-gradient(900px 560px at 50% 38%, var(--diary-lamp) 0%, color-mix(in srgb, var(--diary-lamp) 38%, transparent) 48%, transparent 74%),
-    radial-gradient(105% 82% at 50% 42%, transparent 42%, rgba(3, 7, 12, 0.45) 100%),
+    radial-gradient(105% 82% at 50% 42%, transparent 42%, rgba(3, 7, 12, 0.5) 100%),
     radial-gradient(1200px 700px at 50% -15%, var(--diary-glow) 0%, transparent 60%),
-    var(--diary-desk);
+    linear-gradient(180deg, rgba(16, 12, 8, 0.74) 0%, rgba(8, 6, 4, 0.86) 100%),
+    var(--diary-wood) center / cover no-repeat;
+
+  background: var(--diary-scene-bg);
+  background-color: var(--diary-desk);
 }

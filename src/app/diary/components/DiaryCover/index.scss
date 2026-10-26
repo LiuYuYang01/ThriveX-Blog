@@ -1,0 +1,143 @@
+// 封面正脸：门外的合着本子、门里合上时扣下来的硬壳共用同一块布面
+// 题签字号按封面宽度缩（cqw），从书的一半缩回桌上那本的尺寸时字不会跳
+.diary-cover-front {
+  --diary-cover-cloth: #223047;
+  --diary-cover-edge: #16202f;
+  --diary-cover-stamp: #b4402f;
+
+  position: absolute;
+  inset: 0;
+  display: block;
+  overflow: hidden;
+  border-radius: 4px 10px 10px 4px;
+  container-type: inline-size;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  background-color: var(--diary-cover-cloth);
+  // 布纹：两组极细的经纬线叠在墨蓝底上
+  background-image:
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.045) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.16) 0 1px, transparent 1px 3px);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.07),
+    0 18px 40px -18px rgba(15, 23, 42, 0.55);
+}
+
+.dark .diary-cover-front {
+  --diary-cover-cloth: #26334a;
+  --diary-cover-edge: #1a2434;
+  --diary-cover-stamp: #d6705c;
+}
+
+// 书脊：靠左的一道暗带，压两道横箍
+.diary-cover-spine {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 26px;
+  background: linear-gradient(90deg, var(--diary-cover-edge), transparent);
+  box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.06);
+}
+
+.diary-cover-spine::before,
+.diary-cover-spine::after {
+  position: absolute;
+  right: 5px;
+  left: 5px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.14);
+  content: '';
+}
+
+.diary-cover-spine::before {
+  top: 30%;
+}
+
+.diary-cover-spine::after {
+  bottom: 30%;
+}
+
+// 压印边框：向内凹的一圈细线
+.diary-cover-body {
+  position: absolute;
+  inset: 14px 14px 14px 34px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0 0 5px rgba(255, 255, 255, 0.05);
+}
+
+// 题签：一张裱在布面上的宣纸小签，细双框，竖排书名，款识落在左下
+.diary-cover-slip {
+  position: relative;
+  display: flex;
+  flex-direction: row-reverse;
+  gap: 7px;
+  align-items: stretch;
+  padding: 15px 11px 12px 12px;
+  background:
+    repeating-linear-gradient(90deg, rgba(120, 95, 60, 0.026) 0 1px, transparent 1px 3px),
+    radial-gradient(120% 80% at 30% 10%, rgba(255, 255, 255, 0.5), transparent 62%),
+    linear-gradient(158deg, #f8f3e7 0%, #f0e8d7 58%, #e8ddc9 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(96, 76, 48, 0.24),
+    inset 1px 1px 0 rgba(255, 255, 255, 0.7),
+    inset -1px -1px 0 rgba(110, 88, 56, 0.12),
+    0 1px 2px rgba(8, 13, 22, 0.34),
+    0 14px 24px -18px rgba(8, 13, 22, 0.65);
+}
+
+// 内框：离边 4px 的第二道细线，题签的老样式
+.diary-cover-slip::after {
+  position: absolute;
+  inset: 4px;
+  border: 1px solid rgba(96, 76, 48, 0.13);
+  pointer-events: none;
+  content: '';
+}
+
+// 题字用楷体，像请人手写的书签；没装楷体的系统退回宋体
+.diary-cover-title {
+  font-family: 'Kaiti SC', 'STKaiti', KaiTi, var(--diary-serif);
+  font-size: 9.2cqw;
+  font-weight: 400;
+  line-height: 1.18;
+  letter-spacing: 0.24em;
+  color: #262218;
+  writing-mode: vertical-rl;
+}
+
+.diary-cover-author {
+  margin-top: auto;
+  padding: 0 1px 2px;
+  font-family: 'Kaiti SC', 'STKaiti', KaiTi, var(--diary-serif);
+  font-size: 11.5px;
+  line-height: 1.2;
+  letter-spacing: 0.24em;
+  color: rgba(70, 58, 40, 0.6);
+  writing-mode: vertical-rl;
+}
+
+// 朱砂印：略微歪一点，像手工盖的
+.diary-cover-seal {
+  position: absolute;
+  right: 24px;
+  bottom: 24px;
+  display: grid;
+  width: 46px;
+  height: 46px;
+  padding-top: 3px;
+  border-radius: 3px;
+  place-items: center;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: 0.04em;
+  color: #f6efe8;
+  text-align: center;
+  background: var(--diary-cover-stamp, var(--diary-seal));
+  transform: rotate(-5deg);
+  writing-mode: vertical-rl;
+  box-shadow: inset 0 0 0 1.5px rgba(246, 239, 232, 0.5);
+}

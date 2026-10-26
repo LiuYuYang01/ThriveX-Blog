@@ -18,11 +18,6 @@
   --diary-drop: rgba(0, 0, 0, 0.46);
   --diary-drop-2: rgba(0, 0, 0, 0.22);
   --diary-fold: rgba(70, 52, 30, 0.55);
-  // 合上时的布面硬壳，和封面同一套颜色
-  --diary-cloth: #223047;
-  --diary-cloth-edge: #16202f;
-  --diary-cloth-slip: #f2ede2;
-  --diary-cloth-seal: #b4402f;
   // 投影挂在每一半张纸上，合上本子时才跟着封面一起挪走
   --diary-book-drop: 0 30px 50px var(--diary-drop), 0 8px 16px var(--diary-drop-2);
   // 书本高度跟视口走，窄屏再换一档更矮的
@@ -62,10 +57,6 @@
   --diary-drop: rgba(0, 0, 0, 0.5);
   --diary-drop-2: rgba(0, 0, 0, 0.28);
   --diary-fold: rgba(35, 24, 10, 0.6);
-  --diary-cloth: #26334a;
-  --diary-cloth-edge: #1a2434;
-  --diary-cloth-slip: #efe8da;
-  --diary-cloth-seal: #d6705c;
 }
 
 // ================= 上下两条横梁 =================
@@ -186,10 +177,8 @@
   transform-style: preserve-3d;
 }
 
-/* 合上的左半张落到右半张上之后，整本收回中间，等封面那页接管 */
+/* 合上的左半张落到右半张上之后，整本停在原处，等浮层把它接回封面页 */
 .diary-book.is-closing {
-  animation: diary-book-away 0.42s cubic-bezier(0.45, 0.02, 0.7, 0.35) 0.62s both;
-
   .diary-leaf-left {
     visibility: hidden;
   }
@@ -197,16 +186,6 @@
   .diary-spine,
   .diary-ribbon {
     opacity: 0;
-  }
-}
-
-@keyframes diary-book-away {
-  from {
-    transform: none;
-  }
-
-  to {
-    transform: translateX(-25%) scale(0.96) rotateX(4deg);
   }
 }
 
@@ -380,7 +359,7 @@
   will-change: transform;
   backface-visibility: hidden;
   transform-style: preserve-3d;
-  animation: diary-lid-close 0.62s cubic-bezier(0.5, 0.05, 0.35, 1) both;
+  animation: diary-lid-close 0.76s cubic-bezier(0.52, 0.04, 0.28, 1) both;
 }
 
 @keyframes diary-lid-close {
@@ -418,7 +397,7 @@
   pointer-events: none;
   content: '';
   background: linear-gradient(to left, var(--diary-fold), transparent 22%);
-  animation: diary-lid-shade 0.62s ease-in-out both;
+  animation: diary-lid-shade 0.76s ease-in-out both;
 }
 
 @keyframes diary-lid-shade {
@@ -446,85 +425,17 @@
   }
 }
 
-@keyframes diary-book-away-sm {
-  from {
-    transform: none;
-  }
-
-  to {
-    transform: scale(0.96) rotateX(4deg);
-  }
-}
-
-/* 背面：墨蓝布面硬壳，书脊落在合上后的左侧，和封面那本同向 */
+/* 背面：合上后扣在右半张上的布面硬壳，和封面页共用同一块 */
 .diary-lid-cover {
   transform: rotateY(180deg);
-  border-radius: 4px 10px 10px 4px;
-  background-color: var(--diary-cloth);
-  background-image:
-    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.045) 0 1px, transparent 1px 3px),
-    repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.16) 0 1px, transparent 1px 3px);
-  box-shadow:
-    var(--diary-book-drop),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.07);
 }
 
-.diary-lid-cover::before {
-  position: absolute;
-  inset: 0 auto 0 0;
-  width: 26px;
-  content: '';
-  background: linear-gradient(90deg, var(--diary-cloth-edge), transparent);
-  box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.06);
-}
-
-/* 压印边框：向内凹的一圈细线 */
-.diary-lid-cover::after {
-  position: absolute;
-  inset: 16px 16px 16px 36px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 0 0 5px rgba(255, 255, 255, 0.05);
-  content: '';
-}
-
-.diary-lid-slip {
-  position: absolute;
-  top: 11%;
-  left: 50%;
-  padding: 14px 10px 16px;
-  border: 1px solid rgba(34, 48, 71, 0.12);
-  background: var(--diary-cloth-slip);
-  box-shadow: 0 2px 10px -2px rgba(10, 16, 26, 0.5);
-  color: var(--diary-cloth);
-  font-family: var(--diary-serif);
-  font-size: 30px;
-  font-weight: 700;
-  line-height: 1.24;
-  letter-spacing: 0.16em;
-  writing-mode: vertical-rl;
-  transform: translateX(-50%);
-}
-
-.diary-lid-seal {
-  position: absolute;
-  right: 24px;
-  bottom: 24px;
-  display: grid;
-  width: 46px;
-  height: 46px;
-  padding-top: 3px;
-  border-radius: 3px;
-  place-items: center;
-  background: var(--diary-cloth-seal);
-  box-shadow: inset 0 0 0 1.5px rgba(246, 239, 232, 0.5);
-  color: #f6efe8;
-  font-size: 13px;
-  font-weight: 700;
-  line-height: 1.1;
-  letter-spacing: 0.04em;
-  text-align: center;
-  writing-mode: vertical-rl;
-  transform: rotate(-5deg);
+// 交接浮层：合上的本子交给它，由它滑回封面页的位置，刷新时两边严丝合缝
+.diary-handoff {
+  position: fixed;
+  z-index: 60;
+  visibility: hidden;
+  pointer-events: none;
 }
 
 // ================= 一页纸的内容 =================
@@ -887,12 +798,8 @@
     width: 100%;
   }
 
-  .diary-book.is-closing {
-    animation-name: diary-book-away-sm;
-
-    .diary-leaf-left {
-      visibility: visible;
-    }
+  .diary-book.is-closing .diary-leaf-left {
+    visibility: visible;
   }
 
   .diary-lid {
@@ -908,20 +815,6 @@
 
   .diary-lid-cover {
     transform: none;
-    border-radius: 5px;
-  }
-
-  /* 单页是从上方翻扣下来的，书脊那道暗带跟着挪到顶边 */
-  .diary-lid-cover::before {
-    inset: 0 0 auto 0;
-    width: auto;
-    height: 26px;
-    background: linear-gradient(180deg, var(--diary-cloth-edge), transparent);
-    box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.06);
-  }
-
-  .diary-lid-cover::after {
-    inset: 36px 16px 16px;
   }
 
   .diary-paper-front,

@@ -1,12 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { Button, TextField } from '@/ThriveUI';
 import { useAppConfig } from '@/components/AppConfigProvider';
 import { unlockDiaryAPI } from '@/api/diary';
 import type { DiaryQuestion } from '@/types/app/diary';
+import { saveCoverRect } from '../../coverRect';
+import DiaryCoverFront from '../DiaryCover';
 import DiaryLamp from '../DiaryLamp';
 
 import './index.scss';
@@ -22,6 +24,7 @@ const UNLOCK_MS = 260;
 export default function DiaryGate({ questions, expired }: Props) {
   const router = useRouter();
   const { author } = useAppConfig();
+  const pagesRef = useRef<HTMLSpanElement>(null);
 
   const [questionId, setQuestionId] = useState<number>(questions[0]?.id ?? 0);
   const [answer, setAnswer] = useState('');
@@ -31,6 +34,12 @@ export default function DiaryGate({ questions, expired }: Props) {
   const [unlocking, setUnlocking] = useState(false);
 
   const empty = !questions.length;
+
+  // 开门前记住封面在桌上的位置，门里合上本子时要滑回这里
+  const openBook = () => {
+    saveCoverRect(pagesRef.current);
+    setOpened(true);
+  };
 
   const submit = async () => {
     const value = answer.trim();
@@ -111,19 +120,10 @@ export default function DiaryGate({ questions, expired }: Props) {
             </div>
           </div>
 
-          <span aria-hidden className="diary-cover-pages" />
+          <span ref={pagesRef} aria-hidden className="diary-cover-pages" />
 
-          <button type="button" className="diary-cover" onClick={() => setOpened(true)} disabled={empty || opened} aria-label="打开日记本" aria-expanded={opened} aria-controls="diary-lock">
-            <span className="diary-cover-face diary-cover-front">
-              <span aria-hidden className="diary-cover-spine" />
-              <span className="diary-cover-body">
-                <span className="diary-cover-slip">
-                  <span className="diary-cover-title">日记本</span>
-                  {author?.name ? <span className="diary-cover-author">{author.name} 记</span> : null}
-                </span>
-              </span>
-              <span aria-hidden className="diary-cover-seal">慎独</span>
-            </span>
+          <button type="button" className="diary-cover" onClick={openBook} disabled={empty || opened} aria-label="打开日记本" aria-expanded={opened} aria-controls="diary-lock">
+            <DiaryCoverFront author={author?.name} />
             <span aria-hidden className="diary-cover-face diary-cover-back">
               <span className="diary-cover-frame" />
               <span className="diary-cover-inside-title">日记本</span>

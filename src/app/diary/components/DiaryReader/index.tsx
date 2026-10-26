@@ -6,7 +6,10 @@ import { useRouter } from 'next/navigation';
 import { FiCalendar, FiChevronLeft, FiChevronRight, FiLock } from 'react-icons/fi';
 
 import { lockDiaryAPI } from '@/api/diary';
+import { useAppConfig } from '@/components/AppConfigProvider';
 import type { Diary } from '@/types/app/diary';
+import { fallbackCoverRect, readCoverRect } from '../../coverRect';
+import DiaryCoverFront from '../DiaryCover';
 import DiaryLamp from '../DiaryLamp';
 import DiaryCalendar from './DiaryCalendar';
 import DiarySheet from './DiarySheet';
@@ -46,8 +49,9 @@ const FLIP_RANGE_MS = 400;
 const SNAP = 0.38;
 const DRAG_MIN = 10;
 const MOBILE_MAX = 860;
-const CLOSE_FOLD_MS = 620;
-const CLOSE_SETTLE_MS = 420;
+const CLOSE_FOLD_MS = 760;
+const CLOSE_HOLD_MS = 140;
+const CLOSE_MOVE_MS = 660;
 
 const easeInOutCubic = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
 const easeOutCubic = (t: number) => 1 - (1 - t) ** 3;
@@ -57,6 +61,7 @@ const firstOfSpread = (index: number) => Math.floor(index / 2) * 2;
 
 export default function DiaryReader({ pages }: Props) {
   const router = useRouter();
+  const { author } = useAppConfig();
   const total = pages.length;
 
   const bookRef = useRef<HTMLDivElement>(null);
@@ -65,6 +70,7 @@ export default function DiaryReader({ pages }: Props) {
   const backRef = useRef<HTMLDivElement>(null);
   const calRef = useRef<HTMLDivElement>(null);
   const calBtnRef = useRef<HTMLButtonElement>(null);
+  const handoffRef = useRef<HTMLDivElement>(null);
   const session = useRef<Session | null>(null);
   const drag = useRef<Drag | null>(null);
   const raf = useRef(0);
@@ -335,7 +341,77 @@ export default function DiaryReader({ pages }: Props) {
     return () => window.removeEventListener('keydown', onKey);
   }, [total]);
 
-  // 合上日记本：先跑完合上的动画，锁请求在动画期间并行发出
+  // 合不上时把书放回原样，留给读者再试一次
+  const restoreBook = () => {
+    const book = bookRef.current;
+    if (book) {
+      book.getAnimations().forEach((anim) => anim.cancel());
+      book.style.visibility = '';
+    }
+    const overlay = handoffRef.current;
+    if (overlay) {
+      overlay.getAnimations().forEach((anim) => anim.cancel());
+      overlay.style.visibility = 'hidden';
+    }
+    closingRef.current = false;
+    setClosing(false);
+    setNotice('日记本没合上，稍后再试一次。');
+  };
+
+  const settleClose = async (locked: Promise<boolean>) => {
+    if (await locked) router.refresh();
+    else restoreBook();
+  };
+
+  // 合上之后把硬壳交给浮层，沿直线滑回开门时封面停着的桌面位置
+  const handOff = async (locked: Promise<boolean>) => {
+    const book = bookRef.current;
+    const overlay = handoffRef.current;
+    const cover = readCoverRect() ?? fallbackCoverRect();
+    if (!book || !overlay) {
+      void settleClose(locked);
+      return;
+    }
+
+    // 先回到封面页当初的滚动位置，刷新后封面才会和浮层严丝合缝
+    if (window.scrollY !== cover.scrollY) window.scrollTo(0, cover.scrollY);
+
+    const rect = book.getBoundingClientRect();
+    // 桌面合上后只剩书脊右侧那一半；窄屏是一整页
+    const start = mobileRef.current
+      ? { left: rect.left, top: rect.top, width: rect.width, height: rect.height }
+      : { left: rect.left + rect.width / 2, top: rect.top, width: rect.width / 2, height: rect.height };
+    const end = {
+      left: cover.left - window.scrollX,
+      top: cover.top - window.scrollY,
+      width: cover.width,
+      height: cover.height,
+    };
+
+    overlay.style.left = `${start.left}px`;
+    overlay.style.top = `${start.top}px`;
+    overlay.style.width = `${start.width}px`;
+    overlay.style.height = `${start.height}px`;
+    overlay.style.visibility = 'visible';
+
+    overlay.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 160, easing: 'linear', fill: 'both' });
+    book.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 160, easing: 'linear', fill: 'both' });
+
+    const slide = overlay.animate(
+      [
+        { left: `${start.left}px`, top: `${start.top}px`, width: `${start.width}px`, height: `${start.height}px` },
+        { left: `${end.left}px`, top: `${end.top}px`, width: `${end.width}px`, height: `${end.height}px` },
+      ],
+      { duration: CLOSE_MOVE_MS, easing: 'cubic-bezier(0.38, 0.06, 0.2, 1)', fill: 'both' },
+    );
+
+    const [ok] = await Promise.all([locked, slide.finished.catch(() => undefined)]);
+    book.style.visibility = 'hidden';
+    if (ok) router.refresh();
+    else restoreBook();
+  };
+
+  // 合上日记本：先让硬壳慢慢扣下，停一下再滑回封面页；锁请求在动画期间并行发出
   const closeBook = () => {
     if (closingRef.current) return;
     closingRef.current = true;
@@ -346,18 +422,11 @@ export default function DiaryReader({ pages }: Props) {
       () => true,
       () => false,
     );
-    window.setTimeout(
-      async () => {
-        if (await locked) {
-          router.refresh();
-          return;
-        }
-        closingRef.current = false;
-        setClosing(false);
-        setNotice('日记本没合上，稍后再试一次。');
-      },
-      reduceRef.current ? 0 : CLOSE_FOLD_MS + CLOSE_SETTLE_MS,
-    );
+    if (reduceRef.current) {
+      void settleClose(locked);
+      return;
+    }
+    window.setTimeout(() => void handOff(locked), CLOSE_FOLD_MS + CLOSE_HOLD_MS);
   };
 
   const marked = useMemo(() => {
@@ -435,8 +504,7 @@ export default function DiaryReader({ pages }: Props) {
               <div aria-hidden className="diary-lid">
                 <div className="diary-lid-face diary-lid-page">{sheet(spread.left)}</div>
                 <div className="diary-lid-face diary-lid-cover">
-                  <span className="diary-lid-slip">日记本</span>
-                  <span className="diary-lid-seal">慎独</span>
+                  <DiaryCoverFront author={author?.name} />
                 </div>
               </div>
             ) : null}
@@ -448,6 +516,12 @@ export default function DiaryReader({ pages }: Props) {
           <p className="diary-blank">本子还是空的。主理人在后台写下第一页，这里就有字了。</p>
         )}
       </div>
+
+      {closing ? (
+        <div ref={handoffRef} aria-hidden className="diary-handoff">
+          <DiaryCoverFront author={author?.name} />
+        </div>
+      ) : null}
 
       {total ? (
         <footer className="diary-bar diary-bar-foot">

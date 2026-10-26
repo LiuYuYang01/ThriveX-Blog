@@ -105,18 +105,28 @@ export default async (props: Props) => {
 
   const errorCodes = [400, 404, 611];
 
+  // 密码错误时服务端只有错误码，不能当成文章不存在
+  if (code === 613) {
+    return <Encrypt id={id} />;
+  }
+
   if (errorCodes.includes(code ?? 200) || !data?.title) {
     return <NotFound />;
   }
 
-  // 记录文章访问量
-  after(async () => {
-    try {
-      await recordViewAPI(id);
-    } catch (error) {
-      if (error instanceof Error && error.name === 'AbortError') return;
-    }
-  });
+  // 加密文章且尚未输入密码（服务端此时只下发打码数据）
+  const needPassword = data?.config?.isEncrypt === true && !password;
+
+  // 记录文章访问量，密码框曝光不计入阅读
+  if (!needPassword) {
+    after(async () => {
+      try {
+        await recordViewAPI(id);
+      } catch (error) {
+        if (error instanceof Error && error.name === 'AbortError') return;
+      }
+    });
+  }
 
   const headings = extractArticleHeadings(data?.content);
 
@@ -128,7 +138,7 @@ export default async (props: Props) => {
   const iconSty = 'flex justify-center items-center w-5 h-5 rounded-full text-xs mr-1';
 
   // 如果文章没有加密或者密码正确，则显示文章
-  if ((data?.config?.isEncrypt !== 1) || (password && data?.config?.isEncrypt === 1)) {
+  if (!needPassword) {
     return (
       <ArticleLikeProvider articleId={id} initialCount={data?.likeCount ?? 0}>
         <ArticleShareProvider articleId={id} initialCount={data?.shareCount ?? 0}>
@@ -218,6 +228,6 @@ export default async (props: Props) => {
       </ArticleLikeProvider>
     );
   } else {
-    return !password && <Encrypt id={id} />;
+    return <Encrypt id={id} />;
   }
 };

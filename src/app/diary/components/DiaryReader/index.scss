@@ -59,7 +59,7 @@
   --diary-fold: rgba(35, 24, 10, 0.6);
 }
 
-// ================= 上下两条横梁 =================
+// ================= 顶部横梁 =================
 .diary-bar {
   display: flex;
   flex: none;
@@ -73,11 +73,6 @@
 // 合上日记本时横梁先退场，只剩书本
 .diary-reader.is-shutting .diary-bar {
   opacity: 0;
-}
-
-.diary-bar-foot {
-  justify-content: center;
-  gap: 20px;
 }
 
 .diary-bar-top {
@@ -107,40 +102,6 @@
     cursor: default;
     opacity: 0.4;
   }
-}
-
-.diary-turn {
-  display: grid;
-  place-items: center;
-  width: 40px;
-  height: 40px;
-  border: 1px solid color-mix(in srgb, var(--diary-ink) 12%, transparent);
-  border-radius: 50%;
-  cursor: pointer;
-  color: var(--diary-ink-2);
-  background: var(--diary-paper);
-  transition: transform 0.18s ease;
-
-  &:hover:not(:disabled) {
-    transform: scale(1.06);
-  }
-
-  &:disabled {
-    cursor: default;
-    opacity: 0.3;
-  }
-}
-
-.diary-pager {
-  margin: 0;
-  min-width: 118px;
-  font-family: var(--diary-serif);
-  font-size: 12.5px;
-  font-style: italic;
-  letter-spacing: 0.12em;
-  color: var(--diary-desk-ink);
-  text-align: center;
-  opacity: 0.75;
 }
 
 .diary-notice {
@@ -763,7 +724,7 @@
 }
 
 // ================= 焦点与宽窄屏 =================
-.diary-reader :is(.diary-tool, .diary-turn, .diary-cal-day.is-written, .diary-cal-step, .diary-cal-close):focus-visible {
+.diary-reader :is(.diary-tool, .diary-cal-day.is-written, .diary-cal-step, .diary-cal-close):focus-visible {
   outline: 2px solid var(--diary-accent);
   outline-offset: 2px;
 }
@@ -846,15 +807,6 @@
     left: auto;
   }
 
-  .diary-turn {
-    width: 38px;
-    height: 38px;
-  }
-
-  .diary-pager {
-    min-width: 96px;
-    font-size: 12px;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -867,8 +819,7 @@
   .diary-bar,
   .diary-spine,
   .diary-ribbon,
-  .diary-tool,
-  .diary-turn {
+  .diary-tool {
     transition: none;
 
     &:hover {

@@ -12,11 +12,12 @@ interface Props {
   diary?: Diary;
   // 页码：整本按写入顺序编号，翻到哪页就看到哪页
   num?: number;
+  total?: number;
 }
 
 const WEEKDAYS = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
 
-export default function DiarySheet({ diary, num }: Props) {
+export default function DiarySheet({ diary, num, total }: Props) {
   if (!diary) return <div aria-hidden className="diary-sheet is-blank" />;
 
   const date = dayjs(diary.diaryDate);
@@ -58,7 +59,11 @@ export default function DiarySheet({ diary, num }: Props) {
         <DiaryPhotos images={diary.images ?? []} />
       </div>
 
-      {num ? <div className="diary-sheet-num">{num}</div> : null}
+      {num ? (
+        <div className="diary-sheet-num">
+          {num}/{total}
+        </div>
+      ) : null}
     </div>
   );
 }

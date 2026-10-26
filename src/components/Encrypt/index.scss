@@ -1,0 +1,365 @@
+// 一封封好的信：信舌压在正文上，火漆印钉在信舌的尖角，答对口令后信舌向后翻、印子留在纸上
+// 纸质、墨色、朱砂都沿用日记本内页那一套，让「被锁住的内容」在站内是同一种东西
+.letter {
+  --letter-paper: #faf5e9;
+  --letter-paper-2: #f1e8d6;
+  --letter-edge: #e7dcc6;
+  --letter-ink: #312b24;
+  --letter-ink-2: #6d6357;
+  --letter-ink-3: #8b806d;
+  --letter-line: rgba(90, 70, 45, 0.2);
+  --letter-rule: rgba(120, 95, 60, 0.06);
+  --letter-seal: #b4402f;
+  --letter-seal-ink: #f8f0e3;
+  --letter-gloss: rgba(255, 255, 255, 0.56);
+  --letter-drop: rgba(52, 38, 20, 0.3);
+  --letter-serif: Georgia, 'Songti SC', 'STSong', 'Noto Serif SC', 'Source Han Serif SC', 'SimSun', serif;
+  --letter-flap-h: 78px;
+
+  position: relative;
+  max-width: 560px;
+  margin: 0 auto;
+  perspective: 1100px;
+}
+
+.dark .letter {
+  --letter-drop: rgba(0, 0, 0, 0.55);
+}
+
+// ================= 信舌 =================
+.letter-flap {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: var(--letter-flap-h);
+  transform-origin: top center;
+  transition: transform 0.46s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+// 折痕用一层压深一点的三角形垫出来，clip-path 会连边框一起裁掉，所以不用 border
+.letter-flap::before,
+.letter-flap::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+}
+
+.letter-flap::before {
+  top: 1px;
+  background: var(--letter-line);
+}
+
+.letter-flap::after {
+  background: linear-gradient(178deg, var(--letter-paper-2), var(--letter-edge));
+}
+
+// 火漆印：一枚盖在信舌尖角上的朱印
+.letter-seal {
+  position: absolute;
+  top: calc(var(--letter-flap-h) - 21px);
+  left: 50%;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--letter-seal);
+  border-radius: 3px;
+  background: var(--letter-paper);
+  color: var(--letter-seal);
+  font-family: var(--letter-serif);
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0;
+  transform: translateX(-50%) rotate(-3deg);
+  box-shadow: 0 6px 14px -10px rgba(120, 40, 28, 0.8);
+  transition: opacity 0.3s ease, transform 0.46s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+// ================= 信纸 =================
+.letter-page {
+  position: relative;
+  padding: calc(var(--letter-flap-h) + 42px) 30px 26px;
+  border-radius: 14px;
+  color: var(--letter-ink);
+  background:
+    radial-gradient(120% 80% at 50% 0%, var(--letter-gloss), transparent 58%),
+    repeating-linear-gradient(0deg, transparent 0 31px, var(--letter-rule) 31px 32px),
+    linear-gradient(104deg, var(--letter-paper) 0%, var(--letter-paper-2) 100%);
+  box-shadow:
+    inset 0 0 0 1px var(--letter-line),
+    0 22px 46px -28px var(--letter-drop),
+    0 2px 5px -2px var(--letter-drop);
+
+  ::selection {
+    background: rgba(180, 64, 47, 0.16);
+  }
+}
+
+.letter-title {
+  margin: 0;
+  font-family: var(--letter-serif);
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--letter-ink);
+}
+
+.letter-lead {
+  margin: 9px 0 0;
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--letter-ink-2);
+}
+
+.letter-form {
+  margin-top: 26px;
+}
+
+// ================= 口令：纸上一条横线，不用站里的白盒子 =================
+.letter-field {
+  label {
+    font-family: var(--letter-serif);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    color: var(--letter-ink-2);
+  }
+
+  input {
+    min-height: 46px;
+    padding: 2px 2.5rem 8px 0;
+    border: 0;
+    border-bottom: 1px solid var(--letter-line);
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    color: var(--letter-ink);
+    caret-color: var(--letter-seal);
+    font-size: 16px;
+    transition: none;
+
+    &::placeholder {
+      color: var(--letter-ink-3);
+    }
+
+    &:focus {
+      border-bottom: 1px solid var(--letter-seal);
+      box-shadow: inset 0 -2px 0 -1px var(--letter-seal);
+      outline: none;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+    }
+  }
+
+  // 答错了：横线先红回去，不抖动画框
+  &.is-wrong input {
+    border-bottom-color: var(--letter-seal);
+    box-shadow: inset 0 -2px 0 -1px var(--letter-seal);
+  }
+}
+
+.letter-eye {
+  pointer-events: auto;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  color: var(--letter-ink-3);
+  transition-property: color;
+  transition-duration: 0.18s;
+
+  &:hover {
+    color: var(--letter-seal);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--letter-seal);
+    outline-offset: 2px;
+  }
+}
+
+// ================= 落款行 =================
+.letter-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin-top: 18px;
+  min-height: 44px;
+}
+
+.letter-status {
+  flex: 1 1 100%;
+  margin: 0;
+  min-height: 18px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--letter-seal);
+
+  &.is-ok {
+    color: var(--letter-ink-2);
+  }
+}
+
+// 回首页：纸上的一点墨，不做成按钮盒子
+.letter-back {
+  flex: none;
+  height: 44px;
+  padding: 0 4px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  background-image: none;
+  box-shadow: none;
+  color: var(--letter-ink-2);
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  transition-property: color;
+  transition-duration: 0.18s;
+
+  &:hover {
+    background: transparent;
+    color: var(--letter-seal);
+  }
+}
+
+// 朱砂按钮：像在纸上盖一个印，不用站里的蓝色渐变
+.letter-open {
+  flex: none;
+  height: 44px;
+  padding: 0 24px;
+  margin-left: auto;
+  border: 0;
+  border-radius: 3px;
+  background-color: var(--letter-seal);
+  background-image: none;
+  color: var(--letter-seal-ink);
+  font-size: 13px;
+  letter-spacing: 0.16em;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 12px 22px -14px rgba(120, 40, 28, 0.7);
+  transition-property: transform;
+  transition-duration: 0.18s;
+
+  &:hover:not(:disabled) {
+    background-color: #9c3425;
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+
+  &:disabled {
+    opacity: 1;
+  }
+
+  // 还没落笔时是一枚没沾印泥的章
+  &.is-idle {
+    border: 1px solid var(--letter-line);
+    background-color: transparent;
+    color: var(--letter-ink-3);
+    box-shadow: none;
+  }
+}
+
+// ================= 去哪儿要口令 =================
+.letter-channels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+  align-items: center;
+  margin-top: 26px;
+  padding-top: 18px;
+  border-top: 1px solid var(--letter-line);
+}
+
+.letter-channels-label {
+  font-size: 12.5px;
+  color: var(--letter-ink-2);
+}
+
+.letter-channels-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  align-items: center;
+  margin-left: auto;
+}
+
+.letter-channel {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  transition-property: transform;
+  transition-duration: 0.18s;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--letter-seal);
+    outline-offset: 1px;
+  }
+}
+
+// ================= 拆封 =================
+.letter.is-open {
+  .letter-flap {
+    transform: rotateX(-104deg);
+    backface-visibility: hidden;
+  }
+
+  .letter-seal {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-6px) rotate(-9deg) scale(1.06);
+  }
+}
+
+@media (max-width: 640px) {
+  .letter {
+    --letter-flap-h: 66px;
+  }
+
+  .letter-page {
+    padding: calc(var(--letter-flap-h) + 34px) 20px 22px;
+  }
+
+  .letter-title {
+    font-size: 19px;
+  }
+
+  .letter-open {
+    margin-left: 0;
+  }
+
+  .letter-back,
+  .letter-open {
+    flex: 1 1 auto;
+  }
+
+  .letter-channels-list {
+    margin-left: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .letter-flap,
+  .letter-seal,
+  .letter-eye,
+  .letter-open,
+  .letter-channel {
+    transition: none;
+  }
+}

@@ -1,9 +1,9 @@
 import { Request } from '@/utils';
 import { Article } from '@/types/app/article';
 
-// 获取指定文章数据
+// 获取指定文章数据（password 走 params 编码，中文口令才不会被拼坏）
 export const getArticleDataAPI = async (id: number, password?: string) => {
-    return await Request<Article>('GET', `/article${!password ? `/${id}` : `/${id}?password=${password}`}`);
+    return await Request<Article>('GET', `/article/${id}`, { params: { password } });
 }
 
 // 获取文章列表（title 按标题模糊搜索）

@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import dayjs from 'dayjs';
 import { useRouter } from 'next/navigation';
-import { FiCalendar, FiChevronLeft, FiChevronRight, FiLock } from 'react-icons/fi';
+import { FiCalendar, FiLock } from 'react-icons/fi';
 
 import { lockDiaryAPI } from '@/api/diary';
 import { useAppConfig } from '@/components/AppConfigProvider';
@@ -80,7 +80,7 @@ export default function DiaryReader({ pages }: Props) {
   const closingRef = useRef(false);
 
   const [mobile, setMobile] = useState(false);
-  const [index, setIndex] = useState(() => firstOfSpread(Math.max(0, total - 1)));
+  const [index, setIndex] = useState(0);
   // 翻页途中被纸盖住的底层页；为 null 时按 index 正常排版
   const [slot, setSlot] = useState<Slot | null>(null);
   const [flip, setFlip] = useState<Flip | null>(null);
@@ -131,7 +131,7 @@ export default function DiaryReader({ pages }: Props) {
     session.current = null;
     setFlip(null);
     setSlot(null);
-    setIndex((prev) => (mobile ? Math.min(firstOfSpread(prev) + 1, total - 1) : firstOfSpread(prev)));
+    setIndex((prev) => firstOfSpread(prev));
   }, [mobile, total]);
 
   const at = (n: number) => (n >= 0 && n < total ? n : -1);
@@ -440,14 +440,12 @@ export default function DiaryReader({ pages }: Props) {
   const spread: Slot = slot ?? { left: index, right: mobile || at(index + 1) < 0 ? -1 : at(index + 1) };
   // 页码/月份按逻辑位置算，翻页途中被提前换掉的底层页不参与
   const logical: Slot = { left: index, right: mobile || at(index + 1) < 0 ? -1 : at(index + 1) };
-  const newest = logical.right >= 0 ? logical.right : logical.left;
+  // 新日记排在前面，左页总比右页新
+  const newest = logical.left;
   const activeDates = [logical.left, logical.right].filter((n) => n >= 0).map((n) => pages[n].diaryDate);
   const monthKey = total ? dayjs(pages[newest].diaryDate).format('YYYY-MM') : '';
-  const canPrev = !flip && !closing && reachable('prev', index, mobile);
-  const canNext = !flip && !closing && reachable('next', index, mobile);
-  const pager = mobile || logical.right < 0 ? `${index + 1} / ${total}` : `${logical.left + 1} – ${logical.right + 1} / ${total}`;
 
-  const sheet = (n: number) => <DiarySheet diary={n >= 0 ? pages[n] : undefined} num={n >= 0 ? n + 1 : undefined} />;
+  const sheet = (n: number) => <DiarySheet diary={n >= 0 ? pages[n] : undefined} num={n >= 0 ? n + 1 : undefined} total={total} />;
 
   return (
     <section className={`diary-reader diary-scene ${closing ? 'is-shutting' : ''}`}>
@@ -521,18 +519,6 @@ export default function DiaryReader({ pages }: Props) {
         <div ref={handoffRef} aria-hidden className="diary-handoff">
           <DiaryCoverFront author={author?.name} />
         </div>
-      ) : null}
-
-      {total ? (
-        <footer className="diary-bar diary-bar-foot">
-          <button type="button" className="diary-turn" onClick={() => go('prev')} disabled={!canPrev} aria-label="上一页">
-            <FiChevronLeft className="size-5" />
-          </button>
-          <p className="diary-pager">{pager}</p>
-          <button type="button" className="diary-turn" onClick={() => go('next')} disabled={!canNext} aria-label="下一页">
-            <FiChevronRight className="size-5" />
-          </button>
-        </footer>
       ) : null}
 
       <p aria-live="polite" className="diary-notice">

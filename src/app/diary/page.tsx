@@ -27,7 +27,8 @@ export default async function DiaryPage() {
   // 有凭证就先替读者取回整本，取不到（过期/失效）就退回封面
   if (token) {
     const { code, data } = await getDiaryPagesDataAPI();
-    if (code === 200 && data) return <DiaryReader pages={data} />;
+    // 最新的排在前面，翻开就是第一页
+    if (code === 200 && data) return <DiaryReader pages={[...data].reverse()} />;
   }
 
   return <DiaryGate questions={questions} expired={!!token} />;

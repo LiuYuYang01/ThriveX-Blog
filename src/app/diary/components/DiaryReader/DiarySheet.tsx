@@ -5,8 +5,7 @@ import { RiMapPinLine } from 'react-icons/ri';
 
 import type { Diary } from '@/types/app/diary';
 import DiaryPhotos from '../DiaryPhotos';
-
-import { WEATHER_META } from './weather';
+import DiaryMarkdown from './DiaryMarkdown';
 
 interface Props {
   diary?: Diary;
@@ -21,8 +20,6 @@ export default function DiarySheet({ diary, num, total }: Props) {
   if (!diary) return <div aria-hidden className="diary-sheet is-blank" />;
 
   const date = dayjs(diary.diaryDate);
-  const weather = WEATHER_META[diary.weather ?? ''];
-  const WeatherIcon = weather?.icon;
 
   return (
     <div className="diary-sheet">
@@ -31,31 +28,24 @@ export default function DiarySheet({ diary, num, total }: Props) {
         <span className="diary-sheet-week">{WEEKDAYS[date.day()]}</span>
       </div>
 
-      {diary.mood || WeatherIcon || diary.location ? (
+      {diary.location ? (
         <p className="diary-sheet-meta">
-          {diary.mood ? <span className="diary-sheet-mood">{diary.mood}</span> : null}
-          {weather ? (
-            <span className="diary-sheet-tag">
-              <WeatherIcon className="size-3.5" />
-              {weather.label}
-            </span>
-          ) : null}
-          {diary.location ? (
-            <span className="diary-sheet-tag">
-              <RiMapPinLine className="size-3.5" />
-              {diary.location}
-            </span>
-          ) : null}
+          <span className="diary-sheet-tag">
+            <RiMapPinLine className="size-3.5" />
+            {diary.location}
+          </span>
         </p>
       ) : null}
 
-      <h2 className="diary-sheet-title">{diary.title || '无题'}</h2>
-      <div className="diary-sheet-rule" />
+      {diary.title ? (
+        <>
+          <h2 className="diary-sheet-title">{diary.title}</h2>
+          <div className="diary-sheet-rule" />
+        </>
+      ) : null}
 
       <div className="diary-sheet-text">
-        {diary.content.split(/\n{2,}/).map((para, i) => (
-          <p key={i}>{para}</p>
-        ))}
+        <DiaryMarkdown content={diary.content} />
         <DiaryPhotos images={diary.images ?? []} />
       </div>
 

@@ -1,0 +1,167 @@
+// 日记正文按 Markdown 渲染，排版贴着纸面：楷体正文、赭石强调色
+.diary-md {
+  > :first-child {
+    margin-top: 0;
+  }
+
+  p {
+    margin: 0 0 0.82em;
+    text-indent: 2em;
+    white-space: pre-wrap;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    margin: 1.4em 0 0.6em;
+    font-family: var(--diary-serif);
+    font-weight: 700;
+    line-height: 1.6;
+    letter-spacing: 0.02em;
+    color: var(--diary-ink);
+    text-indent: 0;
+  }
+
+  h1 {
+    font-size: 1.45em;
+  }
+
+  h2 {
+    font-size: 1.28em;
+  }
+
+  h3 {
+    font-size: 1.12em;
+  }
+
+  h4 {
+    font-size: 1em;
+  }
+
+  strong {
+    font-weight: 700;
+    color: var(--diary-ink);
+  }
+
+  em {
+    font-style: italic;
+  }
+
+  a {
+    color: var(--diary-accent);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-decoration-color: color-mix(in srgb, var(--diary-accent) 45%, transparent);
+    text-underline-offset: 3px;
+    text-indent: 0;
+  }
+
+  ul,
+  ol {
+    margin: 0 0 1.05em;
+    padding-left: 1.6em;
+    // Tailwind 的 preflight 把列表符号清掉了，这里按书里的样式还回来
+    list-style-type: disc;
+    text-indent: 0;
+  }
+
+  ol {
+    list-style-type: decimal;
+  }
+
+  li {
+    margin: 0.3em 0;
+  }
+
+  li::marker {
+    color: var(--diary-ink-3);
+  }
+
+  ul.contains-task-list {
+    padding-left: 0.3em;
+    list-style: none;
+  }
+
+  ul.contains-task-list input[type='checkbox'] {
+    margin-right: 0.45em;
+    accent-color: var(--diary-accent);
+  }
+
+  blockquote {
+    margin: 1.2em 0;
+    padding: 0.15em 0 0.15em 1em;
+    border-left: 2px solid var(--diary-accent);
+    color: var(--diary-ink-2);
+
+    p {
+      margin: 0 0 0.6em;
+      text-indent: 0;
+    }
+  }
+
+  code {
+    padding: 0.12em 0.36em;
+    border-radius: 4px;
+    background: var(--diary-gutter);
+    color: var(--diary-ink);
+    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.86em;
+    text-indent: 0;
+  }
+
+  pre {
+    margin: 1.2em 0;
+    padding: 0.9em 1em;
+    border-radius: 10px;
+    background: var(--diary-gutter);
+    overflow-x: auto;
+    line-height: 1.7;
+
+    code {
+      padding: 0;
+      background: transparent;
+    }
+  }
+
+  .diary-md-img {
+    display: block;
+    max-width: 100%;
+    margin: 1.2em auto;
+    border-radius: 8px;
+    box-shadow: 0 6px 16px var(--diary-drop-2);
+  }
+
+  hr {
+    width: 34px;
+    height: 2px;
+    margin: 1.9em auto;
+    border: none;
+    background: var(--diary-accent);
+    opacity: 0.45;
+  }
+
+  table {
+    width: 100%;
+    margin: 1.2em 0;
+    border-collapse: collapse;
+    font-size: 0.92em;
+  }
+
+  th,
+  td {
+    padding: 0.42em 0.6em;
+    border: 1px solid var(--diary-gutter);
+    text-align: left;
+  }
+
+  th {
+    background: var(--diary-gutter);
+    font-family: var(--diary-serif);
+    font-weight: 700;
+  }
+}

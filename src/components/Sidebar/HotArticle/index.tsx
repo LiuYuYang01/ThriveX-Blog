@@ -53,8 +53,8 @@ const HotArticle = async ({ recoArticleIds = [] }: { recoArticleIds?: number[] }
               <div className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-[linear-gradient(transparent,#000)]" />
             </div>
 
-            <Link href={`/article/${item.id}`} target="_blank" className="inline-block w-full h-full">
-              <h4 className="absolute bottom-2.5 w-[95%] px-2.5 text-white text-[15px] font-normal line-clamp-1 z-10">
+            <Link href={`/article/${item.id}`} target="_blank" className="absolute inset-0 z-10">
+              <h4 className="absolute bottom-2.5 w-[95%] px-2.5 text-white text-[15px] font-normal line-clamp-1">
                 {item.title}
               </h4>
             </Link>

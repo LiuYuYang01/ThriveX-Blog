@@ -1,18 +1,26 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import dayjs from 'dayjs';
 import { useRouter } from 'next/navigation';
 import { FiCalendar, FiLock } from 'react-icons/fi';
+import { GrabfoldBook, type GrabfoldBookHandle, type PageRef } from 'grabfold/react';
+import type { PageTurnSound } from 'grabfold/sound';
 
 import { lockDiaryAPI } from '@/api/diary';
 import { useAppConfig } from '@/components/AppConfigProvider';
 import type { Diary } from '@/types/app/diary';
 import { fallbackCoverRect, readCoverRect } from '../../coverRect';
 import DiaryCoverFront from '../DiaryCover';
-import DiaryLamp from '../DiaryLamp';
 import DiaryCalendar from './DiaryCalendar';
-import DiarySheet from './DiarySheet';
+import {
+  DiaryColophonSheet,
+  DiaryEndpaper,
+  DiaryEntrySheet,
+  DiaryTitleSheet,
+  DiaryVerso,
+  splitDiaryContent,
+} from './DiarySheet';
 
 import './index.scss';
 
@@ -21,98 +29,376 @@ interface Props {
 }
 
 type Dir = 'next' | 'prev';
+type Mode = 'spread' | 'single';
 
-// 页位：-1 表示这一页留白（本子最后一篇摊不开）
-interface Slot {
-  left: number;
-  right: number;
-}
-interface Flip {
-  front: number;
-  back: number;
-}
-interface Session {
-  dir: Dir;
-  step: number;
-  from: number;
-  to: number;
-  progress: number;
-}
-interface Drag {
-  x0: number;
-  y0: number;
-  started: boolean;
-}
-
-const FLIP_BASE_MS = 200;
-const FLIP_RANGE_MS = 400;
-const SNAP = 0.38;
-const DRAG_MIN = 10;
-const MOBILE_MAX = 860;
-const CLOSE_FOLD_MS = 760;
-const CLOSE_HOLD_MS = 140;
+const SPREAD_MQ = '(min-width: 700px)';
+const FLIP_MS = 680;
+const CLOSE_FADE_MS = 160;
 const CLOSE_MOVE_MS = 660;
 
-const easeInOutCubic = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
-const easeOutCubic = (t: number) => 1 - (1 - t) ** 3;
+const CN_DIGITS = ['〇', '一', '二', '三', '四', '五', '六', '七', '八', '九'];
+const CN_MONTHS = ['', '一', '二', '三', '四', '五', '六', '七', '八', '九', '十', '十一', '十二'];
 
-/** 桌面一页摊两页，摊开位置恒为偶数下标 */
-const firstOfSpread = (index: number) => Math.floor(index / 2) * 2;
+const cnYear = (year: number) =>
+  String(year)
+    .split('')
+    .map((char) => CN_DIGITS[Number(char)] ?? char)
+    .join('');
+
+const seasonOf = (month: number) => {
+  if (month >= 3 && month <= 5) return '春天';
+  if (month >= 6 && month <= 8) return '夏天';
+  if (month >= 9 && month <= 11) return '秋天';
+  return '冬天';
+};
+
+/** 换布局时把阅读位置换算过去，读者不会丢页 */
+const mapMode = (position: number, total: number, from: Mode, to: Mode) => {
+  if (from === to) return position;
+  if (to === 'single') {
+    if (position < 0) return -1;
+    if (position >= total) return total * 2;
+    return position * 2;
+  }
+  if (position < 0) return -1;
+  if (position >= total * 2) return total;
+  return Math.floor(position / 2);
+};
+
+/* ---------- 纸的下缘被轻轻托起：弹簧-质点 + Verlet 积分 ----------
+   和示例同一套算法：底边离散成 17 个质点，每个点被一根很软的弹簧拉向目标高度，
+   相邻点之间再靠弯曲刚度牵连；每帧写回 clip-path，形状是真的在动。 */
+const createPaperEdge = () => {
+  const N = 17;
+  const LIFT = 12;
+  const AIM = 0.095;
+  const BEND = 0.24;
+  const DAMP = 0.83;
+  const SHAPE = Array.from({ length: N }, (_, i) => (i / (N - 1)) ** 1.5);
+  const FLAT = 'polygon(0 0, 100% 0, 100% 100%, 0 100%)';
+
+  interface Rope {
+    el: HTMLElement;
+    dir: 1 | -1;
+    y: Float32Array;
+    was: Float32Array;
+    aim: number;
+  }
+
+  const ropes = new Map<HTMLElement, Rope>();
+  let frame = 0;
+  let hovered: HTMLElement | null = null;
+
+  const ropeOf = (el: HTMLElement) => {
+    let rope = ropes.get(el);
+    if (!rope) {
+      rope = {
+        el,
+        dir: el.classList.contains('page--left') ? -1 : 1,
+        y: new Float32Array(N),
+        was: new Float32Array(N),
+        aim: 0,
+      };
+      ropes.set(el, rope);
+    }
+    return rope;
+  };
+
+  const polygonFor = (y: Float32Array, dir: 1 | -1) => {
+    const parts = ['0 0', '100% 0'];
+    for (let i = N - 1; i >= 0; i -= 1) {
+      const fromSpine = dir > 0 ? i : N - 1 - i;
+      parts.push(`${((i / (N - 1)) * 100).toFixed(2)}% calc(100% - ${y[fromSpine].toFixed(2)}px)`);
+    }
+    return `polygon(${parts.join(',')})`;
+  };
+
+  const paint = (rope: Rope) => {
+    const { y, dir } = rope;
+    rope.el.style.clipPath = polygonFor(y, dir);
+    rope.el.style.setProperty('--curl-shade', Math.min(1, y[N - 1] / (LIFT * 0.72)).toFixed(3));
+  };
+
+  const step = (rope: Rope) => {
+    const { y, was } = rope;
+    for (let i = 2; i < N; i += 1) {
+      const drift = (y[i] - was[i]) * DAMP;
+      was[i] = y[i];
+      y[i] = Math.max(0, y[i] + drift + (SHAPE[i] * rope.aim - y[i]) * AIM);
+    }
+    for (let i = 2; i < N - 1; i += 1) {
+      y[i] += ((y[i - 1] + y[i + 1]) / 2 - y[i]) * BEND;
+    }
+
+    let speed = 0;
+    for (let i = 2; i < N; i += 1) {
+      const delta = Math.abs(y[i] - was[i]);
+      if (delta > speed) speed = delta;
+    }
+    paint(rope);
+
+    if (Math.abs(rope.aim - y[N - 1]) < 0.12 && speed < 0.12) {
+      if (rope.aim === 0) {
+        y.fill(0);
+        was.fill(0);
+      } else {
+        y[N - 1] = rope.aim;
+      }
+      paint(rope);
+      return false;
+    }
+    return true;
+  };
+
+  const tick = () => {
+    frame = 0;
+    let busy = false;
+    ropes.forEach((rope, el) => {
+      if (!el.isConnected) {
+        ropes.delete(el);
+        return;
+      }
+      if (step(rope)) busy = true;
+    });
+    if (busy) frame = requestAnimationFrame(tick);
+  };
+
+  const wake = () => {
+    if (!frame) frame = requestAnimationFrame(tick);
+  };
+
+  const aim = (el: HTMLElement | null) => {
+    if (hovered === el) return;
+    if (hovered) {
+      const old = ropes.get(hovered);
+      if (old) {
+        old.aim = 0;
+        wake();
+      }
+    }
+    hovered = el;
+    if (el) {
+      ropeOf(el).aim = LIFT;
+      wake();
+    }
+  };
+
+  const freeze = () => {
+    hovered = null;
+    ropes.forEach((rope) => {
+      rope.aim = 0;
+      rope.y.fill(0);
+      rope.was.fill(0);
+      rope.el.style.clipPath = FLAT;
+      rope.el.style.setProperty('--curl-shade', '0');
+    });
+  };
+
+  const nearest = (node: EventTarget | null) =>
+    node instanceof Element ? node.closest<HTMLElement>('.page--left, .page--right') : null;
+
+  const canHover = window.matchMedia('(hover: hover)');
+  const calm = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  const onMove = (event: PointerEvent) => {
+    if (!canHover.matches || calm.matches) return;
+    const page = nearest(event.target);
+    aim(page && !page.closest('.is-turning') ? page : null);
+  };
+  const onLeave = () => aim(null);
+  const onBlur = () => aim(null);
+
+  document.addEventListener('pointermove', onMove, { passive: true });
+  document.addEventListener('pointerleave', onLeave);
+  window.addEventListener('blur', onBlur);
+
+  return {
+    freeze,
+    dispose() {
+      cancelAnimationFrame(frame);
+      document.removeEventListener('pointermove', onMove);
+      document.removeEventListener('pointerleave', onLeave);
+      window.removeEventListener('blur', onBlur);
+      ropes.clear();
+    },
+  };
+};
 
 export default function DiaryReader({ pages }: Props) {
   const router = useRouter();
   const { author } = useAppConfig();
   const total = pages.length;
 
-  const bookRef = useRef<HTMLDivElement>(null);
-  const paperRef = useRef<HTMLDivElement>(null);
-  const frontRef = useRef<HTMLDivElement>(null);
-  const backRef = useRef<HTMLDivElement>(null);
+  const bookRef = useRef<GrabfoldBookHandle>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const frameRef = useRef<HTMLDivElement>(null);
+  const coverRef = useRef<HTMLDivElement>(null);
+  const castRef = useRef<HTMLDivElement>(null);
+  const flipRef = useRef<HTMLDivElement>(null);
+  const pagerRef = useRef<HTMLDivElement>(null);
+  const handoffRef = useRef<HTMLDivElement>(null);
+  const liveRef = useRef<HTMLDivElement>(null);
   const calRef = useRef<HTMLDivElement>(null);
   const calBtnRef = useRef<HTMLButtonElement>(null);
-  const handoffRef = useRef<HTMLDivElement>(null);
-  const session = useRef<Session | null>(null);
-  const drag = useRef<Drag | null>(null);
-  const raf = useRef(0);
-  const indexRef = useRef(0);
-  const mobileRef = useRef(false);
-  const reduceRef = useRef(false);
-  const closingRef = useRef(false);
+  const paperEdgeRef = useRef<ReturnType<typeof createPaperEdge> | null>(null);
 
-  const [mobile, setMobile] = useState(false);
-  const [index, setIndex] = useState(0);
-  // 翻页途中被纸盖住的底层页；为 null 时按 index 正常排版
-  const [slot, setSlot] = useState<Slot | null>(null);
-  const [flip, setFlip] = useState<Flip | null>(null);
+  const closingRef = useRef(false);
+  const reduceRef = useRef(false);
+  const pendingTurn = useRef<Dir | null>(null);
+
+  const [mode, setMode] = useState<Mode>('spread');
+  const modeRef = useRef<Mode>('spread');
+  const [position, setPosition] = useState(0);
+  const positionRef = useRef(0);
   const [closing, setClosing] = useState(false);
   const [calOpen, setCalOpen] = useState(false);
   const [notice, setNotice] = useState('');
+  const [sound, setSound] = useState<PageTurnSound | null>(null);
 
   useEffect(() => {
-    indexRef.current = index;
-  }, [index]);
+    modeRef.current = mode;
+  }, [mode]);
 
   useEffect(() => {
-    mobileRef.current = mobile;
-  }, [mobile]);
+    positionRef.current = position;
+  }, [position]);
 
+  const leaves = useMemo(() => pages.map((item) => splitDiaryContent(item.content)), [pages]);
+
+  const titleMeta = useMemo(() => {
+    if (!pages.length) return '';
+    const date = dayjs(pages[0].diaryDate);
+    return `${cnYear(date.year())}年 ${CN_MONTHS[date.month() + 1]}月`;
+  }, [pages]);
+
+  const colophonNote = useMemo(() => {
+    if (!pages.length) return '';
+    const date = dayjs(pages[pages.length - 1].diaryDate);
+    return `${total} 篇旧日手札，写于${cnYear(date.year())}年的${seasonOf(date.month() + 1)}。`;
+  }, [pages, total]);
+
+  // 书页对开时平整，鼠标靠近书沿时露出一角
   useEffect(() => {
-    const mql = window.matchMedia(`(max-width:${MOBILE_MAX}px)`);
-    const sync = () => setMobile(mql.matches);
-    reduceRef.current = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    sync();
-    mql.addEventListener('change', sync);
-    return () => mql.removeEventListener('change', sync);
+    const edge = createPaperEdge();
+    paperEdgeRef.current = edge;
+    return () => {
+      edge.dispose();
+      paperEdgeRef.current = null;
+    };
   }, []);
 
-  // 台历只是偶尔翻一下：点外面或按 Esc 就收起
+  // 翻页声跟示例一样，第一次手势之后才会真的响
+  useEffect(() => {
+    let alive = true;
+    const load = async () => {
+      try {
+        const [soundModule, takesModule] = await Promise.all([import('grabfold/sound'), import('grabfold/sounds')]);
+        if (!alive) return;
+        const turnSound = soundModule.createPageTurnSound({
+          takes: takesModule.defaultPageTurnTakes,
+          boardTakes: takesModule.defaultBoardTurnTakes,
+          volume: 0.32,
+        });
+        void turnSound.preload();
+        setSound(turnSound);
+      } catch {
+        // 没有声音也能翻页
+      }
+    };
+    void load();
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  const updateCover = useCallback(() => {
+    const frame = frameRef.current;
+    const stage = stageRef.current;
+    const book = bookRef.current?.book;
+    if (!frame || !stage || !book) return;
+
+    const frameRect = frame.getBoundingClientRect();
+    const bookRect = book.bookElement.getBoundingClientRect();
+    if (bookRect.width < 40) return;
+
+    const bleedX = 17;
+    const bleedTop = 15;
+    const bleedBottom = 19;
+    const box = {
+      left: bookRect.left - frameRect.left - bleedX,
+      top: bookRect.top - frameRect.top - bleedTop,
+      width: bookRect.width + bleedX * 2,
+      height: bookRect.height + bleedTop + bleedBottom,
+    };
+
+    for (const el of [coverRef.current, castRef.current]) {
+      if (!el) continue;
+      el.style.left = `${box.left}px`;
+      el.style.top = `${box.top}px`;
+      el.style.width = `${box.width}px`;
+      el.style.height = `${box.height}px`;
+    }
+
+    const pager = pagerRef.current;
+    if (pager) {
+      const stageRect = stage.getBoundingClientRect();
+      const top = Math.min(bookRect.bottom - stageRect.top + 30, stageRect.height - 18);
+      pager.style.top = `${Math.round(top)}px`;
+      pager.style.bottom = 'auto';
+    }
+  }, []);
+
+  // 视口、字体、书本尺寸变化都要把书壳重新贴回纸边上
+  useEffect(() => {
+    const id = requestAnimationFrame(updateCover);
+    return () => cancelAnimationFrame(id);
+  }, [position, mode, updateCover]);
+
+  useEffect(() => {
+    const el = flipRef.current;
+    if (!el || typeof ResizeObserver === 'undefined') return;
+    const observer = new ResizeObserver(() => updateCover());
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [mode, updateCover]);
+
+  useEffect(() => {
+    const onResize = () => updateCover();
+    window.addEventListener('resize', onResize);
+    document.fonts?.ready.then(updateCover).catch(() => {});
+    return () => window.removeEventListener('resize', onResize);
+  }, [updateCover]);
+
+  // 窄屏单页 / 宽屏对开：和示例一样在断点处重建书本，位置跟着读者走
+  useEffect(() => {
+    const mql = window.matchMedia(SPREAD_MQ);
+    reduceRef.current = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const next = mql.matches ? 'spread' : 'single';
+    if (modeRef.current !== next) {
+      setPosition((prev) => mapMode(prev, total, modeRef.current, next));
+      modeRef.current = next;
+      setMode(next);
+    }
+
+    const onChange = (event: MediaQueryListEvent) => {
+      const target = event.matches ? 'spread' : 'single';
+      if (modeRef.current === target) return;
+      setPosition((prev) => mapMode(prev, total, modeRef.current, target));
+      modeRef.current = target;
+      setMode(target);
+    };
+    mql.addEventListener('change', onChange);
+    return () => mql.removeEventListener('change', onChange);
+  }, [total]);
+
+  // 日历点外面或按 Esc 收起
   useEffect(() => {
     if (!calOpen) return;
-    const onDown = (e: PointerEvent) => {
-      if (!calRef.current?.contains(e.target as Node)) setCalOpen(false);
+    const onDown = (event: PointerEvent) => {
+      if (!calRef.current?.contains(event.target as Node)) setCalOpen(false);
     };
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key !== 'Escape') return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
       setCalOpen(false);
       calBtnRef.current?.focus();
     };
@@ -124,233 +410,249 @@ export default function DiaryReader({ pages }: Props) {
     };
   }, [calOpen]);
 
-  // 跨断点时把视线交回同一篇日记；纸还在半空就立刻落平
+  // 连着点两下时，第二次留到这一页落定再翻
+  const requestTurn = useCallback((dir: Dir) => {
+    if (closingRef.current) return;
+    const book = bookRef.current;
+    if (!book) return;
+    if (book.book?.isTurning) {
+      pendingTurn.current = dir;
+      return;
+    }
+    pendingTurn.current = null;
+    void (dir === 'next' ? book.next() : book.prev());
+  }, []);
+
+  const handleTurnStart = useCallback(() => {
+    flipRef.current?.classList.add('is-turning');
+    paperEdgeRef.current?.freeze();
+  }, []);
+
+  const handleTurn = useCallback(() => {
+    flipRef.current?.classList.remove('is-turning');
+    const queued = pendingTurn.current;
+    pendingTurn.current = null;
+    if (queued) requestTurn(queued);
+    requestAnimationFrame(updateCover);
+  }, [requestTurn, updateCover]);
+
+  const handlePositionChange = useCallback(
+    (next: number) => {
+      setPosition(next);
+      requestAnimationFrame(updateCover);
+    },
+    [updateCover],
+  );
+
+  // 点击左右半边翻页；拖动交给引擎
   useEffect(() => {
-    if (!total) return;
-    cancelAnimationFrame(raf.current);
-    session.current = null;
-    setFlip(null);
-    setSlot(null);
-    setIndex((prev) => firstOfSpread(prev));
-  }, [mobile, total]);
+    const frame = frameRef.current;
+    if (!frame) return;
 
-  const at = (n: number) => (n >= 0 && n < total ? n : -1);
+    let tapStart: { x: number; y: number; time: number; id: number } | null = null;
 
-  const reachable = (dir: Dir, i: number, m: boolean) => {
-    if (m) return dir === 'next' ? i < total - 1 : i > 0;
-    return dir === 'next' ? i + 2 < total : i > 0;
-  };
+    const interactive = (target: EventTarget | null) =>
+      target instanceof Element && !!target.closest('button, a, input, textarea, select, label, [data-no-turn]');
 
-  const apply = (p: number) => {
-    const s = session.current;
-    if (!s || !paperRef.current) return;
-    paperRef.current.style.transform = `rotateY(${s.from + (s.to - s.from) * p}deg)`;
-    // 纸立起来的那一刻折痕最深，阴影与旋转逐帧同步
-    const shade = (Math.sin(p * Math.PI) * 0.55).toFixed(3);
-    frontRef.current?.style.setProperty('--fs', shade);
-    backRef.current?.style.setProperty('--bs', shade);
-    s.progress = p;
-  };
+    const onDown = (event: PointerEvent) => {
+      if (closingRef.current || !event.isPrimary) return;
+      if (event.pointerType === 'mouse' && event.button !== 0) return;
+      if (interactive(event.target)) return;
+      tapStart = { x: event.clientX, y: event.clientY, time: performance.now(), id: event.pointerId };
+    };
 
-  const begin = (dir: Dir) => {
-    const i = indexRef.current;
-    const m = mobileRef.current;
-    if (m) {
-      const j = at(dir === 'next' ? i + 1 : i - 1);
-      setFlip({ front: i, back: j });
-      setSlot({ left: j, right: -1 });
-      session.current = { dir, step: dir === 'next' ? 1 : -1, from: 0, to: dir === 'next' ? -180 : 180, progress: 0 };
-      return;
-    }
-    if (dir === 'next') {
-      setFlip({ front: at(i + 1), back: at(i + 2) });
-      setSlot({ left: at(i), right: at(i + 3) });
-      session.current = { dir, step: 2, from: 0, to: -180, progress: 0 };
-      return;
-    }
-    setFlip({ front: at(i - 1), back: at(i) });
-    setSlot({ left: at(i - 2), right: at(i + 1) });
-    session.current = { dir, step: -2, from: -180, to: 0, progress: 0 };
-  };
+    const onUp = (event: PointerEvent) => {
+      const start = tapStart;
+      tapStart = null;
+      if (!start || start.id !== event.pointerId) return;
+      if (Math.hypot(event.clientX - start.x, event.clientY - start.y) > 8) return;
+      if (performance.now() - start.time > 900) return;
+      if (String(window.getSelection ? window.getSelection() : '').trim()) return;
+      if (closingRef.current) return;
+      const target = bookRef.current?.book?.bookElement ?? flipRef.current;
+      if (!target) return;
+      const rect = target.getBoundingClientRect();
+      requestTurn(event.clientX >= rect.left + rect.width / 2 ? 'next' : 'prev');
+    };
 
-  const land = (step: number | null) => {
-    cancelAnimationFrame(raf.current);
-    session.current = null;
-    setFlip(null);
-    setSlot(null);
-    if (step !== null) setIndex((prev) => prev + step);
-  };
+    frame.addEventListener('pointerdown', onDown, true);
+    frame.addEventListener('pointerup', onUp, true);
+    return () => {
+      frame.removeEventListener('pointerdown', onDown, true);
+      frame.removeEventListener('pointerup', onUp, true);
+    };
+  }, [requestTurn]);
 
-  const run = (from: number, to: number, ease: (t: number) => number) =>
-    new Promise<void>((resolve) => {
-      if (!session.current) {
-        resolve();
+  // 滚轮 / 触控板：一格一页，一次两指滑动只翻一页，惯性余波不连翻
+  useEffect(() => {
+    const frame = frameRef.current;
+    if (!frame) return;
+
+    let wheelSum = 0;
+    let wheelSign = 0;
+    let wheelUntil = 0;
+
+    const onWheel = (event: WheelEvent) => {
+      if (closingRef.current || !bookRef.current) return;
+      const target = event.target instanceof Element ? event.target : null;
+      const body = target?.closest<HTMLElement>('.body');
+      // 正文太长、已经能滚动时，滚轮先让给正文
+      if (body && body.scrollHeight > body.clientHeight + 1 && Math.abs(event.deltaY) >= Math.abs(event.deltaX)) return;
+
+      event.preventDefault();
+      const now = performance.now();
+      if (now < wheelUntil) {
+        if (Math.abs(event.deltaY) < 60 && Math.abs(event.deltaX) < 60) wheelUntil = now + 190;
         return;
       }
-      const duration = FLIP_BASE_MS + Math.abs(to - from) * FLIP_RANGE_MS;
-      const start = performance.now();
-      const frame = (now: number) => {
-        if (!session.current) {
-          resolve();
-          return;
-        }
-        const t = Math.min(1, (now - start) / duration);
-        apply(from + (to - from) * ease(t));
-        if (t < 1) raf.current = requestAnimationFrame(frame);
-        else resolve();
-      };
-      raf.current = requestAnimationFrame(frame);
+
+      const delta = Math.abs(event.deltaY) >= Math.abs(event.deltaX) ? event.deltaY : event.deltaX;
+      const sign = Math.sign(delta);
+      if (!sign) return;
+
+      const notch = event.deltaMode !== 0 || Math.abs(delta) >= 90;
+      if (notch) {
+        wheelSum = 0;
+        wheelUntil = now + 150;
+        requestTurn(delta > 0 ? 'next' : 'prev');
+        return;
+      }
+
+      if (sign !== wheelSign) {
+        wheelSum = 0;
+        wheelSign = sign;
+      }
+      wheelSum += delta;
+      if (Math.abs(wheelSum) < 52) return;
+      wheelSum = 0;
+      wheelUntil = now + 190;
+      requestTurn(sign > 0 ? 'next' : 'prev');
+    };
+
+    frame.addEventListener('wheel', onWheel, { passive: false });
+    return () => frame.removeEventListener('wheel', onWheel);
+  }, [requestTurn]);
+
+  // 键盘翻页：Home / End 直接到扉页与尾页
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if (!bookRef.current || closingRef.current) return;
+      if (event.metaKey || event.ctrlKey || event.altKey) return;
+      const target = event.target as HTMLElement | null;
+      if (target?.closest('input, textarea, select, [contenteditable="true"]')) return;
+      if (target?.closest('button, a')) return;
+
+      if (event.key === 'ArrowLeft' || event.key === 'PageUp') {
+        event.preventDefault();
+        requestTurn('prev');
+      } else if (event.key === 'ArrowRight' || event.key === 'PageDown' || event.key === ' ') {
+        event.preventDefault();
+        requestTurn('next');
+      } else if (event.key === 'Home') {
+        event.preventDefault();
+        void bookRef.current.turnTo(modeRef.current === 'spread' ? -1 : -2);
+      } else if (event.key === 'End') {
+        event.preventDefault();
+        void bookRef.current.turnTo(modeRef.current === 'spread' ? total : total * 2 + 1);
+      }
+    };
+
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [requestTurn, total]);
+
+  const first = mode === 'spread' ? -1 : -2;
+  const last = mode === 'spread' ? total : total * 2 + 1;
+  const canPrev = position > first;
+  const canNext = position < last;
+
+  useEffect(() => {
+    frameRef.current?.classList.toggle('is-turnable', canPrev || canNext);
+  }, [canPrev, canNext]);
+
+  const logical = useMemo(() => {
+    if (!total || position < 0) return -1;
+    if (mode === 'spread') return position >= total ? total : position;
+    if (position >= total * 2) return total;
+    return Math.floor(position / 2);
+  }, [mode, position, total]);
+
+  const current = logical >= 0 && logical < total ? pages[logical] : null;
+  const monthKey = current
+    ? dayjs(current.diaryDate).format('YYYY-MM')
+    : total
+      ? dayjs(pages[0].diaryDate).format('YYYY-MM')
+      : '';
+  const activeDates = current ? [current.diaryDate] : [];
+  const edge = logical < 0 || logical >= total;
+  const pageLabel = logical < 0 ? '序' : logical >= total ? '终' : String(logical + 1).padStart(2, '0');
+
+  const marked = useMemo(() => {
+    const map = new Map<string, number>();
+    pages.forEach((item, index) => {
+      if (!map.has(item.diaryDate)) map.set(item.diaryDate, index);
     });
+    return map;
+  }, [pages]);
 
-  const go = (dir: Dir) => {
-    if (closingRef.current || session.current || !reachable(dir, indexRef.current, mobileRef.current)) return;
-    const m = mobileRef.current;
-    const step = dir === 'next' ? (m ? 1 : 2) : m ? -1 : -2;
-    if (reduceRef.current) {
-      setIndex((prev) => prev + step);
-      return;
+  useEffect(() => {
+    const message = !total
+      ? '日记本还是空的'
+      : logical < 0
+        ? '扉页，旧日手札'
+        : logical >= total
+          ? '尾页，本册读完了'
+          : `正在阅读：${pages[logical].title || dayjs(pages[logical].diaryDate).format('YYYY年M月D日')}，第 ${logical + 1} 篇，共 ${total} 篇`;
+    const timer = window.setTimeout(() => {
+      if (liveRef.current) liveRef.current.textContent = message;
+    }, 220);
+    return () => window.clearTimeout(timer);
+  }, [logical, total, pages]);
+
+  const singleLeaf = (index: number) => {
+    if (index === 0) return <DiaryTitleSheet meta={titleMeta} />;
+    if (index >= total * 2 + 1) return <DiaryColophonSheet count={total} note={colophonNote} />;
+    const entry = Math.floor((index - 1) / 2);
+    return (
+      <DiaryEntrySheet
+        diary={pages[entry]}
+        side={index % 2 === 1 ? 'left' : 'right'}
+        index={entry}
+        content={leaves[entry][index % 2 === 1 ? 0 : 1]}
+      />
+    );
+  };
+
+  const renderPage = (page: PageRef) => {
+    if (page.kind === 'cover') return page.face === 'inside' ? <DiaryEndpaper /> : null;
+
+    if (mode === 'single') {
+      if (page.kind === 'back') return <DiaryVerso />;
+      return singleLeaf(page.sheet);
     }
-    begin(dir);
-    run(0, 1, easeInOutCubic).then(() => land(session.current?.step ?? null));
+
+    if (page.kind === 'front') {
+      if (page.sheet === 0) return <DiaryTitleSheet meta={titleMeta} />;
+      if (page.sheet > total) return <DiaryEndpaper />;
+      const entry = page.sheet - 1;
+      return <DiaryEntrySheet diary={pages[entry]} side="right" index={entry} content={leaves[entry][1]} />;
+    }
+
+    if (page.sheet >= total) return <DiaryColophonSheet count={total} note={colophonNote} />;
+    return <DiaryEntrySheet diary={pages[page.sheet]} side="left" index={page.sheet} content={leaves[page.sheet][0]} />;
   };
 
-  const jump = (target: number) => {
-    if (closingRef.current || session.current || target < 0 || target >= total) return;
-    land(null);
-    setIndex(mobileRef.current ? target : firstOfSpread(target));
-    revealBook();
-  };
-
-  const jumpFromCalendar = (target: number) => {
-    jump(target);
+  const jumpToIndex = (index: number) => {
+    const target = modeRef.current === 'spread' ? index : index * 2;
+    if (target !== positionRef.current) void bookRef.current?.turnTo(target);
     setCalOpen(false);
   };
 
-  // 日历落到书本下面时，跳完页、合上本子都得把视线送回纸上
-  const revealBook = () => {
-    const book = bookRef.current;
-    if (!book) return;
-    const rect = book.getBoundingClientRect();
-    if (rect.top >= 0 && rect.bottom <= window.innerHeight) return;
-    book.scrollIntoView({ block: 'center', behavior: reduceRef.current ? 'auto' : 'smooth' });
-  };
-
-  // 拖纸角：横向拖过阈值才算翻页，进度直接跟着手指走
-  const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (e.button > 0 || closingRef.current || session.current || total < 2) return;
-    const target = e.target as HTMLElement | null;
-    if (target?.closest('button, a, img, input')) return;
-    drag.current = { x0: e.clientX, y0: e.clientY, started: false };
-  };
-
-  const startDrag = (dx: number, dy: number): Dir | null => {
-    if (Math.abs(dx) < DRAG_MIN || Math.abs(dx) < Math.abs(dy)) return null;
-    const m = mobileRef.current;
-    if (m) return dx < 0 ? 'next' : 'prev';
-    const rect = bookRef.current?.getBoundingClientRect();
-    if (!rect) return null;
-    const inRight = (drag.current?.x0 ?? 0) - rect.left > rect.width / 2;
-    if (dx < 0 && inRight) return 'next';
-    if (dx > 0 && !inRight) return 'prev';
-    return null;
-  };
-
-  // 只依赖 ref，挂一次即可
-  useEffect(() => {
-    const onMove = (e: PointerEvent) => {
-      const d = drag.current;
-      if (!d) return;
-      const dx = e.clientX - d.x0;
-      const dy = e.clientY - d.y0;
-      if (!d.started) {
-        const dir = startDrag(dx, dy);
-        if (!dir) return;
-        if (!reachable(dir, indexRef.current, mobileRef.current)) {
-          drag.current = null;
-          return;
-        }
-        begin(dir);
-        d.started = true;
-      }
-      const s = session.current;
-      const rect = bookRef.current?.getBoundingClientRect();
-      if (!s || !rect) return;
-      const base = (mobileRef.current ? rect.width : rect.width / 2) * 0.85;
-      const p = s.dir === 'next' ? (d.x0 - e.clientX) / base : (e.clientX - d.x0) / base;
-      apply(Math.min(1, Math.max(0, p)));
-    };
-
-    const settle = (clientX: number | null) => {
-      const d = drag.current;
-      drag.current = null;
-      if (!d) return;
-      const s = session.current;
-
-      if (!d.started) {
-        if (clientX === null || s) return;
-        // 只是点了一下：选中文字时不翻页
-        if (window.getSelection()?.toString()) return;
-        const rect = bookRef.current?.getBoundingClientRect();
-        if (!rect) return;
-        go(clientX - rect.left > rect.width / 2 ? 'next' : 'prev');
-        return;
-      }
-      if (!s) return;
-      const target = s.progress > SNAP ? 1 : 0;
-      run(s.progress, target, easeOutCubic).then(() => {
-        if (session.current !== s) return;
-        if (target === 1) land(s.step);
-        else land(null);
-      });
-    };
-
-    const onUp = (e: PointerEvent) => settle(e.clientX);
-    const onCancel = () => settle(null);
-
-    window.addEventListener('pointermove', onMove);
-    window.addEventListener('pointerup', onUp);
-    window.addEventListener('pointercancel', onCancel);
-    return () => {
-      window.removeEventListener('pointermove', onMove);
-      window.removeEventListener('pointerup', onUp);
-      window.removeEventListener('pointercancel', onCancel);
-      cancelAnimationFrame(raf.current);
-    };
-  }, []);
-
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.metaKey || e.ctrlKey || e.altKey) return;
-      const el = e.target as HTMLElement | null;
-      if (el?.tagName === 'INPUT' || el?.tagName === 'TEXTAREA' || el?.isContentEditable) return;
-      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
-        e.preventDefault();
-        go('next');
-      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
-        e.preventDefault();
-        go('prev');
-      } else if (e.key === 'Home') {
-        e.preventDefault();
-        jump(0);
-      } else if (e.key === 'End') {
-        e.preventDefault();
-        jump(total - 1);
-      }
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [total]);
-
-  // 合不上时把书放回原样，留给读者再试一次
   const restoreBook = () => {
-    const book = bookRef.current;
-    if (book) {
-      book.getAnimations().forEach((anim) => anim.cancel());
-      book.style.visibility = '';
-    }
+    frameRef.current?.getAnimations().forEach((animation) => animation.cancel());
     const overlay = handoffRef.current;
     if (overlay) {
-      overlay.getAnimations().forEach((anim) => anim.cancel());
+      overlay.getAnimations().forEach((animation) => animation.cancel());
       overlay.style.visibility = 'hidden';
     }
     closingRef.current = false;
@@ -358,34 +660,29 @@ export default function DiaryReader({ pages }: Props) {
     setNotice('日记本没合上，稍后再试一次。');
   };
 
-  const settleClose = async (locked: Promise<boolean>) => {
-    if (await locked) router.refresh();
-    else restoreBook();
-  };
-
   // 合上之后把硬壳交给浮层，沿直线滑回开门时封面停着的桌面位置
   const handOff = async (locked: Promise<boolean>) => {
-    const book = bookRef.current;
     const overlay = handoffRef.current;
-    const cover = readCoverRect() ?? fallbackCoverRect();
-    if (!book || !overlay) {
-      void settleClose(locked);
+    const cover = coverRef.current;
+    const saved = readCoverRect() ?? fallbackCoverRect();
+
+    if (!overlay || !cover) {
+      if (await locked) router.refresh();
+      else restoreBook();
       return;
     }
 
-    // 先回到封面页当初的滚动位置，刷新后封面才会和浮层严丝合缝
-    if (window.scrollY !== cover.scrollY) window.scrollTo(0, cover.scrollY);
-
-    const rect = book.getBoundingClientRect();
-    // 桌面合上后只剩书脊右侧那一半；窄屏是一整页
-    const start = mobileRef.current
-      ? { left: rect.left, top: rect.top, width: rect.width, height: rect.height }
-      : { left: rect.left + rect.width / 2, top: rect.top, width: rect.width / 2, height: rect.height };
+    if (window.scrollY !== saved.scrollY) window.scrollTo(0, saved.scrollY);
+    const rect = cover.getBoundingClientRect();
+    const start =
+      modeRef.current === 'single'
+        ? { left: rect.left, top: rect.top, width: rect.width, height: rect.height }
+        : { left: rect.left + rect.width / 2, top: rect.top, width: rect.width / 2, height: rect.height };
     const end = {
-      left: cover.left - window.scrollX,
-      top: cover.top - window.scrollY,
-      width: cover.width,
-      height: cover.height,
+      left: saved.left - window.scrollX,
+      top: saved.top - window.scrollY,
+      width: saved.width,
+      height: saved.height,
     };
 
     overlay.style.left = `${start.left}px`;
@@ -394,8 +691,8 @@ export default function DiaryReader({ pages }: Props) {
     overlay.style.height = `${start.height}px`;
     overlay.style.visibility = 'visible';
 
-    overlay.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 160, easing: 'linear', fill: 'both' });
-    book.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 160, easing: 'linear', fill: 'both' });
+    overlay.animate([{ opacity: 0 }, { opacity: 1 }], { duration: CLOSE_FADE_MS, easing: 'linear', fill: 'both' });
+    frameRef.current?.animate([{ opacity: 1 }, { opacity: 0 }], { duration: CLOSE_FADE_MS, easing: 'linear', fill: 'both' });
 
     const slide = overlay.animate(
       [
@@ -406,120 +703,125 @@ export default function DiaryReader({ pages }: Props) {
     );
 
     const [ok] = await Promise.all([locked, slide.finished.catch(() => undefined)]);
-    book.style.visibility = 'hidden';
     if (ok) router.refresh();
     else restoreBook();
   };
 
-  // 合上日记本：先让硬壳慢慢扣下，停一下再滑回封面页；锁请求在动画期间并行发出
   const closeBook = () => {
     if (closingRef.current) return;
     closingRef.current = true;
     setCalOpen(false);
+    setNotice('');
     setClosing(true);
-    revealBook();
+
     const locked = lockDiaryAPI().then(
       () => true,
       () => false,
     );
     if (reduceRef.current) {
-      void settleClose(locked);
+      void locked.then((ok) => {
+        if (ok) router.refresh();
+        else restoreBook();
+      });
       return;
     }
-    window.setTimeout(() => void handOff(locked), CLOSE_FOLD_MS + CLOSE_HOLD_MS);
+    void handOff(locked);
   };
-
-  const marked = useMemo(() => {
-    const map = new Map<string, number>();
-    pages.forEach((item, i) => {
-      if (!map.has(item.diaryDate)) map.set(item.diaryDate, i);
-    });
-    return map;
-  }, [pages]);
-
-  const spread: Slot = slot ?? { left: index, right: mobile || at(index + 1) < 0 ? -1 : at(index + 1) };
-  // 页码/月份按逻辑位置算，翻页途中被提前换掉的底层页不参与
-  const logical: Slot = { left: index, right: mobile || at(index + 1) < 0 ? -1 : at(index + 1) };
-  // 新日记排在前面，左页总比右页新
-  const newest = logical.left;
-  const activeDates = [logical.left, logical.right].filter((n) => n >= 0).map((n) => pages[n].diaryDate);
-  const monthKey = total ? dayjs(pages[newest].diaryDate).format('YYYY-MM') : '';
-
-  const sheet = (n: number) => <DiarySheet diary={n >= 0 ? pages[n] : undefined} num={n >= 0 ? n + 1 : undefined} total={total} />;
 
   return (
     <section className={`diary-reader diary-scene ${closing ? 'is-shutting' : ''}`}>
-      <DiaryLamp />
-
-      <header className="diary-bar diary-bar-top">
-        <button type="button" className="diary-tool" onClick={closeBook} aria-label="合上日记本" disabled={closing}>
-          <FiLock className="size-4" />
-          <span>合上日记本</span>
-        </button>
-
-        {total ? (
-          <div className="diary-cal-slot" ref={calRef}>
-            <button
-              ref={calBtnRef}
-              type="button"
-              className="diary-tool"
-              onClick={() => setCalOpen((open) => !open)}
-              disabled={closing}
-              aria-expanded={calOpen}
-              aria-controls="diary-calendar"
-            >
-              <FiCalendar className="size-4" />
-              <span>日历</span>
+      {total ? (
+        <>
+          <header className="diary-tools">
+            <button type="button" className="diary-tool" onClick={closeBook} disabled={closing} aria-label="合上日记本">
+              <FiLock className="size-4" />
+              <span>合上日记本</span>
             </button>
 
-            {calOpen ? (
-              <div id="diary-calendar" className="diary-cal-pop" aria-label="日记日历">
-                <DiaryCalendar marked={marked} activeDates={activeDates} month={monthKey} onJump={jumpFromCalendar} onClose={() => setCalOpen(false)} />
+            <div className="diary-cal-slot" ref={calRef}>
+              <button
+                ref={calBtnRef}
+                type="button"
+                className="diary-tool"
+                onClick={() => setCalOpen((open) => !open)}
+                disabled={closing}
+                aria-expanded={calOpen}
+                aria-controls="diary-calendar"
+              >
+                <FiCalendar className="size-4" />
+                <span>日历</span>
+              </button>
+
+              {calOpen ? (
+                <div id="diary-calendar" className="diary-cal-pop" aria-label="日记日历">
+                  <DiaryCalendar marked={marked} activeDates={activeDates} month={monthKey} onJump={jumpToIndex} onClose={() => setCalOpen(false)} />
+                </div>
+              ) : null}
+            </div>
+          </header>
+
+          <div className="diary-stage">
+            <div className="book-stage" ref={stageRef}>
+              <div className="book-frame" ref={frameRef}>
+                <div className="book-cast" ref={castRef} aria-hidden="true" />
+                <div className="book-cover" ref={coverRef} aria-hidden="true" />
+
+                <GrabfoldBook
+                  key={mode}
+                  ref={bookRef}
+                  className="flipbook"
+                  sheets={mode === 'spread' ? total + 1 : total * 2 + 2}
+                  covers="inside"
+                  hard={() => true}
+                  pageRatio={450 / 680}
+                  fit="contain"
+                  layout={mode}
+                  position={position}
+                  duration={FLIP_MS}
+                  commitAt={0.18}
+                  thickness={9}
+                  shadow={0.46}
+                  gutter={0.13}
+                  lift={22}
+                  center
+                  keyboard={false}
+                  grabBlock={false}
+                  label="日记本"
+                  sound={sound}
+                  renderPage={renderPage}
+                  onTurnStart={handleTurnStart}
+                  onTurn={handleTurn}
+                  onPositionChange={handlePositionChange}
+                />
               </div>
-            ) : null}
+
+              <div ref={pagerRef} className={`pager ${edge ? 'is-edge' : ''}`}>
+                <span className={`entry-number ${edge ? 'is-word' : ''}`}>{pageLabel}</span>
+                <span className="pager-sep">/</span>
+                <span className="entry-total">{String(total).padStart(2, '0')}</span>
+              </div>
+            </div>
+
+            <div className="a11y-turn">
+              <button type="button" onClick={() => requestTurn('prev')} disabled={!canPrev} aria-keyshortcuts="ArrowLeft PageUp">
+                上一篇
+              </button>
+              <button type="button" onClick={() => requestTurn('next')} disabled={!canNext} aria-keyshortcuts="ArrowRight PageDown">
+                下一篇
+              </button>
+            </div>
+
+            <div ref={liveRef} className="sr-only" aria-live="polite" />
           </div>
-        ) : null}
-      </header>
 
-      <div className="diary-stage">
-        {total ? (
-          <div ref={bookRef} className={`diary-book ${closing ? 'is-closing' : ''}`} onPointerDown={onPointerDown}>
-            <div className="diary-leaf diary-leaf-left">{sheet(spread.left)}</div>
-            <div className="diary-leaf diary-leaf-right">{sheet(spread.right)}</div>
-
-            {flip ? (
-              <div className="diary-paper" ref={paperRef}>
-                <div className="diary-paper-face diary-paper-front" ref={frontRef}>
-                  {sheet(flip.front)}
-                </div>
-                <div className="diary-paper-face diary-paper-back" ref={backRef}>
-                  {sheet(flip.back)}
-                </div>
-              </div>
-            ) : null}
-
-            {closing ? (
-              <div aria-hidden className="diary-lid">
-                <div className="diary-lid-face diary-lid-page">{sheet(spread.left)}</div>
-                <div className="diary-lid-face diary-lid-cover">
-                  <DiaryCoverFront author={author?.name} />
-                </div>
-              </div>
-            ) : null}
-
-            <span aria-hidden className="diary-spine" />
-            <span aria-hidden className="diary-ribbon" />
+          <div ref={handoffRef} aria-hidden className="diary-handoff">
+            <DiaryCoverFront author={author?.name} />
           </div>
-        ) : (
+        </>) : (
+        <div className="diary-stage">
           <p className="diary-blank">本子还是空的。主理人在后台写下第一页，这里就有字了。</p>
-        )}
-      </div>
-
-      {closing ? (
-        <div ref={handoffRef} aria-hidden className="diary-handoff">
-          <DiaryCoverFront author={author?.name} />
         </div>
-      ) : null}
+      )}
 
       <p aria-live="polite" className="diary-notice">
         {notice}

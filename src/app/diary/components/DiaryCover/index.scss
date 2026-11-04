@@ -1,9 +1,9 @@
-// 封面正脸：门外的合着本子、门里合上时扣下来的硬壳共用同一块布面
+// 封面正脸：门外的合着本子、门里合上时扣下来的硬壳共用这一块皮革
 // 题签字号按封面宽度缩（cqw），从书的一半缩回桌上那本的尺寸时字不会跳
 .diary-cover-front {
-  --diary-cover-cloth: #223047;
-  --diary-cover-edge: #16202f;
-  --diary-cover-stamp: #b4402f;
+  --diary-cover-cloth: #4a2f1a;
+  --diary-cover-edge: #24160d;
+  --diary-cover-stamp: #9a4a38;
 
   position: absolute;
   inset: 0;
@@ -14,28 +14,29 @@
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
   background-color: var(--diary-cover-cloth);
-  // 布纹：两组极细的经纬线叠在墨蓝底上
   background-image:
-    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.045) 0 1px, transparent 1px 3px),
-    repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.16) 0 1px, transparent 1px 3px);
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='l'><feTurbulence type='fractalNoise' baseFrequency='0.55' numOctaves='4' seed='5'/><feColorMatrix type='matrix' values='0 0 0 0 0.14 0 0 0 0 0.08 0 0 0 0 0.03 0.5 0.5 0.5 0 -0.56'/></filter><rect width='180' height='180' filter='url(%23l)' opacity='0.85'/></svg>"),
+    radial-gradient(52% 40% at 8% 4%, rgba(214, 164, 110, 0.26), rgba(214, 164, 110, 0) 72%),
+    radial-gradient(46% 40% at 96% 96%, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0) 74%),
+    linear-gradient(150deg, #6b4526 0%, #4b2f18 46%, #2b190d 100%);
+  background-size: 180px 180px, auto, auto, auto;
   box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.07),
-    0 18px 40px -18px rgba(15, 23, 42, 0.55);
-}
-
-.dark .diary-cover-front {
-  --diary-cover-cloth: #26334a;
-  --diary-cover-edge: #1a2434;
-  --diary-cover-stamp: #d6705c;
+    inset 0 1px 0 rgba(255, 226, 182, 0.26),
+    inset 1px 0 0 rgba(255, 226, 182, 0.1),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.5),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.42),
+    inset 0 0 0 3px rgba(255, 220, 172, 0.055),
+    inset 0 0 18px 5px rgba(0, 0, 0, 0.42),
+    0 18px 40px -18px rgba(0, 0, 0, 0.72);
 }
 
 // 书脊：靠左的一道暗带，压两道横箍
 .diary-cover-spine {
   position: absolute;
   inset: 0 auto 0 0;
-  width: 26px;
+  width: 24px;
   background: linear-gradient(90deg, var(--diary-cover-edge), transparent);
-  box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.06);
+  box-shadow: inset -1px 0 0 rgba(255, 232, 194, 0.12);
 }
 
 .diary-cover-spine::before,
@@ -44,7 +45,7 @@
   right: 5px;
   left: 5px;
   height: 1px;
-  background: rgba(255, 255, 255, 0.14);
+  background: rgba(255, 232, 194, 0.16);
   content: '';
 }
 
@@ -59,16 +60,16 @@
 // 压印边框：向内凹的一圈细线
 .diary-cover-body {
   position: absolute;
-  inset: 14px 14px 14px 34px;
+  inset: 14px 14px 14px 32px;
   display: flex;
   align-items: flex-start;
   justify-content: center;
   padding-top: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 0 0 5px rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 232, 194, 0.13);
+  box-shadow: 0 0 0 5px rgba(255, 232, 194, 0.05);
 }
 
-// 题签：一张裱在布面上的宣纸小签，细双框，竖排书名，款识落在左下
+// 题签：一张裱在皮面上的宣纸小签，细双框，竖排书名，款识落在左下
 .diary-cover-slip {
   position: relative;
   display: flex;
@@ -78,8 +79,9 @@
   padding: 15px 11px 12px 12px;
   background:
     repeating-linear-gradient(90deg, rgba(120, 95, 60, 0.026) 0 1px, transparent 1px 3px),
-    radial-gradient(120% 80% at 30% 10%, rgba(255, 255, 255, 0.5), transparent 62%),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='170' height='170'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.78' numOctaves='4' stitchTiles='stitch'/><feColorMatrix type='matrix' values='0 0 0 0 0.36 0 0 0 0 0.26 0 0 0 0 0.13 0.45 0.45 0.45 0 -0.42'/></filter><rect width='170' height='170' filter='url(%23n)' opacity='0.45'/></svg>"),
     linear-gradient(158deg, #f8f3e7 0%, #f0e8d7 58%, #e8ddc9 100%);
+  background-size: auto, 170px 170px, auto;
   box-shadow:
     inset 0 0 0 1px rgba(96, 76, 48, 0.24),
     inset 1px 1px 0 rgba(255, 255, 255, 0.7),
@@ -97,11 +99,11 @@
   content: '';
 }
 
-// 题字用楷体，像请人手写的书签；没装楷体的系统退回宋体
+// 题字用宋体，像书页上印的名字；没装思源宋体就退回本机宋体
 .diary-cover-title {
-  font-family: 'Kaiti SC', 'STKaiti', KaiTi, var(--diary-serif);
+  font-family: var(--diary-serif);
   font-size: 9.2cqw;
-  font-weight: 400;
+  font-weight: 500;
   line-height: 1.18;
   letter-spacing: 0.24em;
   color: #262218;
@@ -111,7 +113,7 @@
 .diary-cover-author {
   margin-top: auto;
   padding: 0 1px 2px;
-  font-family: 'Kaiti SC', 'STKaiti', KaiTi, var(--diary-serif);
+  font-family: var(--diary-serif);
   font-size: 11.5px;
   line-height: 1.2;
   letter-spacing: 0.24em;
@@ -129,7 +131,6 @@
   height: 46px;
   padding-top: 3px;
   border-radius: 3px;
-  place-items: center;
   font-size: 13px;
   font-weight: 700;
   line-height: 1.1;
@@ -137,7 +138,8 @@
   color: #f6efe8;
   text-align: center;
   background: var(--diary-cover-stamp, var(--diary-seal));
+  box-shadow: inset 0 0 0 1.5px rgba(246, 239, 232, 0.5);
   transform: rotate(-5deg);
   writing-mode: vertical-rl;
-  box-shadow: inset 0 0 0 1.5px rgba(246, 239, 232, 0.5);
+  place-items: center;
 }

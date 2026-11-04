@@ -1,43 +1,29 @@
-// 一本布面精装本：合着时只有封面，点开后封面的背板成了左页，密语写在牛皮纸右页
+// 一本皮面精装本：合着时只有封面，点开后封面的背板成了左页，密语写在发黄的纸右页
 // 宽高、字号、印章都从 --page-w 推，桌面是两页对开，窄屏只留一页
 .diary-booklet {
-  --page-w: min(340px, 86vw, calc((100dvh - 250px) * 0.75));
-  // 内页牛皮纸，和翻页那本书用同一套暖色
-  --page-paper: #faf5e9;
-  --page-paper-2: #f1e8d6;
-  --page-edge: #e7dcc6;
-  --page-edge-2: #ddd0b7;
-  --page-ink: #312b24;
-  --page-ink-2: #6d6357;
-  --page-ink-3: #a89c8c;
-  --page-line: rgba(90, 70, 45, 0.2);
+  --page-w: min(340px, 86vw, calc((100dvh - 250px) * 0.66));
+  // 内页旧纸，和翻页那本书用同一套暖色
+  --page-paper: #eee3c8;
+  --page-paper-2: #e6d8ba;
+  --page-edge: #d6c39f;
+  --page-edge-2: #cbb994;
+  --page-ink: #3f3529;
+  --page-ink-2: #6d5c47;
+  --page-ink-3: #9c8869;
+  --page-line: rgba(112, 84, 48, 0.22);
   --page-rule: rgba(120, 95, 60, 0.06);
-  --page-seal: #b4402f;
-  --page-seal-soft: rgba(180, 64, 47, 0.14);
-  --page-note: rgba(180, 64, 47, 0.07);
-  --page-gloss: rgba(255, 255, 255, 0.56);
-  --gate-drop: rgba(52, 38, 20, 0.3);
-  --diary-serif: Georgia, 'Songti SC', 'STSong', 'Noto Serif SC', 'Source Han Serif SC', 'SimSun', serif;
+  --page-seal: #9a4a38;
+  --page-seal-soft: rgba(154, 74, 56, 0.14);
+  --page-note: rgba(154, 74, 56, 0.08);
+  --page-gloss: rgba(255, 252, 242, 0.42);
+  --gate-drop: rgba(0, 0, 0, 0.55);
+  --diary-serif: 'Noto Serif SC', 'Songti SC', 'STSong', 'SimSun', serif;
 
   position: relative;
   width: var(--page-w);
-  height: calc(var(--page-w) * 4 / 3);
+  height: calc(var(--page-w) * 680 / 450);
   perspective: 1800px;
   transition: opacity 0.26s ease;
-}
-
-.dark .diary-booklet {
-  --page-paper: #e9e1d2;
-  --page-paper-2: #ded5c3;
-  --page-edge: #cfc2a9;
-  --page-edge-2: #c1b499;
-  --page-ink: #2f2820;
-  --page-ink-2: #5c5142;
-  --page-ink-3: #8b806d;
-  --page-line: rgba(60, 45, 25, 0.24);
-  --page-rule: rgba(60, 45, 25, 0.09);
-  --page-gloss: rgba(255, 255, 255, 0.3);
-  --gate-drop: rgba(0, 0, 0, 0.55);
 }
 
 // 答对后整本淡出，交给翻页那一侧接手
@@ -45,21 +31,26 @@
   opacity: 0;
 }
 
-// ================= 右页：写着密语的牛皮纸 =================
+// ================= 右页：写着密语的旧纸 =================
 .diary-page {
   position: absolute;
   inset: 0;
   z-index: 1;
   overflow: hidden;
-  border-radius: 3px 8px 8px 3px;
   color: var(--page-ink);
-  background:
-    radial-gradient(120% 90% at 14% 0%, var(--page-gloss), transparent 60%),
+  background-color: var(--page-paper);
+  background-image:
+    radial-gradient(126% 84% at 50% -22%, rgba(255, 252, 242, 0.42) 0%, rgba(255, 252, 242, 0.12) 40%, rgba(255, 252, 242, 0) 64%),
+    radial-gradient(94% 68% at 70% 114%, rgba(150, 112, 62, 0.32) 0%, rgba(150, 112, 62, 0) 66%),
     repeating-linear-gradient(0deg, transparent 0 29px, var(--page-rule) 29px 30px),
-    linear-gradient(100deg, var(--page-paper) 0%, var(--page-paper-2) 100%);
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='170' height='170'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.78' numOctaves='4' stitchTiles='stitch'/><feColorMatrix type='matrix' values='0 0 0 0 0.36 0 0 0 0 0.26 0 0 0 0 0.13 0.45 0.45 0.45 0 -0.42'/></filter><rect width='170' height='170' filter='url(%23n)' opacity='0.55'/></svg>");
+  background-repeat: no-repeat, no-repeat, repeat, repeat;
+  background-size: auto, auto, auto, 170px 170px;
+  border-radius: 3px 8px 8px 3px;
   box-shadow:
     inset 0 0 0 1px var(--page-line),
     inset 28px 0 34px -32px rgba(58, 40, 18, 0.55),
+    inset 0 0 34px 0 rgba(118, 88, 50, 0.1),
     3px 0 0 -1px var(--page-edge),
     6px 0 0 -2px var(--page-edge-2),
     0 26px 50px -30px var(--gate-drop);
@@ -385,13 +376,16 @@
   padding: 30px;
   border-radius: 10px 4px 4px 10px;
   transform: rotateY(180deg);
-  background-color: var(--diary-ink);
+  background-color: #34200f;
   background-image:
-    radial-gradient(120% 80% at 30% 0%, rgba(255, 255, 255, 0.08), transparent 62%),
-    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.04) 0 1px, transparent 1px 3px),
-    repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.16) 0 1px, transparent 1px 3px);
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='l'><feTurbulence type='fractalNoise' baseFrequency='0.55' numOctaves='4' seed='5'/><feColorMatrix type='matrix' values='0 0 0 0 0.11 0 0 0 0 0.06 0 0 0 0 0.02 0.5 0.5 0.5 0 -0.54'/></filter><rect width='180' height='180' filter='url(%23l)' opacity='0.95'/></svg>"),
+    radial-gradient(66% 52% at 10% -2%, rgba(198, 144, 92, 0.16), rgba(198, 144, 92, 0) 68%),
+    radial-gradient(70% 60% at 92% 104%, rgba(0, 0, 0, 0.42), rgba(0, 0, 0, 0) 72%),
+    linear-gradient(102deg, #4a301b 0%, #36200f 52%, #221307 100%);
+  background-repeat: repeat, no-repeat, no-repeat, no-repeat;
+  background-size: 180px 180px, auto, auto, auto;
   box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.05),
+    inset 0 0 0 1px rgba(255, 226, 182, 0.08),
     inset -28px 0 34px -32px rgba(0, 0, 0, 0.65),
     0 20px 44px -22px rgba(15, 23, 42, 0.5);
 }
@@ -399,17 +393,17 @@
 .diary-cover-frame {
   position: absolute;
   inset: 16px;
-  border: 1px solid rgba(246, 239, 232, 0.14);
+  border: 1px solid rgba(255, 226, 182, 0.14);
   border-radius: 2px;
 }
 
 .diary-cover-inside-title {
   font-family: var(--diary-serif);
   font-size: calc(var(--page-w) * 0.09);
-  font-weight: 700;
+  font-weight: 500;
   line-height: 1.2;
   letter-spacing: 0.26em;
-  color: rgba(246, 239, 232, 0.9);
+  color: rgba(246, 231, 207, 0.9);
   writing-mode: vertical-rl;
 }
 
@@ -417,7 +411,7 @@
   margin-top: -6px;
   font-size: 12px;
   letter-spacing: 0.2em;
-  color: rgba(246, 239, 232, 0.46);
+  color: rgba(246, 231, 207, 0.46);
   writing-mode: vertical-rl;
 }
 
@@ -444,22 +438,18 @@
   margin: 24px 0 0;
   font-size: 11.5px;
   letter-spacing: 0.16em;
-  color: rgba(74, 64, 51, 0.55);
+  color: rgba(230, 210, 175, 0.55);
   transition: opacity 0.24s ease;
 
   &.is-gone {
     opacity: 0;
-  }
-
-  .dark & {
-    color: rgba(241, 232, 215, 0.42);
   }
 }
 
 // 矮屏手机：收一点留白，别让密语纸自己滚动
 @media (max-height: 720px) {
   .diary-booklet {
-    --page-w: min(320px, 82vw, calc((100dvh - 230px) * 0.75));
+    --page-w: min(320px, 82vw, calc((100dvh - 230px) * 0.66));
   }
 
   .diary-page-content {
@@ -480,7 +470,7 @@
 // 合着时封面居中；翻开时封面绕书脊转到左边，书本顺势右移，对开页停在正中
 @media (min-width: 900px) {
   .diary-booklet {
-    --page-w: min(clamp(300px, 31vw, 420px), calc((100dvh - 230px) * 0.75), calc((100vw - 64px) / 2));
+    --page-w: min(clamp(300px, 31vw, 420px), calc((100dvh - 230px) * 0.66), calc((100vw - 64px) / 2));
 
     width: calc(var(--page-w) * 2);
     transform: translateX(calc(var(--page-w) * -0.5));

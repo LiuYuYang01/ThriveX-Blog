@@ -1,82 +1,51 @@
-// 牛皮纸日记本：书页、装订线、横梁，全部收在 .diary-reader 里
-// 桌面是门里门外共用的夜读桌（见 diary.scss），这里只管纸上的暖色
+// 旧日手札：木桌、皮革书壳、发黄的纸页
+// 视觉与交互对齐示例 index.html；页面内容由 DiarySheet 通过 grabfold 引擎渲染
 .diary-reader {
-  --diary-paper: #faf6ec;
-  --diary-paper-2: #f3ecdc;
-  --diary-stack: rgba(225, 214, 196, 0.9);
-  --diary-grain: rgba(150, 130, 100, 0.05);
-  --diary-blush: rgba(200, 182, 150, 0.1);
-  --diary-gutter: rgba(130, 110, 85, 0.1);
-  --diary-shade: rgba(80, 60, 38, 0.1);
-  --diary-ink: #312b24;
-  --diary-ink-2: #6d6357;
-  --diary-ink-3: #a89c8c;
-  --diary-alert: #a4463a;
-  --diary-accent: #b0783f;
+  --ink: #3b3126;
+  --ink-soft: #6d5c47;
+  --paper: #ecdfc6;
+  --accent: #9a4a38;
+  --serif: 'Noto Serif SC', 'Songti SC', 'STSong', 'SimSun', serif;
+  --latin: 'Cormorant Garamond', 'Times New Roman', serif;
+
+  // 日历与 Markdown 共用的一套纸面变量
+  --diary-paper: #eee3c8;
+  --diary-paper-2: #e6d8ba;
+  --diary-gutter: rgba(112, 84, 48, 0.2);
+  --diary-drop: rgba(0, 0, 0, 0.55);
+  --diary-ink: #3f3529;
+  --diary-ink-2: #6d5c47;
+  --diary-ink-3: #9c8869;
+  --diary-accent: #9a4a38;
   --diary-ribbon: #c25e4c;
-  --diary-ribbon-2: #a4463a;
-  --diary-drop: rgba(0, 0, 0, 0.46);
-  --diary-drop-2: rgba(0, 0, 0, 0.22);
-  --diary-fold: rgba(70, 52, 30, 0.55);
-  // 投影挂在每一半张纸上，合上本子时才跟着封面一起挪走
-  --diary-book-drop: 0 30px 50px var(--diary-drop), 0 8px 16px var(--diary-drop-2);
-  // 书本高度跟视口走，窄屏再换一档更矮的
-  --diary-book-h: min(660px, calc(100dvh - 260px));
-  --diary-serif: Georgia, 'Songti SC', 'STSong', serif;
-  --diary-kai: 'Kaiti SC', 'STKaiti', KaiTi, '楷体', 'Songti SC', serif;
+  --diary-serif: var(--serif);
 
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 10px;
   min-height: 100vh;
   min-height: 100dvh;
-  padding: 84px 22px 22px;
-  color: var(--diary-ink);
-  font-family: system-ui, -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
-
-  ::selection {
-    color: #fff;
-    background: var(--diary-accent);
-  }
+  color: #efe4cf;
+  font-family: var(--serif);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
-.dark .diary-reader {
-  --diary-paper: #e9e1d2;
-  --diary-paper-2: #ded5c3;
-  --diary-stack: rgba(196, 182, 158, 0.75);
-  --diary-grain: rgba(70, 55, 30, 0.07);
-  --diary-blush: rgba(120, 100, 65, 0.12);
-  --diary-gutter: rgba(60, 45, 25, 0.14);
-  --diary-shade: rgba(20, 12, 4, 0.18);
-  --diary-ink: #2f2820;
-  --diary-ink-2: #5c5142;
-  --diary-ink-3: #8b806d;
-  --diary-alert: #d98a72;
-  --diary-accent: #9c6a34;
-  --diary-drop: rgba(0, 0, 0, 0.5);
-  --diary-drop-2: rgba(0, 0, 0, 0.28);
-  --diary-fold: rgba(35, 24, 10, 0.6);
-}
-
-// ================= 顶部横梁 =================
-.diary-bar {
+// ================= 桌面上的工具 =================
+.diary-tools {
+  position: absolute;
+  top: max(68px, calc(env(safe-area-inset-top) + 68px));
+  right: clamp(12px, 3vw, 34px);
+  z-index: 40;
   display: flex;
-  flex: none;
+  gap: 8px;
   align-items: center;
-  gap: 12px;
-  padding: 0 4px;
-  min-height: 40px;
   transition: opacity 0.3s ease;
 }
 
-// 合上日记本时横梁先退场，只剩书本
-.diary-reader.is-shutting .diary-bar {
+.diary-reader.is-shutting .diary-tools,
+.diary-reader.is-shutting .pager {
   opacity: 0;
-}
-
-.diary-bar-top {
-  justify-content: space-between;
 }
 
 .diary-tool {
@@ -84,18 +53,20 @@
   gap: 7px;
   align-items: center;
   padding: 7px 12px;
-  border: 1px solid color-mix(in srgb, var(--diary-ink) 12%, transparent);
+  border: 1px solid rgba(201, 171, 116, 0.28);
   border-radius: 9999px;
   cursor: pointer;
   font-family: inherit;
-  font-size: 12.5px;
-  letter-spacing: 0.06em;
-  color: var(--diary-ink-2);
-  background: var(--diary-paper);
-  transition: transform 0.18s ease;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: #e4d2b0;
+  background: rgba(28, 17, 10, 0.72);
+  backdrop-filter: blur(4px);
+  transition: background-color 0.2s ease, border-color 0.2s ease;
 
   &:hover:not(:disabled) {
-    transform: translateY(-1px);
+    border-color: rgba(201, 171, 116, 0.52);
+    background: rgba(43, 27, 16, 0.92);
   }
 
   &:disabled {
@@ -104,450 +75,787 @@
   }
 }
 
-.diary-notice {
-  margin: 0;
-  min-height: 18px;
-  font-size: 12px;
-  color: var(--diary-alert);
-  text-align: center;
+.diary-tool[aria-expanded='true'] {
+  color: #f3e3c4;
+  border-color: rgba(201, 171, 116, 0.6);
 }
 
-// ================= 书本 =================
-/* 书桌正中只摆一本翻开的册子，日历平时收在右上角 */
+// ================= 舞台 =================
 .diary-stage {
-  display: grid;
-  flex: 1;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 22px;
-  align-content: center;
-  align-items: center;
-  justify-items: center;
-  width: 100%;
-  perspective: 2800px;
-}
-
-/* 书本用静态 box-shadow：filter 会让整棵子树进离屏层，翻页时逐帧重算形状，卡顿的源头 */
-.diary-book {
   position: relative;
-  width: min(980px, 100%);
-  height: var(--diary-book-h);
-  min-height: 380px;
-  border-radius: 4px;
-  touch-action: pan-y;
-  animation: diary-book-in 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both;
-  transform-style: preserve-3d;
+  z-index: 2;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(10px, 2.4vh, 28px) clamp(12px, 3vw, 34px) max(clamp(8px, 1.4vh, 16px), env(safe-area-inset-bottom));
 }
 
-/* 合上的左半张落到右半张上之后，整本停在原处，等浮层把它接回封面页 */
-.diary-book.is-closing {
-  .diary-leaf-left {
-    visibility: hidden;
-  }
-
-  .diary-spine,
-  .diary-ribbon {
-    opacity: 0;
-  }
+.book-stage {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
 }
 
-@keyframes diary-book-in {
-  from {
-    opacity: 0;
-    transform: translateY(18px) rotateX(14deg) scale(0.96);
-  }
-
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-.diary-leaf,
-.diary-paper-face,
-.diary-lid-page {
-  overflow: hidden;
-  background:
-    radial-gradient(ellipse at 18% 12%, var(--diary-blush), transparent 55%),
-    radial-gradient(ellipse at 85% 88%, var(--diary-blush), transparent 55%),
-    repeating-linear-gradient(0deg, transparent 0 29px, var(--diary-grain) 29px 30px),
-    linear-gradient(105deg, var(--diary-paper) 0%, var(--diary-paper-2) 100%);
-  backface-visibility: hidden;
-}
-
-.diary-leaf {
+.book-frame {
   position: absolute;
-  top: 0;
-  height: 100%;
+  inset: 32px 3% 60px;
 }
 
-.diary-leaf-left {
+// 光从左上来，整本书也是越往右下越沉，这样纸才不会自己发光
+.book-frame::after {
+  position: absolute;
+  inset: -30px;
+  z-index: 3;
+  pointer-events: none;
+  content: '';
+  background:
+    radial-gradient(112% 92% at 22% -4%, rgba(44, 26, 11, 0) 34%, rgba(44, 26, 11, 0.16) 78%, rgba(38, 22, 9, 0.26) 100%),
+    linear-gradient(198deg, rgba(255, 232, 194, 0.05) 0%, rgba(255, 232, 194, 0) 34%);
+}
+
+// 落在桌上的影子：贴着书沿最黑，越远越散
+.book-cast {
+  position: absolute;
+  z-index: 0;
+  border-radius: 10px;
+  pointer-events: none;
+  background: radial-gradient(
+    closest-side ellipse,
+    rgba(0, 0, 0, 0.58) 0%,
+    rgba(0, 0, 0, 0.5) 56%,
+    rgba(0, 0, 0, 0.26) 76%,
+    rgba(0, 0, 0, 0.06) 90%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  transform: translate(8px, 26px) scale(1.035);
+  transition: left 0.25s ease, top 0.25s ease, width 0.25s ease, height 0.25s ease;
+}
+
+.book-cast::before {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  content: '';
+  background: radial-gradient(
+    closest-side ellipse,
+    rgba(0, 0, 0, 0.34) 0%,
+    rgba(0, 0, 0, 0.3) 70%,
+    rgba(0, 0, 0, 0.12) 88%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  transform: translate(-4px, -6px) scale(1.005);
+}
+
+// 书壳：皮革自己带纹，边沿卷下去
+.book-cover {
+  position: absolute;
+  z-index: 0;
+  border-radius: 6px;
+  background-color: #4a2f1a;
+  background-image:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='l'><feTurbulence type='fractalNoise' baseFrequency='0.55' numOctaves='4' seed='5'/><feColorMatrix type='matrix' values='0 0 0 0 0.14 0 0 0 0 0.08 0 0 0 0 0.03 0.5 0.5 0.5 0 -0.56'/></filter><rect width='180' height='180' filter='url(%23l)' opacity='0.85'/></svg>"),
+    radial-gradient(52% 40% at 8% 4%, rgba(214, 164, 110, 0.26), rgba(214, 164, 110, 0) 72%),
+    radial-gradient(46% 40% at 96% 96%, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0) 74%),
+    linear-gradient(150deg, #6b4526 0%, #4b2f18 46%, #2b190d 100%);
+  background-size: 180px 180px, auto, auto, auto;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 226, 182, 0.26),
+    inset 1px 0 0 rgba(255, 226, 182, 0.1),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.5),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.42),
+    inset 0 0 0 3px rgba(255, 220, 172, 0.055),
+    inset 0 0 18px 5px rgba(0, 0, 0, 0.42),
+    0 1px 1px rgba(0, 0, 0, 0.75),
+    0 3px 6px -1px rgba(0, 0, 0, 0.55),
+    0 12px 20px -6px rgba(0, 0, 0, 0.55),
+    0 42px 64px -18px rgba(0, 0, 0, 0.68),
+    22px 36px 74px -16px rgba(0, 0, 0, 0.38);
+  transition: left 0.25s ease, top 0.25s ease, width 0.25s ease, height 0.25s ease;
+}
+
+.book-cover::before {
+  position: absolute;
+  inset: 0;
+  border-radius: 5px;
+  pointer-events: none;
+  content: '';
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 232, 194, 0.1),
+    inset 0 0 0 3px rgba(0, 0, 0, 0.26),
+    inset 0 0 0 12px rgba(0, 0, 0, 0),
+    inset 0 0 0 13px rgba(255, 230, 190, 0.05);
+}
+
+// 壳的厚度：下沿一窄条纸板切口
+.book-cover::after {
+  position: absolute;
+  right: 3px;
+  bottom: -4px;
+  left: 3px;
+  height: 9px;
+  border-radius: 0 0 7px 7px;
+  content: '';
+  background: linear-gradient(180deg, rgba(126, 84, 48, 0.96) 0%, rgba(92, 60, 33, 0.98) 30%, rgba(54, 34, 18, 1) 72%, rgba(30, 18, 9, 1) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 216, 164, 0.16),
+    0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.book-frame.is-turnable .book-cover {
+  cursor: grab;
+}
+
+body:has(.grabfold[data-dragging='true']) .book-cover {
+  cursor: grabbing;
+}
+
+// ================= 翻页引擎 =================
+.flipbook {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  --grabfold-paper: #cbbd9c;
+  --grabfold-board: #e9dcc0;
+  --grabfold-edge: #d6c39f;
+  --grabfold-lift: #fffaef;
+}
+
+.flipbook .grabfold {
+  pointer-events: auto;
+}
+
+// 纸抬起来时，底下露出的那道边是书芯的切口
+.flipbook .grabfold-page {
+  background-image: linear-gradient(
+    to bottom,
+    rgba(52, 33, 11, 0.46) 0,
+    rgba(52, 33, 11, 0.2) 34%,
+    rgba(52, 33, 11, 0.03) 66%,
+    rgba(255, 252, 242, 0.26) 100%
+  ) !important;
+  background-size: 100% 26px !important;
+  background-repeat: no-repeat !important;
+  background-position: bottom !important;
+}
+
+.flipbook .grabfold {
+  touch-action: pan-y pinch-zoom !important;
+}
+
+// 翻动中的纸页：靠近书脊压暗，自由边受光
+.grabfold-shade {
+  background: linear-gradient(
+    90deg,
+    rgba(56, 36, 18, 0.9) 0%,
+    rgba(56, 36, 18, 0.46) 24%,
+    rgba(56, 36, 18, 0.13) 58%,
+    rgba(56, 36, 18, 0.02) 82%,
+    rgba(56, 36, 18, 0) 100%
+  ) !important;
+  mix-blend-mode: multiply;
+}
+
+.grabfold-board-face:nth-child(2) .grabfold-shade {
+  background: linear-gradient(
+    270deg,
+    rgba(56, 36, 18, 0.9) 0%,
+    rgba(56, 36, 18, 0.46) 24%,
+    rgba(56, 36, 18, 0.13) 58%,
+    rgba(56, 36, 18, 0.02) 82%,
+    rgba(56, 36, 18, 0) 100%
+  ) !important;
+}
+
+.grabfold-board-face {
+  border-radius: 0 2px 2px 0;
+}
+
+.grabfold-board-face::after {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  content: '';
+  box-shadow:
+    inset -1px 0 0 rgba(255, 250, 238, 0.5),
+    inset 0 0 22px rgba(126, 94, 52, 0.1);
+}
+
+.grabfold-stack {
+  border-radius: 1px;
+}
+
+// ================= 页 =================
+.page {
+  position: absolute;
+  inset: 0;
+  container-type: size;
+  overflow: hidden;
+  color: #3f3529;
+  background-color: #eee3c8;
+  background-image:
+    radial-gradient(126% 84% at 50% -22%, rgba(255, 252, 242, 0.42) 0%, rgba(255, 252, 242, 0.12) 40%, rgba(255, 252, 242, 0) 64%),
+    radial-gradient(94% 68% at 70% 114%, rgba(150, 112, 62, 0.32) 0%, rgba(150, 112, 62, 0) 66%),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='170' height='170'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.78' numOctaves='4' stitchTiles='stitch'/><feColorMatrix type='matrix' values='0 0 0 0 0.36 0 0 0 0 0.26 0 0 0 0 0.13 0.45 0.45 0.45 0 -0.42'/></filter><rect width='170' height='170' filter='url(%23n)' opacity='0.55'/></svg>");
+  background-repeat: no-repeat, no-repeat, repeat;
+  background-size: auto, auto, 170px 170px;
+}
+
+.page--left,
+.page--right {
+  --curl-shade: 0;
+}
+
+// 纸弯下去的那一小段：贴着切口最深，往上很快化开
+.sheet::after {
+  position: absolute;
+  right: 0;
+  bottom: 0;
   left: 0;
-  width: 50%;
-  border-radius: 5px 0 0 5px;
-  box-shadow:
-    var(--diary-book-drop),
-    -2px 0 0 var(--diary-stack),
-    -3px 0 0 var(--diary-paper),
-    -4px 0 0 var(--diary-stack),
-    -5px 0 0 var(--diary-paper),
-    inset -1px 0 0 var(--diary-gutter),
-    inset -14px 0 22px -16px var(--diary-shade);
+  z-index: 6;
+  height: 13%;
+  pointer-events: none;
+  content: '';
+  opacity: var(--curl-shade, 0);
+  background-image: linear-gradient(
+    to top,
+    rgba(84, 58, 28, 0.34) 0,
+    rgba(84, 58, 28, 0.26) 6px,
+    rgba(84, 58, 28, 0.16) 18px,
+    rgba(84, 58, 28, 0.07) 44px,
+    rgba(84, 58, 28, 0.02) 76px,
+    rgba(84, 58, 28, 0) 100%
+  );
 }
 
-.diary-leaf-right {
-  left: 50%;
-  width: 50%;
-  border-radius: 0 5px 5px 0;
-  box-shadow:
-    var(--diary-book-drop),
-    2px 0 0 var(--diary-stack),
-    3px 0 0 var(--diary-paper),
-    4px 0 0 var(--diary-stack),
-    5px 0 0 var(--diary-paper),
-    inset 1px 0 0 var(--diary-gutter),
-    inset 14px 0 22px -16px var(--diary-shade);
+// 翻动中每帧都在做 3D 变换，先把卷边摘掉，落定了再装回去
+.flipbook.is-turning .page--left,
+.flipbook.is-turning .page--right {
+  clip-path: none !important;
 }
 
-.diary-leaf::after {
+@media (hover: none) {
+  .page--left,
+  .page--right {
+    clip-path: none !important;
+  }
+}
+
+// 陈年纸上的霉点与茶渍
+.page--left::before,
+.page--right::before,
+.page--title::before,
+.page--colophon::before,
+.page--verso::before {
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='450' height='680' viewBox='0 0 450 680' preserveAspectRatio='none'><g fill='%237e5628'><circle cx='351' cy='571' r='1.7' opacity='0.075'/><circle cx='364' cy='598' r='1.1' opacity='0.06'/><circle cx='333' cy='619' r='1' opacity='0.05'/><circle cx='72' cy='184' r='1.3' opacity='0.055'/><circle cx='94' cy='150' r='0.9' opacity='0.045'/><circle cx='283' cy='82' r='1.1' opacity='0.04'/><circle cx='152' cy='476' r='24' opacity='0.022'/><circle cx='396' cy='231' r='13' opacity='0.018'/></g></svg>");
+}
+
+.page::before {
   position: absolute;
   inset: 0;
   z-index: 2;
   pointer-events: none;
   content: '';
-}
-
-.diary-leaf-left::after {
-  background: linear-gradient(to left, var(--diary-shade), transparent 14%);
-}
-
-.diary-leaf-right::after {
-  background: linear-gradient(to right, var(--diary-shade), transparent 14%);
-}
-
-.diary-spine {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 50%;
-  z-index: 15;
-  width: 3px;
-  pointer-events: none;
-  background: linear-gradient(
-    to bottom,
-    transparent 0%,
-    var(--diary-shade) 6%,
-    var(--diary-shade) 50%,
-    var(--diary-shade) 94%,
-    transparent 100%
-  );
-  box-shadow: 0 0 8px var(--diary-shade);
-  transform: translateX(-50%);
-  transition: opacity 0.24s ease;
-}
-
-.diary-ribbon {
-  position: absolute;
-  top: -8px;
-  right: 13%;
-  z-index: 16;
-  width: 18px;
-  height: 64px;
-  pointer-events: none;
-  background: linear-gradient(var(--diary-ribbon), var(--diary-ribbon-2));
-  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 82%, 0 100%);
-  box-shadow: 0 2px 6px var(--diary-drop);
-  transition: opacity 0.24s ease;
-}
-
-/* 翻页纸：will-change 让它提前进入独立合成层，transform 与阴影由 JS 逐帧同步 */
-.diary-paper {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  z-index: 20;
-  width: 50%;
-  height: 100%;
-  transform-origin: left center;
-  will-change: transform;
-  backface-visibility: hidden;
-  transform-style: preserve-3d;
-}
-
-.diary-paper-face {
-  position: absolute;
-  inset: 0;
-}
-
-.diary-paper-front {
-  border-radius: 0 5px 5px 0;
-  box-shadow: inset 1px 0 0 var(--diary-gutter);
-}
-
-.diary-paper-back {
-  border-radius: 5px 0 0 5px;
-  box-shadow: inset -1px 0 0 var(--diary-gutter);
-  transform: rotateY(180deg);
-}
-
-.diary-paper-face::after {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  content: '';
-}
-
-.diary-paper-front::after {
-  background: linear-gradient(to right, var(--diary-fold), transparent 22%);
-  opacity: var(--fs, 0);
-}
-
-.diary-paper-back::after {
-  background: linear-gradient(to left, var(--diary-fold), transparent 22%);
-  opacity: var(--bs, 0);
-}
-
-// ================= 合上本子 =================
-/* 左半张整页绕书脊翻扣到右半张上，落下来是封面的那块布面硬壳 */
-.diary-lid {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 22;
-  width: 50%;
-  height: 100%;
-  pointer-events: none;
-  transform-origin: right center;
-  will-change: transform;
-  backface-visibility: hidden;
-  transform-style: preserve-3d;
-  animation: diary-lid-close 0.76s cubic-bezier(0.52, 0.04, 0.28, 1) both;
-}
-
-@keyframes diary-lid-close {
-  from {
-    transform: rotateY(0deg);
-  }
-
-  to {
-    transform: rotateY(179deg);
-  }
-}
-
-.diary-lid-face {
-  position: absolute;
-  inset: 0;
-  backface-visibility: hidden;
-}
-
-/* 正面就是当前那页纸，起幅与左页完全重合，看不出是两块 DOM */
-.diary-lid-page {
-  overflow: hidden;
-  border-radius: 5px 0 0 5px;
   box-shadow:
-    var(--diary-book-drop),
-    -2px 0 0 var(--diary-stack),
-    -3px 0 0 var(--diary-paper),
-    -4px 0 0 var(--diary-stack),
-    -5px 0 0 var(--diary-paper),
-    inset 1px 0 0 var(--diary-gutter);
+    inset 0 0 12px -1px rgba(104, 74, 38, 0.3),
+    inset 0 0 34px 0 rgba(118, 88, 50, 0.1),
+    inset 0 0 0 1px rgba(112, 84, 48, 0.2),
+    inset 0 1px 0 rgba(255, 253, 242, 0.22),
+    inset 0 -1px 0 rgba(120, 92, 54, 0.2);
 }
 
-.diary-lid-page::after {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  content: '';
-  background: linear-gradient(to left, var(--diary-fold), transparent 22%);
-  animation: diary-lid-shade 0.76s ease-in-out both;
-}
-
-@keyframes diary-lid-shade {
-  from {
-    opacity: 0;
-  }
-
-  45% {
-    opacity: 0.5;
-  }
-
-  to {
-    opacity: 0;
-  }
-}
-
-/* 窄屏只有一页，没有可对折的书脊：硬壳改成从上方翻扣下来 */
-@keyframes diary-lid-flap {
-  from {
-    transform: rotateX(180deg);
-  }
-
-  to {
-    transform: rotateX(0deg);
-  }
-}
-
-/* 背面：合上后扣在右半张上的布面硬壳，和封面页共用同一块 */
-.diary-lid-cover {
-  transform: rotateY(180deg);
-}
-
-// 交接浮层：合上的本子交给它，由它滑回封面页的位置，刷新时两边严丝合缝
-.diary-handoff {
-  position: fixed;
-  z-index: 60;
-  visibility: hidden;
-  pointer-events: none;
-}
-
-// ================= 一页纸的内容 =================
-.diary-sheet {
+.page::after {
   position: absolute;
   inset: 0;
   z-index: 3;
+  pointer-events: none;
+  content: '';
+}
+
+// 中缝：靠脊处纸往下弯，最暗，紧挨着一道被压出来的高光
+.page--left::after {
+  background-image:
+    linear-gradient(270deg, rgba(40, 22, 8, 0.34) 0%, rgba(40, 22, 8, 0.21) 0.9%, rgba(40, 22, 8, 0.085) 2.1%, rgba(40, 22, 8, 0.015) 3.2%, rgba(40, 22, 8, 0) 4.2%, rgba(92, 64, 32, 0.1) 100%),
+    linear-gradient(270deg, rgba(255, 252, 240, 0) 1.8%, rgba(255, 252, 240, 0.05) 3.3%, rgba(255, 252, 240, 0.012) 5.4%, rgba(255, 252, 240, 0) 7.8%);
+}
+
+.page--right::after {
+  background-image:
+    linear-gradient(90deg, rgba(40, 22, 8, 0.34) 0%, rgba(40, 22, 8, 0.21) 0.9%, rgba(40, 22, 8, 0.085) 2.1%, rgba(40, 22, 8, 0.015) 3.2%, rgba(40, 22, 8, 0) 4.2%, rgba(92, 64, 32, 0.1) 100%),
+    linear-gradient(90deg, rgba(255, 252, 240, 0) 1.8%, rgba(255, 252, 240, 0.05) 3.3%, rgba(255, 252, 240, 0.012) 5.4%, rgba(255, 252, 240, 0) 7.8%);
+}
+
+.sheet {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
   display: flex;
   flex-direction: column;
-  padding: 44px 48px 56px 44px;
   overflow: hidden;
+  padding: calc(1cqh * 8.4) calc(1cqw * 8) calc(1cqh * 5.2);
+  --fs-body: calc(1cqh * 3.02 * var(--fit, 1));
 }
 
-.diary-leaf-right .diary-sheet,
-.diary-paper-back .diary-sheet {
-  padding: 44px 44px 56px 48px;
+// 书脊那边留白宽一些，字才像被装订进去
+.page--left .sheet {
+  padding-right: calc(1cqw * 12.4);
 }
 
-.diary-sheet.is-blank {
+.page--right .sheet {
+  padding-left: calc(1cqw * 12.4);
+}
+
+.masthead {
+  display: flex;
+  flex: none;
+  gap: 10px;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.day {
+  display: block;
+  font-family: var(--latin);
+  font-size: calc(1cqh * 14.2);
+  font-weight: 300;
+  line-height: 0.72;
+  letter-spacing: -0.03em;
+  color: #3d3327;
+}
+
+.weekday {
+  font-size: calc(1cqh * 1.85);
+  letter-spacing: 0.08em;
+  color: #7b6a52;
+  white-space: nowrap;
+}
+
+.hairline {
+  position: relative;
+  flex: none;
+  height: 1px;
+  margin: calc(1cqh * 4.8) 0 calc(1cqh * 4.4);
+  background: linear-gradient(90deg, rgba(120, 95, 60, 0.45), rgba(120, 95, 60, 0.08));
+}
+
+.hairline::before {
+  position: absolute;
+  top: -2px;
+  left: 0;
+  width: 5px;
+  height: 5px;
+  content: '';
+  background: rgba(120, 95, 60, 0.55);
+  transform: rotate(45deg);
+}
+
+.entry-title {
+  flex: none;
+  margin: 0;
+  font-family: var(--serif);
+  font-size: calc(1cqh * 3.7);
+  font-weight: 500;
+  line-height: 1.55;
+  letter-spacing: 0.03em;
+  color: #3a3024;
+}
+
+.entry-place {
+  display: flex;
+  flex: none;
+  gap: 0.3em;
+  align-items: center;
+  margin: calc(1cqh * 1.5) 0 0;
+  font-size: calc(1cqh * 1.95);
+  letter-spacing: 0.06em;
+  color: #8a7556;
+}
+
+.entry-place-icon {
+  width: calc(1cqh * 2);
+  height: calc(1cqh * 2);
+}
+
+.body {
+  flex: 0 0 auto;
+  min-height: 0;
+}
+
+.body--top {
+  flex: 1 1 auto;
+}
+
+.page--right .body--top {
+  flex: 0 0 auto;
+}
+
+.sheet.is-overflow .body {
+  flex: 1 1 auto;
+  min-height: 0;
+  padding-right: calc(1cqw * 2);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-color: rgba(140, 112, 72, 0.45) transparent;
+  scrollbar-width: thin;
+}
+
+.sheet-foot {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: flex-start;
+  margin-top: auto;
+  padding-top: calc(1cqh * 2.2);
+  font-size: calc(1cqh * 1.42);
+  letter-spacing: 0.2em;
+  color: #9c8869;
+}
+
+.page--right .sheet-foot {
+  justify-content: flex-end;
+}
+
+.folio {
+  font-family: var(--latin);
+  font-size: calc(1cqh * 1.9);
+  letter-spacing: 0.1em;
+  color: #7f6a4b;
+}
+
+// 日记里的照片：几张小方片夹在纸里，点开还是原来的大图预览
+.entry-photos {
+  flex: none;
+  margin-top: calc(1cqh * 2.4);
+
+  > div {
+    gap: calc(1cqw * 2);
+    margin-top: 0;
+  }
+
+  button {
+    width: max(42px, calc(1cqw * 12));
+    height: max(42px, calc(1cqw * 12));
+    border-radius: 2px;
+    box-shadow:
+      0 0 0 1px rgba(96, 76, 48, 0.28),
+      0 6px 12px -6px rgba(52, 38, 20, 0.45);
+  }
+}
+
+// ================= 扉页 =================
+.title-sheet {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: calc(1cqh * 12) calc(1cqw * 12) calc(1cqh * 8);
+  text-align: center;
+}
+
+.title-mark {
+  font-size: calc(1cqh * 9.4);
+  letter-spacing: 0.3em;
+  color: #3a3024;
+  text-indent: 0.3em;
+}
+
+.title-rule {
+  width: 42%;
+  height: 1px;
+  margin: calc(1cqh * 7.4) 0 calc(1cqh * 4.6);
+  background: linear-gradient(90deg, transparent, rgba(120, 95, 60, 0.55), transparent);
+}
+
+.title-epigraph {
+  margin: 0;
+  font-size: calc(1cqh * 2.25);
+  line-height: 2;
+  letter-spacing: 0.16em;
+  color: #62523d;
+}
+
+.title-meta {
+  margin-top: auto;
+  font-family: var(--latin);
+  font-size: calc(1cqh * 1.5);
+  line-height: 2.1;
+  letter-spacing: 0.26em;
+  color: #94805f;
+}
+
+.title-flower {
+  width: calc(1cqw * 26);
+  margin: calc(1cqh * 5) auto 0;
+  opacity: 0.55;
+}
+
+.title-flower svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+// ================= 尾页 =================
+.colophon {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 calc(1cqw * 12);
+  text-align: center;
+}
+
+.colophon-mark {
+  margin-bottom: calc(1cqh * 4);
+  font-family: var(--latin);
+  font-size: calc(1cqh * 7.2);
+  line-height: 1;
+  color: #4a3d2c;
+}
+
+.colophon p {
+  margin: 0 0 calc(1cqh * 2.4);
+  font-size: calc(1cqh * 2.1);
+  line-height: 2;
+  letter-spacing: 0.08em;
+  color: #574a38;
+}
+
+.colophon-small {
+  font-family: var(--latin);
+  font-size: calc(1cqh * 1.6) !important;
+  letter-spacing: 0.26em !important;
+  color: #94805f !important;
+}
+
+.colophon-rule {
+  width: 28%;
+  height: 1px;
+  margin: calc(1cqh * 4) 0;
+  background: rgba(120, 95, 60, 0.35);
+}
+
+.colophon-fine {
+  font-size: calc(1cqh * 1.55) !important;
+  letter-spacing: 0.18em !important;
+  color: #8a7556 !important;
+}
+
+// ================= 皮装衬页 =================
+.page--endpaper {
+  background-color: #34200f;
+  background-image:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='l'><feTurbulence type='fractalNoise' baseFrequency='0.55' numOctaves='4' seed='5'/><feColorMatrix type='matrix' values='0 0 0 0 0.11 0 0 0 0 0.06 0 0 0 0 0.02 0.5 0.5 0.5 0 -0.54'/></filter><rect width='180' height='180' filter='url(%23l)' opacity='0.95'/></svg>"),
+    radial-gradient(66% 52% at 10% -2%, rgba(198, 144, 92, 0.16), rgba(198, 144, 92, 0) 68%),
+    radial-gradient(70% 60% at 92% 104%, rgba(0, 0, 0, 0.42), rgba(0, 0, 0, 0) 72%),
+    linear-gradient(102deg, #4a301b 0%, #36200f 52%, #221307 100%);
+  background-repeat: repeat, no-repeat, no-repeat, no-repeat;
+  background-size: 180px 180px, auto, auto, auto;
+}
+
+.page--endpaper::before {
+  box-shadow:
+    inset 0 0 0 1px rgba(0, 0, 0, 0.32),
+    inset -30px 0 40px -26px rgba(20, 10, 4, 0.75),
+    inset 0 0 70px 0 rgba(0, 0, 0, 0.34);
+}
+
+.page--endpaper::after {
+  opacity: 1;
+  background-image:
+    linear-gradient(270deg, rgba(18, 9, 3, 0.72) 0%, rgba(18, 9, 3, 0.3) 2.4%, rgba(228, 186, 136, 0.12) 4.2%, rgba(228, 186, 136, 0) 8%),
+    repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.05) 0 1px, rgba(0, 0, 0, 0) 1px 3px);
+  background-repeat: no-repeat, repeat;
+}
+
+.endpaper {
+  position: absolute;
+  inset: calc(1cqh * 5.2);
+  z-index: 1;
+  border: 1px solid rgba(16, 8, 3, 0.38);
+  box-shadow:
+    inset 0 0 0 1px rgba(226, 184, 134, 0.07),
+    0 1px 0 rgba(226, 184, 134, 0.05);
+}
+
+.endpaper::before {
+  position: absolute;
+  inset: calc(1cqh * 1.7);
+  border: 1px solid rgba(16, 8, 3, 0.3);
+  content: '';
+  box-shadow: 0 1px 0 rgba(226, 184, 134, 0.05);
+}
+
+// ================= 纸背（单页模式） =================
+.page--verso {
+  background-color: #e6d8ba;
+}
+
+.verso {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  gap: calc(1cqw * 4);
+  align-items: center;
+  justify-content: center;
+  color: rgba(120, 96, 62, 0.26);
+}
+
+.verso-rule {
+  width: calc(1cqw * 9);
+  height: 1px;
+  background: currentColor;
+}
+
+.verso-mark {
+  font-size: calc(1cqh * 2.1);
+  letter-spacing: 0.46em;
+  text-indent: 0.46em;
+}
+
+// ================= 页码 =================
+.pager {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  z-index: 4;
+  display: flex;
+  gap: 0.5em;
+  align-items: baseline;
+  font-family: var(--latin);
+  font-size: 13px;
+  letter-spacing: 0.16em;
+  color: #c6b08f;
+  transform: translateX(-50%);
+  transition: opacity 0.2s ease;
+}
+
+.pager-sep {
+  font-size: 11px;
+  color: #7d6a52;
+}
+
+.entry-total {
+  font-size: 10px;
+  color: #8a7657;
+}
+
+.pager.is-edge .pager-sep,
+.pager.is-edge .entry-total {
+  display: none;
+}
+
+.entry-number.is-word {
+  font-family: var(--serif);
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  color: #c9b18b;
+}
+
+// ================= 键盘翻页 / 播报 =================
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  white-space: nowrap;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+.a11y-turn {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  white-space: nowrap;
+  clip: rect(0, 0, 0, 0);
+}
+
+.a11y-turn:focus-within {
+  position: fixed;
+  bottom: max(14px, env(safe-area-inset-bottom));
+  left: 50%;
+  z-index: 40;
+  display: flex;
+  width: auto;
+  height: auto;
+  gap: 6px;
+  padding: 6px 8px;
+  overflow: visible;
+  clip: auto;
+  background: rgba(28, 17, 10, 0.92);
+  border-radius: 9999px;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.5);
+  transform: translateX(-50%);
+}
+
+.a11y-turn button {
+  padding: 6px 14px;
+  border: 1px solid rgba(214, 174, 122, 0.3);
+  border-radius: 9999px;
+  cursor: pointer;
+  font-family: var(--serif);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  color: #e4d2b0;
   background: none;
 }
 
-.diary-sheet-head {
-  display: flex;
-  flex: none;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px;
+.a11y-turn button:focus-visible {
+  outline: 2px solid #c9a86f;
+  outline-offset: 2px;
 }
 
-.diary-sheet-date {
-  font-family: var(--diary-serif);
-  font-size: 12.5px;
-  letter-spacing: 0.1em;
-  color: var(--diary-ink-2);
+.a11y-turn button:disabled {
+  cursor: default;
+  opacity: 0.35;
 }
 
-.diary-sheet-week,
-.diary-sheet-num {
-  font-size: 11.5px;
-  letter-spacing: 0.06em;
-  color: var(--diary-ink-3);
-}
-
-.diary-sheet-meta {
-  display: flex;
-  flex: none;
-  flex-wrap: wrap;
-  gap: 8px;
-  align-items: center;
-  margin: 16px 0 0;
-  font-size: 12.5px;
-  letter-spacing: 0.06em;
-  color: var(--diary-ink-2);
-}
-
-.diary-sheet-tag {
-  display: inline-flex;
-  gap: 4px;
-  align-items: center;
-  color: var(--diary-ink-3);
-}
-
-.diary-sheet-title {
-  margin: 12px 0 0;
-  font-family: var(--diary-serif);
-  font-size: 23px;
-  font-weight: 700;
-  line-height: 1.5;
-  letter-spacing: 0.02em;
-  color: var(--diary-ink);
-}
-
-.diary-sheet-rule {
-  flex: none;
-  width: 34px;
-  height: 2px;
-  margin: 16px 0 20px;
-  background: var(--diary-accent);
-  opacity: 0.45;
-}
-
-.diary-sheet-text {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  padding-right: 10px;
-  scrollbar-color: var(--diary-ink-3) transparent;
-  scrollbar-gutter: stable;
-  scrollbar-width: thin;
-  font-family: var(--diary-kai);
-  font-size: 16.5px;
-  line-height: 2.02;
-  letter-spacing: 0.015em;
-  color: var(--diary-ink);
-
-  p {
-    margin: 0 0 0.82em;
-    text-indent: 2em;
-    white-space: pre-wrap;
-
-    &:last-child {
-      margin-bottom: 0;
-    }
-  }
-
-  &::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    border-radius: 9999px;
-    background: var(--diary-ink-3);
-  }
-}
-
-.diary-sheet-num {
-  position: absolute;
-  right: 42px;
-  bottom: 22px;
-  font-family: var(--diary-serif);
-  font-style: italic;
-  letter-spacing: 0.14em;
-}
-
-.diary-leaf-left .diary-sheet-num,
-.diary-paper-back .diary-sheet-num,
-.diary-lid-page .diary-sheet-num {
-  right: auto;
-  left: 42px;
+.diary-stage:has(.a11y-turn:focus-within) .pager {
+  opacity: 0;
 }
 
 .diary-blank {
   max-width: 30ch;
-  font-family: var(--diary-kai);
+  margin: auto;
+  font-family: var(--serif);
   font-size: 16px;
   line-height: 2.2;
-  color: var(--diary-desk-ink-2);
+  color: #c9b890;
   text-align: center;
 }
 
-// ================= 日历 =================
-/* 日历收在右上角的按钮里：要看的时候落下一张纸片，看完随手收起 */
-.diary-cal-slot {
-  position: relative;
+.diary-notice {
+  position: fixed;
+  bottom: max(18px, env(safe-area-inset-bottom));
+  left: 50%;
+  z-index: 50;
+  margin: 0;
+  min-height: 18px;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: #e7b69e;
+  text-align: center;
+  transform: translateX(-50%);
 }
 
-.diary-tool[aria-expanded='true'] {
-  color: var(--diary-accent);
-  border-color: color-mix(in srgb, var(--diary-accent) 40%, transparent);
+// ================= 日历 =================
+.diary-cal-slot {
+  position: relative;
 }
 
 .diary-cal-pop {
@@ -555,14 +863,16 @@
   top: calc(100% + 10px);
   right: 0;
   z-index: 40;
-  overflow: hidden;
   width: min(320px, calc(100vw - 44px));
+  overflow: hidden;
+  color: var(--diary-ink);
+  background:
+    radial-gradient(120% 90% at 14% 0%, rgba(255, 252, 242, 0.42), transparent 60%),
+    linear-gradient(105deg, var(--diary-paper) 0%, var(--diary-paper-2) 100%);
   border-radius: 6px;
-  background: linear-gradient(105deg, var(--diary-paper) 0%, var(--diary-paper-2) 100%);
   box-shadow:
     0 26px 48px -18px var(--diary-drop),
     inset 0 0 0 1px var(--diary-gutter);
-  color: var(--diary-ink);
   animation: diary-cal-drop 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
@@ -589,7 +899,7 @@
 
 .diary-cal-title {
   margin: 0;
-  font-family: var(--diary-serif);
+  font-family: var(--serif);
   font-size: 14px;
   font-weight: 700;
   letter-spacing: 0.14em;
@@ -610,10 +920,10 @@
   height: 26px;
   border: 0;
   border-radius: 50%;
-  place-items: center;
   cursor: pointer;
   color: var(--diary-ink-2);
   background: transparent;
+  place-items: center;
 
   &:hover {
     background: var(--diary-gutter);
@@ -629,7 +939,6 @@
 
 .diary-cal-step {
   display: grid;
-  place-items: center;
   width: 26px;
   height: 26px;
   border: 1px solid var(--diary-gutter);
@@ -637,6 +946,7 @@
   cursor: pointer;
   color: var(--diary-ink-2);
   background: transparent;
+  place-items: center;
 
   &:disabled {
     cursor: default;
@@ -645,7 +955,7 @@
 }
 
 .diary-cal-label {
-  font-family: var(--diary-serif);
+  font-family: var(--serif);
   font-size: 14px;
   letter-spacing: 0.1em;
   color: var(--diary-ink);
@@ -667,7 +977,6 @@
 .diary-cal-day {
   position: relative;
   display: grid;
-  place-items: center;
   width: 100%;
   padding: 7px 0 10px;
   border: 0;
@@ -676,6 +985,7 @@
   font-size: 12.5px;
   color: var(--diary-ink-3);
   background: transparent;
+  place-items: center;
 }
 
 .diary-cal-day.is-written {
@@ -718,107 +1028,48 @@
   color: var(--diary-ink-3);
 }
 
+// ================= 合上 / 交接浮层 =================
+.diary-handoff {
+  position: fixed;
+  z-index: 60;
+  visibility: hidden;
+  pointer-events: none;
+}
+
 // ================= 焦点与宽窄屏 =================
-.diary-reader :is(.diary-tool, .diary-cal-day.is-written, .diary-cal-step, .diary-cal-close):focus-visible {
-  outline: 2px solid var(--diary-accent);
+.diary-reader :is(.diary-tool, .diary-cal-day.is-written, .diary-cal-step, .diary-cal-close, .a11y-turn button):focus-visible {
+  outline: 2px solid #c9a86f;
   outline-offset: 2px;
 }
 
-@media (max-width: 860px) {
-  .diary-reader {
-    --diary-book-h: min(560px, calc(100dvh - 232px));
-
-    gap: 8px;
-    padding: 76px 12px 14px;
+@media (max-width: 560px) {
+  .diary-stage {
+    padding: 38px 0 8px;
   }
 
-  .diary-book {
-    width: 100%;
-    min-height: 340px;
+  .book-frame {
+    inset: 22px 9% 48px;
   }
 
-  .diary-leaf-left {
-    width: 100%;
-    border-radius: 5px;
+  .diary-tools {
+    top: 70px;
+    right: 12px;
   }
 
-  .diary-leaf-right,
-  .diary-spine,
-  .diary-ribbon,
-  .diary-leaf::after {
+  .diary-tool span {
     display: none;
   }
 
-  .diary-paper {
-    left: 0;
-    width: 100%;
+  .diary-tool {
+    padding: 8px;
   }
-
-  .diary-book.is-closing .diary-leaf-left {
-    visibility: visible;
-  }
-
-  .diary-lid {
-    left: 0;
-    width: 100%;
-    transform-origin: top center;
-    animation-name: diary-lid-flap;
-  }
-
-  .diary-lid-page {
-    display: none;
-  }
-
-  .diary-lid-cover {
-    transform: none;
-  }
-
-  .diary-paper-front,
-  .diary-paper-back {
-    border-radius: 5px;
-  }
-
-  .diary-sheet,
-  .diary-leaf-right .diary-sheet,
-  .diary-paper-back .diary-sheet,
-  .diary-paper-front .diary-sheet {
-    padding: 30px 26px 52px;
-  }
-
-  .diary-sheet-title {
-    font-size: 20px;
-  }
-
-  .diary-sheet-text {
-    font-size: 15.5px;
-    line-height: 1.94;
-  }
-
-  .diary-sheet-num,
-  .diary-leaf-left .diary-sheet-num,
-  .diary-paper-back .diary-sheet-num {
-    right: 24px;
-    bottom: 18px;
-    left: auto;
-  }
-
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .diary-book,
-  .diary-lid,
-  .diary-cal-pop {
-    animation: none;
-  }
-
-  .diary-bar,
-  .diary-spine,
-  .diary-ribbon,
-  .diary-tool {
-    transition: none;
-
-    &:hover {
-      transform: none;
-    }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
   }
 }

@@ -1,49 +1,47 @@
-// 封面专用色：墨蓝布面 + 朱砂印，只在 .diary-gate 内生效，主题切换靠变量换值，不加颜色过渡
-// 封面背后那张密语纸是另一套暖色，变量收在 DiaryGate/index.scss
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Noto+Serif+SC:wght@300;400;500;600&display=swap');
+
+// 封面专用色：皮革棕 + 朱砂印，只在 .diary-gate 内生效
 .diary-gate {
-  --diary-ink: #223047;
-  --diary-ink-edge: #16202f;
-  --diary-seal: #b4402f;
+  --diary-ink: #3b3126;
+  --diary-ink-edge: #24160d;
+  --diary-seal: #9a4a38;
 }
 
-.dark .diary-gate {
-  --diary-ink: #26334a;
-  --diary-ink-edge: #1a2434;
-  --diary-seal: #d6705c;
-}
-
-// 书桌：浅色是白天照进窗的实木桌面，深色换成夜里只留一盏灯
-// 门里门外共用同一张桌子，解锁和合上都不会闪色
-// 木纹来自 Poly Haven 的 CC0 柚木扫描，压成 16:9 放在 public/images/bg/diary-desk.webp
+// 书桌：示例里那间只开一盏灯的旧书房——木纹是被噪声顶弯的一组横线，不是平铺条纹；
+// 左上一盏灯，右下留暗。门里门外共用同一张桌子，解锁和合上都不会闪色
 .diary-scene {
-  --diary-wood: url('/images/bg/diary-desk.webp');
-  --diary-glow: rgba(255, 249, 233, 0.72);
-  --diary-desk-ink: #4a4033;
-  --diary-desk-ink-2: #7d6f5b;
-  --diary-scene-bg:
-    radial-gradient(1200px 680px at 56% -16%, var(--diary-glow) 0%, transparent 64%),
-    radial-gradient(112% 88% at 50% 46%, transparent 40%, rgba(84, 62, 34, 0.3) 100%),
-    linear-gradient(178deg, rgba(248, 240, 224, 0.32) 0%, rgba(233, 220, 198, 0.22) 58%, rgba(202, 186, 163, 0.3) 100%),
-    var(--diary-wood) center / cover no-repeat;
-
-  background: var(--diary-scene-bg);
-  // 图还没加载出来时先铺住原来的暖沙色
-  background-color: #c6b6a0;
+  position: relative;
+  overflow: hidden;
+  background-color: #24160d;
+  background-image:
+    radial-gradient(100% 74% at 22% -12%, rgba(255, 196, 130, 0.26) 0%, rgba(255, 196, 130, 0.07) 40%, rgba(255, 196, 130, 0) 62%),
+    radial-gradient(84% 64% at 86% 114%, rgba(24, 11, 4, 0.44) 0%, rgba(24, 11, 4, 0) 70%),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='1400' height='900'><defs><pattern id='g' width='1400' height='5' patternUnits='userSpaceOnUse'><rect width='1400' height='5' fill='rgb(104,66,38)'/><rect width='1400' height='1.7' fill='rgb(48,28,15)' opacity='0.34'/><rect y='3.1' width='1400' height='0.8' fill='rgb(136,92,56)' opacity='0.26'/></pattern><filter id='f' x='-8%' y='-14%' width='116%' height='128%'><feTurbulence type='fractalNoise' baseFrequency='0.0017 0.013' numOctaves='4' seed='7' result='w'/><feDisplacementMap in='SourceGraphic' in2='w' scale='40' xChannelSelector='R' yChannelSelector='G'/><feGaussianBlur stdDeviation='0.8'/></filter></defs><rect width='1400' height='900' fill='url(%23g)' filter='url(%23f)'/></svg>");
+  background-position: center, center, center;
+  background-repeat: no-repeat, no-repeat, no-repeat;
+  background-size: auto, auto, cover;
 }
 
-.dark .diary-scene {
-  --diary-desk: #120f0b;
-  --diary-glow: #221c14;
-  --diary-lamp: rgba(255, 202, 140, 0.1);
-  --diary-desk-ink: #e6dcc8;
-  --diary-desk-ink-2: #a2947c;
-  --diary-scene-bg:
-    radial-gradient(900px 560px at 50% 38%, var(--diary-lamp) 0%, color-mix(in srgb, var(--diary-lamp) 38%, transparent) 48%, transparent 74%),
-    radial-gradient(105% 82% at 50% 42%, transparent 42%, rgba(3, 7, 12, 0.5) 100%),
-    radial-gradient(1200px 700px at 50% -15%, var(--diary-glow) 0%, transparent 60%),
-    linear-gradient(180deg, rgba(16, 12, 8, 0.74) 0%, rgba(8, 6, 4, 0.86) 100%),
-    var(--diary-wood) center / cover no-repeat;
+// 木面上零星的划痕与灰，只做一点，多了就脏
+.diary-scene::before {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  content: '';
+  opacity: 0.85;
+  background-image:
+    repeating-linear-gradient(1.6deg, rgba(255, 232, 198, 0.026) 0 1px, transparent 1px 27px),
+    repeating-linear-gradient(-2.4deg, rgba(0, 0, 0, 0.055) 0 1px, transparent 1px 43px);
+  mix-blend-mode: soft-light;
+}
 
-  background: var(--diary-scene-bg);
-  background-color: var(--diary-desk);
+.diary-scene::after {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  content: '';
+  box-shadow:
+    inset 0 0 150px 18px rgba(0, 0, 0, 0.46),
+    inset 0 0 60px 0 rgba(0, 0, 0, 0.18),
+    inset 0 -60px 100px -66px rgba(0, 0, 0, 0.34);
 }

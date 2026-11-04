@@ -16,7 +16,6 @@ import { LuArrowLeft, LuArrowRight, LuChevronDown } from 'react-icons/lu';
 
 import MD from '@/app/article/components/MD';
 import DocsNav from '@/app/docs/components/DocsNav';
-import DocsProgress from '@/app/docs/components/DocsProgress';
 import DocsToc from '@/app/docs/components/DocsToc';
 import { getDoc, getDocSlugs, getDocTree, getFlatDocs } from '@/lib/docs';
 import { extractArticleHeadings, getArticleReadingMinutes, getArticleWordCount } from '@/utils/article';

@@ -9,7 +9,6 @@ import { unlockDiaryAPI } from '@/api/diary';
 import type { DiaryQuestion } from '@/types/app/diary';
 import { saveCoverRect } from '../../coverRect';
 import DiaryCoverFront from '../DiaryCover';
-import DiaryLamp from '../DiaryLamp';
 
 import './index.scss';
 
@@ -65,8 +64,6 @@ export default function DiaryGate({ questions, expired }: Props) {
 
   return (
     <div className="diary-gate diary-scene relative min-h-screen overflow-hidden px-4 pb-20 sm:px-6 lg:px-8">
-      <DiaryLamp />
-
       <div className="relative mx-auto flex min-h-[calc(100vh-120px)] w-full flex-col items-center justify-center pt-[92px] pb-16">
         <h1 className="sr-only">日记本</h1>
 

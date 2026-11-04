@@ -57,11 +57,11 @@ export const fallbackCoverRect = (): CoverRect => {
   const vh = window.innerHeight;
   const width =
     vw >= 900
-      ? Math.min(Math.max(300, vw * 0.31), 420, (vh - 230) * 0.75, (vw - 64) / 2)
+      ? Math.min(Math.max(300, vw * 0.31), 420, (vh - 230) * 0.66, (vw - 64) / 2)
       : vh <= 720
-        ? Math.min(320, vw * 0.82, (vh - 230) * 0.75)
-        : Math.min(340, vw * 0.86, (vh - 250) * 0.75);
-  const height = (width * 4) / 3;
+        ? Math.min(320, vw * 0.82, (vh - 230) * 0.66)
+        : Math.min(340, vw * 0.86, (vh - 250) * 0.66);
+  const height = (width * 680) / 450;
   // 封面页里本子居中，上下留白按那页的 padding 算
   const inner = Math.max(vh - 276, height + 38);
   return {

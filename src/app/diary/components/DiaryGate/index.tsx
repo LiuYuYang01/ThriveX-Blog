@@ -63,8 +63,8 @@ export default function DiaryGate({ questions, expired }: Props) {
   };
 
   return (
-    <div className="diary-gate diary-scene relative min-h-screen overflow-hidden px-4 pb-20 sm:px-6 lg:px-8">
-      <div className="relative mx-auto flex min-h-[calc(100vh-120px)] w-full flex-col items-center justify-center pt-[92px] pb-16">
+    <div className="diary-gate diary-scene relative flex min-h-[100dvh] items-center justify-center overflow-hidden px-4 pb-10 sm:px-6 lg:px-8">
+      <div className="relative mx-auto flex w-full flex-col items-center justify-center py-10">
         <h1 className="sr-only">日记本</h1>
 
         <div className={`diary-booklet ${opened ? 'is-open' : ''} ${unlocking ? 'is-unlocking' : ''}`}>

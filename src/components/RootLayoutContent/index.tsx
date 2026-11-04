@@ -13,6 +13,7 @@ import RecordEntry from '@/components/RecordEntry';
 import RecordModal from '@/components/RecordModal';
 import CommandPalette from '@/components/CommandPalette';
 import AnnouncementModal from '@/components/Announcement';
+import DiaryStandalone from '@/components/DiaryStandalone';
 import { getAnnouncementConfigCacheAPI, getAppConfigCacheAPI } from '@/lib/config';
 
 interface Props {
@@ -36,21 +37,23 @@ export default async function RootLayoutContent({ children }: Props) {
 
       <AppConfigProvider web={data} theme={theme} other={other} publicConfig={publicConfig} author={author}>
         <NProgress />
-        <Suspense fallback={null}>
-          <Header theme={theme} />
-        </Suspense>
+        <DiaryStandalone>
+          <Suspense fallback={null}>
+            <Header theme={theme} />
+          </Suspense>
+        </DiaryStandalone>
 
         <div className="min-h-[calc(100vh-300px)]">{children}</div>
 
-        <Footer />
-        <FloatingBlock />
-        <RecordEntry />
-        {/* 弹窗模式下挂载闪念弹窗 */}
-        {theme?.record_mode === 'modal' && <RecordModal />}
-        {/* 站点公告弹窗 */}
-        {announcement?.enable && announcement.content.trim() && (
-          <AnnouncementModal config={announcement} />
-        )}
+        <DiaryStandalone>
+          <Footer />
+          <FloatingBlock />
+          <RecordEntry />
+          {/* 弹窗模式下挂载闪念弹窗 */}
+          {theme?.record_mode === 'modal' && <RecordModal />}
+          {/* 站点公告弹窗 */}
+          {announcement?.enable && announcement.content.trim() && <AnnouncementModal config={announcement} />}
+        </DiaryStandalone>
         {/* 全局命令面板 Ctrl+K */}
         <CommandPalette />
         <ThemeTransition />

@@ -245,6 +245,7 @@ export default function DiaryReader({ pages }: Props) {
   const closingRef = useRef(false);
   const reduceRef = useRef(false);
   const pendingTurn = useRef<Dir | null>(null);
+  const closeRef = useRef<() => void>(() => {});
 
   const [mode, setMode] = useState<Mode>('spread');
   const modeRef = useRef<Mode>('spread');
@@ -411,17 +412,27 @@ export default function DiaryReader({ pages }: Props) {
   }, [calOpen]);
 
   // 连着点两下时，第二次留到这一页落定再翻
-  const requestTurn = useCallback((dir: Dir) => {
-    if (closingRef.current) return;
-    const book = bookRef.current;
-    if (!book) return;
-    if (book.book?.isTurning) {
-      pendingTurn.current = dir;
-      return;
-    }
-    pendingTurn.current = null;
-    void (dir === 'next' ? book.next() : book.prev());
-  }, []);
+  const requestTurn = useCallback(
+    (dir: Dir) => {
+      if (closingRef.current) return;
+      const book = bookRef.current;
+      if (!book) return;
+      if (book.book?.isTurning) {
+        pendingTurn.current = dir;
+        return;
+      }
+      // 已经是最后一页，再往后翻就是把本子合上
+      const engine = book.book;
+      const atEnd = engine ? (modeRef.current === 'spread' ? engine.position >= total : engine.position >= total * 2) : false;
+      if (dir === 'next' && atEnd) {
+        closeRef.current();
+        return;
+      }
+      pendingTurn.current = null;
+      void (dir === 'next' ? book.next() : book.prev());
+    },
+    [total],
+  );
 
   const handleTurnStart = useCallback(() => {
     flipRef.current?.classList.add('is-turning');
@@ -455,7 +466,9 @@ export default function DiaryReader({ pages }: Props) {
       target instanceof Element && !!target.closest('button, a, input, textarea, select, label, [data-no-turn]');
 
     const onDown = (event: PointerEvent) => {
-      if (closingRef.current || !event.isPrimary) return;
+      if (closingRef.current) return;
+      // 鼠标的 isPrimary 在部分环境里是 false，只拦掉多指触摸里的次要点
+      if (event.pointerType !== 'mouse' && !event.isPrimary) return;
       if (event.pointerType === 'mouse' && event.button !== 0) return;
       if (interactive(event.target)) return;
       tapStart = { x: event.clientX, y: event.clientY, time: performance.now(), id: event.pointerId };
@@ -465,7 +478,16 @@ export default function DiaryReader({ pages }: Props) {
       const start = tapStart;
       tapStart = null;
       if (!start || start.id !== event.pointerId) return;
-      if (Math.hypot(event.clientX - start.x, event.clientY - start.y) > 8) return;
+      const dx = event.clientX - start.x;
+      const dy = event.clientY - start.y;
+      // 最后一页向前拖纸：引擎已经无处可翻，这里直接合上本子
+      const engine = bookRef.current?.book;
+      const atEnd = engine ? (modeRef.current === 'spread' ? engine.position >= total : engine.position >= total * 2) : false;
+      if (atEnd && dx < -40 && Math.abs(dx) > Math.abs(dy)) {
+        requestTurn('next');
+        return;
+      }
+      if (Math.hypot(dx, dy) > 8) return;
       if (performance.now() - start.time > 900) return;
       if (String(window.getSelection ? window.getSelection() : '').trim()) return;
       if (closingRef.current) return;
@@ -481,7 +503,7 @@ export default function DiaryReader({ pages }: Props) {
       frame.removeEventListener('pointerdown', onDown, true);
       frame.removeEventListener('pointerup', onUp, true);
     };
-  }, [requestTurn]);
+  }, [requestTurn, total]);
 
   // 滚轮 / 触控板：一格一页，一次两指滑动只翻一页，惯性余波不连翻
   useEffect(() => {
@@ -728,6 +750,11 @@ export default function DiaryReader({ pages }: Props) {
     void handOff(locked);
   };
 
+  // requestTurn 比 closeBook 先定义，用 ref 把最新的合上动作交给它
+  useEffect(() => {
+    closeRef.current = closeBook;
+  });
+
   return (
     <section className={`diary-reader diary-scene ${closing ? 'is-shutting' : ''}`}>
       {total ? (
@@ -806,7 +833,7 @@ export default function DiaryReader({ pages }: Props) {
               <button type="button" onClick={() => requestTurn('prev')} disabled={!canPrev} aria-keyshortcuts="ArrowLeft PageUp">
                 上一篇
               </button>
-              <button type="button" onClick={() => requestTurn('next')} disabled={!canNext} aria-keyshortcuts="ArrowRight PageDown">
+              <button type="button" onClick={() => requestTurn('next')} disabled={closing || (!canNext && logical < total)} aria-keyshortcuts="ArrowRight PageDown">
                 下一篇
               </button>
             </div>

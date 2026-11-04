@@ -379,13 +379,15 @@ export default function DiaryReader({ pages }: Props) {
     return () => cancelAnimationFrame(id);
   }, [position, mode, yearFilter, updateCover]);
 
+  // 目录开合、字体到位、视口变化都会让书本重新量尺寸：
+  // 跟引擎的 resize 事件把书壳与投影重新贴回纸边，第一页才不会是光秃秃的纸
   useEffect(() => {
-    const el = flipRef.current;
-    if (!el || typeof ResizeObserver === 'undefined') return;
-    const observer = new ResizeObserver(() => updateCover());
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [mode, updateCover]);
+    const book = bookRef.current?.book;
+    if (!book) return;
+    return book.on('resize', () => {
+      requestAnimationFrame(updateCover);
+    });
+  }, [mode, yearFilter, updateCover]);
 
   useEffect(() => {
     const onResize = () => updateCover();

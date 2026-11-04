@@ -87,25 +87,22 @@ export default function DiaryToc({ pages, years, yearFilter, activeIndex, onJump
   const tree = useMemo(() => buildTree(pages), [pages]);
 
   const active = activeIndex >= 0 && activeIndex < pages.length ? pages[activeIndex] : null;
-  const activeDate = active?.diaryDate ?? null;
   const activeYear = active ? dayjs(active.diaryDate).year() : null;
   const activeMonth = active ? `${activeYear}-${dayjs(active.diaryDate).month() + 1}` : null;
 
   const [openYears, setOpenYears] = useState<Set<number>>(() => new Set(activeYear != null ? [activeYear] : tree[0] ? [tree[0].year] : []));
   const [openMonths, setOpenMonths] = useState<Set<string>>(() => new Set(activeMonth ? [activeMonth] : []));
-  const [openDays, setOpenDays] = useState<Set<string>>(() => new Set(active ? [active.diaryDate] : []));
 
   // 翻页后目录自动展开到当前这篇所在的位置
   useEffect(() => {
-    if (activeYear == null || !activeMonth || !activeDate) return;
+    if (activeYear == null || !activeMonth) return;
     setOpenYears((prev) => (prev.has(activeYear) ? prev : new Set(prev).add(activeYear)));
     setOpenMonths((prev) => (prev.has(activeMonth) ? prev : new Set(prev).add(activeMonth)));
-    setOpenDays((prev) => (prev.has(activeDate) ? prev : new Set(prev).add(activeDate)));
-  }, [activeYear, activeMonth, activeDate]);
+  }, [activeYear, activeMonth]);
 
   const activeRef = useRef<HTMLButtonElement>(null);
   useEffect(() => {
-    // 展开当前日期后等一帧，再把这一篇滚进目录可视区
+    // 展开到当天后等一帧，再把这一天滚进目录可视区
     const frame = requestAnimationFrame(() => activeRef.current?.scrollIntoView({ block: 'nearest' }));
     return () => cancelAnimationFrame(frame);
   }, [activeIndex]);
@@ -120,14 +117,6 @@ export default function DiaryToc({ pages, years, yearFilter, activeIndex, onJump
 
   const toggleMonth = (key: string) =>
     setOpenMonths((prev) => {
-      const next = new Set(prev);
-      if (next.has(key)) next.delete(key);
-      else next.add(key);
-      return next;
-    });
-
-  const toggleDay = (key: string) =>
-    setOpenDays((prev) => {
       const next = new Set(prev);
       if (next.has(key)) next.delete(key);
       else next.add(key);
@@ -202,39 +191,20 @@ export default function DiaryToc({ pages, years, yearFilter, activeIndex, onJump
                       {openMonths.has(monthKey)
                         ? month.days.map((day) => {
                             const date = dayjs(day.date);
-                            const isOpen = openDays.has(day.date);
+                            const isActive = day.entries.some((entry) => entry.index === activeIndex);
                             return (
-                              <div key={day.date} className="diary-toc-day">
-                                <button
-                                  type="button"
-                                  className="diary-toc-fold is-day"
-                                  onClick={() => toggleDay(day.date)}
-                                  aria-expanded={isOpen}
-                                >
-                                  <FiChevronRight size={10} className={`diary-toc-caret ${isOpen ? 'is-open' : ''}`} />
-                                  <span className="diary-toc-day-no">{date.format('MMDD')}</span>
-                                  <span className="diary-toc-day-week">周{WEEK[date.day()]}</span>
-                                  <span className="diary-toc-count">{day.entries.length}</span>
-                                </button>
-
-                                {isOpen ? (
-                                  <div className="diary-toc-entries">
-                                    {day.entries.map((entry) => (
-                                      <button
-                                        key={`${day.date}-${entry.index}`}
-                                        ref={entry.index === activeIndex ? activeRef : undefined}
-                                        type="button"
-                                        className={`diary-toc-entry ${entry.index === activeIndex ? 'is-active' : ''}`}
-                                        onClick={() => onJump(entry.index)}
-                                        title={entry.title}
-                                      >
-                                        <span className="diary-toc-entry-title">{entry.title}</span>
-                                        <span className="diary-toc-entry-no">{String(entry.index + 1).padStart(2, '0')}</span>
-                                      </button>
-                                    ))}
-                                  </div>
-                                ) : null}
-                              </div>
+                              <button
+                                key={day.date}
+                                ref={isActive ? activeRef : undefined}
+                                type="button"
+                                className={`diary-toc-fold is-day ${isActive ? 'is-active' : ''}`}
+                                onClick={() => onJump(day.entries[0].index)}
+                                title={day.entries.map((entry) => entry.title).join(' / ')}
+                              >
+                                <span className="diary-toc-day-no">{date.format('MMDD')}</span>
+                                <span className="diary-toc-day-week">周{WEEK[date.day()]}</span>
+                                <span className="diary-toc-count">{day.entries.length}</span>
+                              </button>
                             );
                           })
                         : null}

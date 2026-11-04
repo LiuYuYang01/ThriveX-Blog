@@ -112,14 +112,21 @@
   min-height: 0;
   margin: 32px 0 60px;
   overflow: hidden;
+
+  // 目录不载体，字直接落在桌面上，只靠墨色和影子立住
+  --diary-ink: #f4e8cd;
+  --diary-ink-2: rgba(240, 226, 198, 0.88);
+  --diary-ink-3: rgba(240, 226, 198, 0.62);
+  --diary-gutter: rgba(201, 171, 116, 0.24);
+  --diary-accent: #e0997f;
+  --diary-paper-2: rgba(255, 236, 205, 0.16);
+
   color: var(--diary-ink);
-  background:
-    radial-gradient(120% 90% at 14% 0%, rgba(255, 252, 242, 0.42), transparent 60%),
-    linear-gradient(105deg, var(--diary-paper) 0%, var(--diary-paper-2) 100%);
-  border-radius: 6px;
-  box-shadow:
-    0 26px 48px -18px var(--diary-drop),
-    inset 0 0 0 1px var(--diary-gutter);
+  background: none;
+  border-radius: 0;
+  box-shadow: none;
+  // 木纹深浅不一，给字一点影子才立得住
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .diary-toc-head {
@@ -127,8 +134,7 @@
   flex: none;
   gap: 8px;
   align-items: center;
-  padding: 12px 10px 10px 14px;
-  border-bottom: 1px solid var(--diary-gutter);
+  padding: 0 10px 8px 14px;
 }
 
 .diary-toc-title {
@@ -169,9 +175,8 @@
   display: flex;
   flex: none;
   gap: 5px;
-  padding: 8px 10px 7px;
+  padding: 0 10px 10px;
   overflow-x: auto;
-  border-bottom: 1px solid var(--diary-gutter);
   scrollbar-width: none;
 
   &::-webkit-scrollbar {
@@ -199,9 +204,9 @@
   }
 
   &.is-active {
-    color: #f8f0e3;
-    background: var(--diary-accent);
-    border-color: var(--diary-accent);
+    color: var(--diary-ink);
+    background: color-mix(in srgb, var(--diary-accent) 22%, transparent);
+    border-color: color-mix(in srgb, var(--diary-accent) 55%, transparent);
   }
 }
 
@@ -211,14 +216,13 @@
   padding: 6px 0 14px;
   overflow-y: auto;
   overscroll-behavior: contain;
-  scrollbar-color: rgba(140, 112, 72, 0.42) transparent;
+  scrollbar-color: rgba(201, 171, 116, 0.4) transparent;
   scrollbar-width: thin;
 }
 
 .diary-toc-year + .diary-toc-year {
   padding-top: 4px;
-  margin-top: 4px;
-  border-top: 1px solid var(--diary-gutter);
+  margin-top: 10px;
 }
 
 .diary-toc-fold {
@@ -242,7 +246,8 @@
 
 .diary-toc-fold.is-year {
   font-size: 12.5px;
-  letter-spacing: 0.05em;
+  font-weight: 500;
+  letter-spacing: 0.06em;
   color: var(--diary-ink);
 }
 
@@ -255,6 +260,11 @@
   padding-left: 34px;
   font-size: 11px;
   color: var(--diary-ink-3);
+
+  &.is-active {
+    color: var(--diary-accent);
+    background: color-mix(in srgb, var(--diary-accent) 14%, transparent);
+  }
 }
 
 .diary-toc-caret {
@@ -300,7 +310,7 @@
   width: 100%;
   padding: 4px 6px 4px 8px;
   border: 0;
-  border-left: 1px solid var(--diary-gutter);
+  border-radius: 4px;
   cursor: pointer;
   font-family: inherit;
   font-size: 10.5px;
@@ -315,8 +325,7 @@
 
   &.is-active {
     color: var(--diary-accent);
-    background: color-mix(in srgb, var(--diary-accent) 9%, transparent);
-    border-left-color: var(--diary-accent);
+    background: color-mix(in srgb, var(--diary-accent) 14%, transparent);
   }
 }
 
@@ -1283,7 +1292,7 @@ body:has(.grabfold[data-dragging='true']) .book-cover {
     flex-direction: column;
   }
 
-  // 窄屏目录脱离书页，变成左侧抽屉
+  // 窄屏目录脱离书页，变成左侧抽屉；压着书页时给一层暗玻璃，文字才看得清
   .diary-toc {
     position: fixed;
     top: max(54px, env(safe-area-inset-top));
@@ -1292,6 +1301,9 @@ body:has(.grabfold[data-dragging='true']) .book-cover {
     z-index: 45;
     width: min(282px, 84vw);
     margin: 0;
+    background: rgba(26, 16, 9, 0.62);
+    border-radius: 8px;
+    backdrop-filter: blur(12px);
     box-shadow:
       0 30px 60px -12px rgba(0, 0, 0, 0.66),
       inset 0 0 0 1px var(--diary-gutter);

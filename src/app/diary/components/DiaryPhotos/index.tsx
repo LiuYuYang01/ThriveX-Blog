@@ -30,13 +30,13 @@ export default function DiaryPhotos({ images, maxShow = 9 }: Props) {
               setIndex(i);
               setOpen(true);
             }}
-            className="group relative size-24 cursor-pointer overflow-hidden rounded-lg ring-1 ring-black/8 sm:size-28 dark:ring-white/12"
+            className="diary-photo group relative cursor-pointer"
           >
-            <img src={photo.url} alt={photo.alt} className="h-full w-full object-cover transition-[scale] duration-500 ease-out group-hover:scale-105" />
+            <img src={photo.url} alt={photo.alt} className="diary-photo-img" />
             {i === visible - 1 && more > 0 ? (
               <>
-                <span aria-hidden className="absolute inset-0 bg-[rgba(17,22,25,0.4)]" />
-                <span className="absolute inset-0 z-2 grid place-items-center text-base font-bold text-white">+{more}</span>
+                <span aria-hidden className="diary-photo-shade" />
+                <span className="diary-photo-more">+{more}</span>
               </>
             ) : null}
           </button>

@@ -672,7 +672,7 @@ body:has(.grabfold[data-dragging='true']) .book-cover {
   position: relative;
   flex: none;
   height: 1px;
-  margin: calc(1cqh * 4.8) 0 calc(1cqh * 4.4);
+  margin: calc(1cqh * 4.8) 0 calc(1cqh * 2.4);
   background: linear-gradient(90deg, rgba(120, 95, 60, 0.45), rgba(120, 95, 60, 0.08));
 }
 
@@ -696,6 +696,7 @@ body:has(.grabfold[data-dragging='true']) .book-cover {
   line-height: 1.55;
   letter-spacing: 0.03em;
   color: #3a3024;
+  text-align: center;
 }
 
 .entry-place {
@@ -790,23 +791,74 @@ body:has(.grabfold[data-dragging='true']) .book-cover {
   color: #7f6a4b;
 }
 
-// 日记里的照片：几张小方片夹在纸里，点开还是原来的大图预览
+// 日记里的照片：像洗出来贴进本子的宝丽来，压在横线上
 .entry-photos {
   flex: none;
-  margin-top: calc(1cqh * 2.4);
+  margin: calc(1cqh * 2.8) 0 calc(1cqh * 1.4);
 
   > div {
-    gap: calc(1cqw * 2);
+    gap: calc(1cqw * 2.2);
+    align-items: flex-start;
+    padding-left: calc(1cqw * 1.4);
     margin-top: 0;
   }
 
-  button {
-    width: max(42px, calc(1cqw * 12));
-    height: max(42px, calc(1cqw * 12));
-    border-radius: 2px;
+  .diary-photo {
+    position: relative;
+    padding: calc(1cqw * 1.1) calc(1cqw * 1.1) calc(1cqw * 3.1);
+    border: 0;
+    border-radius: 1px;
+    cursor: pointer;
+    background: #f7f0df;
     box-shadow:
-      0 0 0 1px rgba(96, 76, 48, 0.28),
-      0 6px 12px -6px rgba(52, 38, 20, 0.45);
+      inset 0 1px 0 rgba(255, 252, 242, 0.7),
+      0 0 0 1px rgba(112, 84, 48, 0.16),
+      0 10px 18px -10px rgba(52, 38, 20, 0.55);
+    transform: rotate(-1.8deg);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+    &:nth-child(even) {
+      transform: rotate(1.9deg);
+    }
+
+    &:hover {
+      z-index: 2;
+      box-shadow:
+        0 0 0 1px rgba(112, 84, 48, 0.18),
+        0 16px 26px -12px rgba(52, 38, 20, 0.6);
+      transform: translateY(-3px) rotate(0deg);
+    }
+  }
+
+  .diary-photo-img {
+    display: block;
+    width: calc(1cqw * 18);
+    height: calc(1cqw * 16);
+    border-radius: 0;
+    object-fit: cover;
+    filter: saturate(0.94);
+    transition: transform 0.4s ease;
+  }
+
+  .diary-photo:hover .diary-photo-img {
+    transform: scale(1.03);
+  }
+
+  .diary-photo-shade {
+    position: absolute;
+    inset: calc(1cqw * 1.1) calc(1cqw * 1.1) calc(1cqw * 3.1);
+    background: rgba(17, 22, 25, 0.38);
+  }
+
+  .diary-photo-more {
+    position: absolute;
+    inset: calc(1cqw * 1.1) calc(1cqw * 1.1) calc(1cqw * 3.1);
+    display: grid;
+    font-family: var(--serif);
+    font-size: calc(1cqh * 2.6);
+    color: #f7f0df;
+    pointer-events: none;
+    place-items: center;
   }
 }
 

@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect, useRef, type RefObject } from 'react';
 import dayjs from 'dayjs';
 import { RiMapPinLine } from 'react-icons/ri';
 
@@ -52,58 +51,15 @@ export function splitDiaryContent(content: string): [string, string] {
   return [text.slice(0, cut), text.slice(cut)];
 }
 
-/** 正文太长时按整页高度缩字号，缩到下限仍放不下才让正文自己滚动 */
-function useEntryFit(pageRef: RefObject<HTMLDivElement | null>) {
-  useEffect(() => {
-    const page = pageRef.current;
-    const sheet = page?.querySelector<HTMLElement>('.sheet');
-    if (!page || !sheet) return;
-
-    let frame = 0;
-    const run = () => {
-      cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(() => {
-        if (page.clientHeight < 80) return;
-        sheet.classList.remove('is-overflow');
-        const setFit = (value: number) => sheet.style.setProperty('--fit', value.toFixed(3));
-        setFit(1);
-        if (sheet.scrollHeight <= sheet.clientHeight + 1) return;
-
-        let low = 0.55;
-        let high = 1;
-        for (let step = 0; step < 7; step += 1) {
-          const mid = (low + high) / 2;
-          setFit(mid);
-          if (sheet.scrollHeight > sheet.clientHeight + 1) high = mid;
-          else low = mid;
-        }
-        setFit(low);
-        if (sheet.scrollHeight > sheet.clientHeight + 1) sheet.classList.add('is-overflow');
-      });
-    };
-
-    run();
-    const observer = new ResizeObserver(run);
-    observer.observe(page);
-    document.fonts?.ready.then(run).catch(() => {});
-    return () => {
-      cancelAnimationFrame(frame);
-      observer.disconnect();
-    };
-  }, [pageRef]);
-}
-
 export function DiaryEntrySheet({ diary, side, index, content }: EntryProps) {
-  const pageRef = useRef<HTMLDivElement>(null);
-  useEntryFit(pageRef);
-
   const date = dayjs(diary.diaryDate);
 
   if (side === 'left') {
     return (
-      <div ref={pageRef} className="page page--left">
+      <div className="page page--left" data-entry={index}>
         <div className="sheet">
           <div className="masthead">
+            <span className="masthead-ym">{date.format('YYYY.MM')}</span>
             <time className="day" dateTime={diary.diaryDate}>
               {date.format('DD')}
             </time>
@@ -112,19 +68,15 @@ export function DiaryEntrySheet({ diary, side, index, content }: EntryProps) {
           <div className="hairline" />
 
           {diary.title ? <h2 className="entry-title">{diary.title}</h2> : null}
-          {diary.location ? (
-            <p className="entry-place">
-              <RiMapPinLine aria-hidden className="entry-place-icon" />
-              {diary.location}
-            </p>
-          ) : null}
 
-          <div className="body">
-            <DiaryMarkdown content={content} />
+          <div className="leaf-ruled">
+            <div className="body">
+              <DiaryMarkdown content={content} />
+            </div>
           </div>
 
           <div className="sheet-foot">
-            <span className="folio">{128 + index * 2}</span>
+            <span className="folio">{index * 2 + 1}</span>
           </div>
         </div>
       </div>
@@ -132,20 +84,31 @@ export function DiaryEntrySheet({ diary, side, index, content }: EntryProps) {
   }
 
   return (
-    <div ref={pageRef} className="page page--right">
+    <div className="page page--right" data-entry={index}>
       <div className="sheet">
-        <div className="body body--top">
-          <DiaryMarkdown content={content} />
+        <div className="leaf-ruled">
+          <div className="body body--top">
+            <DiaryMarkdown content={content} />
+          </div>
+
+          {diary.images?.length ? (
+            <div className="entry-photos">
+              <DiaryPhotos images={diary.images} maxShow={3} />
+            </div>
+          ) : null}
         </div>
 
-        {diary.images?.length ? (
-          <div className="entry-photos">
-            <DiaryPhotos images={diary.images} maxShow={3} />
-          </div>
-        ) : null}
+        <div className="sheet-tail">
+          {diary.location ? (
+            <p className="entry-place entry-place--end">
+              <RiMapPinLine aria-hidden className="entry-place-icon" />
+              {diary.location}
+            </p>
+          ) : null}
 
-        <div className="sheet-foot">
-          <span className="folio">{129 + index * 2}</span>
+          <div className="sheet-foot">
+            <span className="folio">{index * 2 + 2}</span>
+          </div>
         </div>
       </div>
     </div>
@@ -158,11 +121,7 @@ export function DiaryTitleSheet({ meta }: { meta: string }) {
       <div className="title-sheet">
         <div className="title-mark">日记本</div>
         <div className="title-rule" />
-        <p className="title-epigraph">
-          把寻常日子
-          <br />
-          写成温柔标本
-        </p>
+        <p className="title-epigraph">记录点点滴滴</p>
         <div className="title-flower">
           <svg viewBox="0 0 120 100" fill="none" stroke="#8b7554" strokeWidth="1.2" strokeLinecap="round" aria-hidden="true">
             <path d="M60 96C58 70 58 44 62 16M62 56C45 52 36 40 38 26c14-2 24 10 24 30ZM63 40c3-16 14-24 27-20 1 15-11 24-27 20ZM61 74C47 76 38 70 37 58c12-3 22 3 24 16Z" />
@@ -173,6 +132,17 @@ export function DiaryTitleSheet({ meta }: { meta: string }) {
           </svg>
         </div>
         <div className="title-meta">{meta}</div>
+      </div>
+    </div>
+  );
+}
+
+export function DiaryHalfTitle() {
+  return (
+    <div className="page page--half-title">
+      <div className="half-title">
+        <div className="half-title-mark">日记本</div>
+        <div className="half-title-rule" />
       </div>
     </div>
   );

@@ -1,8 +1,7 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import dayjs from 'dayjs';
-import { FiChevronRight, FiX } from 'react-icons/fi';
 
 import type { Diary } from '@/types/app/diary';
 
@@ -13,9 +12,9 @@ interface Props {
   activeIndex: number;
   onJump: (index: number) => void;
   onYearChange: (year: number | 'all') => void;
-  onClose: () => void;
 }
 
+const CN_DIGITS = ['〇', '一', '二', '三', '四', '五', '六', '七', '八', '九'];
 const CN_MONTHS = ['', '一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'];
 const WEEK = ['日', '一', '二', '三', '四', '五', '六'];
 
@@ -25,7 +24,6 @@ interface TocEntry {
 }
 
 interface TocDay {
-  day: number;
   date: string;
   entries: TocEntry[];
 }
@@ -43,7 +41,13 @@ interface TocYear {
   months: TocMonth[];
 }
 
-// 和本地笔记的存放方式一致：年 / 月 / MMDD，目录也按这三级折叠
+const cnYear = (year: number) =>
+  String(year)
+    .split('')
+    .map((char) => CN_DIGITS[Number(char)] ?? char)
+    .join('');
+
+// 和本地笔记的存放方式一致：年 / 月 / 日，按真实日期分组
 const buildTree = (pages: Diary[]): TocYear[] => {
   const years: TocYear[] = [];
 
@@ -51,7 +55,7 @@ const buildTree = (pages: Diary[]): TocYear[] => {
     const date = dayjs(page.diaryDate);
     const yearNo = date.year();
     const monthNo = date.month() + 1;
-    const dayNo = date.day();
+    const dateKey = date.format('YYYY-MM-DD');
 
     let year = years[years.length - 1];
     if (!year || year.year !== yearNo) {
@@ -68,153 +72,106 @@ const buildTree = (pages: Diary[]): TocYear[] => {
     month.total += 1;
 
     let day = month.days[month.days.length - 1];
-    if (!day || day.day !== dayNo) {
-      day = { day: dayNo, date: page.diaryDate, entries: [] };
+    if (!day || day.date !== dateKey) {
+      day = { date: dateKey, entries: [] };
       month.days.push(day);
     }
 
-    const plain = page.content.replace(/[#>*`_~\-[\]()!]/g, ' ').replace(/\s+/g, ' ').trim();
+    // 标题是可选字段，没有就留空，不拿正文凑标题
     day.entries.push({
       index,
-      title: page.title?.trim() || plain.slice(0, 18) || '无题',
+      title: page.title?.trim() || '',
     });
   });
 
   return years;
 };
 
-export default function DiaryToc({ pages, years, yearFilter, activeIndex, onJump, onYearChange, onClose }: Props) {
+export default function DiaryToc({ pages, years, yearFilter, activeIndex, onJump, onYearChange }: Props) {
   const tree = useMemo(() => buildTree(pages), [pages]);
-
-  const active = activeIndex >= 0 && activeIndex < pages.length ? pages[activeIndex] : null;
-  const activeYear = active ? dayjs(active.diaryDate).year() : null;
-  const activeMonth = active ? `${activeYear}-${dayjs(active.diaryDate).month() + 1}` : null;
-
-  const [openYears, setOpenYears] = useState<Set<number>>(() => new Set(activeYear != null ? [activeYear] : tree[0] ? [tree[0].year] : []));
-  const [openMonths, setOpenMonths] = useState<Set<string>>(() => new Set(activeMonth ? [activeMonth] : []));
-
-  // 翻页后目录自动展开到当前这篇所在的位置
-  useEffect(() => {
-    if (activeYear == null || !activeMonth) return;
-    setOpenYears((prev) => (prev.has(activeYear) ? prev : new Set(prev).add(activeYear)));
-    setOpenMonths((prev) => (prev.has(activeMonth) ? prev : new Set(prev).add(activeMonth)));
-  }, [activeYear, activeMonth]);
 
   const activeRef = useRef<HTMLButtonElement>(null);
   useEffect(() => {
-    // 展开到当天后等一帧，再把这一天滚进目录可视区
+    // 翻回目录时把当前这篇滚进可视区
     const frame = requestAnimationFrame(() => activeRef.current?.scrollIntoView({ block: 'nearest' }));
     return () => cancelAnimationFrame(frame);
   }, [activeIndex]);
 
-  const toggleYear = (year: number) =>
-    setOpenYears((prev) => {
-      const next = new Set(prev);
-      if (next.has(year)) next.delete(year);
-      else next.add(year);
-      return next;
-    });
-
-  const toggleMonth = (key: string) =>
-    setOpenMonths((prev) => {
-      const next = new Set(prev);
-      if (next.has(key)) next.delete(key);
-      else next.add(key);
-      return next;
-    });
-
   return (
-    <aside id="diary-toc" className="diary-toc" aria-label="日记目录">
-      <header className="diary-toc-head">
-        <h2 className="diary-toc-title">目录</h2>
-        <span className="diary-toc-note">{pages.length} 篇</span>
-        <button type="button" className="diary-toc-close" onClick={onClose} aria-label="收起目录">
-          <FiX className="size-4" />
-        </button>
-      </header>
+    <div className="page page--contents" id="diary-toc" aria-label="日记目录" data-no-turn data-grabfold-no-peek>
+      <div className="contents-sheet">
+        <header className="contents-head">
+          <h2 className="contents-title">目次</h2>
 
-      <div className="diary-toc-years" role="tablist" aria-label="按年份查看">
-        <button
-          type="button"
-          role="tab"
-          aria-selected={yearFilter === 'all'}
-          className={`diary-toc-year-tab ${yearFilter === 'all' ? 'is-active' : ''}`}
-          onClick={() => onYearChange('all')}
-        >
-          全部
-        </button>
-        {years.map((year) => (
-          <button
-            key={year}
-            type="button"
-            role="tab"
-            aria-selected={yearFilter === year}
-            title={`${year} 年`}
-            className={`diary-toc-year-tab ${yearFilter === year ? 'is-active' : ''}`}
-            onClick={() => onYearChange(year)}
-          >
-            {year}
-          </button>
-        ))}
-      </div>
-
-      <nav className="diary-toc-body">
-        {tree.map((year) => (
-          <section key={year.year} className="diary-toc-year">
+          <div className="contents-tabs" role="tablist" aria-label="按年份查看">
             <button
               type="button"
-              className="diary-toc-fold is-year"
-              onClick={() => toggleYear(year.year)}
-              aria-expanded={openYears.has(year.year)}
+              role="tab"
+              aria-selected={yearFilter === 'all'}
+              className={`contents-tab ${yearFilter === 'all' ? 'is-active' : ''}`}
+              onClick={() => onYearChange('all')}
             >
-              <FiChevronRight size={12} className={`diary-toc-caret ${openYears.has(year.year) ? 'is-open' : ''}`} />
-              <span>{year.year}</span>
-              <span className="diary-toc-count">{year.total}</span>
+              全部
             </button>
+            {years.map((year) => (
+              <button
+                key={year}
+                type="button"
+                role="tab"
+                aria-selected={yearFilter === year}
+                className={`contents-tab ${yearFilter === year ? 'is-active' : ''}`}
+                onClick={() => onYearChange(year)}
+              >
+                {year}
+              </button>
+            ))}
+          </div>
+        </header>
 
-            {openYears.has(year.year)
-              ? year.months.map((month) => {
-                  const monthKey = `${year.year}-${month.month}`;
-                  return (
-                    <div key={monthKey} className="diary-toc-month">
-                      <button
-                        type="button"
-                        className="diary-toc-fold is-month"
-                        onClick={() => toggleMonth(monthKey)}
-                        aria-expanded={openMonths.has(monthKey)}
-                      >
-                        <FiChevronRight size={11} className={`diary-toc-caret ${openMonths.has(monthKey) ? 'is-open' : ''}`} />
-                        <span>{month.name}</span>
-                        <span className="diary-toc-count">{month.total}</span>
-                      </button>
+        <nav className="contents-body" aria-label="按年份折叠的目录">
+          {tree.map((year) => (
+            <section key={year.year} className="contents-year">
+              <header className="contents-year-head">
+                <h3 className="contents-year-name">{cnYear(year.year)}年</h3>
+                <span className="contents-year-count">{year.total} 篇</span>
+              </header>
 
-                      {openMonths.has(monthKey)
-                        ? month.days.map((day) => {
-                            const date = dayjs(day.date);
-                            const isActive = day.entries.some((entry) => entry.index === activeIndex);
-                            return (
-                              <button
-                                key={day.date}
-                                ref={isActive ? activeRef : undefined}
-                                type="button"
-                                className={`diary-toc-fold is-day ${isActive ? 'is-active' : ''}`}
-                                onClick={() => onJump(day.entries[0].index)}
-                                title={day.entries.map((entry) => entry.title).join(' / ')}
-                              >
-                                <span className="diary-toc-day-no">{date.format('MMDD')}</span>
-                                <span className="diary-toc-day-week">周{WEEK[date.day()]}</span>
-                                <span className="diary-toc-count">{day.entries.length}</span>
-                              </button>
-                            );
-                          })
-                        : null}
-                    </div>
-                  );
-                })
-              : null}
-          </section>
-        ))}
-      </nav>
-    </aside>
+              {year.months.map((month) => (
+                <div key={`${year.year}-${month.month}`} className="contents-month">
+                  <div className="contents-month-head">
+                    <span className="contents-month-name">{month.name}</span>
+                    <span className="contents-month-rule" />
+                    <span className="contents-month-count">{String(month.total).padStart(2, '0')}</span>
+                  </div>
+
+                  {month.days.map((day) => {
+                    const date = dayjs(day.date);
+                    return day.entries.map((entry, order) => {
+                      const isActive = entry.index === activeIndex;
+                      return (
+                        <button
+                          key={`${day.date}-${entry.index}`}
+                          ref={isActive ? activeRef : undefined}
+                          type="button"
+                          className={`contents-row ${isActive ? 'is-active' : ''}`}
+                          onClick={() => onJump(entry.index)}
+                          title={entry.title || undefined}
+                        >
+                          <span className="contents-date">{order === 0 ? date.format('MM.DD') : ''}</span>
+                          <span className="contents-week">{order === 0 ? `周${WEEK[date.day()]}` : ''}</span>
+                          {entry.title ? <span className="contents-entry">{entry.title}</span> : null}
+                          <span className="contents-leader" />
+                          <span className="contents-page">{String(entry.index * 2 + 1).padStart(2, '0')}</span>
+                        </button>
+                      );
+                    });
+                  })}
+                </div>
+              ))}
+            </section>
+          ))}
+        </nav>
+      </div>
+    </div>
   );
 }

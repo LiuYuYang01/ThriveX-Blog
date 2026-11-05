@@ -44,22 +44,20 @@
 }
 
 .diary-reader.is-shutting .diary-tools,
-.diary-reader.is-shutting .pager,
-.diary-reader.is-shutting .diary-toc {
+.diary-reader.is-shutting .pager {
   opacity: 0;
 }
 
 .diary-tool {
   display: inline-flex;
-  gap: 7px;
   align-items: center;
-  padding: 7px 12px;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
   border: 1px solid rgba(201, 171, 116, 0.28);
-  border-radius: 9999px;
+  border-radius: 50%;
   cursor: pointer;
-  font-family: inherit;
-  font-size: 12px;
-  letter-spacing: 0.1em;
   color: #e4d2b0;
   background: rgba(28, 17, 10, 0.72);
   backdrop-filter: blur(4px);
@@ -101,247 +99,218 @@
   min-height: 0;
 }
 
-// ================= 目录 =================
-.diary-toc {
-  position: relative;
-  z-index: 10;
+// ================= 目次（卷首的一张纸页） =================
+.page--contents {
+  color: #3f3529;
+}
+
+.contents-sheet {
+  position: absolute;
+  inset: calc(1cqh * 7.6) calc(1cqw * 9.5) calc(1cqh * 5.6);
+  z-index: 2;
   display: flex;
-  flex: none;
   flex-direction: column;
-  width: clamp(156px, 15vw, 216px);
   min-height: 0;
-  margin: 32px 0 60px;
-  overflow: hidden;
-
-  // 目录不载体，字直接落在桌面上，只靠墨色和影子立住
-  --diary-ink: #f4e8cd;
-  --diary-ink-2: rgba(240, 226, 198, 0.88);
-  --diary-ink-3: rgba(240, 226, 198, 0.62);
-  --diary-gutter: rgba(201, 171, 116, 0.24);
-  --diary-accent: #e0997f;
-  --diary-paper-2: rgba(255, 236, 205, 0.16);
-
-  color: var(--diary-ink);
-  background: none;
-  border-radius: 0;
-  box-shadow: none;
-  // 木纹深浅不一，给字一点影子才立得住
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
-.diary-toc-head {
-  display: flex;
+.contents-head {
   flex: none;
-  gap: 8px;
-  align-items: center;
-  padding: 0 10px 8px 14px;
+  text-align: center;
 }
 
-.diary-toc-title {
+.contents-title {
   margin: 0;
   font-family: var(--serif);
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  color: var(--diary-ink);
+  font-size: calc(1cqh * 4.6);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: 0.36em;
+  text-indent: 0.36em;
+  color: #3a3024;
 }
 
-.diary-toc-note {
-  margin-left: auto;
-  font-family: var(--latin);
-  font-size: 10.5px;
-  letter-spacing: 0.06em;
-  color: var(--diary-ink-3);
-}
-
-.diary-toc-close {
-  display: grid;
-  flex: none;
-  width: 24px;
-  height: 24px;
-  border: 0;
-  border-radius: 50%;
-  cursor: pointer;
-  color: var(--diary-ink-2);
-  background: transparent;
-  place-items: center;
-
-  &:hover {
-    background: var(--diary-gutter);
-  }
-}
-
-.diary-toc-years {
+.contents-tabs {
   display: flex;
-  flex: none;
-  gap: 5px;
-  padding: 0 10px 10px;
-  overflow-x: auto;
-  scrollbar-width: none;
-
-  &::-webkit-scrollbar {
-    display: none;
-  }
+  flex-wrap: wrap;
+  gap: calc(1cqw * 3.4);
+  justify-content: center;
+  margin-top: calc(1cqh * 1.5);
 }
 
-.diary-toc-year-tab {
-  flex: none;
-  padding: 3px 9px;
-  border: 1px solid var(--diary-gutter);
-  border-radius: 3px;
+.contents-tab {
+  padding: 0 0 2px;
+  border: 0;
+  border-bottom: 1px solid transparent;
   cursor: pointer;
-  font-family: inherit;
-  font-size: 10.5px;
+  font-family: var(--serif);
+  font-size: calc(1cqh * 1.8);
   font-variant-numeric: tabular-nums;
-  letter-spacing: 0.06em;
-  color: var(--diary-ink-2);
-  background: transparent;
-  transition: color 0.18s ease, border-color 0.18s ease, background-color 0.18s ease;
+  letter-spacing: 0.1em;
+  color: #8a7556;
+  background: none;
 
   &:hover {
-    color: var(--diary-accent);
-    border-color: color-mix(in srgb, var(--diary-accent) 45%, transparent);
+    color: #9a4a38;
   }
 
   &.is-active {
-    color: var(--diary-ink);
-    background: color-mix(in srgb, var(--diary-accent) 22%, transparent);
-    border-color: color-mix(in srgb, var(--diary-accent) 55%, transparent);
+    border-bottom-color: rgba(154, 74, 56, 0.5);
+    color: #6d3a2c;
   }
 }
 
-.diary-toc-body {
+.contents-body {
   flex: 1;
   min-height: 0;
-  padding: 6px 0 14px;
+  margin-top: calc(1cqh * 1.8);
+  padding-right: calc(1cqw * 1.6);
   overflow-y: auto;
   overscroll-behavior: contain;
-  scrollbar-color: rgba(201, 171, 116, 0.4) transparent;
+  scrollbar-color: rgba(140, 112, 72, 0.4) transparent;
   scrollbar-width: thin;
-}
 
-.diary-toc-year + .diary-toc-year {
-  padding-top: 4px;
-  margin-top: 10px;
-}
+  &::-webkit-scrollbar {
+    width: 3px;
+  }
 
-.diary-toc-fold {
-  display: flex;
-  gap: 5px;
-  align-items: center;
-  width: 100%;
-  padding: 5px 12px;
-  border: 0;
-  cursor: pointer;
-  font-family: inherit;
-  text-align: left;
-  color: var(--diary-ink-2);
-  background: transparent;
+  &::-webkit-scrollbar-thumb {
+    border-radius: 2px;
+    background: rgba(120, 95, 60, 0.34);
+  }
 
-  &:hover {
-    color: var(--diary-accent);
-    background: color-mix(in srgb, var(--diary-paper-2) 62%, transparent);
+  &::-webkit-scrollbar-track {
+    background: transparent;
   }
 }
 
-.diary-toc-fold.is-year {
-  font-size: 12.5px;
+.contents-year + .contents-year {
+  margin-top: calc(1cqh * 2.6);
+}
+
+.contents-year-head {
+  display: flex;
+  gap: calc(1cqw * 2);
+  align-items: baseline;
+  padding-bottom: calc(1cqh * 0.8);
+  border-bottom: 1px solid rgba(120, 95, 60, 0.34);
+}
+
+.contents-year-name {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: calc(1cqh * 2.3);
   font-weight: 500;
-  letter-spacing: 0.06em;
-  color: var(--diary-ink);
+  letter-spacing: 0.14em;
+  color: #4a3d2c;
 }
 
-.diary-toc-fold.is-month {
-  padding-left: 24px;
-  font-size: 11.5px;
-}
-
-.diary-toc-fold.is-day {
-  padding-left: 34px;
-  font-size: 11px;
-  color: var(--diary-ink-3);
-
-  &.is-active {
-    color: var(--diary-accent);
-    background: color-mix(in srgb, var(--diary-accent) 14%, transparent);
-  }
-}
-
-.diary-toc-caret {
-  flex: none;
-  opacity: 0.7;
-  transition: transform 0.18s ease;
-
-  &.is-open {
-    transform: rotate(90deg);
-  }
-}
-
-.diary-toc-day-no {
-  font-family: var(--latin);
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  color: var(--diary-ink-2);
-}
-
-.diary-toc-day-week {
-  font-size: 9.5px;
-  color: var(--diary-ink-3);
-}
-
-.diary-toc-count {
+.contents-year-count {
   margin-left: auto;
+  font-size: calc(1cqh * 1.45);
+  letter-spacing: 0.08em;
+  color: #9c8869;
+}
+
+.contents-month {
+  margin-top: calc(1cqh * 1.3);
+}
+
+.contents-month-head {
+  display: flex;
+  gap: calc(1cqw * 1.4);
+  align-items: center;
+  padding: 0 calc(1cqw * 0.8);
+}
+
+.contents-month-name {
+  font-size: calc(1cqh * 1.8);
+  letter-spacing: 0.16em;
+  color: #6d5c47;
+}
+
+.contents-month-rule {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(120, 95, 60, 0.3), rgba(120, 95, 60, 0));
+}
+
+.contents-month-count {
   font-family: var(--latin);
-  font-size: 10px;
-  color: var(--diary-ink-3);
+  font-size: calc(1cqh * 1.4);
+  letter-spacing: 0.08em;
+  color: #9c8869;
 }
 
-.diary-toc-entries {
+.contents-row {
   display: flex;
-  flex-direction: column;
-  gap: 1px;
-  padding: 1px 8px 4px 42px;
-}
-
-.diary-toc-entry {
-  display: flex;
-  gap: 6px;
+  gap: calc(1cqw * 1.2);
   align-items: baseline;
   width: 100%;
-  padding: 4px 6px 4px 8px;
+  padding: calc(1cqh * 0.78) calc(1cqw * 0.8);
   border: 0;
-  border-radius: 4px;
+  border-radius: 2px;
   cursor: pointer;
   font-family: inherit;
-  font-size: 10.5px;
-  line-height: 1.55;
   text-align: left;
-  color: var(--diary-ink-2);
-  background: transparent;
+  color: #574a38;
+  background: none;
 
   &:hover {
-    color: var(--diary-accent);
+    color: #9a4a38;
+    background: rgba(120, 95, 60, 0.07);
   }
 
   &.is-active {
-    color: var(--diary-accent);
-    background: color-mix(in srgb, var(--diary-accent) 14%, transparent);
+    color: #9a4a38;
+    background: rgba(154, 74, 56, 0.09);
   }
 }
 
-.diary-toc-entry-title {
-  flex: 1;
-  min-width: 0;
+.contents-date {
+  flex: none;
+  width: calc(1cqw * 8.8);
+  font-family: var(--latin);
+  font-size: calc(1cqh * 1.85);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+  color: #3f3529;
+}
+
+.contents-week {
+  flex: none;
+  width: calc(1cqw * 5.4);
+  font-size: calc(1cqh * 1.42);
+  letter-spacing: 0.04em;
+  color: #9c8869;
+}
+
+.contents-entry {
+  flex: 0 1 auto;
+  max-width: 72%;
   overflow: hidden;
+  font-size: calc(1cqh * 1.9);
+  letter-spacing: 0.03em;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.diary-toc-entry-no {
+.contents-leader {
+  flex: 1;
+  height: 1px;
+  min-width: calc(1cqw * 3);
+  margin: 0 calc(1cqw * 0.8) 0.32em;
+  opacity: 0.55;
+  background-image: repeating-linear-gradient(90deg, #6d5c47 0 1px, transparent 1px 5px);
+}
+
+.contents-page {
   flex: none;
+  width: calc(1cqw * 4.8);
   font-family: var(--latin);
-  font-size: 9px;
-  color: var(--diary-ink-3);
+  font-size: calc(1cqh * 1.9);
+  letter-spacing: 0.08em;
+  text-align: right;
+  color: #7f6a4b;
 }
 
 .book-frame {
@@ -594,6 +563,7 @@ body:has(.grabfold[data-dragging='true']) .book-cover {
 .page--left::before,
 .page--right::before,
 .page--title::before,
+.page--contents::before,
 .page--colophon::before,
 .page--verso::before {
   background-repeat: no-repeat;
@@ -644,7 +614,7 @@ body:has(.grabfold[data-dragging='true']) .book-cover {
   flex-direction: column;
   overflow: hidden;
   padding: calc(1cqh * 8.4) calc(1cqw * 8) calc(1cqh * 5.2);
-  --fs-body: calc(1cqh * 3.02 * var(--fit, 1));
+  --fs-body: calc(1cqh * 2.5 * var(--fit, 1));
 }
 
 // 书脊那边留白宽一些，字才像被装订进去
@@ -657,24 +627,41 @@ body:has(.grabfold[data-dragging='true']) .book-cover {
 }
 
 .masthead {
-  display: flex;
+  display: grid;
   flex: none;
-  gap: 10px;
+  grid-template-columns: auto 1fr;
+  row-gap: calc(1cqh * 1.8);
+  column-gap: calc(1cqw * 2);
   align-items: baseline;
-  justify-content: space-between;
 }
 
 .day {
   display: block;
+  grid-row: 2;
+  grid-column: 1;
   font-family: var(--latin);
-  font-size: calc(1cqh * 14.2);
-  font-weight: 300;
+  font-size: calc(1cqh * 14.8);
+  font-weight: 400;
   line-height: 0.72;
   letter-spacing: -0.03em;
   color: #3d3327;
 }
 
+.masthead-ym {
+  grid-row: 1;
+  grid-column: 1;
+  font-family: var(--latin);
+  font-size: calc(1cqh * 1.5);
+  line-height: 1.2;
+  letter-spacing: 0.16em;
+  color: #a08a68;
+  white-space: nowrap;
+}
+
 .weekday {
+  grid-row: 2;
+  grid-column: 2;
+  justify-self: end;
   font-size: calc(1cqh * 1.85);
   letter-spacing: 0.08em;
   color: #7b6a52;
@@ -722,9 +709,35 @@ body:has(.grabfold[data-dragging='true']) .book-cover {
   color: #8a7556;
 }
 
+// 地点写在正文最后：落在右页页脚上方，右对齐
+.entry-place--end {
+  justify-content: flex-end;
+  margin: 0 0 calc(1cqh * 1.1);
+  font-size: calc(1cqh * 1.7);
+}
+
 .entry-place-icon {
   width: calc(1cqh * 2);
   height: calc(1cqh * 2);
+}
+
+// 横线本：整块书写区铺满横线，没有字的地方也照样有线
+.leaf-ruled {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+  --rule-step: calc(var(--fs-body, 15px) * 2.12);
+  --rule-line: calc(var(--rule-step) * 0.858);
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent calc(var(--rule-line) - 1px),
+    rgba(120, 95, 60, 0.2) calc(var(--rule-line) - 1px),
+    rgba(120, 95, 60, 0.2) var(--rule-line),
+    transparent var(--rule-line),
+    transparent var(--rule-step)
+  );
 }
 
 .body {
@@ -755,15 +768,19 @@ body:has(.grabfold[data-dragging='true']) .book-cover {
   flex: none;
   align-items: center;
   justify-content: flex-start;
-  margin-top: auto;
   padding-top: calc(1cqh * 2.2);
   font-size: calc(1cqh * 1.42);
   letter-spacing: 0.2em;
   color: #9c8869;
 }
 
+.sheet-tail {
+  flex: none;
+}
+
 .page--right .sheet-foot {
   justify-content: flex-end;
+  margin-top: 0;
 }
 
 .folio {
@@ -791,6 +808,33 @@ body:has(.grabfold[data-dragging='true']) .book-cover {
       0 0 0 1px rgba(96, 76, 48, 0.28),
       0 6px 12px -6px rgba(52, 38, 20, 0.45);
   }
+}
+
+// ================= 半扉页（目录的正面，只印书名） =================
+.half-title {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: calc(1cqh * 27);
+  text-align: center;
+}
+
+.half-title-mark {
+  font-family: var(--serif);
+  font-size: calc(1cqh * 2.8);
+  letter-spacing: 0.5em;
+  text-indent: 0.5em;
+  color: #6d5c47;
+}
+
+.half-title-rule {
+  width: calc(1cqw * 11);
+  height: 1px;
+  margin-top: calc(1cqh * 2.5);
+  background: linear-gradient(90deg, transparent, rgba(120, 95, 60, 0.42), transparent);
 }
 
 // ================= 扉页 =================
@@ -1282,7 +1326,7 @@ body:has(.grabfold[data-dragging='true']) .book-cover {
 }
 
 // ================= 焦点与宽窄屏 =================
-.diary-reader :is(.diary-tool, .diary-cal-day.is-written, .diary-cal-step, .diary-cal-close, .diary-toc-close, .diary-toc-year-tab, .diary-toc-fold, .diary-toc-entry, .a11y-turn button):focus-visible {
+.diary-reader :is(.diary-tool, .diary-cal-day.is-written, .diary-cal-step, .diary-cal-close, .contents-tab, .contents-row, .a11y-turn button):focus-visible {
   outline: 2px solid #c9a86f;
   outline-offset: 2px;
 }
@@ -1290,23 +1334,6 @@ body:has(.grabfold[data-dragging='true']) .book-cover {
 @media (max-width: 899px) {
   .diary-stage {
     flex-direction: column;
-  }
-
-  // 窄屏目录脱离书页，变成左侧抽屉；压着书页时给一层暗玻璃，文字才看得清
-  .diary-toc {
-    position: fixed;
-    top: max(54px, env(safe-area-inset-top));
-    bottom: max(14px, env(safe-area-inset-bottom));
-    left: 12px;
-    z-index: 45;
-    width: min(282px, 84vw);
-    margin: 0;
-    background: rgba(26, 16, 9, 0.62);
-    border-radius: 8px;
-    backdrop-filter: blur(12px);
-    box-shadow:
-      0 30px 60px -12px rgba(0, 0, 0, 0.66),
-      inset 0 0 0 1px var(--diary-gutter);
   }
 }
 
@@ -1322,14 +1349,6 @@ body:has(.grabfold[data-dragging='true']) .book-cover {
   .diary-tools {
     top: 10px;
     right: 12px;
-  }
-
-  .diary-tool span {
-    display: none;
-  }
-
-  .diary-tool {
-    padding: 8px;
   }
 }
 

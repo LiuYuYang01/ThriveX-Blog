@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import dayjs from 'dayjs';
 import { useRouter } from 'next/navigation';
-import { FiCalendar, FiList, FiLock } from 'react-icons/fi';
+import { FiCalendar, FiLock } from 'react-icons/fi';
 import { GrabfoldBook, type GrabfoldBookHandle, type PageRef } from 'grabfold/react';
 import type { PageTurnSound } from 'grabfold/sound';
 
@@ -18,6 +18,7 @@ import {
   DiaryColophonSheet,
   DiaryEndpaper,
   DiaryEntrySheet,
+  DiaryHalfTitle,
   DiaryTitleSheet,
   DiaryVerso,
   splitDiaryContent,
@@ -57,13 +58,15 @@ const seasonOf = (month: number) => {
 const mapMode = (position: number, total: number, from: Mode, to: Mode) => {
   if (from === to) return position;
   if (to === 'single') {
-    if (position < 0) return -1;
-    if (position >= total) return total * 2;
-    return position * 2;
+    // 封面跨页换成衬页，目录跨页换成目录页
+    if (position <= 0) return position === 0 ? -1 : -2;
+    if (position >= total + 1) return total * 2 + 1;
+    return (position - 1) * 2 + 1;
   }
-  if (position < 0) return -1;
-  if (position >= total * 2) return total;
-  return Math.floor(position / 2);
+  if (position <= -1) return -1;
+  if (position === 0) return 0;
+  if (position >= total * 2 + 1) return total + 1;
+  return Math.floor((position - 1) / 2) + 1;
 };
 
 /* ---------- 纸的下缘被轻轻托起：弹簧-质点 + Verlet 积分 ----------
@@ -249,11 +252,11 @@ export default function DiaryReader({ pages }: Props) {
 
   const [mode, setMode] = useState<Mode>('spread');
   const modeRef = useRef<Mode>('spread');
+  // 翻开本子先落在卷首这一跨页：左边目录，右边扉页
   const [position, setPosition] = useState(0);
   const positionRef = useRef(0);
   const [closing, setClosing] = useState(false);
   const [calOpen, setCalOpen] = useState(false);
-  const [tocOpen, setTocOpen] = useState(true);
   const [yearFilter, setYearFilter] = useState<number | 'all'>('all');
   const [notice, setNotice] = useState('');
   const [sound, setSound] = useState<PageTurnSound | null>(null);
@@ -296,11 +299,6 @@ export default function DiaryReader({ pages }: Props) {
     const date = dayjs(viewPages[viewPages.length - 1].diaryDate);
     return `${total} 篇旧日手札，写于${cnYear(date.year())}年的${seasonOf(date.month() + 1)}。`;
   }, [viewPages, total]);
-
-  // 窄屏目录改成抽屉，默认收起，不和书页抢地方
-  useEffect(() => {
-    if (!window.matchMedia('(min-width: 900px)').matches) setTocOpen(false);
-  }, []);
 
   // 书页对开时平整，鼠标靠近书沿时露出一角
   useEffect(() => {
@@ -373,11 +371,54 @@ export default function DiaryReader({ pages }: Props) {
     }
   }, []);
 
+  // 同一篇日记的左右两页共用一个字号：按更挤的那页缩，翻页时字号不会突变
+  const balanceEntryFit = useCallback(() => {
+    const root = frameRef.current;
+    if (!root) return;
+
+    const groups = new Map<string, HTMLElement[]>();
+    root.querySelectorAll<HTMLElement>('.page[data-entry]').forEach((page) => {
+      const key = page.dataset.entry;
+      const sheet = page.querySelector<HTMLElement>('.sheet');
+      if (!key || !sheet) return;
+      const list = groups.get(key);
+      if (list) list.push(sheet);
+      else groups.set(key, [sheet]);
+    });
+
+    groups.forEach((sheets) => {
+      let fit = 1;
+      sheets.forEach((sheet) => {
+        sheet.classList.remove('is-overflow');
+        sheet.style.setProperty('--fit', '1');
+        if (sheet.scrollHeight <= sheet.clientHeight + 1) return;
+
+        let low = 0.55;
+        let high = 1;
+        for (let step = 0; step < 7; step += 1) {
+          const mid = (low + high) / 2;
+          sheet.style.setProperty('--fit', mid.toFixed(3));
+          if (sheet.scrollHeight > sheet.clientHeight + 1) high = mid;
+          else low = mid;
+        }
+        fit = Math.min(fit, low);
+      });
+
+      sheets.forEach((sheet) => {
+        sheet.style.setProperty('--fit', fit.toFixed(3));
+        sheet.classList.toggle('is-overflow', sheet.scrollHeight > sheet.clientHeight + 1);
+      });
+    });
+  }, []);
+
   // 视口、字体、书本尺寸变化都要把书壳重新贴回纸边上
   useEffect(() => {
-    const id = requestAnimationFrame(updateCover);
+    const id = requestAnimationFrame(() => {
+      updateCover();
+      balanceEntryFit();
+    });
     return () => cancelAnimationFrame(id);
-  }, [position, mode, yearFilter, updateCover]);
+  }, [position, mode, yearFilter, updateCover, balanceEntryFit]);
 
   // 目录开合、字体到位、视口变化都会让书本重新量尺寸：
   // 跟引擎的 resize 事件把书壳与投影重新贴回纸边，第一页才不会是光秃秃的纸
@@ -385,16 +426,22 @@ export default function DiaryReader({ pages }: Props) {
     const book = bookRef.current?.book;
     if (!book) return;
     return book.on('resize', () => {
-      requestAnimationFrame(updateCover);
+      requestAnimationFrame(() => {
+        updateCover();
+        balanceEntryFit();
+      });
     });
-  }, [mode, yearFilter, updateCover]);
+  }, [mode, yearFilter, updateCover, balanceEntryFit]);
 
   useEffect(() => {
-    const onResize = () => updateCover();
+    const onResize = () => {
+      updateCover();
+      balanceEntryFit();
+    };
     window.addEventListener('resize', onResize);
-    document.fonts?.ready.then(updateCover).catch(() => {});
+    document.fonts?.ready.then(onResize).catch(() => {});
     return () => window.removeEventListener('resize', onResize);
-  }, [updateCover]);
+  }, [updateCover, balanceEntryFit]);
 
   // 窄屏单页 / 宽屏对开：和示例一样在断点处重建书本，位置跟着读者走
   useEffect(() => {
@@ -449,7 +496,7 @@ export default function DiaryReader({ pages }: Props) {
       }
       // 已经是最后一页，再往后翻就是把本子合上
       const engine = book.book;
-      const atEnd = engine ? (modeRef.current === 'spread' ? engine.position >= total : engine.position >= total * 2) : false;
+      const atEnd = engine ? (modeRef.current === 'spread' ? engine.position >= total + 1 : engine.position >= total * 2 + 1) : false;
       if (dir === 'next' && atEnd) {
         closeRef.current();
         return;
@@ -508,7 +555,7 @@ export default function DiaryReader({ pages }: Props) {
       const dy = event.clientY - start.y;
       // 最后一页向前拖纸：引擎已经无处可翻，这里直接合上本子
       const engine = bookRef.current?.book;
-      const atEnd = engine ? (modeRef.current === 'spread' ? engine.position >= total : engine.position >= total * 2) : false;
+      const atEnd = engine ? (modeRef.current === 'spread' ? engine.position >= total + 1 : engine.position >= total * 2 + 1) : false;
       if (atEnd && dx < -40 && Math.abs(dx) > Math.abs(dy)) {
         requestTurn('next');
         return;
@@ -543,9 +590,9 @@ export default function DiaryReader({ pages }: Props) {
     const onWheel = (event: WheelEvent) => {
       if (closingRef.current || !bookRef.current) return;
       const target = event.target instanceof Element ? event.target : null;
-      const body = target?.closest<HTMLElement>('.body');
-      // 正文太长、已经能滚动时，滚轮先让给正文
-      if (body && body.scrollHeight > body.clientHeight + 1 && Math.abs(event.deltaY) >= Math.abs(event.deltaX)) return;
+      const scroller = target?.closest<HTMLElement>('.body, .contents-body');
+      // 正文或目录太长、已经能滚动时，滚轮先让给内容
+      if (scroller && scroller.scrollHeight > scroller.clientHeight + 1 && Math.abs(event.deltaY) >= Math.abs(event.deltaX)) return;
 
       event.preventDefault();
       const now = performance.now();
@@ -598,10 +645,10 @@ export default function DiaryReader({ pages }: Props) {
         requestTurn('next');
       } else if (event.key === 'Home') {
         event.preventDefault();
-        void bookRef.current.turnTo(modeRef.current === 'spread' ? -1 : -2);
+        void bookRef.current.turnTo(modeRef.current === 'spread' ? 0 : -1);
       } else if (event.key === 'End') {
         event.preventDefault();
-        void bookRef.current.turnTo(modeRef.current === 'spread' ? total : total * 2 + 1);
+        void bookRef.current.turnTo(modeRef.current === 'spread' ? total + 1 : total * 2 + 1);
       }
     };
 
@@ -610,7 +657,7 @@ export default function DiaryReader({ pages }: Props) {
   }, [requestTurn, total]);
 
   const first = mode === 'spread' ? -1 : -2;
-  const last = mode === 'spread' ? total : total * 2 + 1;
+  const last = mode === 'spread' ? total + 1 : total * 2 + 2;
   const canPrev = position > first;
   const canNext = position < last;
 
@@ -619,10 +666,11 @@ export default function DiaryReader({ pages }: Props) {
   }, [canPrev, canNext]);
 
   const logical = useMemo(() => {
-    if (!total || position < 0) return -1;
-    if (mode === 'spread') return position >= total ? total : position;
-    if (position >= total * 2) return total;
-    return Math.floor(position / 2);
+    if (!total) return -1;
+    if (position <= 0) return -1;
+    if (mode === 'spread') return Math.min(position - 1, total);
+    if (position >= total * 2 + 1) return total;
+    return Math.floor((position - 1) / 2);
   }, [mode, position, total]);
 
   const current = logical >= 0 && logical < total ? viewPages[logical] : null;
@@ -647,7 +695,7 @@ export default function DiaryReader({ pages }: Props) {
     const message = !total
       ? '日记本还是空的'
       : logical < 0
-        ? '扉页，旧日手札'
+        ? '卷首，旧日手札'
         : logical >= total
           ? '尾页，本册读完了'
           : `正在阅读：${viewPages[logical].title || dayjs(viewPages[logical].diaryDate).format('YYYY年M月D日')}，第 ${logical + 1} 篇，共 ${total} 篇`;
@@ -658,15 +706,16 @@ export default function DiaryReader({ pages }: Props) {
   }, [logical, total, viewPages]);
 
   const singleLeaf = (index: number) => {
-    if (index === 0) return <DiaryTitleSheet meta={titleMeta} />;
-    if (index >= total * 2 + 1) return <DiaryColophonSheet count={total} note={colophonNote} />;
-    const entry = Math.floor((index - 1) / 2);
+    if (index === 0) return <DiaryToc pages={viewPages} years={years} yearFilter={yearFilter} activeIndex={logical} onJump={jumpToIndex} onYearChange={changeYear} />;
+    if (index === 1) return <DiaryTitleSheet meta={titleMeta} />;
+    if (index >= total * 2 + 2) return <DiaryColophonSheet count={total} note={colophonNote} />;
+    const entry = Math.floor((index - 2) / 2);
     return (
       <DiaryEntrySheet
         diary={viewPages[entry]}
-        side={index % 2 === 1 ? 'left' : 'right'}
+        side={index % 2 === 0 ? 'left' : 'right'}
         index={entry}
-        content={leaves[entry][index % 2 === 1 ? 0 : 1]}
+        content={leaves[entry][index % 2 === 0 ? 0 : 1]}
       />
     );
   };
@@ -679,33 +728,38 @@ export default function DiaryReader({ pages }: Props) {
       return singleLeaf(page.sheet);
     }
 
+    // 对开：半扉页是一张纸，翻过来就是目录，右边接扉页
     if (page.kind === 'front') {
-      if (page.sheet === 0) return <DiaryTitleSheet meta={titleMeta} />;
-      if (page.sheet > total) return <DiaryEndpaper />;
-      const entry = page.sheet - 1;
+      if (page.sheet === 0) return <DiaryHalfTitle />;
+      if (page.sheet === 1) return <DiaryTitleSheet meta={titleMeta} />;
+      const entry = page.sheet - 2;
       return <DiaryEntrySheet diary={viewPages[entry]} side="right" index={entry} content={leaves[entry][1]} />;
     }
 
-    if (page.sheet >= total) return <DiaryColophonSheet count={total} note={colophonNote} />;
-    return <DiaryEntrySheet diary={viewPages[page.sheet]} side="left" index={page.sheet} content={leaves[page.sheet][0]} />;
+    if (page.sheet === 0) {
+      return <DiaryToc pages={viewPages} years={years} yearFilter={yearFilter} activeIndex={logical} onJump={jumpToIndex} onYearChange={changeYear} />;
+    }
+    if (page.sheet > total) return <DiaryColophonSheet count={total} note={colophonNote} />;
+    const entry = page.sheet - 1;
+    return <DiaryEntrySheet diary={viewPages[entry]} side="left" index={entry} content={leaves[entry][0]} />;
   };
 
   const jumpToIndex = (index: number) => {
-    const target = modeRef.current === 'spread' ? index : index * 2;
-    if (target !== positionRef.current) void bookRef.current?.turnTo(target);
+    const target = modeRef.current === 'spread' ? index + 1 : index * 2 + 1;
     setCalOpen(false);
-    // 窄屏点完目录就收起，把页面让给书
-    if (!window.matchMedia('(min-width: 900px)').matches) setTocOpen(false);
+    if (target === positionRef.current) return;
+    // 目录/日历跳转直接落到那一页，不逐页翻过去
+    bookRef.current?.jumpTo(target);
+    setPosition(target);
+    positionRef.current = target;
+    requestAnimationFrame(updateCover);
   };
 
-  // 切换年份后整本书只保留该年的日记，从第一篇重新翻开
+  // 切换年份后整本书只保留该年的日记，仍停在目录页上让读者重新挑
   const changeYear = (value: number | 'all') => {
     if (value === yearFilter) return;
     setYearFilter(value);
     setCalOpen(false);
-    setPosition(0);
-    positionRef.current = 0;
-    if (!window.matchMedia('(min-width: 900px)').matches) setTocOpen(false);
   };
 
   const restoreBook = () => {
@@ -798,22 +852,8 @@ export default function DiaryReader({ pages }: Props) {
       {total ? (
         <>
           <header className="diary-tools">
-            <button
-              type="button"
-              className="diary-tool"
-              onClick={() => setTocOpen((open) => !open)}
-              disabled={closing}
-              aria-label={tocOpen ? '收起目录' : '打开目录'}
-              aria-expanded={tocOpen}
-              aria-controls="diary-toc"
-            >
-              <FiList className="size-4" />
-              <span>目录</span>
-            </button>
-
-            <button type="button" className="diary-tool" onClick={closeBook} disabled={closing} aria-label="合上日记本">
+            <button type="button" className="diary-tool" onClick={closeBook} disabled={closing} aria-label="合上日记本" title="合上日记本">
               <FiLock className="size-4" />
-              <span>合上日记本</span>
             </button>
 
             <div className="diary-cal-slot" ref={calRef}>
@@ -825,9 +865,10 @@ export default function DiaryReader({ pages }: Props) {
                 disabled={closing}
                 aria-expanded={calOpen}
                 aria-controls="diary-calendar"
+                aria-label="日历"
+                title="日历"
               >
                 <FiCalendar className="size-4" />
-                <span>日历</span>
               </button>
 
               {calOpen ? (
@@ -839,18 +880,6 @@ export default function DiaryReader({ pages }: Props) {
           </header>
 
           <div className="diary-stage">
-            {tocOpen ? (
-              <DiaryToc
-                pages={viewPages}
-                years={years}
-                yearFilter={yearFilter}
-                activeIndex={logical}
-                onJump={jumpToIndex}
-                onYearChange={changeYear}
-                onClose={() => setTocOpen(false)}
-              />
-            ) : null}
-
             <div className="book-stage" ref={stageRef}>
               <div className="book-frame" ref={frameRef}>
                 <div className="book-cast" ref={castRef} aria-hidden="true" />
@@ -860,7 +889,7 @@ export default function DiaryReader({ pages }: Props) {
                   key={`${mode}-${yearFilter}`}
                   ref={bookRef}
                   className="flipbook"
-                  sheets={mode === 'spread' ? total + 1 : total * 2 + 2}
+                  sheets={mode === 'spread' ? total + 2 : total * 2 + 3}
                   covers="inside"
                   hard={() => true}
                   pageRatio={450 / 680}

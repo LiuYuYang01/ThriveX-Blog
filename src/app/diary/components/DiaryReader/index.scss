@@ -318,18 +318,6 @@
   inset: 32px 3% 60px;
 }
 
-// 光从左上来，整本书也是越往右下越沉，这样纸才不会自己发光
-.book-frame::after {
-  position: absolute;
-  inset: -30px;
-  z-index: 3;
-  pointer-events: none;
-  content: '';
-  background:
-    radial-gradient(112% 92% at 22% -4%, rgba(44, 26, 11, 0) 34%, rgba(44, 26, 11, 0.16) 78%, rgba(38, 22, 9, 0.26) 100%),
-    linear-gradient(198deg, rgba(255, 232, 194, 0.05) 0%, rgba(255, 232, 194, 0) 34%);
-}
-
 // 落在桌上的影子：贴着书沿最黑，越远越散
 .book-cast {
   position: absolute;

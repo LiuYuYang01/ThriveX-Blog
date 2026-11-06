@@ -16,7 +16,7 @@
   background-image:
     radial-gradient(100% 74% at 22% -12%, rgba(255, 196, 130, 0.26) 0%, rgba(255, 196, 130, 0.07) 40%, rgba(255, 196, 130, 0) 62%),
     radial-gradient(84% 64% at 86% 114%, rgba(24, 11, 4, 0.44) 0%, rgba(24, 11, 4, 0) 70%),
-    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='1400' height='900'><defs><pattern id='g' width='1400' height='5' patternUnits='userSpaceOnUse'><rect width='1400' height='5' fill='rgb(104,66,38)'/><rect width='1400' height='1.7' fill='rgb(48,28,15)' opacity='0.34'/><rect y='3.1' width='1400' height='0.8' fill='rgb(136,92,56)' opacity='0.26'/></pattern><filter id='f' x='-8%' y='-14%' width='116%' height='128%'><feTurbulence type='fractalNoise' baseFrequency='0.0017 0.013' numOctaves='4' seed='7' result='w'/><feDisplacementMap in='SourceGraphic' in2='w' scale='40' xChannelSelector='R' yChannelSelector='G'/><feGaussianBlur stdDeviation='0.8'/></filter></defs><rect width='1400' height='900' fill='url(%23g)' filter='url(%23f)'/></svg>");
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='1400' height='900'><defs><pattern id='g' width='1400' height='5' patternUnits='userSpaceOnUse'><rect width='1400' height='5' fill='rgb(104,66,38)'/><rect width='1400' height='1.7' fill='rgb(48,28,15)' opacity='0.34'/><rect y='3.1' width='1400' height='0.8' fill='rgb(136,92,56)' opacity='0.26'/></pattern><filter id='f' x='-8%' y='-14%' width='116%' height='128%'><feTurbulence type='fractalNoise' baseFrequency='0.0017 0.013' numOctaves='4' seed='7' result='w'/><feOffset in='SourceGraphic' dx='0' dy='0' x='0' y='0' width='1400' height='900' result='s'/><feTile in='s' result='t'/><feDisplacementMap in='t' in2='w' scale='40' xChannelSelector='R' yChannelSelector='G'/><feGaussianBlur stdDeviation='0.8'/></filter></defs><rect width='1400' height='900' fill='url(%23g)' filter='url(%23f)'/></svg>");
   background-position: center, center, center;
   background-repeat: no-repeat, no-repeat, no-repeat;
   background-size: auto, auto, cover;
@@ -33,15 +33,4 @@
     repeating-linear-gradient(1.6deg, rgba(255, 232, 198, 0.026) 0 1px, transparent 1px 27px),
     repeating-linear-gradient(-2.4deg, rgba(0, 0, 0, 0.055) 0 1px, transparent 1px 43px);
   mix-blend-mode: soft-light;
-}
-
-.diary-scene::after {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  content: '';
-  box-shadow:
-    inset 0 0 150px 18px rgba(0, 0, 0, 0.46),
-    inset 0 0 60px 0 rgba(0, 0, 0, 0.18),
-    inset 0 -60px 100px -66px rgba(0, 0, 0, 0.34);
 }

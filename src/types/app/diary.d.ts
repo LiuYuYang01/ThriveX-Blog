@@ -9,7 +9,6 @@ export interface Diary {
   diaryDate: string;
   title?: string;
   content: string;
-  images: string[];
   mood?: string;
   weather?: string;
   location?: string;

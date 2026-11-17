@@ -149,14 +149,22 @@
 
   .diary-md-img {
     display: block;
-    max-width: 100%;
-    max-height: calc(1cqh * 32);
-    margin: 1.2em auto;
-    border-radius: 4px;
+    max-width: calc(100% - 0.6em);
+    max-height: calc(1cqh * 30);
+    margin: 1.4em auto;
+    padding: calc(1cqw * 0.9) calc(1cqw * 0.9) calc(1cqw * 2.2);
+    border-radius: 1px;
+    background: #f7f0df;
     object-fit: contain;
     box-shadow:
-      0 0 0 1px rgba(96, 76, 48, 0.22),
-      0 8px 18px -10px rgba(52, 38, 20, 0.5);
+      inset 0 1px 0 rgba(255, 252, 242, 0.7),
+      0 0 0 1px rgba(112, 84, 48, 0.16),
+      0 10px 18px -10px rgba(52, 38, 20, 0.5);
+    transform: rotate(-1.2deg);
+
+    &:nth-of-type(even) {
+      transform: rotate(1.2deg);
+    }
   }
 
   hr {

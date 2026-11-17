@@ -161,7 +161,7 @@ export default function DiaryToc({ pages, years, yearFilter, activeIndex, onJump
                           <span className="contents-week">{order === 0 ? `周${WEEK[date.day()]}` : ''}</span>
                           {entry.title ? <span className="contents-entry">{entry.title}</span> : null}
                           <span className="contents-leader" />
-                          <span className="contents-page">{String(entry.index * 2 + 1).padStart(2, '0')}</span>
+                          <span className="contents-page">{String(entry.index + 1).padStart(2, '0')}</span>
                         </button>
                       );
                     });

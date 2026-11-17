@@ -4,7 +4,6 @@ import dayjs from 'dayjs';
 import { RiMapPinLine } from 'react-icons/ri';
 
 import type { Diary } from '@/types/app/diary';
-import DiaryPhotos from '../DiaryPhotos';
 import DiaryMarkdown from './DiaryMarkdown';
 
 const WEEKDAYS = ['星期天', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
@@ -13,101 +12,41 @@ interface EntryProps {
   diary: Diary;
   side: 'left' | 'right';
   index: number;
-  content: string;
 }
 
-/** 把一篇日记拆成左右两页，尽量按段落对半分 */
-export function splitDiaryContent(content: string): [string, string] {
-  const text = content.replace(/\r\n/g, '\n').trim();
-  if (!text) return ['', ''];
-
-  const blocks = text.split(/\n{2,}/);
-  if (blocks.length > 1) {
-    let acc = 0;
-    let cut = blocks.length - 1;
-    for (let i = 0; i < blocks.length; i += 1) {
-      acc += blocks[i].length;
-      if (acc >= text.length / 2) {
-        cut = Math.min(i + 1, blocks.length - 1);
-        break;
-      }
-    }
-    return [blocks.slice(0, cut).join('\n\n'), blocks.slice(cut).join('\n\n')];
-  }
-
-  // 只有一段时在句子边界附近断开，别把句子拦腰截断
-  const mid = Math.floor(text.length / 2);
-  const marks = ['。', '！', '？', '\n', '；'];
-  let cut = -1;
-  for (const mark of marks) {
-    const before = text.lastIndexOf(mark, mid);
-    const after = text.indexOf(mark, mid);
-    const candidates = [before + 1, after + 1].filter((n) => n > 0 && n <= text.length);
-    if (!candidates.length) continue;
-    const best = candidates.reduce((a, b) => (Math.abs(a - mid) < Math.abs(b - mid) ? a : b));
-    if (cut < 0 || Math.abs(best - mid) < Math.abs(cut - mid)) cut = best;
-  }
-  if (cut <= 0 || cut >= text.length) cut = mid;
-  return [text.slice(0, cut), text.slice(cut)];
-}
-
-export function DiaryEntrySheet({ diary, side, index, content }: EntryProps) {
+export function DiaryEntrySheet({ diary, side, index }: EntryProps) {
   const date = dayjs(diary.diaryDate);
 
-  if (side === 'left') {
-    return (
-      <div className="page page--left" data-entry={index}>
-        <div className="sheet">
-          <div className="masthead">
-            <span className="masthead-ym">{date.format('YYYY.MM')}</span>
-            <time className="day" dateTime={diary.diaryDate}>
-              {date.format('DD')}
-            </time>
-            <span className="weekday">{WEEKDAYS[date.day()]}</span>
-          </div>
-          <div className="hairline" />
-
-          {diary.title ? <h2 className="entry-title">{diary.title}</h2> : null}
-
-          <div className="leaf-ruled">
-            <div className="body">
-              <DiaryMarkdown content={content} />
-            </div>
-          </div>
-
-          <div className="sheet-foot">
-            <span className="folio">{index * 2 + 1}</span>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="page page--right" data-entry={index}>
+    <div className={`page page--${side}`} data-entry={index}>
       <div className="sheet">
-        <div className="leaf-ruled">
-          <div className="body body--top">
-            <DiaryMarkdown content={content} />
-          </div>
+        <div className="masthead">
+          <span className="masthead-ym">{date.format('YYYY.MM')}</span>
+          <time className="day" dateTime={diary.diaryDate}>
+            {date.format('DD')}
+          </time>
+          <span className="weekday">{WEEKDAYS[date.day()]}</span>
+        </div>
+        <div className="hairline" />
 
-          {diary.images?.length ? (
-            <div className="entry-photos">
-              <DiaryPhotos images={diary.images} maxShow={3} />
-            </div>
-          ) : null}
+        {diary.title ? <h2 className="entry-title">{diary.title}</h2> : null}
+
+        <div className="leaf-ruled">
+          <div className="body">
+            <DiaryMarkdown content={diary.content} />
+          </div>
         </div>
 
         <div className="sheet-tail">
           {diary.location ? (
-            <p className="entry-place entry-place--end">
+            <p className={`entry-place ${side === 'right' ? 'entry-place--end' : ''}`}>
               <RiMapPinLine aria-hidden className="entry-place-icon" />
               {diary.location}
             </p>
           ) : null}
 
           <div className="sheet-foot">
-            <span className="folio">{index * 2 + 2}</span>
+            <span className="folio">{index + 1}</span>
           </div>
         </div>
       </div>

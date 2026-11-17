@@ -21,7 +21,6 @@ import {
   DiaryHalfTitle,
   DiaryTitleSheet,
   DiaryVerso,
-  splitDiaryContent,
 } from './DiarySheet';
 
 import './index.scss';
@@ -32,6 +31,7 @@ interface Props {
 
 type Dir = 'next' | 'prev';
 type Mode = 'spread' | 'single';
+type Slot = 'half' | 'toc' | 'title' | 'colophon' | 'verso' | { entry: number };
 
 const SPREAD_MQ = '(min-width: 700px)';
 const FLIP_MS = 680;
@@ -54,19 +54,20 @@ const seasonOf = (month: number) => {
   return '冬天';
 };
 
+/** 一页一天：对开时一卷纸的两面各放一篇，奇数篇幅补一张空白页让卷末落在左页 */
+const spreadSheetCount = (total: number) => Math.ceil((total + 4 + (total % 2)) / 2);
+
 /** 换布局时把阅读位置换算过去，读者不会丢页 */
 const mapMode = (position: number, total: number, from: Mode, to: Mode) => {
   if (from === to) return position;
   if (to === 'single') {
-    // 封面跨页换成衬页，目录跨页换成目录页
-    if (position <= 0) return position === 0 ? -1 : -2;
-    if (position >= total + 1) return total * 2 + 1;
-    return (position - 1) * 2 + 1;
+    if (position <= 0) return position;
+    const entry = Math.min(position * 2 - 2, total);
+    return entry >= total ? total + 2 : entry + 1;
   }
-  if (position <= -1) return -1;
-  if (position === 0) return 0;
-  if (position >= total * 2 + 1) return total + 1;
-  return Math.floor((position - 1) / 2) + 1;
+  if (position <= 0) return position < -1 ? -1 : position;
+  const entry = Math.min(position - 1, total);
+  return entry >= total ? spreadSheetCount(total) - 1 : Math.floor(entry / 2) + 1;
 };
 
 /* ---------- 纸的下缘被轻轻托起：弹簧-质点 + Verlet 积分 ----------
@@ -285,7 +286,27 @@ export default function DiaryReader({ pages }: Props) {
   );
   const total = viewPages.length;
 
-  const leaves = useMemo(() => viewPages.map((item) => splitDiaryContent(item.content)), [viewPages]);
+  const spreadSlots = useMemo(() => {
+    const slots: Slot[] = ['half', 'toc', 'title'];
+    viewPages.forEach((_, index) => slots.push({ entry: index }));
+    if ((slots.length + 1) % 2 === 1) slots.push('verso');
+    slots.push('colophon');
+    return slots;
+  }, [viewPages]);
+
+  const singleSlots = useMemo(() => {
+    const slots: Slot[] = ['toc', 'title'];
+    viewPages.forEach((_, index) => slots.push({ entry: index }));
+    slots.push('colophon');
+    return slots;
+  }, [viewPages]);
+
+  const spreadSheets = spreadSlots.length / 2;
+  const singleSheets = singleSlots.length;
+  const lastAt = useCallback(
+    (target: Mode) => (target === 'spread' ? spreadSheets : singleSheets) - 1,
+    [spreadSheets, singleSheets],
+  );
 
   const titleMeta = useMemo(() => {
     if (!viewPages.length) return '';
@@ -496,7 +517,7 @@ export default function DiaryReader({ pages }: Props) {
       }
       // 已经是最后一页，再往后翻就是把本子合上
       const engine = book.book;
-      const atEnd = engine ? (modeRef.current === 'spread' ? engine.position >= total + 1 : engine.position >= total * 2 + 1) : false;
+      const atEnd = engine ? engine.position >= lastAt(modeRef.current) : false;
       if (dir === 'next' && atEnd) {
         closeRef.current();
         return;
@@ -504,7 +525,7 @@ export default function DiaryReader({ pages }: Props) {
       pendingTurn.current = null;
       void (dir === 'next' ? book.next() : book.prev());
     },
-    [total],
+    [lastAt],
   );
 
   const handleTurnStart = useCallback(() => {
@@ -555,7 +576,7 @@ export default function DiaryReader({ pages }: Props) {
       const dy = event.clientY - start.y;
       // 最后一页向前拖纸：引擎已经无处可翻，这里直接合上本子
       const engine = bookRef.current?.book;
-      const atEnd = engine ? (modeRef.current === 'spread' ? engine.position >= total + 1 : engine.position >= total * 2 + 1) : false;
+      const atEnd = engine ? engine.position >= lastAt(modeRef.current) : false;
       if (atEnd && dx < -40 && Math.abs(dx) > Math.abs(dy)) {
         requestTurn('next');
         return;
@@ -576,7 +597,7 @@ export default function DiaryReader({ pages }: Props) {
       frame.removeEventListener('pointerdown', onDown, true);
       frame.removeEventListener('pointerup', onUp, true);
     };
-  }, [requestTurn, total]);
+  }, [lastAt, requestTurn]);
 
   // 滚轮 / 触控板：一格一页，一次两指滑动只翻一页，惯性余波不连翻
   useEffect(() => {
@@ -648,16 +669,16 @@ export default function DiaryReader({ pages }: Props) {
         void bookRef.current.turnTo(modeRef.current === 'spread' ? 0 : -1);
       } else if (event.key === 'End') {
         event.preventDefault();
-        void bookRef.current.turnTo(modeRef.current === 'spread' ? total + 1 : total * 2 + 1);
+        void bookRef.current.turnTo(lastAt(modeRef.current));
       }
     };
 
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [requestTurn, total]);
+  }, [requestTurn, lastAt]);
 
   const first = mode === 'spread' ? -1 : -2;
-  const last = mode === 'spread' ? total + 1 : total * 2 + 2;
+  const last = lastAt(mode);
   const canPrev = position > first;
   const canNext = position < last;
 
@@ -667,19 +688,30 @@ export default function DiaryReader({ pages }: Props) {
 
   const logical = useMemo(() => {
     if (!total) return -1;
-    if (position <= 0) return -1;
-    if (mode === 'spread') return Math.min(position - 1, total);
-    if (position >= total * 2 + 1) return total;
-    return Math.floor((position - 1) / 2);
+    if (mode === 'spread') {
+      if (position <= 0) return -1;
+      const [left, right] = [position * 2 - 2, position * 2 - 1];
+      if (left >= 0 && left < total) return left;
+      if (right >= 0 && right < total) return right;
+      return total;
+    }
+    return Math.min(Math.max(position - 1, -1), total);
   }, [mode, position, total]);
 
-  const current = logical >= 0 && logical < total ? viewPages[logical] : null;
+  // 一跨页可能同时摊着两篇，日历与月历以这两篇为准
+  const visibleEntries = useMemo(() => {
+    if (!total) return [] as number[];
+    const list = mode === 'spread' ? [position * 2 - 2, position * 2 - 1] : [position - 1];
+    return list.filter((index) => index >= 0 && index < total);
+  }, [mode, position, total]);
+
+  const current = visibleEntries.length ? viewPages[visibleEntries[0]] : null;
   const monthKey = current
     ? dayjs(current.diaryDate).format('YYYY-MM')
     : total
       ? dayjs(viewPages[0].diaryDate).format('YYYY-MM')
       : '';
-  const activeDates = current ? [current.diaryDate] : [];
+  const activeDates = visibleEntries.map((index) => viewPages[index].diaryDate);
   const edge = logical < 0 || logical >= total;
   const pageLabel = logical < 0 ? '序' : logical >= total ? '终' : String(logical + 1).padStart(2, '0');
 
@@ -705,19 +737,17 @@ export default function DiaryReader({ pages }: Props) {
     return () => window.clearTimeout(timer);
   }, [logical, total, viewPages]);
 
-  const singleLeaf = (index: number) => {
-    if (index === 0) return <DiaryToc pages={viewPages} years={years} yearFilter={yearFilter} activeIndex={logical} onJump={jumpToIndex} onYearChange={changeYear} />;
-    if (index === 1) return <DiaryTitleSheet meta={titleMeta} />;
-    if (index >= total * 2 + 2) return <DiaryColophonSheet count={total} note={colophonNote} />;
-    const entry = Math.floor((index - 2) / 2);
-    return (
-      <DiaryEntrySheet
-        diary={viewPages[entry]}
-        side={index % 2 === 0 ? 'left' : 'right'}
-        index={entry}
-        content={leaves[entry][index % 2 === 0 ? 0 : 1]}
-      />
-    );
+  const renderSlot = (slot: Slot | undefined, side: 'left' | 'right') => {
+    if (!slot) return null;
+    if (slot === 'half') return <DiaryHalfTitle />;
+    if (slot === 'toc')
+      return <DiaryToc pages={viewPages} years={years} yearFilter={yearFilter} activeIndex={logical} onJump={jumpToIndex} onYearChange={changeYear} />;
+    if (slot === 'title') return <DiaryTitleSheet meta={titleMeta} />;
+    if (slot === 'colophon') return <DiaryColophonSheet count={total} note={colophonNote} />;
+    if (slot === 'verso') return <DiaryVerso />;
+    const diary = viewPages[slot.entry];
+    if (!diary) return null;
+    return <DiaryEntrySheet diary={diary} side={side} index={slot.entry} />;
   };
 
   const renderPage = (page: PageRef) => {
@@ -725,27 +755,16 @@ export default function DiaryReader({ pages }: Props) {
 
     if (mode === 'single') {
       if (page.kind === 'back') return <DiaryVerso />;
-      return singleLeaf(page.sheet);
+      return renderSlot(singleSlots[page.sheet], page.sheet % 2 === 0 ? 'left' : 'right');
     }
 
-    // 对开：半扉页是一张纸，翻过来就是目录，右边接扉页
-    if (page.kind === 'front') {
-      if (page.sheet === 0) return <DiaryHalfTitle />;
-      if (page.sheet === 1) return <DiaryTitleSheet meta={titleMeta} />;
-      const entry = page.sheet - 2;
-      return <DiaryEntrySheet diary={viewPages[entry]} side="right" index={entry} content={leaves[entry][1]} />;
-    }
-
-    if (page.sheet === 0) {
-      return <DiaryToc pages={viewPages} years={years} yearFilter={yearFilter} activeIndex={logical} onJump={jumpToIndex} onYearChange={changeYear} />;
-    }
-    if (page.sheet > total) return <DiaryColophonSheet count={total} note={colophonNote} />;
-    const entry = page.sheet - 1;
-    return <DiaryEntrySheet diary={viewPages[entry]} side="left" index={entry} content={leaves[entry][0]} />;
+    // 对开：一张纸的正面在右、背面在左，两天正好摊成一跨页
+    const index = page.kind === 'front' ? page.sheet * 2 : page.sheet * 2 + 1;
+    return renderSlot(spreadSlots[index], page.kind === 'front' ? 'right' : 'left');
   };
 
   const jumpToIndex = (index: number) => {
-    const target = modeRef.current === 'spread' ? index + 1 : index * 2 + 1;
+    const target = modeRef.current === 'spread' ? Math.floor(index / 2) + 1 : index + 1;
     setCalOpen(false);
     if (target === positionRef.current) return;
     // 目录/日历跳转直接落到那一页，不逐页翻过去
@@ -889,7 +908,7 @@ export default function DiaryReader({ pages }: Props) {
                   key={`${mode}-${yearFilter}`}
                   ref={bookRef}
                   className="flipbook"
-                  sheets={mode === 'spread' ? total + 2 : total * 2 + 3}
+                  sheets={mode === 'spread' ? spreadSheets : singleSheets}
                   covers="inside"
                   hard={() => true}
                   pageRatio={450 / 680}

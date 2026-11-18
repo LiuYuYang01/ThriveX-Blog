@@ -1,6 +1,7 @@
 'use client';
 
-import { type ReactNode } from 'react';
+import { type MouseEvent, useEffect, useState, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import ReactMarkdown from 'react-markdown';
 import rehypeKatex from 'rehype-katex';
 import remarkGfm from 'remark-gfm';
@@ -46,5 +47,34 @@ const renderMarkdown = (content: string): ReactNode => {
 };
 
 export default function DiaryMarkdown({ content }: { content: string }) {
-  return <div className="diary-md">{renderMarkdown(content)}</div>;
+  const [viewer, setViewer] = useState<{ src: string; alt: string } | null>(null);
+
+  const openViewer = (event: MouseEvent<HTMLDivElement>) => {
+    const target = event.target;
+    if (!(target instanceof HTMLImageElement) || !target.currentSrc) return;
+    setViewer({ src: target.currentSrc, alt: target.alt });
+  };
+
+  useEffect(() => {
+    if (!viewer) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setViewer(null);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [viewer]);
+
+  return (
+    <div className="diary-md" onClick={openViewer}>
+      {renderMarkdown(content)}
+      {viewer
+        ? createPortal(
+            <div className="diary-viewer" role="dialog" aria-modal="true" aria-label={viewer.alt || '查看图片'} onClick={() => setViewer(null)}>
+              <img src={viewer.src} alt={viewer.alt} />
+            </div>,
+            document.body,
+          )
+        : null}
+    </div>
+  );
 }

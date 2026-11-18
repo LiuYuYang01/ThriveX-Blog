@@ -500,8 +500,9 @@ export default function DiaryReader({ pages }: Props) {
 
     let tapStart: { x: number; y: number; time: number; id: number } | null = null;
 
+    // 图片和表单一样优先响应自己，不当作翻页热区
     const interactive = (target: EventTarget | null) =>
-      target instanceof Element && !!target.closest('button, a, input, textarea, select, label, [data-no-turn]');
+      target instanceof Element && !!target.closest('button, a, input, textarea, select, label, img, [data-no-turn]');
 
     const onDown = (event: PointerEvent) => {
       if (closingRef.current) return;

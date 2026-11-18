@@ -47,13 +47,6 @@ const cnYear = (year: number) =>
     .map((char) => CN_DIGITS[Number(char)] ?? char)
     .join('');
 
-const seasonOf = (month: number) => {
-  if (month >= 3 && month <= 5) return '春天';
-  if (month >= 6 && month <= 8) return '夏天';
-  if (month >= 9 && month <= 11) return '秋天';
-  return '冬天';
-};
-
 /** 一页一天：对开时一卷纸的两面各放一篇，奇数篇幅补一张空白页让卷末落在左页 */
 const spreadSheetCount = (total: number) => Math.ceil((total + 4 + (total % 2)) / 2);
 
@@ -315,12 +308,6 @@ export default function DiaryReader({ pages }: Props) {
     return `${cnYear(date.year())}年 ${CN_MONTHS[date.month() + 1]}月`;
   }, [viewPages, yearFilter]);
 
-  const colophonNote = useMemo(() => {
-    if (!viewPages.length) return '';
-    const date = dayjs(viewPages[viewPages.length - 1].diaryDate);
-    return `${total} 篇旧日手札，写于${cnYear(date.year())}年的${seasonOf(date.month() + 1)}。`;
-  }, [viewPages, total]);
-
   // 书页对开时平整，鼠标靠近书沿时露出一角
   useEffect(() => {
     const edge = createPaperEdge();
@@ -392,54 +379,13 @@ export default function DiaryReader({ pages }: Props) {
     }
   }, []);
 
-  // 同一篇日记的左右两页共用一个字号：按更挤的那页缩，翻页时字号不会突变
-  const balanceEntryFit = useCallback(() => {
-    const root = frameRef.current;
-    if (!root) return;
-
-    const groups = new Map<string, HTMLElement[]>();
-    root.querySelectorAll<HTMLElement>('.page[data-entry]').forEach((page) => {
-      const key = page.dataset.entry;
-      const sheet = page.querySelector<HTMLElement>('.sheet');
-      if (!key || !sheet) return;
-      const list = groups.get(key);
-      if (list) list.push(sheet);
-      else groups.set(key, [sheet]);
-    });
-
-    groups.forEach((sheets) => {
-      let fit = 1;
-      sheets.forEach((sheet) => {
-        sheet.classList.remove('is-overflow');
-        sheet.style.setProperty('--fit', '1');
-        if (sheet.scrollHeight <= sheet.clientHeight + 1) return;
-
-        let low = 0.55;
-        let high = 1;
-        for (let step = 0; step < 7; step += 1) {
-          const mid = (low + high) / 2;
-          sheet.style.setProperty('--fit', mid.toFixed(3));
-          if (sheet.scrollHeight > sheet.clientHeight + 1) high = mid;
-          else low = mid;
-        }
-        fit = Math.min(fit, low);
-      });
-
-      sheets.forEach((sheet) => {
-        sheet.style.setProperty('--fit', fit.toFixed(3));
-        sheet.classList.toggle('is-overflow', sheet.scrollHeight > sheet.clientHeight + 1);
-      });
-    });
-  }, []);
-
   // 视口、字体、书本尺寸变化都要把书壳重新贴回纸边上
   useEffect(() => {
     const id = requestAnimationFrame(() => {
       updateCover();
-      balanceEntryFit();
     });
     return () => cancelAnimationFrame(id);
-  }, [position, mode, yearFilter, updateCover, balanceEntryFit]);
+  }, [position, mode, yearFilter, updateCover]);
 
   // 目录开合、字体到位、视口变化都会让书本重新量尺寸：
   // 跟引擎的 resize 事件把书壳与投影重新贴回纸边，第一页才不会是光秃秃的纸
@@ -449,20 +395,18 @@ export default function DiaryReader({ pages }: Props) {
     return book.on('resize', () => {
       requestAnimationFrame(() => {
         updateCover();
-        balanceEntryFit();
       });
     });
-  }, [mode, yearFilter, updateCover, balanceEntryFit]);
+  }, [mode, yearFilter, updateCover]);
 
   useEffect(() => {
     const onResize = () => {
       updateCover();
-      balanceEntryFit();
     };
     window.addEventListener('resize', onResize);
     document.fonts?.ready.then(onResize).catch(() => {});
     return () => window.removeEventListener('resize', onResize);
-  }, [updateCover, balanceEntryFit]);
+  }, [updateCover]);
 
   // 窄屏单页 / 宽屏对开：和示例一样在断点处重建书本，位置跟着读者走
   useEffect(() => {
@@ -599,84 +543,6 @@ export default function DiaryReader({ pages }: Props) {
     };
   }, [lastAt, requestTurn]);
 
-  // 滚轮 / 触控板：一格一页，一次两指滑动只翻一页，惯性余波不连翻
-  useEffect(() => {
-    const frame = frameRef.current;
-    if (!frame) return;
-
-    let wheelSum = 0;
-    let wheelSign = 0;
-    let wheelUntil = 0;
-
-    const onWheel = (event: WheelEvent) => {
-      if (closingRef.current || !bookRef.current) return;
-      const target = event.target instanceof Element ? event.target : null;
-      const scroller = target?.closest<HTMLElement>('.body, .contents-body');
-      // 正文或目录太长、已经能滚动时，滚轮先让给内容
-      if (scroller && scroller.scrollHeight > scroller.clientHeight + 1 && Math.abs(event.deltaY) >= Math.abs(event.deltaX)) return;
-
-      event.preventDefault();
-      const now = performance.now();
-      if (now < wheelUntil) {
-        if (Math.abs(event.deltaY) < 60 && Math.abs(event.deltaX) < 60) wheelUntil = now + 190;
-        return;
-      }
-
-      const delta = Math.abs(event.deltaY) >= Math.abs(event.deltaX) ? event.deltaY : event.deltaX;
-      const sign = Math.sign(delta);
-      if (!sign) return;
-
-      const notch = event.deltaMode !== 0 || Math.abs(delta) >= 90;
-      if (notch) {
-        wheelSum = 0;
-        wheelUntil = now + 150;
-        requestTurn(delta > 0 ? 'next' : 'prev');
-        return;
-      }
-
-      if (sign !== wheelSign) {
-        wheelSum = 0;
-        wheelSign = sign;
-      }
-      wheelSum += delta;
-      if (Math.abs(wheelSum) < 52) return;
-      wheelSum = 0;
-      wheelUntil = now + 190;
-      requestTurn(sign > 0 ? 'next' : 'prev');
-    };
-
-    frame.addEventListener('wheel', onWheel, { passive: false });
-    return () => frame.removeEventListener('wheel', onWheel);
-  }, [requestTurn]);
-
-  // 键盘翻页：Home / End 直接到扉页与尾页
-  useEffect(() => {
-    const onKey = (event: KeyboardEvent) => {
-      if (!bookRef.current || closingRef.current) return;
-      if (event.metaKey || event.ctrlKey || event.altKey) return;
-      const target = event.target as HTMLElement | null;
-      if (target?.closest('input, textarea, select, [contenteditable="true"]')) return;
-      if (target?.closest('button, a')) return;
-
-      if (event.key === 'ArrowLeft' || event.key === 'PageUp') {
-        event.preventDefault();
-        requestTurn('prev');
-      } else if (event.key === 'ArrowRight' || event.key === 'PageDown' || event.key === ' ') {
-        event.preventDefault();
-        requestTurn('next');
-      } else if (event.key === 'Home') {
-        event.preventDefault();
-        void bookRef.current.turnTo(modeRef.current === 'spread' ? 0 : -1);
-      } else if (event.key === 'End') {
-        event.preventDefault();
-        void bookRef.current.turnTo(lastAt(modeRef.current));
-      }
-    };
-
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [requestTurn, lastAt]);
-
   const first = mode === 'spread' ? -1 : -2;
   const last = lastAt(mode);
   const canPrev = position > first;
@@ -743,7 +609,7 @@ export default function DiaryReader({ pages }: Props) {
     if (slot === 'toc')
       return <DiaryToc pages={viewPages} years={years} yearFilter={yearFilter} activeIndex={logical} onJump={jumpToIndex} onYearChange={changeYear} />;
     if (slot === 'title') return <DiaryTitleSheet meta={titleMeta} />;
-    if (slot === 'colophon') return <DiaryColophonSheet count={total} note={colophonNote} />;
+    if (slot === 'colophon') return <DiaryColophonSheet count={total} />;
     if (slot === 'verso') return <DiaryVerso />;
     const diary = viewPages[slot.entry];
     if (!diary) return null;
@@ -923,6 +789,7 @@ export default function DiaryReader({ pages }: Props) {
                   lift={22}
                   center
                   keyboard={false}
+                  gestures={false}
                   grabBlock={false}
                   label="日记本"
                   sound={sound}

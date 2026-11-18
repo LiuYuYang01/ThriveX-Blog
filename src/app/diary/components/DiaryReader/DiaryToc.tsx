@@ -1,9 +1,11 @@
 'use client';
 
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import dayjs from 'dayjs';
+import { FiChevronDown } from 'react-icons/fi';
 
 import type { Diary } from '@/types/app/diary';
+import { useAutoHideScrollbar } from './useAutoHideScrollbar';
 
 interface Props {
   pages: Diary[];
@@ -89,6 +91,28 @@ const buildTree = (pages: Diary[]): TocYear[] => {
 
 export default function DiaryToc({ pages, years, yearFilter, activeIndex, onJump, onYearChange }: Props) {
   const tree = useMemo(() => buildTree(pages), [pages]);
+  const handleScroll = useAutoHideScrollbar();
+
+  // 默认全部收起，只把「今天所在的月份」摊开
+  const currentMonthKey = useMemo(() => {
+    const now = dayjs();
+    return `${now.year()}-${now.month() + 1}`;
+  }, []);
+
+  const [expanded, setExpanded] = useState<Set<string>>(() => new Set());
+
+  useEffect(() => {
+    setExpanded((prev) => (prev.has(currentMonthKey) ? prev : new Set(prev).add(currentMonthKey)));
+  }, [currentMonthKey]);
+
+  const toggleMonth = (key: string) => {
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  };
 
   const activeRef = useRef<HTMLButtonElement>(null);
   useEffect(() => {
@@ -101,7 +125,7 @@ export default function DiaryToc({ pages, years, yearFilter, activeIndex, onJump
     <div className="page page--contents" id="diary-toc" aria-label="日记目录" data-no-turn data-grabfold-no-peek>
       <div className="contents-sheet">
         <header className="contents-head">
-          <h2 className="contents-title">目次</h2>
+          <h2 className="contents-title">目录</h2>
 
           <div className="contents-tabs" role="tablist" aria-label="按年份查看">
             <button
@@ -128,7 +152,7 @@ export default function DiaryToc({ pages, years, yearFilter, activeIndex, onJump
           </div>
         </header>
 
-        <nav className="contents-body" aria-label="按年份折叠的目录">
+        <nav className="contents-body" aria-label="按年份折叠的目录" onScroll={handleScroll}>
           {tree.map((year) => (
             <section key={year.year} className="contents-year">
               <header className="contents-year-head">
@@ -136,38 +160,49 @@ export default function DiaryToc({ pages, years, yearFilter, activeIndex, onJump
                 <span className="contents-year-count">{year.total} 篇</span>
               </header>
 
-              {year.months.map((month) => (
-                <div key={`${year.year}-${month.month}`} className="contents-month">
-                  <div className="contents-month-head">
-                    <span className="contents-month-name">{month.name}</span>
-                    <span className="contents-month-rule" />
-                    <span className="contents-month-count">{String(month.total).padStart(2, '0')}</span>
-                  </div>
+              {year.months.map((month) => {
+                const monthKey = `${year.year}-${month.month}`;
+                const isCollapsed = !expanded.has(monthKey);
+                return (
+                  <div key={monthKey} className="contents-month">
+                    <button
+                      type="button"
+                      className={`contents-month-head ${isCollapsed ? 'is-collapsed' : ''}`}
+                      aria-expanded={!isCollapsed}
+                      onClick={() => toggleMonth(monthKey)}
+                    >
+                      <span className="contents-month-name">{month.name}</span>
+                      <span className="contents-month-rule" />
+                      <FiChevronDown aria-hidden className="contents-month-arrow" />
+                    </button>
 
-                  {month.days.map((day) => {
-                    const date = dayjs(day.date);
-                    return day.entries.map((entry, order) => {
-                      const isActive = entry.index === activeIndex;
-                      return (
-                        <button
-                          key={`${day.date}-${entry.index}`}
-                          ref={isActive ? activeRef : undefined}
-                          type="button"
-                          className={`contents-row ${isActive ? 'is-active' : ''}`}
-                          onClick={() => onJump(entry.index)}
-                          title={entry.title || undefined}
-                        >
-                          <span className="contents-date">{order === 0 ? date.format('MM.DD') : ''}</span>
-                          <span className="contents-week">{order === 0 ? `周${WEEK[date.day()]}` : ''}</span>
-                          {entry.title ? <span className="contents-entry">{entry.title}</span> : null}
-                          <span className="contents-leader" />
-                          <span className="contents-page">{String(entry.index + 1).padStart(2, '0')}</span>
-                        </button>
-                      );
-                    });
-                  })}
-                </div>
-              ))}
+                    {isCollapsed
+                      ? null
+                      : month.days.map((day) => {
+                          const date = dayjs(day.date);
+                          return day.entries.map((entry, order) => {
+                            const isActive = entry.index === activeIndex;
+                            return (
+                              <button
+                                key={`${day.date}-${entry.index}`}
+                                ref={isActive ? activeRef : undefined}
+                                type="button"
+                                className={`contents-row ${isActive ? 'is-active' : ''}`}
+                                onClick={() => onJump(entry.index)}
+                                title={entry.title || undefined}
+                              >
+                                <span className="contents-date">{order === 0 ? date.format('MM.DD') : ''}</span>
+                                <span className="contents-week">{order === 0 ? `周${WEEK[date.day()]}` : ''}</span>
+                                {entry.title ? <span className="contents-entry">{entry.title}</span> : null}
+                                <span className="contents-leader" />
+                                <span className="contents-page">{String(entry.index + 1).padStart(2, '0')}</span>
+                              </button>
+                            );
+                          });
+                        })}
+                  </div>
+                );
+              })}
             </section>
           ))}
         </nav>

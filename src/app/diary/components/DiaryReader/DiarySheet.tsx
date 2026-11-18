@@ -5,6 +5,7 @@ import { RiMapPinLine } from 'react-icons/ri';
 
 import type { Diary } from '@/types/app/diary';
 import DiaryMarkdown from './DiaryMarkdown';
+import { useAutoHideScrollbar } from './useAutoHideScrollbar';
 
 const WEEKDAYS = ['星期天', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
 
@@ -16,6 +17,7 @@ interface EntryProps {
 
 export function DiaryEntrySheet({ diary, side, index }: EntryProps) {
   const date = dayjs(diary.diaryDate);
+  const handleScroll = useAutoHideScrollbar();
 
   return (
     <div className={`page page--${side}`} data-entry={index}>
@@ -32,7 +34,7 @@ export function DiaryEntrySheet({ diary, side, index }: EntryProps) {
         {diary.title ? <h2 className="entry-title">{diary.title}</h2> : null}
 
         <div className="leaf-ruled">
-          <div className="body">
+          <div className="body" onScroll={handleScroll}>
             <DiaryMarkdown content={diary.content} />
           </div>
         </div>
@@ -87,15 +89,13 @@ export function DiaryHalfTitle() {
   );
 }
 
-export function DiaryColophonSheet({ count, note }: { count: number; note: string }) {
+export function DiaryColophonSheet({ count }: { count: number }) {
   return (
     <div className="page page--colophon">
       <div className="colophon">
         <div className="colophon-mark">Fin.</div>
         <p>读到这里，这一册就翻完了。</p>
-        <p>{note}</p>
         <div className="colophon-rule" />
-        <p className="colophon-small">DIARY · VOL. 01</p>
         <p className="colophon-fine">私人的、缓慢的、不必给谁看的生活记录</p>
         <span className="sr-only">共 {count} 篇</span>
       </div>

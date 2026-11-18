@@ -99,7 +99,7 @@
   min-height: 0;
 }
 
-// ================= 目次（卷首的一张纸页） =================
+// ================= 目录（卷首的一张纸页） =================
 .page--contents {
   color: #3f3529;
 }
@@ -166,8 +166,13 @@
   padding-right: calc(1cqw * 1.6);
   overflow-y: auto;
   overscroll-behavior: contain;
-  scrollbar-color: rgba(140, 112, 72, 0.4) transparent;
+  // 默认藏起滚动条，滚动时（is-scrolling）才显形
+  scrollbar-color: transparent transparent;
   scrollbar-width: thin;
+
+  &.is-scrolling {
+    scrollbar-color: rgba(140, 112, 72, 0.4) transparent;
+  }
 
   &::-webkit-scrollbar {
     width: 3px;
@@ -175,6 +180,10 @@
 
   &::-webkit-scrollbar-thumb {
     border-radius: 2px;
+    background: transparent;
+  }
+
+  &.is-scrolling::-webkit-scrollbar-thumb {
     background: rgba(120, 95, 60, 0.34);
   }
 
@@ -219,7 +228,35 @@
   display: flex;
   gap: calc(1cqw * 1.4);
   align-items: center;
-  padding: 0 calc(1cqw * 0.8);
+  width: 100%;
+  padding: calc(1cqh * 0.5) calc(1cqw * 0.8);
+  border: 0;
+  border-radius: 2px;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  color: inherit;
+  background: none;
+
+  &:hover {
+    background: rgba(120, 95, 60, 0.07);
+
+    .contents-month-name {
+      color: #9a4a38;
+    }
+  }
+}
+
+.contents-month-arrow {
+  flex: none;
+  width: calc(1cqh * 1.5);
+  height: calc(1cqh * 1.5);
+  color: #9c8869;
+  transition: transform 0.2s ease;
+}
+
+.contents-month-head.is-collapsed .contents-month-arrow {
+  transform: rotate(-90deg);
 }
 
 .contents-month-name {
@@ -602,7 +639,7 @@ body:has(.grabfold[data-dragging='true']) .book-cover {
   flex-direction: column;
   overflow: hidden;
   padding: calc(1cqh * 8.4) calc(1cqw * 8) calc(1cqh * 5.2);
-  --fs-body: calc(1cqh * 2.5 * var(--fit, 1));
+  --fs-body: calc(1cqh * 2.5);
 }
 
 // 书脊那边留白宽一些，字才像被装订进去
@@ -710,7 +747,7 @@ body:has(.grabfold[data-dragging='true']) .book-cover {
   height: calc(1cqh * 2);
 }
 
-// 横线本：整块书写区铺满横线，没有字的地方也照样有线
+// 横线本：横线画在正文的滚动层上，跟着文字一起滚，字才像真的写在纸上
 .leaf-ruled {
   display: flex;
   flex: 1 1 auto;
@@ -718,6 +755,14 @@ body:has(.grabfold[data-dragging='true']) .book-cover {
   min-height: 0;
   --rule-step: calc(var(--fs-body, 15px) * 2.12);
   --rule-line: calc(var(--rule-step) * 0.858);
+}
+
+.body {
+  flex: 1 1 auto;
+  min-height: 0;
+  padding-right: calc(1cqw * 2);
+  overflow-y: auto;
+  overscroll-behavior: contain;
   background-image: repeating-linear-gradient(
     to bottom,
     transparent 0,
@@ -727,11 +772,31 @@ body:has(.grabfold[data-dragging='true']) .book-cover {
     transparent var(--rule-line),
     transparent var(--rule-step)
   );
-}
+  background-attachment: local;
+  // 默认藏起滚动条，滚动时（is-scrolling）才显形
+  scrollbar-color: transparent transparent;
+  scrollbar-width: thin;
 
-.body {
-  flex: 0 0 auto;
-  min-height: 0;
+  &.is-scrolling {
+    scrollbar-color: rgba(140, 112, 72, 0.45) transparent;
+  }
+
+  &::-webkit-scrollbar {
+    width: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 2px;
+    background: transparent;
+  }
+
+  &.is-scrolling::-webkit-scrollbar-thumb {
+    background: rgba(120, 95, 60, 0.34);
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
 }
 
 .body--top {
@@ -740,16 +805,6 @@ body:has(.grabfold[data-dragging='true']) .book-cover {
 
 .page--right .body--top {
   flex: 0 0 auto;
-}
-
-.sheet.is-overflow .body {
-  flex: 1 1 auto;
-  min-height: 0;
-  padding-right: calc(1cqw * 2);
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  scrollbar-color: rgba(140, 112, 72, 0.45) transparent;
-  scrollbar-width: thin;
 }
 
 .sheet-foot {
@@ -888,13 +943,6 @@ body:has(.grabfold[data-dragging='true']) .book-cover {
   line-height: 2;
   letter-spacing: 0.08em;
   color: #574a38;
-}
-
-.colophon-small {
-  font-family: var(--latin);
-  font-size: calc(1cqh * 1.6) !important;
-  letter-spacing: 0.26em !important;
-  color: #94805f !important;
 }
 
 .colophon-rule {
@@ -1295,7 +1343,7 @@ body:has(.grabfold[data-dragging='true']) .book-cover {
 }
 
 // ================= 焦点与宽窄屏 =================
-.diary-reader :is(.diary-tool, .diary-cal-day.is-written, .diary-cal-step, .diary-cal-close, .contents-tab, .contents-row, .a11y-turn button):focus-visible {
+.diary-reader :is(.diary-tool, .diary-cal-day.is-written, .diary-cal-step, .diary-cal-close, .contents-tab, .contents-month-head, .contents-row, .a11y-turn button):focus-visible {
   outline: 2px solid #c9a86f;
   outline-offset: 2px;
 }

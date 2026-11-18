@@ -1,6 +1,6 @@
 'use client';
 
-import { type MouseEvent, useEffect, useState, type ReactNode } from 'react';
+import { Children, isValidElement, type MouseEvent, useEffect, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import ReactMarkdown from 'react-markdown';
 import rehypeKatex from 'rehype-katex';
@@ -14,6 +14,17 @@ import './DiaryMarkdown.scss';
 // 翻页时同一页正文会被复制到多张切片上，按内容缓存解析结果，避免重复解析
 const CACHE_LIMIT = 8;
 const cache = new Map<string, ReactNode>();
+
+const DiaryImage = ({ src, alt }: { src?: string | Blob; alt?: string }) => (
+  <img src={typeof src === 'string' ? src : undefined} alt={alt ?? ''} loading="lazy" className="diary-md-img" />
+);
+
+// 图片独占一段时换成不带行高的容器，否则段落里的文字会被压成 0 行高和图片叠在一起
+const DiaryParagraph = ({ children }: { children?: ReactNode }) => {
+  const items = Children.toArray(children).filter((child) => !(typeof child === 'string' && !child.trim()));
+  const onlyImage = items.length === 1 && isValidElement(items[0]) && items[0].type === DiaryImage;
+  return onlyImage ? <div className="diary-md-figure">{items[0]}</div> : <p>{children}</p>;
+};
 
 const renderMarkdown = (content: string): ReactNode => {
   const cached = cache.get(content);
@@ -34,7 +45,8 @@ const renderMarkdown = (content: string): ReactNode => {
               {children}
             </a>
           ),
-        img: ({ src, alt }) => <img src={src} alt={alt ?? ''} loading="lazy" className="diary-md-img" />,
+        img: DiaryImage,
+        p: DiaryParagraph,
       }}
     >
       {content}

@@ -639,7 +639,7 @@ body:has(.grabfold[data-dragging='true']) .book-cover {
   flex-direction: column;
   overflow: hidden;
   padding: calc(1cqh * 8.4) calc(1cqw * 8) calc(1cqh * 5.2);
-  --fs-body: calc(1cqh * 2.5);
+  --fs-body: calc(1cqh * 2.5 - 3px);
 }
 
 // 书脊那边留白宽一些，字才像被装订进去

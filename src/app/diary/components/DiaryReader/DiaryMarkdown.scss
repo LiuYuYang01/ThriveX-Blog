@@ -147,12 +147,10 @@
     }
   }
 
-  // 图片单独成段时段落本身不占高度，正文才能绕排到照片旁边
-  p:has(> .diary-md-img:only-child) {
-    height: 0;
+  // 图片单独成段时用一个不占高度的容器包住，正文才能绕排到照片旁边
+  .diary-md-figure {
     margin: 0;
     line-height: 0;
-    text-indent: 0;
   }
 
   .diary-md-img {
